@@ -5,12 +5,16 @@ import com.hysteryale.repository.UserRepository;
 import com.hysteryale.service.impl.EmailServiceImpl;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,13 +23,10 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
-public class UserService extends BasedService{
+public class UserService extends BasedService implements UserDetailsService {
     @Resource
     UserRepository userRepository;
     @Resource
@@ -110,7 +111,7 @@ public class UserService extends BasedService{
      */
     @Transactional
     public void updateUserInformation(User dbUser, User updateUser) {
-        dbUser.setUserName(updateUser.getUserName());
+        dbUser.setName(updateUser.getName());
         dbUser.setRole(updateUser.getRole());
         dbUser.setDefaultLocale(updateUser.getDefaultLocale());
     }
@@ -132,7 +133,7 @@ public class UserService extends BasedService{
             char c = (char) ('a' + random.nextInt(26));
             newPassword.append(c);
         }
-        emailService.sendResetPasswordEmail(user.getUserName(), newPassword.toString(), user.getEmail());
+        emailService.sendResetPasswordEmail(user.getName(), newPassword.toString(), user.getEmail());
         user.setPassword(passwordEncoder().encode(newPassword.toString()));
     }
 
@@ -144,10 +145,18 @@ public class UserService extends BasedService{
      * @param sortType type of sort (ascending or descending)
      */
     public Page<User> searchUser(String searchString, int pageNo, int perPage, String sortType) {
-        Pageable pageable = PageRequest.of(pageNo - 1, perPage, Sort.by("userName").ascending());
+        Pageable pageable = PageRequest.of(pageNo - 1, perPage, Sort.by("name").ascending());
         if(sortType.equals("descending"))
-            pageable = PageRequest.of(pageNo - 1, perPage, Sort.by("userName").descending());
+            pageable = PageRequest.of(pageNo - 1, perPage, Sort.by("name").descending());
         return userRepository.searchUser(searchString, pageable);
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+       return userRepository
+               .getActiveUserByEmail(username)
+               .orElseThrow(
+                       () -> new UsernameNotFoundException("User not found: " + username)
+               );
+    }
 }
