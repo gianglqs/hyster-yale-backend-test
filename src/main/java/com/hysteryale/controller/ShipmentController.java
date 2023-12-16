@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,7 +53,7 @@ public class ShipmentController {
     }
 
     @PostMapping(path = "/importNewShipment", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> importNewDataShipment(@RequestBody MultipartFile file, Authentication authentication) {
 
         try {

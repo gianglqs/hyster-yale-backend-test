@@ -9,19 +9,19 @@ import com.hysteryale.utils.StringUtils;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -140,20 +140,20 @@ public class UserController {
      *
      * @param email get from front-end
      */
-    @PostMapping(path = "/users/resetPassword")
-    public void resetPassword(@RequestBody String email) {
-        JSONParser parser = new JSONParser();
-        try {
-            JSONObject jsonObject = (JSONObject) parser.parse(email);
-            try {
-                userService.resetUserPassword((String) jsonObject.get("email"));
-            } catch (MailjetSocketTimeoutException | MailjetException e) {
-                throw new RuntimeException(e);
-            }
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @PostMapping(path = "/users/resetPassword")
+//    public void resetPassword(@RequestBody String email) {
+//        JSONParser parser = new JSONParser();
+//        try {
+//            JSONObject jsonObject = (JSONObject) parser.parse(email);
+//            try {
+//                userService.resetUserPassword((String) jsonObject.get("email"));
+//            } catch (MailjetSocketTimeoutException | MailjetException e) {
+//                throw new RuntimeException(e);
+//            }
+//        } catch (ParseException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     /**
      * Revoke the access_token for logging user out
@@ -177,6 +177,6 @@ public class UserController {
 //    }
 
     @PostMapping(path = "/oauth/checkTokenOfAdmin")
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void checkTokenOfAdmin() {}
 }
