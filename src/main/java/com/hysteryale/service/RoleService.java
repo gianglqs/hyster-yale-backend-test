@@ -15,4 +15,8 @@ public class RoleService {
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
+
+    public Role getRoleByRowName(String roleName){
+        return roleRepository.findByRoleName(roleName);
+    }
 }
