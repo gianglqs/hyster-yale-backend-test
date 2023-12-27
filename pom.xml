@@ -254,7 +254,7 @@
                 </includes>
             </resource>
         </resources>
-
+        <finalName>hysteryale</finalName>
     </build>
 
 </project>
