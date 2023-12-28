@@ -1,34 +1,32 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.authentication.AuthenticationService;
 import com.hysteryale.model.User;
+import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.UserService;
 import com.hysteryale.service.impl.EmailServiceImpl;
 import com.hysteryale.utils.StringUtils;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
-import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@EnableResourceServer
 @CrossOrigin
 @Slf4j
 public class UserController {
@@ -36,8 +34,11 @@ public class UserController {
     public UserService userService;
     @Resource
     EmailServiceImpl emailService;
-    @Resource(name = "tokenServices")
-    DefaultTokenServices tokenServices;
+
+    @Resource
+    AuthenticationService authenticationService;
+//    @Resource(name = "tokenServices")
+//    DefaultTokenServices tokenServices;
 
     /**
      * Get user's details by userId
@@ -53,7 +54,7 @@ public class UserController {
      * Reverse user's active state into true or false based on whether user is active or not
      */
     @PutMapping(path = "users/activate/{userId}")
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void activateUser(@PathVariable int userId) {
         User user = userService.getUserById(userId);
         userService.setUserActiveState(user, !user.isActive());
@@ -65,7 +66,7 @@ public class UserController {
      * @param user mapping from JSON format
      */
     @PostMapping(path = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void addUser(@Valid @RequestBody User user) {
         String password = user.getPassword();
 
@@ -73,7 +74,7 @@ public class UserController {
         userService.addUser(user);
 
         try {
-            emailService.sendRegistrationEmail(user.getUserName(), password, user.getEmail());
+            emailService.sendRegistrationEmail(user.getName(), password, user.getEmail());
         } catch (MailjetSocketTimeoutException | MailjetException e) {
             log.error(e.toString());
         }
@@ -93,7 +94,7 @@ public class UserController {
      * Get list of users based on searchString (if searchString is null then get all users)
      */
     @GetMapping(path = "/users")
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Map<String, Object> searchUser(@RequestParam(required = false) String search,
                                           @RequestParam(defaultValue = "100") int perPage,
                                           @RequestParam(defaultValue = "1") int pageNo,
@@ -139,33 +140,43 @@ public class UserController {
      *
      * @param email get from front-end
      */
-    @PostMapping(path = "/users/resetPassword")
-    public void resetPassword(@RequestBody String email) {
-        JSONParser parser = new JSONParser();
-        try {
-            JSONObject jsonObject = (JSONObject) parser.parse(email);
-            try {
-                userService.resetUserPassword((String) jsonObject.get("email"));
-            } catch (MailjetSocketTimeoutException | MailjetException e) {
-                throw new RuntimeException(e);
-            }
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @PostMapping(path = "/users/resetPassword")
+//    public void resetPassword(@RequestBody String email) {
+//        JSONParser parser = new JSONParser();
+//        try {
+//            JSONObject jsonObject = (JSONObject) parser.parse(email);
+//            try {
+//                userService.resetUserPassword((String) jsonObject.get("email"));
+//            } catch (MailjetSocketTimeoutException | MailjetException e) {
+//                throw new RuntimeException(e);
+//            }
+//        } catch (ParseException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     /**
      * Revoke the access_token for logging user out
      */
-    @PostMapping(path = "/oauth/revokeAccessToken")
-    public void revokeAccessToken(@RequestHeader("Authorization") String accessToken) {
-        tokenServices.revokeToken(accessToken.substring(6));
+//    @PostMapping(path = "/oauth/revokeAccessToken")
+//    public void revokeAccessToken(@RequestHeader("Authorization") String accessToken) {
+//        tokenServices.revokeToken(accessToken.substring(6));
+//    }
+    @PostMapping(path = "/oauth/checkToken")
+    public void checkToken() {
     }
 
-    @PostMapping(path = "/oauth/checkToken")
-    public void checkToken() {}
+    @PostMapping(path = "/oauth/login")
+    public ResponseEntity<ResponseObject> login(@RequestParam String email, @RequestParam String password) {
+        return authenticationService.login(new User(email, password));
+    }
+
+//    @PostMapping(path = "/oauth/register")
+//    public void register(@RequestBody User user) {
+//         authenticationService.register(user);
+//    }
 
     @PostMapping(path = "/oauth/checkTokenOfAdmin")
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void checkTokenOfAdmin() {}
 }
