@@ -25,6 +25,11 @@ public class AdjustmentService extends BasedService {
     public Map<String, Object> getAdjustmentByFilter(FilterModel filterModel, CalculatorModel calculatorModel) throws ParseException {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filterModel);
+
+        // '000 USD -> USD to calculate
+        calculatorModel.setFreightAdj(calculatorModel.getFreightAdj() * 1000);
+        calculatorModel.setFxAdj(calculatorModel.getFxAdj() * 1000);
+
         logInfo(filterMap.toString());
         //TODO : set Margin after Adj for filter
         logInfo("marginPercentageAfterAdjFilter" + filterMap.get("marginPercentageAfterAdjFilter"));
@@ -156,7 +161,7 @@ public class AdjustmentService extends BasedService {
         adjustmentPayLoad.setManualAdjFX(calculatorModel.getFxAdj());
 
         //Total Manual Adj Cost = (1) + (2) + (3) (4)
-        adjustmentPayLoad.setTotalManualAdjCost(adjustmentPayLoad.getManualAdjCost() - adjustmentPayLoad.getManualAdjFreight() - adjustmentPayLoad.getManualAdjFX());
+        adjustmentPayLoad.setTotalManualAdjCost(adjustmentPayLoad.getManualAdjCost() + adjustmentPayLoad.getManualAdjFreight() + adjustmentPayLoad.getManualAdjFX());
 
         //New DN (‘000 USD) - After manual Adj = Original DN * DN Adj % (rename to Adjusted Dealer Net) (5)
         adjustmentPayLoad.setNewDN(booking.getDealerNetAfterSurCharge() * (1 + calculatorModel.getDnAdjPercentage() / 100));
@@ -167,11 +172,8 @@ public class AdjustmentService extends BasedService {
         // Margin %
         adjustmentPayLoad.setNewMarginPercentage(adjustmentPayLoad.getNewMargin() / adjustmentPayLoad.getNewDN());
 
-        // TODO : recheck formula
         //Additional Volume at BEP For Discount =  ABS( margin) / (DN* % DN adj) - (Original total cost/no of order)
-         adjustmentPayLoad.setAdditionalVolume((int) Math.round(Math.abs(adjustmentPayLoad.getNewMargin() / (adjustmentPayLoad.getNewDN() - (adjustmentPayLoad.getTotalManualAdjCost() / booking.getQuantity())))));
-        // adjustmentPayLoad.setAdditionalVolume((int) Math.round(Math.abs(adjustmentPayLoad.getNewMargin() / (adjustmentPayLoad.getNewDN()/ booking.getQuantity() - (adjustmentPayLoad.getTotalManualAdjCost() / booking.getQuantity())))));
-        //adjustmentPayLoad.setAdditionalVolume((int) Math.round((Math.abs(adjustmentPayLoad.getNewMargin()) + adjustmentPayLoad.getTotalManualAdjCost()) / (adjustmentPayLoad.getNewDN() / booking.getQuantity())));
+        adjustmentPayLoad.setAdditionalVolume((int) (Math.round(booking.getMarginAfterSurCharge() / (adjustmentPayLoad.getNewDN() / booking.getQuantity() - (adjustmentPayLoad.getTotalManualAdjCost() / booking.getQuantity())) - booking.getQuantity())));
 
         return adjustmentPayLoad;
     }

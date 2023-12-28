@@ -60,8 +60,8 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
                                           @Param("toDate") Calendar toDate,
                                           Pageable pageable);
 
-    @Query("SELECT new BookingOrder( sum(c.quantity), sum(c.totalCost), sum(c.dealerNet), " +
-            " sum(c.dealerNetAfterSurCharge), sum(c.marginAfterSurCharge), (sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge) )) " +
+    @Query("SELECT new BookingOrder( COALESCE(sum(c.quantity), 0), COALESCE(sum(c.totalCost), 0), COALESCE(sum(c.dealerNet), 0), " +
+            " COALESCE(sum(c.dealerNetAfterSurCharge), 0), COALESCE(sum(c.marginAfterSurCharge), 0), COALESCE(sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge), 0)) " +
             " FROM BookingOrder c WHERE " +
             " ((:regions) IS Null OR c.region.region IN (:regions))" +
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
@@ -331,7 +331,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
                                                    @Param("dnAdjPercentage") double dnAdjPercentage
     );
 
-    @Query("SELECT new BookingOrder('Total', sum(c.quantity), sum(c.dealerNet), sum(c.dealerNetAfterSurCharge), sum(c.totalCost), sum(c.marginAfterSurCharge), (sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)) ) FROM BookingOrder c WHERE " +
+    @Query("SELECT new BookingOrder('Total', COALESCE(sum(c.quantity),0), COALESCE(sum(c.dealerNet),0), COALESCE(sum(c.dealerNetAfterSurCharge),0), COALESCE(sum(c.totalCost),0), COALESCE(sum(c.marginAfterSurCharge),0), COALESCE((sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)),0 )) FROM BookingOrder c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region.region IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
@@ -367,7 +367,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
                                 @Param("fromDate") Calendar fromDate,
                                 @Param("toDate") Calendar toDate);
 
-    @Query("SELECT (sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)) FROM BookingOrder c WHERE " +
+    @Query("SELECT COALESCE((sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)),0) FROM BookingOrder c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region.region IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +

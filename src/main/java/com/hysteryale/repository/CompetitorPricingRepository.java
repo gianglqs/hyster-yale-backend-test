@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CompetitorPricingRepository extends JpaRepository<CompetitorPricing, Integer> {
 
@@ -87,9 +88,9 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
                                                            @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
                                                            Pageable pageable);
 
-    @Query("SELECT new CompetitorPricing('Total', sum(c.actual), sum(c.AOPF), sum(c.LRFF), sum(c.dealerHandlingCost), sum(c.competitorPricing), " +
-            " sum(c.dealerStreetPricing),  (sum(c.averageDN) / count(c)), "+
-            " ((sum(c.competitorPricing) - (sum(c.dealerStreetPricing) + sum(c.dealerPricingPremium))) / sum(c.competitorPricing)) )"+
+    @Query("SELECT new CompetitorPricing('Total', COALESCE(sum(c.actual),0), COALESCE(sum(c.AOPF),0), COALESCE(sum(c.LRFF),0), COALESCE(sum(c.dealerHandlingCost),0), COALESCE(sum(c.competitorPricing),0), " +
+            " COALESCE(sum(c.dealerStreetPricing),0),  COALESCE(sum(c.averageDN),0) , "+
+            " COALESCE((sum(c.competitorPricing) - (sum(c.dealerStreetPricing) + sum(c.dealerPricingPremium))) / sum(c.competitorPricing),0) )"+
             " FROM CompetitorPricing c WHERE " +
             "((:regions) IS Null OR c.region IN (:regions))" +
             " AND ((:plants) IS NULL OR c.plant IN (:plants))" +
@@ -141,14 +142,19 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
     @Query("SELECT DISTINCT c.category FROM CompetitorPricing c")
     List<String> getDistinctCategory();
 
-    @Query("SELECT c FROM CompetitorPricing c " +
+    @Query("SELECT new CompetitorPricing (c.competitorName, AVG(c.competitorLeadTime), AVG(c.competitorPricing), AVG(c.marketShare), c.color) FROM CompetitorPricing c " +
             "WHERE ((:regions) IS NULL OR c.region IN (:regions)) " +
             "AND ((:countries) IS NULL OR c.country.countryName IN (:countries)) " +
             "AND ((:classes) IS NULL OR c.clazz IN (:classes)) " +
             "AND ((:category) IS NULL OR c.category IN (:category)) " +
-            "AND ((:series) IS NULL OR c.series IN (:series))")
+            "AND ((:series) IS NULL OR c.series IN (:series)) GROUP BY c.competitorName, c.color ORDER BY c.competitorName")
     List<CompetitorPricing> getDataForBubbleChart(@Param("regions") Object regions, @Param("countries") Object countries,
                                                   @Param("classes") Object classes, @Param("category") Object categories,
                                                   @Param("series") Object series);
+
+    @Query("SELECT c FROM CompetitorPricing c WHERE c.country.countryName = ?1 AND c.clazz = ?2 AND c.category = ?3 AND " +
+            "c.series = ?4 AND c.competitorName = ?5 AND c.model = ?6")
+    Optional<CompetitorPricing> getCompetitorPricing(String country, String clazz, String category,
+                                                     String series, String competitorName, String model);
 
 }

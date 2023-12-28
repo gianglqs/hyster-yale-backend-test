@@ -54,23 +54,24 @@ Before you begin, ensure you have the following:
 ### Install Git
 `sudo apt install git`
 
+#### Navigate to the folder /opt
+`cd /opt`
+
+### create root folder for project
+
+```
+mkdir hysteryale
+cd hysteryale
+```
+
 ### Update Github Deployment Key
 
 #### Clone your Spring Boot application repository
 `git clone https://github.com/Phoenix-Software-Development/hyster-yale-backend.git`
 
-#### Navigate to the application directory
-`cd /opt/hyster-yale-backend`
+`cd hyster-yale-backend`
 
-## Step 5: Build and Package the Spring Boot Application
-
-#### Build the application
-`./mvnw clean install`
-
-#### Package the application
-`./mvnw package`
-
-## Step 6: Configure the Spring Boot Application
+## Step 5: Configure the Spring Boot Application
 
 Edit the `application.properties` file in your Spring Boot application to configure the database connection:
 
@@ -80,10 +81,21 @@ spring.datasource.username=your_username`
 spring.datasource.password=your_password`
 ```
 
+## Step 6: Build and Package the Spring Boot Application
+
+#### install maven
+`sudo apt install maven`
+
+#### Build the application
+`mvn clean install`
+
+#### Package the application
+`mvn package`
+
 ## Step 7: Run the Spring Boot Application
 
 #### Run the application
-java -jar target/hysteryale-be.jar
+`java -jar target/hysteryale.jar`
 
 ## Step 8: Access the Application
 

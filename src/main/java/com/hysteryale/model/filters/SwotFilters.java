@@ -14,7 +14,7 @@ import java.util.List;
 public class SwotFilters {
     private String regions;
     private List<String> countries;
-    private String classes;
-    private String categories;
+    private List<String> classes;
+    private List<String> categories;
     private List<String> series;
 }

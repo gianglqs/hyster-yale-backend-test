@@ -4,10 +4,17 @@ import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
+import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.IndicatorService;
+import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.FileUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
@@ -17,10 +24,10 @@ import java.util.Map;
 
 @RestController
 public class IndicatorController {
-
-
     @Resource
     IndicatorService indicatorService;
+    @Resource
+    FileUploadService fileUploadService;
 
 
     @PostMapping("/getCompetitorData")
@@ -83,5 +90,24 @@ public class IndicatorController {
     @PutMapping("/competitorColors")
     public void updateCompetitorColor(@RequestBody CompetitorColor competitorColor) {
         indicatorService.updateCompetitorColor(competitorColor);
+    }
+
+    @PostMapping("/importIndicatorsFile")
+    public void importIndicatorsFile(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
+        String filePath = fileUploadService.saveFileUploadToDisk(file);
+
+        // Verify the Excel file
+        if (FileUtils.isExcelFile(filePath)) {
+            indicatorService.importIndicatorsFromFile(filePath);
+
+        } else {
+            fileUploadService.deleteFileInDisk(filePath);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is not an Excel file");
+        }
+    }
+
+    @PostMapping("/uploadForecastFile")
+    public void uploadForecastFile(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
+        indicatorService.uploadForecastFile(file, authentication);
     }
 }

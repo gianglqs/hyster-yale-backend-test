@@ -8,18 +8,29 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface IMMarginAnalystDataRepository extends JpaRepository<IMMarginAnalystData, Integer> {
-    @Query(value = "select m.id, m.plant, m.model_code, m.clazz, m.option_code, m.type, " +
-            "m.description, m.list_price, m.margin_aop, m. month_year, m.currency, m.manufacturingcost, m.dealer, m.dealer_net, m.fileuuid, m.ordernumber, m.issped " +
-            "from (select *, row_number() over (partition by model_code, option_code order by option_code asc) rn from immarginanalystdata) m \n" +
-            "where rn = 1 and model_code = :model_code and currency = :currency and fileuuid = :fileuuid and type = :type", nativeQuery = true)
+    @Query("SELECT m from IMMarginAnalystData m " +
+            "WHERE ((:model_code) IS NULL OR m.modelCode = (:model_code)) " +
+            "AND ((:series) IS NULL OR m.series = (:series)) " +
+            "AND m.currency = :currency " +
+            "AND ((:type) IS NULL OR m.type = (:type)) " +
+            "AND m.fileUUID = :fileuuid " +
+            "ORDER BY m.type, m.modelCode")
     List<IMMarginAnalystData> getIMMarginAnalystData(@Param("model_code") String modelCode, @Param("currency") String strCurrency,
-                                                     @Param("fileuuid") String fileUUID, @Param("type") Integer type);
+                                                     @Param("fileuuid") String fileUUID, @Param("type") Integer type,
+                                                     @Param("series") String series);
 
-    @Query("SELECT m FROM IMMarginAnalystData m WHERE m.modelCode = ?1 AND m.orderNumber = ?2 AND m.currency = ?3 AND m.type = ?4")
-    List<IMMarginAnalystData> getUSPlantIMMarginAnalystData(String modelCode, String orderNumber, String currency, Integer type);
+    @Query("SELECT m from IMMarginAnalystData m " +
+            "WHERE ((:model_code) IS NULL OR m.modelCode = (:model_code)) " +
+            "AND ((:series) IS NULL OR m.series = (:series)) " +
+            "AND m.orderNumber = :order_number " +
+            "AND m.currency = :currency " +
+            "AND ((:type) IS NULL OR m.type = (:type)) " +
+            "AND m.fileUUID = :fileuuid")
+    List<IMMarginAnalystData> getUSPlantIMMarginAnalystData(@Param("model_code") String modelCode, @Param("order_number") String orderNumber,
+                                                            @Param("currency") String currency, @Param("type") Integer type,
+                                                            @Param("fileuuid") String fileUUID, @Param("series") String series);
 
-    @Query("SELECT DISTINCT m.modelCode FROM IMMarginAnalystData m WHERE m.fileUUID = ?1")
-    List<String> getModelCodesByFileUUID(String fileUUID);
-
+    @Query("SELECT DISTINCT m.modelCode FROM IMMarginAnalystData m WHERE m.fileUUID = ?1 and m.series = ?2")
+    List<String> getModelCodesBySeries(String fileUUID, String series);
 
 }

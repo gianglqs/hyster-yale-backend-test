@@ -16,7 +16,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -117,7 +119,7 @@ public class ImportService extends BasedService {
         Cell cellRegion = row.getCell(ORDER_COLUMNS_NAME.get("Region"));
 
         Cell cellCompetitorName = row.getCell(ORDER_COLUMNS_NAME.get("Brand"));
-        String competitorName = cellCompetitorName.getStringCellValue();
+        String competitorName = cellCompetitorName.getStringCellValue().strip();
 
         boolean isChineseBrand = competitorName.contains("Heli") || competitorName.contains("HeLi") || competitorName.contains("Hangcha") || competitorName.contains("Hang Cha");
         Cell cellClass = row.getCell(ORDER_COLUMNS_NAME.get("Class"));
@@ -143,6 +145,7 @@ public class ImportService extends BasedService {
         Country country = getCountry(strCountry, strRegion);
 
         CompetitorColor competitorColor = indicatorService.getCompetitorColor(competitorName);
+        String model = row.getCell(ORDER_COLUMNS_NAME.get("Model"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
 
 
         // assigning values for CompetitorPricing
@@ -163,6 +166,7 @@ public class ImportService extends BasedService {
         cp.setSeries("");
         cp.setMarketShare(marketShare);
         cp.setColor(competitorColor);
+        cp.setModel(model);
 
         // separate seriesString (for instances: A3C4/A7S4)
         String seriesString;
@@ -180,14 +184,14 @@ public class ImportService extends BasedService {
                 cp1.setClazz(clazz);
                 cp1.setCompetitorLeadTime(leadTime);
                 cp1.setDealerNet(partService.getAverageDealerNet(strRegion, clazz, series));
-                log.info("AVG Dealer Net: " + partService.getAverageDealerNet(strRegion, clazz, series));
                 cp1.setChineseBrand(isChineseBrand);
 
                 cp1.setCompetitorPricing(competitorPricing);
                 cp1.setDealerPremiumPercentage(percentageDealerPremium);
                 cp1.setSeries(series);
                 cp1.setMarketShare(marketShare);
-                cp1.setModel(productDimensionService.getModelFromMetaSeries(series.substring(1)));
+//                cp1.setModel(productDimensionService.getModelFromMetaSeries(series.substring(1)));
+                cp1.setModel(model);
                 cp1.setColor(competitorColor);
 
                 competitorPricingList.add(cp1);
@@ -221,12 +225,6 @@ public class ImportService extends BasedService {
 
         for (String fileName : fileList) {
             String pathFile = folderPath + "/" + fileName;
-            //check file has been imported ?
-            if (isImported(pathFile)) {
-                logWarning("file '" + fileName + "' has been imported");
-                continue;
-            }
-            logInfo("{ Start importing file: '" + fileName + "'");
 
             InputStream is = new FileInputStream(pathFile);
             XSSFWorkbook workbook = new XSSFWorkbook(is);
@@ -257,8 +255,6 @@ public class ImportService extends BasedService {
                             competitorPricing.setLRFF(LRFFForeCast == null ? 0 : LRFFForeCast.getQuantity());
                             competitorPricing.setPlant(LRFFForeCast == null ? "" : LRFFForeCast.getPlant());
 
-                            //AOPMargin
-                            Double aopMargin = aopMarginService.getAOPMargin(competitorPricing.getSeries(), competitorPricing.getRegion(), competitorPricing.getPlant());
                         }
                         competitorPricingList.add(competitorPricing);
                     }
@@ -266,14 +262,13 @@ public class ImportService extends BasedService {
             }
             competitorPricingRepository.saveAll(competitorPricingList);
             assigningCompetitorValues();
-            updateStateImportFile(pathFile);
         }
     }
 
     /**
      * Find a forecast value by Region and Series, year is an option if year is empty then we get all years
      */
-    private ForeCastValue findForeCastValue(List<ForeCastValue> foreCastValues, String strRegion, String metaSeries, int year) {
+    public ForeCastValue findForeCastValue(List<ForeCastValue> foreCastValues, String strRegion, String metaSeries, int year) {
         for (ForeCastValue foreCastValue : foreCastValues) {
             if (foreCastValue.getRegion().getRegion().equals(strRegion) && foreCastValue.getMetaSeries().equals(metaSeries) && foreCastValue.getYear() == year)
                 return foreCastValue;
@@ -281,11 +276,13 @@ public class ImportService extends BasedService {
         return null;
     }
 
-    private List<ForeCastValue> loadForecastForCompetitorPricingFromFile() throws IOException {
+    public List<ForeCastValue> loadForecastForCompetitorPricingFromFile() throws IOException {
 
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.forecast-pricing");
         List<String> fileList = getAllFilesInFolder(folderPath, -1);
+        if(fileList.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Forecast Dynamic Pricing Excel file");
 
         List<ForeCastValue> foreCastValues = new ArrayList<>();
 
@@ -426,7 +423,6 @@ public class ImportService extends BasedService {
             }
             competitorPricingRepository.saveAll(competitorPricingList);
         }
-
     }
 
     public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException {

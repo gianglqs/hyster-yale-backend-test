@@ -2,23 +2,37 @@ package com.hysteryale.service;
 
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
+import com.hysteryale.model.competitor.ForeCastValue;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
 import com.hysteryale.repository.CompetitorColorRepository;
 import com.hysteryale.repository.CompetitorPricingRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
+import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -28,6 +42,10 @@ public class IndicatorService extends BasedService {
     CompetitorPricingRepository competitorPricingRepository;
     @Resource
     CompetitorColorRepository competitorColorRepository;
+    @Resource
+    FileUploadService fileUploadService;
+    @Resource
+    ImportService importService;
 
 
     public Map<String, Object> getCompetitorPriceForTableByFilter(FilterModel filterModel) throws ParseException {
@@ -86,15 +104,19 @@ public class IndicatorService extends BasedService {
 
         String regions = filters.getRegions();
         List<String> countryNames = filters.getCountries();
-        String competitorClass = filters.getClasses();
-        String category = filters.getCategories();
+        List<String> competitorClass = filters.getClasses();
+        List<String> category = filters.getCategories();
         List<String> series = filters.getSeries();
 
         if(countryNames.isEmpty())
             countryNames = null;
+        if(competitorClass.isEmpty())
+            competitorClass = null;
+        if(category.isEmpty())
+            category = null;
         if(series.isEmpty())
             series = null;
-        return competitorPricingRepository.getDataForBubbleChart(Collections.singletonList(regions), countryNames, Collections.singletonList(competitorClass), Collections.singletonList(category), series);
+        return competitorPricingRepository.getDataForBubbleChart(Collections.singletonList(regions), countryNames, competitorClass, category, series);
     }
 
     /**
@@ -136,5 +158,105 @@ public class IndicatorService extends BasedService {
             dbCompetitorColor.setColorCode(modifyColor.getColorCode());
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Competitor Color not found");
+    }
+
+    /**
+     * Save new Forecast file after deleting current Forecast file
+     */
+    public void uploadForecastFile(MultipartFile multipartFile, Authentication authentication) throws Exception {
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String forecastFolder = EnvironmentUtils.getEnvironmentValue("import-files.forecast-pricing");
+
+
+        // delete current Forecast file in folder
+        List<String> fileNames = FileUtils.getAllFilesInFolder(baseFolder + "/" + forecastFolder);
+        for(String fileName : fileNames) {
+            File forecastFile = new File(baseFolder + "/" + forecastFolder + "/" + fileName);
+            forecastFile.delete();
+        }
+
+        // save new Forecast file into disk
+        Date uploadedTime = new Date();
+        String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
+        String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + ".xlsx";
+
+        File file = new File(baseFolder + "/" + forecastFolder + "/" + encodedFileName);
+        if (file.createNewFile()) {
+            log.info("File " + encodedFileName + " created");
+            multipartFile.transferTo(file);
+
+            fileUploadService.saveFileUpload(multipartFile, authentication);
+        } else {
+            log.info("Can not create new file: " + encodedFileName);
+            throw new Exception("Can not create new file: " + encodedFileName);
+        }
+    }
+
+    public HashMap<String, Integer> getCompetitorColumnName(Row row) {
+        HashMap<String, Integer> competitorColumnName = new HashMap<>();
+        for(Cell cell : row)
+            competitorColumnName.put(cell.getStringCellValue(), cell.getColumnIndex());
+        return competitorColumnName;
+    }
+
+    /**
+     * Check the existence of Competitor Pricing in DB then update value
+     */
+    private CompetitorPricing checkExistAndUpdateCompetitorPricing(CompetitorPricing competitorPricing) {
+        log.info(competitorPricing.getClazz() + " " + competitorPricing.getCategory() + " " + competitorPricing.getCompetitorName() + " " + competitorPricing.getCountry().getCountryName());
+        Optional<CompetitorPricing> dbCompetitorPricing = competitorPricingRepository.getCompetitorPricing(
+                competitorPricing.getCountry().getCountryName(),
+                competitorPricing.getClazz(),
+                competitorPricing.getCategory(),
+                competitorPricing.getSeries(),
+                competitorPricing.getCompetitorName(),
+                competitorPricing.getModel()
+        );
+        dbCompetitorPricing.ifPresent(pricing -> competitorPricing.setId(pricing.getId()));
+        return competitorPricing;
+    }
+
+    /**
+     * Checking existed Competitor Pricing and update new data from imported file
+     */
+    public void importIndicatorsFromFile(String filePath) throws IOException {
+        InputStream is = new FileInputStream(filePath);
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+
+        HashMap<String, Integer> competitorColumnName = new HashMap<>();
+        List<CompetitorPricing> competitorPricingList = new ArrayList<>();
+        List<ForeCastValue> forecastValueList = importService.loadForecastForCompetitorPricingFromFile();
+        Sheet sheet = workbook.getSheetAt(0);
+
+        for(Row row : sheet) {
+            if(row.getRowNum() == 0)
+                competitorColumnName = getCompetitorColumnName(row);
+            else if (!row.getCell(competitorColumnName.get("Table Title"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
+                List<CompetitorPricing> competitorPricings = importService.mapExcelDataIntoCompetitorObject(row, competitorColumnName);
+                for (CompetitorPricing competitorPricing : competitorPricings) {
+                    // if it has series -> assign ForeCastValue
+                    if (!competitorPricing.getSeries().isEmpty()) {
+                        String strRegion = competitorPricing.getRegion();
+                        String metaSeries = competitorPricing.getSeries().substring(1); // extract metaSeries from series
+
+                        Calendar time = Calendar.getInstance();
+                        int currentYear = time.get(Calendar.YEAR);
+
+                        ForeCastValue actualForeCast = importService.findForeCastValue(forecastValueList, strRegion, metaSeries, currentYear - 1);
+                        ForeCastValue AOPFForeCast = importService.findForeCastValue(forecastValueList, strRegion, metaSeries, currentYear);
+                        ForeCastValue LRFFForeCast = importService.findForeCastValue(forecastValueList, strRegion, metaSeries, currentYear + 1);
+
+                        competitorPricing.setActual(actualForeCast == null ? 0 : actualForeCast.getQuantity());
+                        competitorPricing.setAOPF(AOPFForeCast == null ? 0 : AOPFForeCast.getQuantity());
+                        competitorPricing.setLRFF(LRFFForeCast == null ? 0 : LRFFForeCast.getQuantity());
+                        competitorPricing.setPlant(LRFFForeCast == null ? "" : LRFFForeCast.getPlant());
+
+                    }
+                    competitorPricingList.add(checkExistAndUpdateCompetitorPricing(competitorPricing));
+                }
+            }
+        }
+        competitorPricingRepository.saveAll(competitorPricingList);
+        importService.assigningCompetitorValues();
     }
 }

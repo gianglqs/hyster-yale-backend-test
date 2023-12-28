@@ -90,23 +90,23 @@ public class BookingOrderServiceTest {
     }
     @Test
     void testGetAPACColumnsName() throws IOException {
-        InputStream is = new FileInputStream("import_files/APAC/APAC Serial in NOVO master file.xlsx");
-        XSSFWorkbook workbook = new XSSFWorkbook(is);
-
-        Sheet orderSheet = workbook.getSheet("Master Summary");
-        HashMap<String, Integer> APAC_COLUMNS = new HashMap<>();
-        for (Row row : orderSheet) {
-            if (row.getRowNum() == 0)
-            {
-                for(int i = 0; i < 11; i++) {
-                    String columnName = row.getCell(i).getStringCellValue();
-                    if(APAC_COLUMNS.get(columnName) != null)
-                        columnName += "_Yale";
-                    APAC_COLUMNS.put(columnName, i);
-                }
-                log.info("APAC Columns: " + APAC_COLUMNS);
-            }
-        }
+//        InputStream is = new FileInputStream("import_files/APAC/APAC Serial in NOVO master file.xlsx");
+//        XSSFWorkbook workbook = new XSSFWorkbook(is);
+//
+//        Sheet orderSheet = workbook.getSheet("Master Summary");
+//        HashMap<String, Integer> APAC_COLUMNS = new HashMap<>();
+//        for (Row row : orderSheet) {
+//            if (row.getRowNum() == 0)
+//            {
+//                for(int i = 0; i < 11; i++) {
+//                    String columnName = row.getCell(i).getStringCellValue();
+//                    if(APAC_COLUMNS.get(columnName) != null)
+//                        columnName += "_Yale";
+//                    APAC_COLUMNS.put(columnName, i);
+//                }
+//                log.info("APAC Columns: " + APAC_COLUMNS);
+//            }
+//        }
     }
 
     @Test

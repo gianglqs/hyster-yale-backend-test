@@ -30,7 +30,7 @@ public class FilterService {
     public Map<String, Object> getCompetitorPricingFilter() {
 
         Map<String, Object> filters = new HashMap<>();
-        filters.put("classes", getAllClasses());
+        filters.put("classes", getAllClassesForIndicators());
         filters.put("plants", getAllPlants());
         filters.put("metaSeries", getAllMetaSeries());
         filters.put("models", getAllModels());
@@ -114,6 +114,20 @@ public class FilterService {
         result.add(Chinese);
 
         return result;
+    }
+
+    private List<Map<String, String>> getAllClassesForIndicators() {
+        List<Map<String, String>> classMap = new ArrayList<>();
+        List<String> classes = productDimensionRepository.getAllClass();
+        classes.sort(String::compareTo);
+        for (String m : classes) {
+            if(m.equals("Class 5 not BT"))
+                m = "Class 5 non BT";
+            Map<String, String> mMap = new HashMap<>();
+            mMap.put("value", m);
+            classMap.add(mMap);
+        }
+        return classMap;
     }
 
     private List<Map<String, String>> getAllClasses() {

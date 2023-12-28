@@ -51,8 +51,9 @@ public class IMMarginAnalystData {
     private boolean isSPED;
 
     private int type;
+    private String series;
 
-    public IMMarginAnalystData(String plant, String modelCode, String optionCode, String description, double listPrice, Calendar monthYear, String currency, double dealerNet) {
+    public IMMarginAnalystData(String plant, String modelCode, String optionCode, String description, double listPrice, Calendar monthYear, String currency, double dealerNet, String series) {
         this.plant = plant;
         this.modelCode = modelCode;
         this.optionCode = optionCode;
@@ -61,5 +62,6 @@ public class IMMarginAnalystData {
         this.monthYear = monthYear;
         this.currency = currency;
         this.dealerNet = dealerNet;
+        this.series = series;
     }
 }

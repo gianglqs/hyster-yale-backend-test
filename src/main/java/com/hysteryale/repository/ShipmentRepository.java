@@ -148,7 +148,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                                       @Param("dealerName") Object dealerName,
                                       @Param("year") int year);
 
-    @Query("SELECT new Shipment('Total', sum(c.quantity), sum(c.dealerNet), sum(c.dealerNetAfterSurCharge), sum(c.totalCost), sum(c.netRevenue), sum(c.marginAfterSurCharge), (sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)) ) FROM Shipment c WHERE " +
+    @Query("SELECT new Shipment('Total', COALESCE(sum(c.quantity),0), COALESCE(sum(c.dealerNet),0), COALESCE(sum(c.dealerNetAfterSurCharge),0), COALESCE(sum(c.totalCost),0), COALESCE(sum(c.netRevenue),0), COALESCE(sum(c.marginAfterSurCharge),0), COALESCE((sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)),0) ) FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region.region IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +

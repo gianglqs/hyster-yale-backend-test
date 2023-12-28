@@ -78,4 +78,12 @@ public class CompetitorPricing {
         this.averageDN = averageDN;
         this.variancePercentage = variancePercentage;
     }
+
+    public CompetitorPricing (String competitorName, double competitorLeadTime, double competitorPricing, double marketShare, CompetitorColor competitorColor) {
+        this.competitorName = competitorName;
+        this.competitorLeadTime = competitorLeadTime;
+        this.competitorPricing = competitorPricing;
+        this.marketShare = marketShare;
+        this.color = competitorColor;
+    }
 }

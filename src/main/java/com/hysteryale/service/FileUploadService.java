@@ -35,7 +35,7 @@ public class FileUploadService {
      * @param authentication contains upload person's email
      * @return UUID string
      */
-    public String saveFileUpload(MultipartFile excelFile, Authentication authentication) throws IOException {
+    public String saveFileUpload(MultipartFile excelFile, Authentication authentication) {
         // Find who uploads this file
         String uploadedByEmail = authentication.getName();
         Optional<User> optionalUploadedBy = userService.getActiveUserByEmail(uploadedByEmail);
