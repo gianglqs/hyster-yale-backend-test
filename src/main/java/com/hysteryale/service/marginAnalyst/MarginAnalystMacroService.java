@@ -1,10 +1,8 @@
 package com.hysteryale.service.marginAnalyst;
 
 import com.hysteryale.model.Currency;
-import com.hysteryale.model.marginAnalyst.MarginAnalysisAOPRate;
-import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
-import com.hysteryale.repository.marginAnalyst.MarginAnalysisAOPRateRepository;
-import com.hysteryale.repository.marginAnalyst.MarginAnalystMacroRepository;
+import com.hysteryale.model.marginAnalyst.*;
+import com.hysteryale.repository.marginAnalyst.*;
 import com.hysteryale.service.CurrencyService;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import com.hysteryale.utils.DateUtils;
@@ -33,6 +31,12 @@ public class MarginAnalystMacroService {
     CurrencyService currencyService;
     @Resource
     MarginAnalysisAOPRateRepository marginAnalysisAOPRateRepository;
+    @Resource
+    FreightRepository freightRepository;
+    @Resource
+    TargetMarginRepository targetMarginRepository;
+    @Resource
+    WarrantyRepository warrantyRepository;
 
     static HashMap<String, String> MACRO_COLUMNS = new HashMap<>();
 
@@ -154,7 +158,102 @@ public class MarginAnalystMacroService {
                 log.error(e.getMessage());
             }
         }
+        importFreightFromFile(filePath, monthYear);
+        importTargetMarginFromFile(filePath, monthYear);
+        importWarrantyFromFile(filePath, monthYear);
     }
+
+    /**
+     * Import Freight data from Macro file (from 'Freight' tab)
+     */
+    public void importFreightFromFile(String filePath, Calendar monthYear) {
+        try{
+            XLSBWorkbook workbook = new XLSBWorkbook();
+            workbook.openFile(filePath);
+
+            HashMap<String, String> columnMap = new HashMap<>();
+            Sheet sheet = workbook.getSheet("Freight");
+            for(Row row : sheet.getRowList()) {
+                if(row.getRowNum() == 0) {
+                    for(Cell cell : row.getCellList())
+                        columnMap.put(cell.getValue(), cell.getCellColumn());
+                }
+                else {
+                    String metaSeries = row.getCell(columnMap.get("Meta Sers for China")).getValue();
+                    double freightValue = row.getCell(columnMap.get("Total")).getNumericCellValue();
+                    Freight freight = new Freight(metaSeries, freightValue, monthYear);
+
+                    Optional<Freight> optionalFreight = freightRepository.getFreight(metaSeries, monthYear);
+                    optionalFreight.ifPresent(value -> freight.setId(value.getId()));
+
+                    freightRepository.save(freight);
+                }
+            }
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+        }
+    }
+
+    /**
+     * Import TargetMargin and Margin Guideline from Macro file (in 'AOPF 2023' tab)
+     */
+    public void importTargetMarginFromFile(String filePath, Calendar monthYear) {
+        try {
+            XLSBWorkbook workbook = new XLSBWorkbook();
+            workbook.openFile(filePath);
+
+            HashMap<String, String> columnMap = new HashMap<>();
+            List<TargetMargin> targetMarginList = new ArrayList<>();
+
+            Sheet sheet = workbook.getSheet("AOPF " + monthYear.get(Calendar.YEAR));
+            for(Row row : sheet.getRowList()) {
+                if(row.getRowNum() == 0) {
+                    for(Cell cell : row.getCellList())
+                        columnMap.put(cell.getValue(), cell.getCellColumn());
+                }
+                else {
+                    // Map the Target Margin value from AOPF 2023
+                    String region = row.getCell(columnMap.get("Region")).getValue();
+                    String metaSeries = row.getCell(columnMap.get("Series")).getValue();
+                    double stdMarginPercentage = row.getCell(columnMap.get("Margin % STD")).getNumericCellValue();
+                    TargetMargin targetMargin = new TargetMargin(region, metaSeries, monthYear, stdMarginPercentage);
+
+                    Optional<TargetMargin> optionalTargetMargin = targetMarginRepository.getTargetMargin(region, metaSeries, monthYear);
+                    optionalTargetMargin.ifPresent(margin -> targetMargin.setId(margin.getId()));
+
+                    targetMarginList.add(targetMargin);
+                }
+            }
+            targetMarginRepository.saveAll(targetMarginList );
+        } catch(Exception exception) {
+            log.error(exception.getMessage());
+        }
+    }
+
+    /**
+     * Import Warranty from Macro file (in 'Mappting' tab)
+     */
+    public void importWarrantyFromFile(String filePath, Calendar monthYear) {
+        try {
+            XLSBWorkbook workbook = new XLSBWorkbook();
+            workbook.openFile(filePath);
+            Sheet sheet = workbook.getSheet("Mappting");
+
+            for (int i = 7; i <= 12; i++) {
+                String clazz = sheet.getRow(i).getCell("A").getValue();
+                double warrantyValue = sheet.getRow(i).getCell("B").getNumericCellValue();
+
+                Warranty warranty = new Warranty(clazz, monthYear, warrantyValue);
+                Optional<Warranty> optionalWarranty = warrantyRepository.getWarranty(clazz, monthYear);
+                optionalWarranty.ifPresent(value -> warranty.setId(value.getId()));
+
+                warrantyRepository.save(warranty);
+            }
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+        }
+    }
+
 
     // Import all Macro file in directory
     public void importMarginAnalystMacro() {
@@ -260,5 +359,43 @@ public class MarginAnalystMacroService {
     }
     public List<MarginAnalystMacro> getMarginAnalystMacroByHYMPlantAndListPartNumber(String modelCode, List<String> partNumber, String currency, Calendar monthYear) {
         return marginAnalystMacroRepository.getMarginAnalystMacroByHYMPlantAndListPartNumber(modelCode, partNumber, currency, monthYear);
+    }
+
+    /**
+     * Get Freight value if existed else return 0
+     */
+    public double getFreightValue(String metaSeries, Calendar monthYear) {
+        Optional<Freight> optionalFreight = freightRepository.getFreight(metaSeries, monthYear);
+        return optionalFreight.map(Freight::getFreight).orElse(0.0);
+    }
+
+    /**
+     * Get Warranty value if existed else return 0
+     */
+    public double getWarrantyValue(String clazz, Calendar monthYear) {
+        Optional<Warranty> optionalWarranty = warrantyRepository.getWarranty(clazz, monthYear);
+        return optionalWarranty.map(Warranty::getWarranty).orElse(0.0);
+    }
+
+    /**
+     * Get Target Margin % if existed else return 0
+     */
+    public double getTargetMarginValue(String region, String metaSeries, Calendar monthYear) {
+        Optional<TargetMargin> optionalTargetMargin = targetMarginRepository.getTargetMargin(region, metaSeries, monthYear);
+        return optionalTargetMargin.map(TargetMargin::getStdMarginPercentage).orElse(0.0);
+    }
+
+    /**
+     * Get MarginGuideline Value if exited else return 0
+     */
+    public double getMarginGuidelineValue(String region, String metaSeries, Calendar monthYear) {
+        return targetMarginRepository.getMarginGuideline(region, metaSeries, monthYear);
+    }
+
+    /**
+     * Get class of the Model Code
+     */
+    public String getClassByModelCode(String modelCode) {
+        return marginAnalystMacroRepository.getClassByModelCode(modelCode);
     }
 }
