@@ -54,7 +54,7 @@ public class UserController {
      * Reverse user's active state into true or false based on whether user is active or not
      */
     @PutMapping(path = "users/activate/{userId}")
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void activateUser(@PathVariable int userId) {
         User user = userService.getUserById(userId);
         userService.setUserActiveState(user, !user.isActive());
@@ -66,7 +66,7 @@ public class UserController {
      * @param user mapping from JSON format
      */
     @PostMapping(path = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void addUser(@Valid @RequestBody User user) {
         String password = user.getPassword();
 
@@ -94,7 +94,7 @@ public class UserController {
      * Get list of users based on searchString (if searchString is null then get all users)
      */
     @GetMapping(path = "/users")
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Map<String, Object> searchUser(@RequestParam(required = false) String search,
                                           @RequestParam(defaultValue = "100") int perPage,
                                           @RequestParam(defaultValue = "1") int pageNo,
