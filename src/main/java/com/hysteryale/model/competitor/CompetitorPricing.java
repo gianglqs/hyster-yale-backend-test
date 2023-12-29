@@ -86,4 +86,11 @@ public class CompetitorPricing {
         this.marketShare = marketShare;
         this.color = competitorColor;
     }
+
+    public CompetitorPricing (double competitorLeadTime, double competitorPricing, double marketShare, CompetitorColor competitorColor) {
+        this.competitorLeadTime = competitorLeadTime;
+        this.competitorPricing = competitorPricing;
+        this.marketShare = marketShare;
+        this.color = competitorColor;
+    }
 }

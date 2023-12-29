@@ -16,11 +16,11 @@ public class CompetitorColor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private String competitorName;
+    private String groupName;
     private String colorCode;
 
-    public CompetitorColor(String competitorName, String colorCode) {
-        this.competitorName = competitorName;
+    public CompetitorColor(String groupName, String colorCode) {
+        this.groupName = groupName;
         this.colorCode = colorCode;
     }
 }
