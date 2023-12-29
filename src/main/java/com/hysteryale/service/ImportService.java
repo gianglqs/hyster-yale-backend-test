@@ -144,7 +144,8 @@ public class ImportService extends BasedService {
         String strRegion = cellRegion.getStringCellValue();
         Country country = getCountry(strCountry, strRegion);
 
-        CompetitorColor competitorColor = indicatorService.getCompetitorColor(competitorName);
+        String group = row.getCell(ORDER_COLUMNS_NAME.get("Group"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+        CompetitorColor competitorColor = indicatorService.getCompetitorColor(group);
         String model = row.getCell(ORDER_COLUMNS_NAME.get("Model"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
 
 
