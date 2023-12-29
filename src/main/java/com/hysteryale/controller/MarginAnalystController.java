@@ -1,5 +1,6 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.model.marginAnalyst.CalculatedMargin;
 import com.hysteryale.model_h2.IMMarginAnalystData;
 import com.hysteryale.model_h2.IMMarginAnalystSummary;
 import com.hysteryale.service.FileUploadService;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +51,10 @@ public class MarginAnalystController {
      * Calculate MarginAnalystData and MarginAnalystSummary based on user's uploaded file
      */
     @PostMapping(path = "/estimateMarginAnalystData", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> estimateMarginAnalystData(@RequestBody IMMarginAnalystData marginData) throws Exception {
+    public Map<String, Object> estimateMarginAnalystData(@RequestBody CalculatedMargin calculatedMargin) throws Exception {
+
+        IMMarginAnalystData marginData = calculatedMargin.getMarginData();
+        String region = calculatedMargin.getRegion();
 
         String currency = marginData.getCurrency();
         String orderNumber = marginData.getOrderNumber();
@@ -84,12 +89,22 @@ public class MarginAnalystController {
 
         imMarginAnalystDataList = IMMarginAnalystDataService.getIMMarginAnalystData(modelCode, currency, fileUUID, orderNumber, type, series, plant);
 
+        double targetMargin = 0.0;
+        double marginGuideline = 0.0;
+        if(!imMarginAnalystDataList.isEmpty() && series != null) {
+            Calendar monthYear = imMarginAnalystDataList.get(0).getMonthYear();
+            targetMargin = marginAnalystMacroService.getTargetMarginValue(region, series.substring(1), monthYear);
+            marginGuideline = marginAnalystMacroService.getMarginGuidelineValue(region, series.substring(1), monthYear);
+        }
+
         return Map.of(
                 "MarginAnalystData", imMarginAnalystDataList,
                 "MarginAnalystSummary", Map.of(
                         "MarginAnalystSummaryMonthly", monthlySummary,
                         "MarginAnalystSummaryAnnually", annuallySummary
-                )
+                ),
+                "TargetMargin", targetMargin,
+                "MarginGuideline", marginGuideline
         );
     }
 

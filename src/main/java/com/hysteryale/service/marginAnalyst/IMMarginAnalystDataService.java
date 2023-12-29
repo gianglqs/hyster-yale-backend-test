@@ -247,20 +247,23 @@ public class IMMarginAnalystDataService {
                 dealerNet += data.getDealerNet();
             }
         }
-        double costUplift = 0.0, warranty = 0.0, surcharge = 0.015, duty = 0.0, freight = 0.0, aopRate = 1;
+        double costUplift = 0.0, surcharge = 0.015, aopRate = 1;
         boolean liIonIncluded = false;
 
         String queryPlant = plant.equals("SN") ? "SN" : "HYM";
         Optional<MarginAnalysisAOPRate> optionalMarginAnalysisAOPRate = getMarginAnalysisAOPRate(strCurrency, monthYear, queryPlant, durationUnit);
-        if(optionalMarginAnalysisAOPRate.isPresent()) {
-            MarginAnalysisAOPRate marginAnalysisAOPRate = optionalMarginAnalysisAOPRate.get();
-            aopRate = marginAnalysisAOPRate.getAopRate();
-            costUplift = marginAnalysisAOPRate.getCostUplift();
-            warranty = marginAnalysisAOPRate.getAddWarranty();
-            surcharge = marginAnalysisAOPRate.getSurcharge();
-            duty = marginAnalysisAOPRate.getDuty();
-            freight = marginAnalysisAOPRate.getFreight();
-        }
+        if(optionalMarginAnalysisAOPRate.isPresent())
+            aopRate = optionalMarginAnalysisAOPRate.get().getAopRate();
+
+        String clazz = marginAnalystMacroService.getClassByModelCode(modelCode);
+        double warranty = marginAnalystMacroService.getWarrantyValue(clazz, monthYear);
+        double duty = clazz != null
+                        ? clazz.equals("Class 5 BT")
+                            ? 0.05
+                            : 0.0
+                        : 0.0;
+        double freight = marginAnalystMacroService.getFreightValue(series.substring(1), monthYear);
+
         double totalCost = totalManufacturingCost * (1 + costUplift) * (1 + warranty + surcharge + duty);
         double blendedDiscount = 1 - (dealerNet / totalListPrice);
 
@@ -431,8 +434,17 @@ public class IMMarginAnalystDataService {
         }
 
         // Initialize values
-        double costUplift = 0.0, warranty = 0.0, surcharge = 0.015, duty = 0.0, freight = 0.0;
+        double costUplift = 0.0, surcharge = 0.015;
         boolean liIonIncluded = false; // NO
+
+        String clazz = marginAnalystMacroService.getClassByModelCode(modelCode);
+        double warranty = marginAnalystMacroService.getWarrantyValue(clazz, monthYear);
+        double duty = clazz != null
+                    ? clazz.equals("Class 5 BT")
+                        ? 0.05
+                        : 0.0
+                    : 0.0;
+        double freight = marginAnalystMacroService.getFreightValue(series.substring(1), monthYear);
 
         // ExchangeRate from strCurrency to USD
         monthYear.set(monthYear.get(Calendar.YEAR), monthYear.get(Calendar.MONTH), 1);
