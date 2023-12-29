@@ -18,6 +18,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
     boolean isEmailExisted(String email);
     @Query("SELECT a FROM User a WHERE a.email = ?1 AND a.isActive = true")
     Optional<User> getActiveUserByEmail(String email);
-    @Query("SELECT a FROM User a WHERE CONCAT(a.userName, a.email) LIKE %?1%")
+    @Query("SELECT a FROM User a WHERE CONCAT(a.name, a.email) LIKE %?1%")
     Page<User> searchUser(String searchString, Pageable pageable);
 }

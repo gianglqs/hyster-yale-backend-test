@@ -1,14 +1,16 @@
 package com.hysteryale.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,14 +18,15 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="\"user\"")
-public class User {
+@Builder
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Size(min = 2, message = "User name must be at least 2 characters")
     @Column(name = "user_name")
-    private String userName;
+    private String name;
 
     @NotBlank(message = "Email must not be blank")
     private String email;
@@ -45,7 +48,7 @@ public class User {
     private Date lastLogin;
 
     public User(String userName, String email, String password, Role role) {
-        this.userName = userName;
+        this.name = userName;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -53,7 +56,7 @@ public class User {
 
     public User(Integer id, String userName, String email, String password, Role role, String defaultLocale, boolean isActive) {
         this.id = id;
-        this.userName = userName;
+        this.name = userName;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -64,4 +67,44 @@ public class User {
         this.id = id;
         this.password = password;
     }
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.getRoleName()));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+
+
 }
