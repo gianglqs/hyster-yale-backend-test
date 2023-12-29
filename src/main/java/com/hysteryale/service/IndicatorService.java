@@ -123,13 +123,13 @@ public class IndicatorService extends BasedService {
      * Get CompetitorColor by competitorName
      * @return competitor color if existed, else randomly generate new one.
      */
-    public CompetitorColor getCompetitorColor(String competitorName) {
-        Optional<CompetitorColor> optional = competitorColorRepository.getCompetitorColor(competitorName.strip());
+    public CompetitorColor getCompetitorColor(String groupName) {
+        Optional<CompetitorColor> optional = competitorColorRepository.getCompetitorColor(groupName.strip());
         if(optional.isEmpty()) {
             Random random = new Random();
             int nextColorCode = random.nextInt(256 * 256 * 256);
             String colorCode = String.format("#%06x", nextColorCode);
-            return competitorColorRepository.save(new CompetitorColor(competitorName, colorCode));
+            return competitorColorRepository.save(new CompetitorColor(groupName, colorCode));
         }
         else
             return optional.get();
@@ -144,7 +144,7 @@ public class IndicatorService extends BasedService {
     }
 
     public Page<CompetitorColor> searchCompetitorColor(String search, int pageNo, int perPage) {
-        Pageable pageable = PageRequest.of(pageNo - 1, perPage, Sort.by("competitorName").ascending());
+        Pageable pageable = PageRequest.of(pageNo - 1, perPage, Sort.by("groupName").ascending());
         return competitorColorRepository.searchCompetitorColor(search, pageable);
     }
 
@@ -154,7 +154,7 @@ public class IndicatorService extends BasedService {
         if(optional.isPresent()) {
             CompetitorColor dbCompetitorColor = optional.get();
 
-            dbCompetitorColor.setCompetitorName(modifyColor.getCompetitorName());
+            dbCompetitorColor.setGroupName(modifyColor.getGroupName());
             dbCompetitorColor.setColorCode(modifyColor.getColorCode());
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Competitor Color not found");

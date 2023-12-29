@@ -142,12 +142,12 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
     @Query("SELECT DISTINCT c.category FROM CompetitorPricing c")
     List<String> getDistinctCategory();
 
-    @Query("SELECT new CompetitorPricing (c.competitorName, AVG(c.competitorLeadTime), AVG(c.competitorPricing), AVG(c.marketShare), c.color) FROM CompetitorPricing c " +
+    @Query("SELECT new CompetitorPricing (AVG(c.competitorLeadTime), AVG(c.competitorPricing), AVG(c.marketShare), c.color) FROM CompetitorPricing c " +
             "WHERE ((:regions) IS NULL OR c.region IN (:regions)) " +
             "AND ((:countries) IS NULL OR c.country.countryName IN (:countries)) " +
             "AND ((:classes) IS NULL OR c.clazz IN (:classes)) " +
             "AND ((:category) IS NULL OR c.category IN (:category)) " +
-            "AND ((:series) IS NULL OR c.series IN (:series)) GROUP BY c.competitorName, c.color ORDER BY c.competitorName")
+            "AND ((:series) IS NULL OR c.series IN (:series)) GROUP BY c.color ORDER BY AVG(c.marketShare)")
     List<CompetitorPricing> getDataForBubbleChart(@Param("regions") Object regions, @Param("countries") Object countries,
                                                   @Param("classes") Object classes, @Param("category") Object categories,
                                                   @Param("series") Object series);
