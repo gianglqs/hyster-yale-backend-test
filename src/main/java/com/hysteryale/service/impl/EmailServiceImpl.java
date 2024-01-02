@@ -1,6 +1,7 @@
 package com.hysteryale.service.impl;
 
 import com.hysteryale.service.EmailService;
+import com.hysteryale.utils.EnvironmentUtils;
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
@@ -38,7 +39,7 @@ public class EmailServiceImpl implements EmailService {
         String subject = "Welcome to Hyster-Yale";
         String textPart = "Your account's password has been updated";
         String htmlPart = "<h1> Hello " +  userName + ",</h1>";
-        htmlPart += "<h3> Your account's password has been updated, please log-in with your new password: " + newPassword + ".</h3>";
+        htmlPart += "<h3> Your account's password has been updated, please log-in with your new password: " + newPassword + "</h3>";
 
         //create email body
         MailjetRequest request = createEmailRequest(emailTo, subject, textPart, htmlPart);
@@ -67,10 +68,11 @@ public class EmailServiceImpl implements EmailService {
     private void sendEmail(MailjetRequest request) throws MailjetSocketTimeoutException, MailjetException {
         MailjetResponse response;
 
-        log.info(System.getenv("MJ_apiKey") + " " + System.getenv("MJ_apiSecret"));
-
-        MailjetClient client = new MailjetClient(System.getenv("MJ_apiKey"),
-                System.getenv("MJ_apiSecret"), new ClientOptions("v3.1"));
+        MailjetClient client = new MailjetClient(
+                EnvironmentUtils.getEnvironmentValue("mailjet.apiKey"),
+                EnvironmentUtils.getEnvironmentValue("mailjet.apiSecret"),
+                new ClientOptions("v3.1")
+        );
 
         response = client.post(request);
         log.info(response.getStatus() + " " + response.getData());
