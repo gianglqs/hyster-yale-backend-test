@@ -40,6 +40,8 @@ public class EnvironmentUtils implements EnvironmentAware {
 //        System.setProperty("ROLBAR_CODE_VERSION", dotenv().get("ROLBAR_CODE_VERSION"));
         System.setProperty("BASE_FOLDER", dotenv().get("BASE_FOLDER"));
         System.setProperty("IMPORTED_FILES", dotenv().get("IMPORTED_FILES"));
+        System.setProperty("MJ_API_KEY", dotenv().get("MJ_API_KEY"));
+        System.setProperty("MJ_API_SECRET", dotenv().get("MJ_API_SECRET"));
     }
 
 }
