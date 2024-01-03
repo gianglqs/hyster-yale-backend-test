@@ -1,6 +1,7 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.authentication.AuthenticationService;
+import com.hysteryale.authentication.JwtService;
 import com.hysteryale.model.User;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.UserService;
@@ -9,19 +10,15 @@ import com.hysteryale.utils.StringUtils;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,8 +34,8 @@ public class UserController {
 
     @Resource
     AuthenticationService authenticationService;
-//    @Resource(name = "tokenServices")
-//    DefaultTokenServices tokenServices;
+    @Resource
+    JwtService jwtService;
 
     /**
      * Get user's details by userId
@@ -115,24 +112,32 @@ public class UserController {
 
     /**
      * Change user's password, {userId, password} passed from JSON format
-     *
-     * @param changedPasswordUser contains {userId, password}
      */
-    @PostMapping(path = "/users/changePassword/{userId}")
-    public ResponseEntity<?> changePassword(@RequestBody User changedPasswordUser, @PathVariable int userId) {
-        User dbUser = userService.getUserById(userId);
+    @PostMapping(path = "/users/changePassword", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> changePassword(@RequestParam("oldPassword") String oldPassword,
+                                            @RequestParam("newPassword") String newPassword,
+                                            @RequestHeader("Authorization") String accessToken) {
 
-        if (StringUtils.checkPasswordStreng(changedPasswordUser.getPassword()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must consist of at least 12 characters and has at least\n" +
-                    "\n" +
-                    "    one Uppercase character,\n" +
-                    "    one Lowercase character,\n" +
-                    "    a Digit and\n" +
-                    "    a Special character or Symbol.");
-        else {
-            userService.changeUserPassword(dbUser, changedPasswordUser.getPassword());
-            return ResponseEntity.ok("Password has been changed successfully");
+        String email = jwtService.extractUsername(accessToken.split(" ")[1].trim());
+        User dbUser = userService.getUserByEmail(email);
+
+        // Check the old password
+        if(userService.isPasswordMatched(oldPassword, dbUser)) {
+            // Check the strength of the new password
+            if (!StringUtils.checkPasswordStreng(newPassword))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must consist of at least 12 characters and has at least\n" +
+                        "\n" +
+                        "    one Uppercase character,\n" +
+                        "    one Lowercase character,\n" +
+                        "    a Digit and\n" +
+                        "    a Special character or Symbol.");
+            else {
+                userService.changeUserPassword(dbUser, newPassword);
+                return ResponseEntity.ok("Password has been changed successfully");
+            }
         }
+        else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Old password is not correct.");
     }
 
     /**
@@ -166,9 +171,9 @@ public class UserController {
     public void checkToken() {
     }
 
-    @PostMapping(path = "/oauth/login")
-    public ResponseEntity<ResponseObject> login(@RequestParam String email, @RequestParam String password) {
-        return authenticationService.login(new User(email, password));
+    @PostMapping(path = "/oauth/login", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseObject> login(@RequestBody User user) {
+        return authenticationService.login(user);
     }
 
 //    @PostMapping(path = "/oauth/register")
