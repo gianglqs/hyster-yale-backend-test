@@ -26,15 +26,15 @@ public class TrendsService {
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
 
         List<TrendData> bookingData = bookingOrderRepository.getMarginVsCostData(
-                filterMap.get("regionFilter"), filterMap.get("plantFilter"), filterMap.get("metaSeriesFilter"),
-                filterMap.get("classFilter"), filterMap.get("modelFilter"), filterMap.get("segmentFilter"),
-                filterMap.get("dealerNameFilter"), (Integer) filterMap.get("year")
+                (List<String>) filterMap.get("regionFilter"),  (List<String>)  filterMap.get("plantFilter"),  (List<String>)  filterMap.get("metaSeriesFilter"),
+                (List<String>)  filterMap.get("classFilter"),  (List<String>)  filterMap.get("modelFilter"),  (List<String>)  filterMap.get("segmentFilter"),
+                (List<String>)  filterMap.get("dealerNameFilter"), (Integer) filterMap.get("year")
         );
 
         List<TrendData> shipmentData = shipmentRepository.getMarginVsCostData(
-                filterMap.get("regionFilter"), filterMap.get("plantFilter"), filterMap.get("metaSeriesFilter"),
-                filterMap.get("classFilter"), filterMap.get("modelFilter"), filterMap.get("segmentFilter"),
-                filterMap.get("dealerNameFilter"), (Integer) filterMap.get("year")
+                (List<String>) filterMap.get("regionFilter"),  (List<String>)  filterMap.get("plantFilter"),  (List<String>)  filterMap.get("metaSeriesFilter"),
+                (List<String>)  filterMap.get("classFilter"),  (List<String>)  filterMap.get("modelFilter"),  (List<String>)  filterMap.get("segmentFilter"),
+                (List<String>)  filterMap.get("dealerNameFilter"), (Integer) filterMap.get("year")
         );
 
         for(int i = 0; i < 12; i++) {
@@ -54,15 +54,15 @@ public class TrendsService {
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
 
         List<TrendData> bookingData = bookingOrderRepository.getMarginVsDNData(
-                filterMap.get("regionFilter"), filterMap.get("plantFilter"), filterMap.get("metaSeriesFilter"),
-                filterMap.get("classFilter"), filterMap.get("modelFilter"), filterMap.get("segmentFilter"),
-                filterMap.get("dealerNameFilter"), (Integer) filterMap.get("year")
+                (List<String>) filterMap.get("regionFilter"),  (List<String>)  filterMap.get("plantFilter"),  (List<String>)  filterMap.get("metaSeriesFilter"),
+                (List<String>)  filterMap.get("classFilter"),  (List<String>)  filterMap.get("modelFilter"),  (List<String>)  filterMap.get("segmentFilter"),
+                (List<String>)  filterMap.get("dealerNameFilter"), (Integer) filterMap.get("year")
         );
 
         List<TrendData> shipmentData = shipmentRepository.getMarginVsDNData(
-                filterMap.get("regionFilter"), filterMap.get("plantFilter"), filterMap.get("metaSeriesFilter"),
-                filterMap.get("classFilter"), filterMap.get("modelFilter"), filterMap.get("segmentFilter"),
-                filterMap.get("dealerNameFilter"), (Integer) filterMap.get("year")
+                (List<String>) filterMap.get("regionFilter"),  (List<String>)  filterMap.get("plantFilter"),  (List<String>)  filterMap.get("metaSeriesFilter"),
+                (List<String>)  filterMap.get("classFilter"),  (List<String>)  filterMap.get("modelFilter"),  (List<String>)  filterMap.get("segmentFilter"),
+                (List<String>)  filterMap.get("dealerNameFilter"), (Integer) filterMap.get("year")
         );
 
         for(int i = 0; i < 12; i++) {

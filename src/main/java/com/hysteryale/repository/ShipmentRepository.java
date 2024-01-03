@@ -37,17 +37,17 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND (cast(:fromDate as date ) IS NULL OR c.date >= :fromDate)" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= :toDate) ORDER BY c.orderNo"
     )
-    List<Shipment> findShipmentByFilterForTable(@Param("orderNo") Object orderNo,
-                                                @Param("regions") Object regions,
-                                                @Param("plants") Object plants,
-                                                @Param("metaSeries") Object metaSeries,
-                                                @Param("classes") Object classes,
-                                                @Param("models") Object models,
-                                                @Param("segments") Object segments,
-                                                @Param("dealerName") Object dealerName,
-                                                @Param("AOPMarginPercentage") Object AOPMarginPercentage,
-                                                @Param("comparator") Object comparator,
-                                                @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
+    List<Shipment> findShipmentByFilterForTable(@Param("orderNo") String orderNo,
+                                                @Param("regions") List<String> regions,
+                                                @Param("plants") List<String> plants,
+                                                @Param("metaSeries") List<String> metaSeries,
+                                                @Param("classes") List<String> classes,
+                                                @Param("models") List<String> models,
+                                                @Param("segments") List<String> segments,
+                                                @Param("dealerName") List<String> dealerName,
+                                                @Param("AOPMarginPercentage") String AOPMarginPercentage,
+                                                @Param("comparator") String comparator,
+                                                @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
                                                 @Param("fromDate") Calendar fromDate,
                                                 @Param("toDate") Calendar toDate,
                                                 @Param("pageable") Pageable pageable);
@@ -75,17 +75,17 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))"
     )
-    int getCount(@Param("orderNo") Object orderNo,
-                 @Param("regions") Object regions,
-                 @Param("plants") Object plants,
-                 @Param("metaSeries") Object metaSeries,
-                 @Param("classes") Object classes,
-                 @Param("models") Object models,
-                 @Param("segments") Object segments,
-                 @Param("dealerName") Object dealerName,
-                 @Param("AOPMarginPercentage") Object AOPMarginPercentage,
-                 @Param("comparator") Object comparator,
-                 @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
+    int getCount(@Param("orderNo") String orderNo,
+                 @Param("regions") List<String> regions,
+                 @Param("plants") List<String> plants,
+                 @Param("metaSeries") List<String> metaSeries,
+                 @Param("classes") List<String> classes,
+                 @Param("models") List<String> models,
+                 @Param("segments") List<String> segments,
+                 @Param("dealerName") List<String> dealerName,
+                 @Param("AOPMarginPercentage") String AOPMarginPercentage,
+                 @Param("comparator") String comparator,
+                 @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
                  @Param("fromDate") Calendar fromDate,
                  @Param("toDate") Calendar toDate);
 
@@ -113,13 +113,13 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND b.marginPercentageAfterSurCharge != 'Infinity'" +
             " GROUP BY EXTRACT(month FROM b.date) ORDER BY month ASC"
     )
-    List<TrendData> getMarginVsCostData(@Param("regions") Object regions,
-                                        @Param("plants") Object plants,
-                                        @Param("metaSeries") Object metaSeries,
-                                        @Param("classes") Object classes,
-                                        @Param("models") Object models,
-                                        @Param("segments") Object segments,
-                                        @Param("dealerName") Object dealerName,
+    List<TrendData> getMarginVsCostData(@Param("regions") List<String> regions,
+                                        @Param("plants") List<String> plants,
+                                        @Param("metaSeries") List<String> metaSeries,
+                                        @Param("classes") List<String> classes,
+                                        @Param("models") List<String> models,
+                                        @Param("segments") List<String> segments,
+                                        @Param("dealerName") List<String> dealerName,
                                         @Param("year") int year);
 
     @Query("SELECT new com.hysteryale.model.TrendData( EXTRACT(month FROM b.date) as month, " +
@@ -139,14 +139,15 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND b.marginPercentageAfterSurCharge != 'Infinity'" +
             " GROUP BY EXTRACT(month FROM b.date) ORDER BY month ASC"
     )
-    List<TrendData> getMarginVsDNData(@Param("regions") Object regions,
-                                      @Param("plants") Object plants,
-                                      @Param("metaSeries") Object metaSeries,
-                                      @Param("classes") Object classes,
-                                      @Param("models") Object models,
-                                      @Param("segments") Object segments,
-                                      @Param("dealerName") Object dealerName,
-                                      @Param("year") int year);
+    List<TrendData> getMarginVsDNData(
+            @Param("regions") List<String> regions,
+            @Param("plants") List<String> plants,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("classes") List<String> classes,
+            @Param("models") List<String> models,
+            @Param("segments") List<String> segments,
+            @Param("dealerName") List<String> dealerName,
+            @Param("year") int year);
 
     @Query("SELECT new Shipment('Total', COALESCE(sum(c.quantity),0), COALESCE(sum(c.dealerNet),0), COALESCE(sum(c.dealerNetAfterSurCharge),0), COALESCE(sum(c.totalCost),0), COALESCE(sum(c.netRevenue),0), COALESCE(sum(c.marginAfterSurCharge),0), COALESCE((sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)),0) ) FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
@@ -170,17 +171,17 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND (cast(:fromDate as date ) IS NULL OR c.date >= :fromDate)" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= :toDate)"
     )
-    List<Shipment> getTotal(@Param("orderNo") Object orderNo,
-                                @Param("regions") Object regions,
-                                @Param("plants") Object plants,
-                                @Param("metaSeries") Object metaSeries,
-                                @Param("classes") Object classes,
-                                @Param("models") Object models,
-                                @Param("segments") Object segments,
-                                @Param("dealerName") Object dealerName,
-                                @Param("AOPMarginPercentage") Object AOPMarginPercentage,
-                                @Param("comparator") Object comparator,
-                                @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
-                                @Param("fromDate") Calendar fromDate,
-                                @Param("toDate") Calendar toDate);
+    List<Shipment> getTotal(@Param("orderNo") String orderNo,
+                            @Param("regions") List<String> regions,
+                            @Param("plants") List<String> plants,
+                            @Param("metaSeries") List<String> metaSeries,
+                            @Param("classes") List<String> classes,
+                            @Param("models") List<String> models,
+                            @Param("segments") List<String> segments,
+                            @Param("dealerName") List<String> dealerName,
+                            @Param("AOPMarginPercentage") String AOPMarginPercentage,
+                            @Param("comparator") String comparator,
+                            @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
+                            @Param("fromDate") Calendar fromDate,
+                            @Param("toDate") Calendar toDate);
 }

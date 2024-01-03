@@ -35,12 +35,14 @@ public class AdjustmentService extends BasedService {
         logInfo("marginPercentageAfterAdjFilter" + filterMap.get("marginPercentageAfterAdjFilter"));
 
         List<BookingOrder> bookingOrderList = bookingOrderRepository.selectForAdjustmentByFilter(
-                filterMap.get("regionFilter"), filterMap.get("dealerNameFilter"), filterMap.get("plantFilter"), filterMap.get("segmentFilter"),
-                filterMap.get("classFilter"), filterMap.get("metaSeriesFilter"), filterMap.get("modelFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(0),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(1),
-                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(0),
-                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(1),
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
+                (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("modelFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
+                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(1)),
                 calculatorModel.getCostAdjPercentage(), calculatorModel.getFreightAdj(), calculatorModel.getFxAdj(), calculatorModel.getDnAdjPercentage(),
                 (Pageable) filterMap.get("pageable"));
 
@@ -49,25 +51,30 @@ public class AdjustmentService extends BasedService {
         setIdForList(listAdj);
         result.put("listAdjustment", listAdj);
         // get total
-        List<BookingOrder> getAll = bookingOrderRepository.selectTotalForAdjustment(filterMap.get("regionFilter"), filterMap.get("dealerNameFilter"), filterMap.get("plantFilter"), filterMap.get("segmentFilter"),
-                filterMap.get("classFilter"), filterMap.get("metaSeriesFilter"), filterMap.get("modelFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(0),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(1),
-                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(0),
-                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(1),
+        List<BookingOrder> getAll = bookingOrderRepository.selectTotalForAdjustment(
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
+                (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("modelFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
+                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(1)),
                 calculatorModel.getCostAdjPercentage(), calculatorModel.getFreightAdj(), calculatorModel.getFxAdj(), calculatorModel.getDnAdjPercentage());
         List<AdjustmentPayLoad> totalAdj = convertToListAdjustment(getAll, calculatorModel);
         List<AdjustmentPayLoad> calculateAll = calculateTotal(totalAdj, calculatorModel);
         result.put("total", calculateAll);
 
         List<Integer> countAll = bookingOrderRepository.getCountAllForAdjustmentByFilter(
-                filterMap.get("regionFilter"), filterMap.get("dealerNameFilter"), filterMap.get("plantFilter"), filterMap.get("segmentFilter"),
-                filterMap.get("classFilter"), filterMap.get("metaSeriesFilter"), filterMap.get("modelFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(0),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(1),
-                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(0),
-                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(1),
-                calculatorModel.getCostAdjPercentage(), calculatorModel.getFreightAdj(), calculatorModel.getFxAdj(), calculatorModel.getDnAdjPercentage());
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
+                (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("modelFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
+                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(1)),
+                (Double) calculatorModel.getCostAdjPercentage(), (Double) calculatorModel.getFreightAdj(), (Double) calculatorModel.getFxAdj(), (Double) calculatorModel.getDnAdjPercentage());
 
         result.put("totalItems", countAll.size());
 

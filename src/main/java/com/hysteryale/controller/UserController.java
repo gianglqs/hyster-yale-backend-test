@@ -142,23 +142,11 @@ public class UserController {
 
     /**
      * Reset user's password specified by email (if email is existed), then send informing email for user.
-     *
-     * @param email get from front-end
      */
-//    @PostMapping(path = "/users/resetPassword")
-//    public void resetPassword(@RequestBody String email) {
-//        JSONParser parser = new JSONParser();
-//        try {
-//            JSONObject jsonObject = (JSONObject) parser.parse(email);
-//            try {
-//                userService.resetUserPassword((String) jsonObject.get("email"));
-//            } catch (MailjetSocketTimeoutException | MailjetException e) {
-//                throw new RuntimeException(e);
-//            }
-//        } catch (ParseException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    @PostMapping(path = "/users/resetPassword")
+    public void resetPassword(@RequestBody User user) throws MailjetSocketTimeoutException, MailjetException {
+        userService.resetUserPassword(user.getEmail());
+    }
 
     /**
      * Revoke the access_token for logging user out
