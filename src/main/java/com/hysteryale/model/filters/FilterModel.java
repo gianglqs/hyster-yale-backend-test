@@ -18,7 +18,7 @@ public class FilterModel {
     private List<String> metaSeries;
     private List<String> classes;
     private List<String> models;
-    private List<String> segment;
+    private List<String> segments;
     private String chineseBrand;
     private String aopMarginPercentageGroup;
     private String marginPercentage;

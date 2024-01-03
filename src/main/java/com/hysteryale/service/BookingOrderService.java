@@ -464,11 +464,11 @@ public class BookingOrderService extends BasedService {
 
     private InputStream getInputStreamForCostData(String month, String year) throws IOException {
 
-       String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
 
-       List<String> listMonth = Arrays.asList(DateUtils.getAllMonthsAsString());
+        List<String> listMonth = Arrays.asList(DateUtils.getAllMonthsAsString());
 
-       String folderPath;
+        String folderPath;
 
         String targetFolder = EnvironmentUtils.getEnvironmentValue("import-files.total-cost");
         folderPath = baseFolder + targetFolder;
@@ -678,29 +678,29 @@ public class BookingOrderService extends BasedService {
         logInfo(filterMap.toString());
 
         List<BookingOrder> bookingOrderList = bookingOrderRepository.selectAllForBookingOrder(
-                filterMap.get("orderNoFilter"), filterMap.get("regionFilter"), filterMap.get("plantFilter"),
-                filterMap.get("metaSeriesFilter"), filterMap.get("classFilter"), filterMap.get("modelFilter"),
-                filterMap.get("segmentFilter"), filterMap.get("dealerNameFilter"), filterMap.get("aopMarginPercentageFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(0),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(1),
-                (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"),
-                (Pageable) filterMap.get("pageable"));
+                (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
+                (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
+                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
+                (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable")
+        );
         result.put("listBookingOrder", bookingOrderList);
         //get total Recode
-        int countAll = bookingOrderRepository.getCount(filterMap.get("orderNoFilter"), filterMap.get("regionFilter"), filterMap.get("plantFilter"),
-                filterMap.get("metaSeriesFilter"), filterMap.get("classFilter"), filterMap.get("modelFilter"),
-                filterMap.get("segmentFilter"), filterMap.get("dealerNameFilter"), filterMap.get("aopMarginPercentageFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(0),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(1),
+        int countAll = bookingOrderRepository.getCount((String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
+                (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
+                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
                 (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
         result.put("totalItems", countAll);
 
         // get total
-        List<BookingOrder> getTotal = bookingOrderRepository.getTotal(filterMap.get("orderNoFilter"), filterMap.get("regionFilter"),
-                filterMap.get("plantFilter"), filterMap.get("metaSeriesFilter"), filterMap.get("classFilter"), filterMap.get("modelFilter"),
-                filterMap.get("segmentFilter"), filterMap.get("dealerNameFilter"), filterMap.get("aopMarginPercentageFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(0),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(1),
+        List<BookingOrder> getTotal = bookingOrderRepository.getTotal((String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
+                (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
+                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
                 (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
         result.put("total", getTotal);
 
