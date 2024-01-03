@@ -94,7 +94,6 @@ public class ConvertDataFilterUtil {
                 result.add(percentValue);
             }
         }
-        System.out.println(result);
         return result;
     }
 
