@@ -10,8 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,8 +20,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
-
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserService extends BasedService implements UserDetailsService {
@@ -158,5 +158,12 @@ public class UserService extends BasedService implements UserDetailsService {
                .orElseThrow(
                        () -> new UsernameNotFoundException("User not found: " + username)
                );
+    }
+
+    /**
+     * Check if the password is match with a user's password in db (for changing password feature)
+     */
+    public boolean isPasswordMatched(String password, User dbUser) {
+        return passwordEncoder().matches(password, dbUser.getPassword());
     }
 }
