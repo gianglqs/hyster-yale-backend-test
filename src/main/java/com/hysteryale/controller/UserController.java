@@ -9,19 +9,15 @@ import com.hysteryale.utils.StringUtils;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,8 +33,6 @@ public class UserController {
 
     @Resource
     AuthenticationService authenticationService;
-//    @Resource(name = "tokenServices")
-//    DefaultTokenServices tokenServices;
 
     /**
      * Get user's details by userId
@@ -137,23 +131,11 @@ public class UserController {
 
     /**
      * Reset user's password specified by email (if email is existed), then send informing email for user.
-     *
-     * @param email get from front-end
      */
-//    @PostMapping(path = "/users/resetPassword")
-//    public void resetPassword(@RequestBody String email) {
-//        JSONParser parser = new JSONParser();
-//        try {
-//            JSONObject jsonObject = (JSONObject) parser.parse(email);
-//            try {
-//                userService.resetUserPassword((String) jsonObject.get("email"));
-//            } catch (MailjetSocketTimeoutException | MailjetException e) {
-//                throw new RuntimeException(e);
-//            }
-//        } catch (ParseException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    @PostMapping(path = "/users/resetPassword")
+    public void resetPassword(@RequestBody User user) throws MailjetSocketTimeoutException, MailjetException {
+        userService.resetUserPassword(user.getEmail());
+    }
 
     /**
      * Revoke the access_token for logging user out
