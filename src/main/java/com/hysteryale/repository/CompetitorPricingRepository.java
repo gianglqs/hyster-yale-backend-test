@@ -151,9 +151,9 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
             "AND ((:classes) IS NULL OR c.clazz IN (:classes)) " +
             "AND ((:category) IS NULL OR c.category IN (:category)) " +
             "AND ((:series) IS NULL OR c.series IN (:series)) GROUP BY c.color ORDER BY AVG(c.marketShare)")
-    List<CompetitorPricing> getDataForBubbleChart(@Param("regions") Object regions, @Param("countries") Object countries,
-                                                  @Param("classes") Object classes, @Param("category") Object categories,
-                                                  @Param("series") Object series);
+    List<CompetitorPricing> getDataForBubbleChart(@Param("regions") List<String> regions, @Param("countries") List<String> countries,
+                                                  @Param("classes") List<String> classes, @Param("category") List<String> categories,
+                                                  @Param("series") List<String> series);
 
     @Query("SELECT c FROM CompetitorPricing c WHERE c.country.countryName = ?1 AND c.clazz = ?2 AND c.category = ?3 AND " +
             "c.series = ?4 AND c.competitorName = ?5 AND c.model = ?6")
