@@ -85,6 +85,7 @@ public class FilterService {
         filters.put("models", getAllModels());
         filters.put("segments", getAllSegments());
         filters.put("years", getRecentYears());
+        filters.put("dealers", getAllDealerNames());
 
         return filters;
     }

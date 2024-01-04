@@ -23,24 +23,26 @@ public class OutlierService extends BasedService {
         //convert data filter
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filterModel);
         List<BookingOrder> listOrder = bookingOrderRepository.getOrderForOutline(
-                filterMap.get("regionFilter"), filterMap.get("plantFilter"), filterMap.get("metaSeriesFilter"),
-                filterMap.get("classFilter"), filterMap.get("modelFilter"), filterMap.get("dealerNameFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(0),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(1),
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"), (List<String>) filterMap.get("dealerNameFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
                 (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"),
                 (Pageable) filterMap.get("pageable"));
 
         // count
-        List<Integer> countAll = bookingOrderRepository.countAllForOutline(filterMap.get("regionFilter"), filterMap.get("plantFilter"), filterMap.get("metaSeriesFilter"),
-                filterMap.get("classFilter"), filterMap.get("modelFilter"), filterMap.get("dealerNameFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(0),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(1),
+        List<Integer> countAll = bookingOrderRepository.countAllForOutline(
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"), (List<String>) filterMap.get("dealerNameFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
                 (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
 
-        List<BookingOrder> getSumAllOrder = bookingOrderRepository.getSumAllOrderForOutline(filterMap.get("regionFilter"), filterMap.get("plantFilter"), filterMap.get("metaSeriesFilter"),
-                filterMap.get("classFilter"), filterMap.get("modelFilter"), filterMap.get("dealerNameFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(0),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(1),
+        List<BookingOrder> getSumAllOrder = bookingOrderRepository.getSumAllOrderForOutline(
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"), (List<String>) filterMap.get("dealerNameFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
                 (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
 
         result.put("total", getSumAllOrder);
@@ -64,10 +66,10 @@ public class OutlierService extends BasedService {
 
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
         List<BookingOrder> listOrder = bookingOrderRepository.getOrderForOutline(
-                filterMap.get("regionFilter"), filterMap.get("plantFilter"), filterMap.get("metaSeriesFilter"),
-                filterMap.get("classFilter"), filterMap.get("modelFilter"), filterMap.get("dealerNameFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(0),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((List) filterMap.get("marginPercentageFilter")).get(1),
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"), (List<String>) filterMap.get("dealerNameFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
                 (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"), null);
 
         List<Object> listRegionData = getListRegionData(listOrder);
@@ -82,7 +84,7 @@ public class OutlierService extends BasedService {
         List<ChartOutlier> chinachartOutlierList = new ArrayList<>();
         List<ChartOutlier> indiachartOutlierList = new ArrayList<>();
 
-        for(BookingOrder order : listOrder) {
+        for (BookingOrder order : listOrder) {
             ChartOutlier chartOutlier = new ChartOutlier(
                     order.getRegion().getRegion(),
                     order.getDealerNet(),
