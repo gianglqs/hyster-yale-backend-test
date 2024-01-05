@@ -12,11 +12,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Getter
 @Setter
+@Table(name = "productdimension")
 public class ProductDimension {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(unique = true)
+    @Column(unique = true, name = "metaseries")
     private String metaSeries;
     private String brand;
     private String plant;
@@ -29,4 +30,6 @@ public class ProductDimension {
         this.clazz = clazz;
         this.model = model;
     }
+
+
 }
