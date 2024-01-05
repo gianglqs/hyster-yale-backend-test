@@ -2,8 +2,13 @@ package com.hysteryale.controller;
 
 import com.hysteryale.authentication.AuthenticationService;
 import com.hysteryale.authentication.JwtService;
+import com.hysteryale.authentication.payload.TokenRefreshRequest;
+import com.hysteryale.authentication.payload.TokenRefreshResponse;
+import com.hysteryale.exception.TokenRefreshException;
 import com.hysteryale.model.User;
+import com.hysteryale.model.RefreshToken;
 import com.hysteryale.response.ResponseObject;
+import com.hysteryale.service.RefreshTokenService;
 import com.hysteryale.service.UserService;
 import com.hysteryale.service.impl.EmailServiceImpl;
 import com.hysteryale.utils.StringUtils;
@@ -36,6 +41,9 @@ public class UserController {
     AuthenticationService authenticationService;
     @Resource
     JwtService jwtService;
+
+    @Resource
+    RefreshTokenService refreshTokenService;
 
     /**
      * Get user's details by userId
@@ -172,4 +180,19 @@ public class UserController {
     @PostMapping(path = "/oauth/checkTokenOfAdmin")
     @PreAuthorize("hasAuthority('ADMIN')")
     public void checkTokenOfAdmin() {}
+
+    @PostMapping("/oauth/refreshToken")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwtService.generateToken(user);
+                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+                })
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
+                        "Refresh token is not in database!"));
+    }
 }

@@ -1,8 +1,11 @@
 package com.hysteryale.authentication;
 
 
+import com.hysteryale.authentication.payload.JwtResponse;
+import com.hysteryale.model.RefreshToken;
 import com.hysteryale.model.User;
 import com.hysteryale.response.ResponseObject;
+import com.hysteryale.service.RefreshTokenService;
 import com.hysteryale.service.RoleService;
 import com.hysteryale.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -38,6 +39,9 @@ public class AuthenticationService {
 
     @Resource
     AuthenticationManager authenticationManager;
+
+    @Resource
+    RefreshTokenService refreshTokenService;
 
     // signup for user
 //    public void register(User userReq) {
@@ -60,11 +64,11 @@ public class AuthenticationService {
                     )
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            Map<String, Object> response = new HashMap<>();
             Optional<User> userDB = userService.getActiveUserByEmail(userReq.getEmail());
-            response.put("access_token", jwtService.generateToken(userReq));
-            response.put("name", userDB.get().getName());
-            response.put("role", userDB.get().getRole().getRoleName());
+
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDB.get().getId());
+            JwtResponse response = new JwtResponse(jwtService.generateToken(userReq), refreshToken.getToken(), userDB.get().getName(), userDB.get().getEmail(), userDB.get().getRole().getRoleName());
+
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ResponseObject(
