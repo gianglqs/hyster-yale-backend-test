@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductDimensionRepository extends JpaRepository<ProductDimension, String> {
+public interface ProductDimensionRepository extends JpaRepository<ProductDimension, Long> {
     @Query("SELECT DISTINCT a.plant FROM ProductDimension a")
     List<String> getPlants();
 
