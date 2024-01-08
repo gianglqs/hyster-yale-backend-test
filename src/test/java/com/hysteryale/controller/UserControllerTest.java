@@ -1,160 +1,404 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.authentication.JwtService;
 import com.hysteryale.model.Role;
 import com.hysteryale.model.User;
 import com.hysteryale.repository.UserRepository;
 import com.hysteryale.service.UserService;
-import com.hysteryale.service.impl.EmailServiceImpl;
-import com.mailjet.client.errors.MailjetException;
-import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @Slf4j
-public class UserControllerTest{// extends BasedControllerTest{
-    @InjectMocks
-    UserController userController;
+@SpringBootTest
+@AutoConfigureMockMvc
+public class UserControllerTest {
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Resource
-    @Mock
-    private UserRepository userRepository;
+    UserRepository userRepository;
     @Resource
-    @Mock
-    private EmailServiceImpl emailService;
+    UserService userService;
+    @Resource
+    JwtService jwtService;
 
-    int pageNo = 0;
-    int perPage = 100;
-    String sortType = "ascending";
-
-
-    @Test
-    void testGetAllUsers() {
-        /*
-        // GIVEN
-        Role role = new Role(1, "admin", null);
-        User given1 = new User(1,"user","admin2@gmail.com","$2a$10$oTxck2rZyU6y6LbUrUM3Zey/CBjNRonGAQ3cM5.QjzkRVIw5.hOhm",role,"us", true);
-        User given2 = new User(2, "given2", "given2@gmail.com", "given", role, "us", true);
-
-        List<User> givenList = new ArrayList<>();
-        givenList.add(given1);
-        givenList.add(given2);
-        userRepository.saveAll(givenList);
-
-        // WHEN
-        when(userService.searchUser("", pageNo, perPage, sortType)).thenReturn(new PageImpl<>(givenList, PageRequest.of(pageNo, perPage), 2));
-        Map<String, Object> result = userController.searchUser("", pageNo, perPage, sortType);
-
-        // THEN
-        Mockito.verify(userService).searchUser("", pageNo, perPage, sortType);
-        Assertions.assertEquals(givenList.size(), ((List<User>) result.get("userList")).size());
-         */
+    @BeforeEach
+    public void setUp() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
+                .apply(springSecurity())
+                .build();
     }
     @Test
-    void testAddUser() throws MailjetSocketTimeoutException, MailjetException {
-        /*
-        // GIVEN
-        Role role = new Role(1, "admin", null);
-        User givenUser = new User(1, "given1", "given2@gmail.com", "user", role, "us", true);
-
-        // WHEN
-        userController.addUser(givenUser);
-
-        // THEN
-        Mockito.verify(userService).addUser(givenUser);
-        Mockito.verify(emailService).sendRegistrationEmail(givenUser.getUserName(), givenUser.getPassword(), givenUser.getEmail());
-        */
-
-    }
-    @Test
-    void testDeactivateUser() {
-        /*
-        // GIVEN
-        Role role = new Role(1, "admin", null);
-        User givenUser = new User(1, "given1", "given2@gmail.com", "user", role, "us", true);
-
-        // WHEN
-        when(userService.getUserById(givenUser.getId())).thenReturn(givenUser);
-        userController.activateUser(givenUser.getId());
-
-        // THEN
-        verify(userService).setUserActiveState(givenUser, false);
-        */
-
+    @WithMockUser(authorities = "ADMIN")
+    public void testGetUserById() throws Exception {
+        User user = userRepository.save(new User("test", "test@gmail.com", "12345678", new Role(1, "ADMIN")));
+        MvcResult result =
+                mockMvc.perform(get("/users/getDetails/" + user.getId()).contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains(user.getName()));
     }
 
     @Test
-    void testActivateUser() {
-        /*
-        // GIVEN
-        Role role = new Role(1, "admin", null);
-        User givenUser = new User(1, "given1", "given2@gmail.com", "user", role, "us", false);
-
-        // WHEN
-        when(userService.getUserById(givenUser.getId())).thenReturn(givenUser);
-        userController.activateUser(givenUser.getId());
-
-        // THEN
-        verify(userService).setUserActiveState(givenUser, true);
-
-         */
+    @WithMockUser(authorities = "ADMIN")
+    public void testGetUserById_NotFound() throws Exception {
+        int notFoundUserId = 123123;
+        MvcResult response =
+                mockMvc
+                        .perform(get("/users/getDetails/" + notFoundUserId))
+                        .andReturn();
+        Assertions.assertEquals(404, response.getResponse().getStatus());
+        Assertions.assertTrue(Objects.requireNonNull(response.getResolvedException()).getMessage().contains("No user with id: " + notFoundUserId));
     }
 
     @Test
-    void testSearchUser() {
-        /*
-        // GIVEN
-        Role role = new Role(1, "admin", null);
-        User given1 = new User(1, "given1", "given1@gmail.com", "given", role, "us", true);
-        User given2 = new User(2, "given2", "given2@gmail.com", "given", role, "us", true);
-        List<User> userList = new ArrayList<>();
-        userList.add(given1);
-        userList.add(given2);
+    @WithMockUser(authorities = "ADMIN")
+    public void testAddUser() throws Exception {
+        User user = new User("admin", "weortuoewrtiu@gmail.com", "12345678", new Role(1, "USER"));
+        MvcResult result =
+                mockMvc
+                        .perform(post("/users").content(parseUserToJSONString(user)).contentType(MediaType.APPLICATION_JSON))
+                        .andReturn();
 
-        String searchString = "given";
-
-        // WHEN
-        when(userService.searchUser(searchString, pageNo, perPage, sortType)).thenReturn(new PageImpl<>(userList));
-        Map<String, Object> result = userController.searchUser(searchString, pageNo, perPage, sortType);
-
-        // THEN
-        Mockito.verify(userService).searchUser(searchString, pageNo, perPage, sortType);
-        Assertions.assertEquals(userList.size(), ((List<User>) result.get("userList")).size());
-        */
+        Assertions.assertEquals(200, result.getResponse().getStatus());
     }
+
+
     @Test
-    void testUpdateUserInformation() {
-        /*
-        // GIVEN
-        Role role = new Role(1, "admin", null);
-        User given1 = new User(1, "given1", "given1@gmail.com", "given", role, "us", true);
+    @WithMockUser(authorities = "ADMIN")
+    public void testAddUser_EmailExistence() throws Exception {
+        User user = new User("admin", "admin@gmail.com", "12345678", new Role(1, "ADMIN"));
+        MvcResult result =
+                mockMvc
+                        .perform(post("/users").content(parseUserToJSONString(user)).contentType(MediaType.APPLICATION_JSON))
+                        .andReturn();
 
-        // WHEN
-        when(userService.getUserById(given1.getId())).thenReturn(given1);
-        userController.updateUserInformation(given1, given1.getId());
+        Assertions.assertEquals(400, result.getResponse().getStatus());
+        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("Email has been already taken"));
+    }
 
-        // THEN
-        Mockito.verify(userService).updateUserInformation(given1, given1);
-         */
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void testActivateUser_changeToLock() throws Exception {
+        User user = userRepository.save(User.builder()
+                        .name("test")
+                        .email("test@gmail.com")
+                        .password("12345678")
+                        .isActive(true)
+                        .role(new Role(2, "USER"))
+                        .build());
+        MvcResult result =
+                mockMvc
+                        .perform(put("/users/activate/" + user.getId()))
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+        Assertions.assertFalse(userService.getUserById(user.getId()).isActive());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void testActivateUser_changeToActive() throws Exception {
+        User user = userRepository.save(User.builder()
+                .name("test")
+                .email("test@gmail.com")
+                .password("12345678")
+                .isActive(false)
+                .role(new Role(2, "USER"))
+                .build());
+        MvcResult result =
+                mockMvc
+                        .perform(put("/users/activate/" + user.getId()))
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+        Assertions.assertTrue(userService.getUserById(user.getId()).isActive());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void testUpdateUserInformation() throws Exception {
+        User user = userRepository.save(User.builder()
+                .name("test")
+                .email("test@gmail.com")
+                .password("12345678")
+                .isActive(false)
+                .defaultLocale("English")
+                .role(new Role(2, "USER"))
+                .build());
+        String name = "test123";
+        Role role = new Role(1, "ADMIN");
+        User updatedUser = User.builder().name(name).role(role).build();
+
+        mockMvc.perform(
+                put(
+                        "/users/updateUser/" + user.getId())
+                        .content(parseUserToJSONString(updatedUser))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        User dbUser = userService.getUserById(user.getId());
+        Assertions.assertEquals(name, dbUser.getName());
+        Assertions.assertEquals(role.getRoleName(), dbUser.getRole().getRoleName());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void testChangePassword() throws Exception {
+        String email = "admin@gmail.com";
+        String password = "123456";
+        String token = jwtService.generateToken(new User(email, password));
+        MvcResult result = mockMvc.perform(
+                MockMvcRequestBuilders.multipart("/users/changePassword")
+                        .param("oldPassword", "123456")
+                        .param("newPassword", "Admin123456;")
+                        .header("Authorization", "Bearer " + token)
+        ).andReturn();
+
+        User dbUser = userService.getUserByEmail(email);
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("Password has been changed successfully"));
+        Assertions.assertTrue(passwordEncoder().matches("Admin123456;", dbUser.getPassword()));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void testChangePassword_wrongOldPassword() throws Exception {
+        String email = "admin@gmail.com";
+        String password = "123456";
+        String token = jwtService.generateToken(new User(email, password));
+        MvcResult result = mockMvc.perform(
+                MockMvcRequestBuilders.multipart("/users/changePassword")
+                        .param("oldPassword", "1234")
+                        .param("newPassword", "Admin123456;")
+                        .header("Authorization", "Bearer " + token)
+        ).andReturn();
+
+        Assertions.assertEquals(400, result.getResponse().getStatus());
+        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("Old password is not correct."));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void testChangePassword_weakNewPassword() throws Exception {
+        String email = "admin@gmail.com";
+        String password = "123456";
+        String token = jwtService.generateToken(new User(email, password));
+        MvcResult result = mockMvc.perform(
+                MockMvcRequestBuilders.multipart("/users/changePassword")
+                        .param("oldPassword", "123456")
+                        .param("newPassword", "Admin1234")
+                        .header("Authorization", "Bearer " + token)
+        ).andReturn();
+
+        Assertions.assertEquals(400, result.getResponse().getStatus());
+        Assertions.assertTrue(
+                Objects
+                        .requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Password must consist of at least 12 characters and has at least"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER")
+    public void testResetPassword() throws Exception {
+        User user = User.builder()
+                .name("test")
+                .email("admin@gmail.com")
+                .password("12345678")
+                .isActive(false)
+                .defaultLocale("English")
+                .role(new Role(2, "USER"))
+                .build();
+
+        MvcResult result =
+                mockMvc
+                        .perform(
+                                post("/users/resetPassword")
+                                        .content(parseUserToJSONString(user))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                        ).andReturn();
+
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER")
+    public void testResetPassword_emailNotFound() throws Exception{
+        User user = User.builder()
+                .name("test")
+                .email("admin123123@gmail.com")
+                .password("12345678")
+                .isActive(false)
+                .defaultLocale("English")
+                .role(new Role(2, "USER"))
+                .build();
+
+        MvcResult result =
+                mockMvc
+                        .perform(
+                                post("/users/resetPassword")
+                                        .content(parseUserToJSONString(user))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                        ).andReturn();
+
+        Assertions.assertEquals(404, result.getResponse().getStatus());
+        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("No email found with " + user.getEmail()));
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER")
+    public void testLogin() throws Exception {
+        User user = User.builder()
+                .name("test")
+                .email("admin@gmail.com")
+                .password("123456")
+                .isActive(false)
+                .role(new Role(2, "USER"))
+                .build();
+
+        MvcResult result =
+                mockMvc
+                        .perform(post("/oauth/login")
+                                .content(parseUserToJSONString(user))
+                                .contentType(MediaType.APPLICATION_JSON)
+                        )
+                        .andExpect(jsonPath("$.data.access_token").exists())
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("Login successfully"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER")
+    public void testLogin_failed() throws Exception {
+        User user = User.builder()
+                .name("test")
+                .email("admin@gmail.com")
+                .password("123")
+                .isActive(false)
+                .role(new Role(2, "USER"))
+                .build();
+
+        MvcResult result =
+                mockMvc
+                        .perform(post("/oauth/login")
+                                .content(parseUserToJSONString(user))
+                                .contentType(MediaType.APPLICATION_JSON)
+                        )
+                        .andReturn();
+        Assertions.assertEquals(400, result.getResponse().getStatus());
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("Username or password is incorrect"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void testSearchUser() throws Exception {
+
+        String strSearch = "a";
+        int perPage = 100;
+
+        MvcResult result =
+                mockMvc
+                        .perform(get("/users")
+                                .param("search", strSearch)
+                                .param("perPage", Integer.toString(perPage))
+                                .param("pageNo", "1")
+                        )
+                        .andExpect(jsonPath("$.userList").isArray())
+                        .andExpect(jsonPath("$.perPage").value(perPage))
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    /**
+     * Test case entering search string for getting list of all user
+     */
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void testSearchUser_emptySearchString() throws Exception {
+        String strSearch = "";
+        int perPage = 100;
+
+        MvcResult result =
+                mockMvc
+                        .perform(get("/users")
+                                .param("search", strSearch)
+                                .param("perPage", Integer.toString(perPage))
+                                .param("pageNo", "1")
+                        )
+                        .andExpect(jsonPath("$.userList").isArray())
+                        .andExpect(jsonPath("$.perPage").value(perPage))
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    public void testSearchUser_searchNotFound() throws Exception {
+        String strSearch = "qwerqweqeqweqwe";
+        int perPage = 100;
+
+        MvcResult result =
+                mockMvc
+                        .perform(get("/users")
+                                .param("search", strSearch)
+                                .param("perPage", Integer.toString(perPage))
+                                .param("pageNo", "1")
+                        )
+                        .andExpect(jsonPath("$.userList").isArray())
+                        .andExpect(jsonPath("$.perPage").value(perPage))
+                        .andExpect(jsonPath("$.totalItems").value(0))
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+
+
+    private PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * Parse User object into JSON String for passing to Controller testing
+     */
+    public String parseUserToJSONString(User user) throws JSONException {
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", user.getName());
+        jsonObject.put("email", user.getEmail());
+        jsonObject.put("password", user.getPassword());
+
+        JSONObject role = new JSONObject();
+        role.put("id", user.getRole().getId());
+        role.put("roleName", user.getRole().getRoleName());
+        jsonObject.put("role", role);
+
+        return jsonObject.toString();
     }
 }
