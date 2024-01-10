@@ -71,7 +71,7 @@ public class FileUploadService {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
 
         Date uploadedTime = new Date();
-        String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
+        String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmssSSS").format(uploadedTime));
         String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + ".xlsx";
 
         File file = new File(baseFolder + "/" + encodedFileName);

@@ -48,17 +48,18 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.model" +
             " ORDER BY c.region.region"
     )
-    List<BookingOrder> getOrderForOutline(@Param("regions") Object regions,
-                                          @Param("plants") Object plants,
-                                          @Param("metaSeries") Object metaSeries,
-                                          @Param("classes") Object classes,
-                                          @Param("models") Object models,
-                                          @Param("dealerName") Object dealerName,
-                                          @Param("comparator") Object comparator,
-                                          @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
-                                          @Param("fromDate") Calendar fromDate,
-                                          @Param("toDate") Calendar toDate,
-                                          Pageable pageable);
+    List<BookingOrder> getOrderForOutline(
+            @Param("regions") List<String> regions,
+            @Param("plants") List<String> plants,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("classes") List<String> classes,
+            @Param("models") List<String> models,
+            @Param("dealerName") List<String> dealerName,
+            @Param("comparator") String comparator,
+            @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
+            @Param("fromDate") Calendar fromDate,
+            @Param("toDate") Calendar toDate,
+            Pageable pageable);
 
     @Query("SELECT new BookingOrder( COALESCE(sum(c.quantity), 0), COALESCE(sum(c.totalCost), 0), COALESCE(sum(c.dealerNet), 0), " +
             " COALESCE(sum(c.dealerNetAfterSurCharge), 0), COALESCE(sum(c.marginAfterSurCharge), 0), COALESCE(sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge), 0)) " +
@@ -79,16 +80,17 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))"
     )
-    List<BookingOrder> getSumAllOrderForOutline(@Param("regions") Object regions,
-                                          @Param("plants") Object plants,
-                                          @Param("metaSeries") Object metaSeries,
-                                          @Param("classes") Object classes,
-                                          @Param("models") Object models,
-                                          @Param("dealerName") Object dealerName,
-                                          @Param("comparator") Object comparator,
-                                          @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
-                                          @Param("fromDate") Calendar fromDate,
-                                          @Param("toDate") Calendar toDate);
+    List<BookingOrder> getSumAllOrderForOutline(
+            @Param("regions") List<String> regions,
+            @Param("plants") List<String> plants,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("classes") List<String> classes,
+            @Param("models") List<String> models,
+            @Param("dealerName") List<String> dealerName,
+            @Param("comparator") String comparator,
+            @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
+            @Param("fromDate") Calendar fromDate,
+            @Param("toDate") Calendar toDate);
 
     //   @Query("SELECT COUNT(distinct (c.region.regionShortName || c.productDimension.plant || c.productDimension.clazz || c.series || c.productDimension.model) )" +
     @Query("SELECT COUNT(c)" +
@@ -110,16 +112,17 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))" +
             " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.model"
     )
-    List<Integer> countAllForOutline(@Param("regions") Object regions,
-                                     @Param("plants") Object plants,
-                                     @Param("metaSeries") Object metaSeries,
-                                     @Param("classes") Object classes,
-                                     @Param("models") Object models,
-                                     @Param("dealerName") Object dealerName,
-                                     @Param("comparator") Object comparator,
-                                     @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
-                                     @Param("fromDate") Calendar fromDate,
-                                     @Param("toDate") Calendar toDate);
+    List<Integer> countAllForOutline(
+            @Param("regions") List<String> regions,
+            @Param("plants") List<String> plants,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("classes") List<String> classes,
+            @Param("models") List<String> models,
+            @Param("dealerName") List<String> dealerName,
+            @Param("comparator") String comparator,
+            @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
+            @Param("fromDate") Calendar fromDate,
+            @Param("toDate") Calendar toDate);
 
 
     @Query(value = "SELECT * FROM booking_order WHERE model = ?1 LIMIT 1", nativeQuery = true)
@@ -147,17 +150,17 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))"
     )
-    int getCount(@Param("orderNo") Object orderNo,
-                 @Param("regions") Object regions,
-                 @Param("plants") Object plants,
-                 @Param("metaSeries") Object metaSeries,
-                 @Param("classes") Object classes,
-                 @Param("models") Object models,
-                 @Param("segments") Object segments,
-                 @Param("dealerName") Object dealerName,
-                 @Param("AOPMarginPercentage") Object AOPMarginPercentage,
-                 @Param("comparator") Object comparator,
-                 @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
+    int getCount(@Param("orderNo") String orderNo,
+                 @Param("regions") List<String> regions,
+                 @Param("plants") List<String> plants,
+                 @Param("metaSeries") List<String> metaSeries,
+                 @Param("classes") List<String> classes,
+                 @Param("models") List<String> models,
+                 @Param("segments") List<String> segments,
+                 @Param("dealerName") List<String> dealerName,
+                 @Param("AOPMarginPercentage") String AOPMarginPercentage,
+                 @Param("comparator") String comparator,
+                 @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
                  @Param("fromDate") Calendar fromDate,
                  @Param("toDate") Calendar toDate);
 
@@ -183,20 +186,22 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND (cast(:fromDate as date ) IS NULL OR c.date >= :fromDate)" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= :toDate) ORDER BY c.orderNo"
     )
-    List<BookingOrder> selectAllForBookingOrder(@Param("orderNo") Object orderNo,
-                                                @Param("regions") Object regions,
-                                                @Param("plants") Object plants,
-                                                @Param("metaSeries") Object metaSeries,
-                                                @Param("classes") Object classes,
-                                                @Param("models") Object models,
-                                                @Param("segments") Object segments,
-                                                @Param("dealerName") Object dealerName,
-                                                @Param("AOPMarginPercentage") Object AOPMarginPercentage,
-                                                @Param("comparator") Object comparator,
-                                                @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
-                                                @Param("fromDate") Calendar fromDate,
-                                                @Param("toDate") Calendar toDate,
-                                                @Param("pageable") Pageable pageable);
+    List<BookingOrder> selectAllForBookingOrder(
+            @Param("orderNo") String orderNo,
+            @Param("regions") List<String> regions,
+            @Param("plants") List<String> plants,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("classes") List<String> classes,
+            @Param("models") List<String> models,
+            @Param("segments") List<String> segments,
+            @Param("dealerName") List<String> dealerName,
+            @Param("AOPMarginPercentage") String AOPMarginPercentage,
+            @Param("comparator") String comparator,
+            @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
+            @Param("fromDate") Calendar fromDate,
+            @Param("toDate") Calendar toData,
+            @Param("pageable") Pageable pageable
+    );
 
     @Query("SELECT b from BookingOrder b where b.orderNo IN :listOrderNo")
     List<BookingOrder> getListBookingExist(List<String> listOrderNo);
@@ -220,14 +225,15 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND b.marginPercentageAfterSurCharge != 'Infinity'" +
             " GROUP BY EXTRACT(month FROM b.date) ORDER BY month ASC"
     )
-    List<TrendData> getMarginVsCostData(@Param("regions") Object regions,
-                                        @Param("plants") Object plants,
-                                        @Param("metaSeries") Object metaSeries,
-                                        @Param("classes") Object classes,
-                                        @Param("models") Object models,
-                                        @Param("segments") Object segments,
-                                        @Param("dealerName") Object dealerName,
-                                        @Param("year") int year);
+    List<TrendData> getMarginVsCostData(
+            @Param("regions") List<String> regions,
+            @Param("plants") List<String> plants,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("classes") List<String> classes,
+            @Param("models") List<String> models,
+            @Param("segments") List<String> segments,
+            @Param("dealerName") List<String> dealerName,
+            @Param("year") int year);
 
     @Query("SELECT new com.hysteryale.model.TrendData( EXTRACT(month FROM b.date) as month, " +
             "AVG(b.marginPercentageAfterSurCharge) as marginPercentage, " +
@@ -246,14 +252,15 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND b.marginPercentageAfterSurCharge != 'Infinity'" +
             " GROUP BY EXTRACT(month FROM b.date) ORDER BY month ASC"
     )
-    List<TrendData> getMarginVsDNData(@Param("regions") Object regions,
-                                        @Param("plants") Object plants,
-                                        @Param("metaSeries") Object metaSeries,
-                                        @Param("classes") Object classes,
-                                        @Param("models") Object models,
-                                        @Param("segments") Object segments,
-                                        @Param("dealerName") Object dealerName,
-                                        @Param("year") int year);
+    List<TrendData> getMarginVsDNData(
+            @Param("regions") List<String> regions,
+            @Param("plants") List<String> plants,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("classes") List<String> classes,
+            @Param("models") List<String> models,
+            @Param("segments") List<String> segments,
+            @Param("dealerName") List<String> dealerName,
+            @Param("year") int year);
 
 
     @Query("SELECT new BookingOrder(c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.model, " +
@@ -277,22 +284,23 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             "   (:comparatorAfterAdj = '<' AND sum(c.dealerNetAfterSurCharge) <> 0 AND ((sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0))) < :marginPercentageAfterSurChargeAfterAdj) OR" +
             "   (:comparatorAfterAdj = '>=' AND sum(c.dealerNetAfterSurCharge) <> 0 AND ((sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0))) > :marginPercentageAfterSurChargeAfterAdj)"
     )
-    List<BookingOrder> selectForAdjustmentByFilter(@Param("regions") Object regions,
-                                                   @Param("dealerName") Object dealerName,
-                                                   @Param("plants") Object plants,
-                                                   @Param("segments") Object segments,
-                                                   @Param("classes") Object classes,
-                                                   @Param("metaSeries") Object metaSeries,
-                                                   @Param("models") Object models,
-                                                   @Param("comparator") Object comparator,
-                                                   @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
-                                                   @Param("comparatorAfterAdj") Object comparatorAfterAdj,
-                                                   @Param("marginPercentageAfterSurChargeAfterAdj") Object marginPercentageAfterSurChargeAfterAdj,
-                                                   @Param("costAdjPercentage") double costAdjPercentage,
-                                                   @Param("freightAdj") double freightAdj,
-                                                   @Param("fxAdj") double fxAdj,
-                                                   @Param("dnAdjPercentage") double dnAdjPercentage,
-                                                   Pageable pageable);
+    List<BookingOrder> selectForAdjustmentByFilter(
+            @Param("regions") List<String> regions,
+            @Param("dealerName") List<String> dealerName,
+            @Param("plants") List<String> plants,
+            @Param("segments") List<String> segments,
+            @Param("classes") List<String> classes,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("models") List<String> models,
+            @Param("comparator") String comparator,
+            @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
+            @Param("comparatorAfterAdj") String comparatorAfterAdj,
+            @Param("marginPercentageAfterSurChargeAfterAdj") Double marginPercentageAfterSurChargeAfterAdj,
+            @Param("costAdjPercentage") double costAdjPercentage,
+            @Param("freightAdj") double freightAdj,
+            @Param("fxAdj") double fxAdj,
+            @Param("dnAdjPercentage") double dnAdjPercentage,
+            Pageable pageable);
 
     @Query("SELECT COUNT(c) " +
             " FROM BookingOrder c WHERE " +
@@ -314,21 +322,22 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             "   (:comparatorAfterAdj = '<' AND sum(c.dealerNetAfterSurCharge) <> 0 AND (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0)) < :marginPercentageAfterSurChargeAfterAdj) OR" +
             "   (:comparatorAfterAdj = '>=' AND sum(c.dealerNetAfterSurCharge) <> 0 AND (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0)) >= :marginPercentageAfterSurChargeAfterAdj)"
     )
-    List<Integer> getCountAllForAdjustmentByFilter(@Param("regions") Object regions,
-                                                   @Param("dealerName") Object dealerName,
-                                                   @Param("plants") Object plants,
-                                                   @Param("segments") Object segments,
-                                                   @Param("classes") Object classes,
-                                                   @Param("metaSeries") Object metaSeries,
-                                                   @Param("models") Object models,
-                                                   @Param("comparator") Object comparator,
-                                                   @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
-                                                   @Param("comparatorAfterAdj") Object comparatorAfterAdj,
-                                                   @Param("marginPercentageAfterSurChargeAfterAdj") Object marginPercentageAfterSurChargeAfterAdj,
-                                                   @Param("costAdjPercentage") double costAdjPercentage,
-                                                   @Param("freightAdj") double freightAdj,
-                                                   @Param("fxAdj") double fxAdj,
-                                                   @Param("dnAdjPercentage") double dnAdjPercentage
+    List<Integer> getCountAllForAdjustmentByFilter(
+            @Param("regions") List<String> regions,
+            @Param("dealerName") List<String> dealerName,
+            @Param("plants") List<String> plants,
+            @Param("segments") List<String> segments,
+            @Param("classes") List<String> classes,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("models") List<String> models,
+            @Param("comparator") String comparator,
+            @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
+            @Param("comparatorAfterAdj") String comparatorAfterAdj,
+            @Param("marginPercentageAfterSurChargeAfterAdj") Double marginPercentageAfterSurChargeAfterAdj,
+            @Param("costAdjPercentage") double costAdjPercentage,
+            @Param("freightAdj") double freightAdj,
+            @Param("fxAdj") double fxAdj,
+            @Param("dnAdjPercentage") double dnAdjPercentage
     );
 
     @Query("SELECT new BookingOrder('Total', COALESCE(sum(c.quantity),0), COALESCE(sum(c.dealerNet),0), COALESCE(sum(c.dealerNetAfterSurCharge),0), COALESCE(sum(c.totalCost),0), COALESCE(sum(c.marginAfterSurCharge),0), COALESCE((sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)),0 )) FROM BookingOrder c WHERE " +
@@ -353,21 +362,22 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND (cast(:fromDate as date ) IS NULL OR c.date >= :fromDate)" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= :toDate)"
     )
-    List<BookingOrder> getTotal(@Param("orderNo") Object orderNo,
-                                @Param("regions") Object regions,
-                                @Param("plants") Object plants,
-                                @Param("metaSeries") Object metaSeries,
-                                @Param("classes") Object classes,
-                                @Param("models") Object models,
-                                @Param("segments") Object segments,
-                                @Param("dealerName") Object dealerName,
-                                @Param("AOPMarginPercentage") Object AOPMarginPercentage,
-                                @Param("comparator") Object comparator,
-                                @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
-                                @Param("fromDate") Calendar fromDate,
-                                @Param("toDate") Calendar toDate);
+    List<BookingOrder> getTotal(
+            @Param("orderNo") String orderNo,
+            @Param("regions") List<String> regions,
+            @Param("plants") List<String> plants,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("classes") List<String> classes,
+            @Param("models") List<String> models,
+            @Param("segments") List<String> segments,
+            @Param("dealerName") List<String> dealerName,
+            @Param("AOPMarginPercentage") String AOPMarginPercentage,
+            @Param("comparator") String comparator,
+            @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
+            @Param("fromDate") Calendar fromDate,
+            @Param("toDate") Calendar toDate);
 
-    @Query("SELECT COALESCE((sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)),0) FROM BookingOrder c WHERE " +
+    @Query("SELECT COALESCE((sum(c.marginAfterSurCharge) / NULLIF( sum(c.dealerNetAfterSurCharge),0)),0) FROM BookingOrder c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region.region IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
@@ -389,19 +399,20 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND (cast(:fromDate as date ) IS NULL OR c.date >= :fromDate)" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= :toDate)"
     )
-    double getTotalMarginPercentage(@Param("orderNo") Object orderNo,
-                                    @Param("regions") Object regions,
-                                    @Param("plants") Object plants,
-                                    @Param("metaSeries") Object metaSeries,
-                                    @Param("classes") Object classes,
-                                    @Param("models") Object models,
-                                    @Param("segments") Object segments,
-                                    @Param("dealerName") Object dealerName,
-                                    @Param("AOPMarginPercentage") Object AOPMarginPercentage,
-                                    @Param("comparator") Object comparator,
-                                    @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
-                                    @Param("fromDate") Calendar fromDate,
-                                    @Param("toDate") Calendar toDate);
+    double getTotalMarginPercentage(
+            @Param("orderNo") String orderNo,
+            @Param("regions") List<String> regions,
+            @Param("plants") List<String> plants,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("classes") List<String> classes,
+            @Param("models") List<String> models,
+            @Param("segments") List<String> segments,
+            @Param("dealerName") List<String> dealerName,
+            @Param("AOPMarginPercentage") String AOPMarginPercentage,
+            @Param("comparator") String comparator,
+            @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
+            @Param("fromDate") Calendar fromDate,
+            @Param("toDate") Calendar toDate);
 
 
     @Query("SELECT new BookingOrder( sum(c.dealerNetAfterSurCharge), sum(c.totalCost), sum(c.marginAfterSurCharge), count(c)) " +
@@ -425,24 +436,22 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             "   (:comparatorAfterAdj = '>=' AND sum(c.dealerNetAfterSurCharge) <> 0 AND (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0)) >= :marginPercentageAfterSurChargeAfterAdj)"
 
     )
-    List<BookingOrder> selectTotalForAdjustment(@Param("regions") Object regions,
-                                                @Param("dealerName") Object dealerName,
-                                                @Param("plants") Object plants,
-                                                @Param("segments") Object segments,
-                                                @Param("classes") Object classes,
-                                                @Param("metaSeries") Object metaSeries,
-                                                @Param("models") Object models,
-                                                @Param("comparator") Object comparator,
-                                                @Param("marginPercentageAfterSurCharge") Object marginPercentageAfterSurCharge,
-                                                @Param("comparatorAfterAdj") Object comparatorAfterAdj,
-                                                @Param("marginPercentageAfterSurChargeAfterAdj") Object marginPercentageAfterSurChargeAfterAdj,
-                                                @Param("costAdjPercentage") double costAdjPercentage,
-                                                @Param("freightAdj") double freightAdj,
-                                                @Param("fxAdj") double fxAdj,
-                                                @Param("dnAdjPercentage") double dnAdjPercentage);
-
-
-
+    List<BookingOrder> selectTotalForAdjustment(
+            @Param("regions") List<String> regions,
+            @Param("dealerName") List<String> dealerName,
+            @Param("plants") List<String> plants,
+            @Param("segments") List<String> segments,
+            @Param("classes") List<String> classes,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("models") List<String> models,
+            @Param("comparator") String comparator,
+            @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
+            @Param("comparatorAfterAdj") String comparatorAfterAdj,
+            @Param("marginPercentageAfterSurChargeAfterAdj") Double marginPercentageAfterSurChargeAfterAdj,
+            @Param("costAdjPercentage") double costAdjPercentage,
+            @Param("freightAdj") double freightAdj,
+            @Param("fxAdj") double fxAdj,
+            @Param("dnAdjPercentage") double dnAdjPercentage);
 
 
 }

@@ -21,7 +21,7 @@ public class ConvertDataFilterUtil {
         List<String> classFilter = checkListData(filterModel.getClasses());
         List<String> modelFilter = checkListData(filterModel.getModels());
         List<String> dealerNameFilter = checkListData(filterModel.getDealers());
-        List<String> segmentFilter = checkListData(filterModel.getSegment());
+        List<String> segmentFilter = checkListData(filterModel.getSegments());
         Boolean ChineseBrandFilter = checkBooleanData(filterModel.getChineseBrand());
         String aopMarginPercentageFilter = checkStringData(filterModel.getAopMarginPercentageGroup());
         List<Object> marginPercentageFilter = checkComparator(filterModel.getMarginPercentage());
@@ -94,7 +94,6 @@ public class ConvertDataFilterUtil {
                 result.add(percentValue);
             }
         }
-        System.out.println(result);
         return result;
     }
 
