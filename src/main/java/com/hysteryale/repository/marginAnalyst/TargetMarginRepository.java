@@ -18,7 +18,4 @@ public interface TargetMarginRepository extends JpaRepository<TargetMargin, Inte
             "LIMIT 1", nativeQuery = true)
     Optional<TargetMargin> getTargetMargin(@Param("region") String region, @Param("meta_series") String metaSeries, @Param("month_year") Calendar monthYear);
 
-    @Query("SELECT SUM(t.stdMarginPercentage) FROM TargetMargin t WHERE t.region = ?1 AND t.metaSeries = ?2 AND t.monthYear = ?3")
-    double getMarginGuideline(String region, String metaSeries, Calendar monthYear);
-
 }
