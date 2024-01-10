@@ -444,10 +444,11 @@ public class BookingOrderService extends BasedService {
                 totalCost += marginAnalystMacro.getCostRMB();
             }
             // exchange rate
-            ExchangeRate exchangeRate = exchangeRateService.getExchangeRate("CNY", bookingOrder.getCurrency().getCurrency(), date);
-            if (exchangeRate != null)
+            ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("CNY", bookingOrder.getCurrency().getCurrency());
+            if (exchangeRate != null) {
                 totalCost *= exchangeRate.getRate();
-           logInfo("None SN list " + marginAnalystMacroList.size() + "  "+bookingOrder.getOrderNo()+"  "+ bookingOrder.getModel());
+                logInfo("None SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getModel() + "  " + exchangeRate.getRate());
+            }
         } else { // plant is SN
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByPlantAndListPartNumber(
                     bookingOrder.getModel(), listPartNumber, bookingOrder.getCurrency().getCurrency(),
@@ -456,10 +457,11 @@ public class BookingOrderService extends BasedService {
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
                 totalCost += marginAnalystMacro.getCostRMB();
             }
-            ExchangeRate exchangeRate = exchangeRateService.getExchangeRate("USD", bookingOrder.getCurrency().getCurrency(), date);
-            if (exchangeRate != null)
+            ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("USD", bookingOrder.getCurrency().getCurrency());
+            if (exchangeRate != null) {
                 totalCost *= exchangeRate.getRate();
-            logInfo(" SN list " + marginAnalystMacroList.size() + "  "+bookingOrder.getOrderNo()+"  "+ bookingOrder.getModel());
+                logInfo(" SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getModel() + "  " + exchangeRate.getRate());
+            }
         }
 
 

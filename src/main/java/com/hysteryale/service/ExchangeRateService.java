@@ -155,4 +155,12 @@ public class ExchangeRateService extends BasedService {
         else
             return null;
     }
+
+    public ExchangeRate getNearestExchangeRate(String fromCurrency, String toCurrency) {
+        Optional<ExchangeRate> optionalExchangeRate = exchangeRateRepository.getNearestExchangeRateByFromToCurrency(fromCurrency, toCurrency);
+        if(optionalExchangeRate.isPresent())
+            return optionalExchangeRate.get();
+        else
+            return null;
+    }
 }
