@@ -186,7 +186,7 @@ public class IndicatorService extends BasedService {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
 
-            fileUploadService.saveFileUpload(multipartFile, authentication);
+            fileUploadService.saveFileUpload(baseFolder + "/" + forecastFolder + "/" + encodedFileName, authentication);
         } else {
             log.info("Can not create new file: " + encodedFileName);
             throw new Exception("Can not create new file: " + encodedFileName);

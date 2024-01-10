@@ -18,6 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -31,11 +33,10 @@ public class FileUploadService {
     /**
      * Save uploaded excel into disk and file information into db
      *
-     * @param excelFile
      * @param authentication contains upload person's email
      * @return UUID string
      */
-    public String saveFileUpload(MultipartFile excelFile, Authentication authentication) {
+    public String saveFileUpload(String filePath, Authentication authentication) {
         // Find who uploads this file
         String uploadedByEmail = authentication.getName();
         Optional<User> optionalUploadedBy = userService.getActiveUserByEmail(uploadedByEmail);
@@ -43,16 +44,14 @@ public class FileUploadService {
         if (optionalUploadedBy.isPresent()) {
             User uploadedBy = optionalUploadedBy.get();
             FileUpload fileUpload = new FileUpload();
-            Date uploadedTime = new Date();
-            String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
 
             // generate random UUID
             fileUpload.setUuid(UUID.randomUUID().toString());
             fileUpload.setUploadedBy(uploadedBy);
-            fileUpload.setUploadedTime(uploadedTime);
+            fileUpload.setUploadedTime(new Date());
 
             // append suffix into fileName
-            fileUpload.setFileName(FileUtils.encoding(Objects.requireNonNull(excelFile.getOriginalFilename())) + "_" + strUploadedTime + ".xlsx");
+            fileUpload.setFileName(filePath);
 
             // save information to db
             fileUploadRepository.save(fileUpload);

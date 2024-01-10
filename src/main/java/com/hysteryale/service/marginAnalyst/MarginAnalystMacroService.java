@@ -386,13 +386,6 @@ public class MarginAnalystMacroService {
     }
 
     /**
-     * Get MarginGuideline Value if exited else return 0
-     */
-    public double getMarginGuidelineValue(String region, String metaSeries, Calendar monthYear) {
-        return targetMarginRepository.getMarginGuideline(region, metaSeries, monthYear);
-    }
-
-    /**
      * Get class of the Model Code
      */
     public String getClassByModelCode(String modelCode) {
