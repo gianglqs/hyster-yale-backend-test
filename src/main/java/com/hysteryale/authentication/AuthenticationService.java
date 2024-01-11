@@ -2,10 +2,9 @@ package com.hysteryale.authentication;
 
 
 import com.hysteryale.authentication.payload.JwtResponse;
-import com.hysteryale.model.RefreshToken;
+import com.hysteryale.authentication.payload.TokenRefreshResponse;
 import com.hysteryale.model.User;
 import com.hysteryale.response.ResponseObject;
-import com.hysteryale.service.RefreshTokenService;
 import com.hysteryale.service.RoleService;
 import com.hysteryale.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +39,6 @@ public class AuthenticationService {
     @Resource
     AuthenticationManager authenticationManager;
 
-    @Resource
-    RefreshTokenService refreshTokenService;
 
     // signup for user
 //    public void register(User userReq) {
@@ -57,7 +54,7 @@ public class AuthenticationService {
 
     public ResponseEntity<ResponseObject> login(User userReq) {
         try {
-         Authentication authentication = authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             userReq.getEmail(),
                             userReq.getPassword()
@@ -66,8 +63,14 @@ public class AuthenticationService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             Optional<User> userDB = userService.getActiveUserByEmail(userReq.getEmail());
 
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDB.get().getId());
-            JwtResponse response = new JwtResponse(jwtService.generateToken(userReq), refreshToken.getToken(), userDB.get().getName(), userDB.get().getEmail(), userDB.get().getRole().getRoleName());
+            String accessToken = jwtService.generateAccessToken(userReq);
+            String refreshToken = jwtService.generateRefreshToken(userReq);
+            JwtResponse response = new JwtResponse(
+                    accessToken,
+                    refreshToken,
+                    userDB.get().getName(),
+                    userDB.get().getEmail(),
+                    userDB.get().getRole().getRoleName());
 
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -84,4 +87,26 @@ public class AuthenticationService {
                             null));
         }
     }
+
+    public ResponseEntity<ResponseObject> refreshToken(String refreshToken){
+        //check token
+        if(jwtService.validateToken(refreshToken)){
+            //get user from
+            String username = jwtService.extractUsername(refreshToken);
+            User user = userService.getActiveUserByEmail(username).get();
+
+            String newAccessToken = jwtService.generateAccessToken(user);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseObject("Refresh token is successfully!",
+                            new TokenRefreshResponse(
+                                    newAccessToken,
+                                    refreshToken
+                            )));
+        }
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ResponseObject("RefreshToken is invalid!", null));
+    }
+
 }
