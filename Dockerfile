@@ -3,9 +3,13 @@ FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /app
 
 #copy source code
+COPY import_files/ import_files/
 COPY src/ src/
 COPY pom.xml .
 COPY .env .
+
+# create folder to save file when import file excel
+RUN mkdir -p /tmp/UploadFiles/forecast_pricing
 
 # build file .war
 RUN mvn clean install
