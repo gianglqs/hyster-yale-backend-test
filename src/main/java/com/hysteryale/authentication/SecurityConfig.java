@@ -83,6 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 // Our public endpoints
                 .antMatchers("/oauth/login").permitAll()
+                .antMatchers("/oauth/refreshToken").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/author/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/users/resetPassword").permitAll()
                 // Our private endpoints
@@ -102,6 +103,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
+        // TODO: set origin when production server
         config.setAllowedOriginPatterns(Collections.singletonList("*"));
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
