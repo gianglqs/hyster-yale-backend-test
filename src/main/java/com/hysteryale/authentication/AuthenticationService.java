@@ -1,6 +1,8 @@
 package com.hysteryale.authentication;
 
 
+import com.hysteryale.authentication.payload.JwtResponse;
+import com.hysteryale.authentication.payload.TokenRefreshResponse;
 import com.hysteryale.model.User;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.RoleService;
@@ -17,8 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -39,6 +39,7 @@ public class AuthenticationService {
     @Resource
     AuthenticationManager authenticationManager;
 
+
     // signup for user
 //    public void register(User userReq) {
 //        Role role = roleService.getRoleByRowName("ADMIN");
@@ -53,18 +54,24 @@ public class AuthenticationService {
 
     public ResponseEntity<ResponseObject> login(User userReq) {
         try {
-         Authentication authentication = authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             userReq.getEmail(),
                             userReq.getPassword()
                     )
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            Map<String, Object> response = new HashMap<>();
             Optional<User> userDB = userService.getActiveUserByEmail(userReq.getEmail());
-            response.put("access_token", jwtService.generateToken(userReq));
-            response.put("name", userDB.get().getName());
-            response.put("role", userDB.get().getRole().getRoleName());
+
+            String accessToken = jwtService.generateAccessToken(userReq);
+            String refreshToken = jwtService.generateRefreshToken(userReq);
+            JwtResponse response = new JwtResponse(
+                    accessToken,
+                    refreshToken,
+                    userDB.get().getName(),
+                    userDB.get().getEmail(),
+                    userDB.get().getRole().getRoleName());
+
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ResponseObject(
@@ -80,4 +87,26 @@ public class AuthenticationService {
                             null));
         }
     }
+
+    public ResponseEntity<ResponseObject> refreshToken(String refreshToken){
+        //check token
+        if(jwtService.validateToken(refreshToken)){
+            //get user from
+            String username = jwtService.extractUsername(refreshToken);
+            User user = userService.getActiveUserByEmail(username).get();
+
+            String newAccessToken = jwtService.generateAccessToken(user);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseObject("Refresh token is successfully!",
+                            new TokenRefreshResponse(
+                                    newAccessToken,
+                                    refreshToken
+                            )));
+        }
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ResponseObject("RefreshToken is invalid!", null));
+    }
+
 }
