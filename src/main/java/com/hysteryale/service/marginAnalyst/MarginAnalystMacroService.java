@@ -97,7 +97,6 @@ public class MarginAnalystMacroService {
         // Extract monthYear from fileName pattern
         Pattern pattern = Pattern.compile(".* Macro_(\\w{3}) .*");
         Matcher matcher = pattern.matcher(fileName);
-        int year = 2023;
         String month;
 
         if(matcher.find()) {
@@ -107,7 +106,7 @@ public class MarginAnalystMacroService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is not in appropriate format");
 
         Calendar monthYear = Calendar.getInstance();
-        monthYear.set(year, DateUtils.monthMap.get(month) -1, 1);
+        monthYear.set(monthYear.get(Calendar.YEAR), DateUtils.monthMap.get(month), 1);
 
         log.info("Reading " + fileName);
         XLSBWorkbook workbook = new XLSBWorkbook();
