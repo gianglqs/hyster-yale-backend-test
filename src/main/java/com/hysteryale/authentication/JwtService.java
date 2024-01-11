@@ -36,22 +36,15 @@ public class JwtService extends BasedService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateAccessToken(UserDetails userDetails) {
+        return buildToken(new HashMap<>(), userDetails, accessTokenExpiration);
     }
 
-    public String generateToken(
-            Map<String, Object> extraClaims,
+    public String generateRefreshToken(
             UserDetails userDetails
     ) {
-        return buildToken(extraClaims, userDetails, accessTokenExpiration);
+        return buildToken(new HashMap<>(), userDetails, refreshTokenExpiration);
     }
-
-//    public String generateRefreshToken(
-//            UserDetails userDetails
-//    ) {
-//        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
-//    }
 
     private String buildToken(
             Map<String, Object> extraClaims,
