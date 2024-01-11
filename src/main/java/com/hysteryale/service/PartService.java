@@ -193,7 +193,7 @@ public class PartService extends BasedService {
         return averageDealerNet != null ? averageDealerNet : 0;
     }
 
-    public List<String> getPartNumberByOrderNo(String orderNo) {
+    public List<String> getAllPartNumbersByOrderNo(String orderNo) {
         return partRepository.getPartNumberByOrderNo(orderNo);
     }
 

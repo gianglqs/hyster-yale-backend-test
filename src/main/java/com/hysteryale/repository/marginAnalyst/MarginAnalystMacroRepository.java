@@ -33,13 +33,13 @@ public interface MarginAnalystMacroRepository extends JpaRepository<MarginAnalys
             "AND m.part_number = :partNumber " +
             "AND m.currency_currency = :currency " +
             "AND m.plant in :plants " +
-            "AND m.month_year = :monthYear LIMIT 1", nativeQuery = true)
+            "AND m.month_year = :monthYear ORDER BY m.costrmb DESC LIMIT 1", nativeQuery = true)
     Double getManufacturingCost(@Param("modelCode") String modelCode, @Param("partNumber") String partNumber, @Param("currency") String strCurrency,
                                 @Param("plants") List<String> plants, @Param("monthYear") Calendar monthYear);
     @Query("SELECT m FROM MarginAnalystMacro m WHERE m.modelCode LIKE CONCAT ('%', ?1, '%') AND m.partNumber IN (?2) AND m.currency.currency = ?3 AND m.plant = ?4 AND m.monthYear = ?5")
     List<MarginAnalystMacro> getMarginAnalystMacroByPlantAndListPartNumber(String modelCode, List<String> partNumber, String currency, String plant, Calendar monthYear);
 
-    @Query("SELECT m FROM MarginAnalystMacro m WHERE m.modelCode LIKE CONCAT ('%', ?1, '%') AND m.partNumber IN ?2 AND m.currency.currency = ?3  AND m.monthYear = ?4")
+    @Query("SELECT m FROM MarginAnalystMacro m WHERE m.modelCode LIKE CONCAT ('%', ?1, '%') AND m.partNumber IN (?2) AND m.currency.currency = ?3  AND m.plant != 'SN' AND m.monthYear = ?4")
     List<MarginAnalystMacro> getMarginAnalystMacroByHYMPlantAndListPartNumber(String modelCode, List<String> partNumber, String currency, Calendar monthYear);
 
     @Query("SELECT CASE WHEN(COUNT(m) > 0) THEN 1 ELSE 0 END FROM MarginAnalystMacro m WHERE m.modelCode = ?1 AND m.partNumber = ?2 AND m.currency.currency = ?3 AND m.monthYear = ?4")
