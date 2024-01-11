@@ -2,6 +2,7 @@ package com.hysteryale.controller;
 
 import com.hysteryale.authentication.AuthenticationService;
 import com.hysteryale.authentication.JwtService;
+import com.hysteryale.authentication.payload.TokenRefreshRequest;
 import com.hysteryale.model.User;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.UserService;
@@ -31,11 +32,11 @@ public class UserController {
     public UserService userService;
     @Resource
     EmailServiceImpl emailService;
-
     @Resource
     AuthenticationService authenticationService;
     @Resource
     JwtService jwtService;
+
 
     /**
      * Get user's details by userId
@@ -172,4 +173,10 @@ public class UserController {
     @PostMapping(path = "/oauth/checkTokenOfAdmin")
     @PreAuthorize("hasAuthority('ADMIN')")
     public void checkTokenOfAdmin() {}
+
+    @PostMapping("/oauth/refreshToken")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+        return authenticationService.refreshToken(requestRefreshToken);
+    }
 }
