@@ -8,10 +8,7 @@ import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.repository.PartRepository;
 import com.hysteryale.repository.bookingorder.BookingOrderRepository;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
-import com.hysteryale.utils.ConvertDataFilterUtil;
-import com.hysteryale.utils.DateUtils;
-import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.PlantUtil;
+import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -693,7 +690,52 @@ public class BookingOrderService extends BasedService {
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
                 (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable")
         );
+
+        // get currency for order -> get exchange_rate
+        List<String> listCurrency = new ArrayList<>();
+        List<ExchangeRate> exchangeRateList = new ArrayList<>();
+        List<String> listTargetCurrency = TargetCurrency.getListTargetCurrency;
+        BookingOrder rowTotal = new BookingOrder();
+        List<BookingOrder> listRowTotal = List.of(rowTotal);
+        String defaultCurrency = "USD";
+        rowTotal.setCurrency(new Currency(defaultCurrency));
+        rowTotal.setOrderNo("Total");
+
+
+        for (BookingOrder bookingOrder : bookingOrderList) {
+            if (bookingOrder.getCurrency() != null) {
+                String currency = bookingOrder.getCurrency().getCurrency();
+                if (!listCurrency.contains(currency)) { // get distinct currency in list order
+                    listCurrency.add(currency);
+                    for (String targetCurrency : listTargetCurrency) {
+                        if (!targetCurrency.equals(currency)) { // get exchange_rate FROM current currency of order TO targetCurrency
+                            exchangeRateList.add(exchangeRateService.getNearestExchangeRate(currency, targetCurrency));
+                        }
+                    }
+                }
+                // calculate RowTotal : Default currency : USD
+                if (currency.equals(defaultCurrency)) { // USD: don't exchange
+                    rowTotal.setDealerNet(rowTotal.getDealerNet() + bookingOrder.getDealerNet());
+                    rowTotal.setDealerNetAfterSurCharge(rowTotal.getDealerNetAfterSurCharge() + bookingOrder.getDealerNetAfterSurCharge());
+                    rowTotal.setTotalCost(rowTotal.getTotalCost() + bookingOrder.getTotalCost());
+                    rowTotal.setMarginAfterSurCharge(rowTotal.getDealerNetAfterSurCharge() - rowTotal.getTotalCost());
+                    rowTotal.setMarginPercentageAfterSurCharge(rowTotal.getMarginAfterSurCharge() / rowTotal.getDealerNetAfterSurCharge());
+                } else {// <> USD: exchange to USD
+                    double rate = exchangeRateService.getNearestExchangeRate(currency, defaultCurrency).getRate();
+                    rowTotal.setDealerNet(rowTotal.getDealerNet() + bookingOrder.getDealerNet() * rate);
+                    rowTotal.setDealerNetAfterSurCharge(rowTotal.getDealerNetAfterSurCharge() + bookingOrder.getDealerNetAfterSurCharge() * rate);
+                    rowTotal.setTotalCost(rowTotal.getTotalCost() + bookingOrder.getTotalCost() * rate);
+                    rowTotal.setMarginAfterSurCharge(rowTotal.getDealerNetAfterSurCharge() - rowTotal.getTotalCost());
+                    rowTotal.setMarginPercentageAfterSurCharge(rowTotal.getMarginAfterSurCharge() / rowTotal.getDealerNetAfterSurCharge());
+                }
+            }
+        }
+
+
+        result.put("listExchangeRate", exchangeRateList);
         result.put("listBookingOrder", bookingOrderList);
+
+
         //get total Recode
         int countAll = bookingOrderRepository.getCount((String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
@@ -703,14 +745,15 @@ public class BookingOrderService extends BasedService {
                 (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
         result.put("totalItems", countAll);
 
-        // get total
+        // get data for totalRow
         List<BookingOrder> getTotal = bookingOrderRepository.getTotal((String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
                 (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
-        result.put("total", getTotal);
+        result.put("total", listRowTotal);
+
 
         return result;
     }
