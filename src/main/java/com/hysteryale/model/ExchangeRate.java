@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.xmlbeans.impl.store.Cur;
 
 import javax.persistence.*;
 import java.util.Calendar;
@@ -26,5 +27,12 @@ public class ExchangeRate {
     private double rate;
     @Temporal(TemporalType.DATE)
     private Calendar date;
+
+    public ExchangeRate (Currency fromCurrency, Currency toCurrency, double rate, Calendar date) {
+        this.from = fromCurrency;
+        this.to = toCurrency;
+        this.rate = rate;
+        this.date = date;
+    }
 
 }
