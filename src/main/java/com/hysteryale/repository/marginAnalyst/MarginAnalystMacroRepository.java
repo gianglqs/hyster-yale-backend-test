@@ -48,4 +48,10 @@ public interface MarginAnalystMacroRepository extends JpaRepository<MarginAnalys
     @Query(value = "SELECT m.clazz FROM margin_analyst_macro m WHERE m.model_code LIKE CONCAT('%', :model_code, '%') LIMIT 1", nativeQuery = true)
     String getClassByModelCode(@Param("model_code") String modelCode);
 
+    @Query("SELECT m FROM MarginAnalystMacro m WHERE m.plant = ?1 AND m.currency.currency = ?2 AND monthYear = ?3")
+    List<MarginAnalystMacro> loadListMacroData(String plant, String currency, Calendar monthYear);
+
+    @Query("SELECT m FROM MarginAnalystMacro m WHERE m.plant != 'SN' AND m.currency.currency = ?1 AND monthYear = ?2")
+    List<MarginAnalystMacro> loadListHYMMacroData(String currency, Calendar monthYear);
+
 }

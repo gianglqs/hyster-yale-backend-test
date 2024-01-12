@@ -150,9 +150,10 @@ public class ExchangeRateService extends BasedService {
 
     public ExchangeRate getExchangeRate(String fromCurrency, String toCurrency, Calendar monthYear) {
         Optional<ExchangeRate> optionalExchangeRate = exchangeRateRepository.getExchangeRateByFromToCurrencyAndDate(fromCurrency, toCurrency, monthYear);
-        if(optionalExchangeRate.isPresent())
-            return optionalExchangeRate.get();
-        else
-            return null;
+        return optionalExchangeRate.orElse(null);
+    }
+
+    public void saveExchangeRate(ExchangeRate exchangeRate) {
+        exchangeRateRepository.save(exchangeRate);
     }
 }

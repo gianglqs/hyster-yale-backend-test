@@ -1,9 +1,12 @@
 package com.hysteryale.service.marginAnalyst;
 
 import com.hysteryale.model.Currency;
+import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.marginAnalyst.*;
+import com.hysteryale.repository.ExchangeRateRepository;
 import com.hysteryale.repository.marginAnalyst.*;
 import com.hysteryale.service.CurrencyService;
+import com.hysteryale.service.ExchangeRateService;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import com.hysteryale.utils.DateUtils;
 import com.hysteryale.utils.EnvironmentUtils;
@@ -37,8 +40,11 @@ public class MarginAnalystMacroService {
     TargetMarginRepository targetMarginRepository;
     @Resource
     WarrantyRepository warrantyRepository;
+    @Resource
+    ExchangeRateService exchangeRateService;
 
     static HashMap<String, String> MACRO_COLUMNS = new HashMap<>();
+    static List<MarginAnalystMacro> listMarginData = new ArrayList<>();
 
     private void getMacroColumns(Row row) {
         for(Cell cell : row.getCellList()) {
@@ -95,18 +101,19 @@ public class MarginAnalystMacroService {
     // Import Macro from a file
     public void importMarginAnalystMacroFromFile(String fileName, String filePath) {
         // Extract monthYear from fileName pattern
-        Pattern pattern = Pattern.compile(".* Macro_(\\w{3}) .*");
+        Pattern pattern = Pattern.compile(".* Macro_(\\w{3}) (\\d{4}).*");
         Matcher matcher = pattern.matcher(fileName);
         String month;
+        int year;
 
         if(matcher.find()) {
             month = matcher.group(1);
+            year = Integer.parseInt(matcher.group(2));
         }
         else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is not in appropriate format");
-
         Calendar monthYear = Calendar.getInstance();
-        monthYear.set(monthYear.get(Calendar.YEAR), DateUtils.monthMap.get(month), 1);
+        monthYear.set(year, DateUtils.monthMap.get(month), 1);
 
         log.info("Reading " + fileName);
         XLSBWorkbook workbook = new XLSBWorkbook();
@@ -118,6 +125,13 @@ public class MarginAnalystMacroService {
             String currency = macroSheet.contains("USD") ? "USD" : "AUD";
             String plant  = macroSheet.contains("SN") ? "SN" : "HYM";
             int columnNameRow = plant.equals("SN") ? 8 : 0;
+
+            if(plant.equals("SN"))
+                listMarginData = marginAnalystMacroRepository.loadListMacroData(plant, currency, monthYear);
+            else
+                listMarginData = marginAnalystMacroRepository.loadListHYMMacroData(currency, monthYear);
+
+            log.info("Size: " + listMarginData.size());
 
             try {
                 workbook.openFile(filePath);
@@ -137,13 +151,13 @@ public class MarginAnalystMacroService {
                     }
                     else if(row.getRowNum() > columnNameRow) {
                         MarginAnalystMacro marginAnalystMacro = mapExcelDataToMarginAnalystMacro(row, currency, monthYear, plant);
-                        Optional<MarginAnalystMacro> optionalMarginAnalystMacro = getMarginAnalystMacro(row, plant, currency, monthYear);
+                        MarginAnalystMacro existedMacro = isMacroExisted(row, plant, currency, monthYear);
 
-                        if(optionalMarginAnalystMacro.isEmpty()) {
+                        if(existedMacro == null) {
                             marginAnalystMacroList.add(marginAnalystMacro);
                         }
                         else {
-                            MarginAnalystMacro dbMacro = updateMacro(optionalMarginAnalystMacro.get(), marginAnalystMacro);
+                            MarginAnalystMacro dbMacro = updateMacro(existedMacro, marginAnalystMacro);
                             marginAnalystMacroList.add(dbMacro);
                         }
                     }
@@ -156,6 +170,8 @@ public class MarginAnalystMacroService {
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
+
+            listMarginData.clear();
         }
         importFreightFromFile(filePath, monthYear);
         importTargetMarginFromFile(filePath, monthYear);
@@ -238,6 +254,7 @@ public class MarginAnalystMacroService {
             workbook.openFile(filePath);
             Sheet sheet = workbook.getSheet("Mappting");
 
+            // Getting Warranty values
             for (int i = 7; i <= 12; i++) {
                 String clazz = sheet.getRow(i).getCell("A").getValue();
                 double warrantyValue = sheet.getRow(i).getCell("B").getNumericCellValue();
@@ -248,6 +265,23 @@ public class MarginAnalystMacroService {
 
                 warrantyRepository.save(warranty);
             }
+
+            // Getting Exchange Rate value between CNY (RMB), USD and AUD
+            Pattern pattern = Pattern.compile("(\\w{3}) to (\\w{3})");
+            for(int i = 1; i <= 4; i++) {
+                Matcher matcher = pattern.matcher(sheet.getRow(i).getCell("A").getValue());
+                if(matcher.find()) {
+                    Currency fromCurrency = currencyService.getCurrenciesByName(matcher.group(1));
+                    Currency toCurrency = currencyService.getCurrenciesByName(matcher.group(2));
+                    double annuallyRate = sheet.getRow(i).getCell("B").getNumericCellValue();
+
+                    if(exchangeRateService.getExchangeRate(fromCurrency.getCurrency(), toCurrency.getCurrency(), monthYear) == null) {
+                        ExchangeRate exchangeRate = new ExchangeRate(fromCurrency, toCurrency, annuallyRate, monthYear);
+                        exchangeRateService.saveExchangeRate(exchangeRate);
+                    }
+                }
+            }
+
         } catch (Exception exception) {
             log.error(exception.getMessage());
         }
@@ -277,6 +311,31 @@ public class MarginAnalystMacroService {
         }
 //        log.info(modelCode + " - " + partNumber + " -  " + currency + " - " + monthYear.get(Calendar.MONTH));
         return marginAnalystMacroRepository.getMarginAnalystMacroByMonthYear(modelCode, partNumber, currency, monthYear);
+    }
+
+    private MarginAnalystMacro isMacroExisted(Row row, String plant, String currency, Calendar monthYear) {
+        String modelCode;
+        String partNumber = row.getCell(MACRO_COLUMNS.get("Option Code")).getValue();
+
+        if(plant.equals("HYM"))
+            modelCode = row.getCell(MACRO_COLUMNS.get("Model Code")).getValue();
+        else {
+            modelCode = row.getCell(MACRO_COLUMNS.get("MODEL CD    (inc \"-\")")).getValue();
+            if(modelCode.isEmpty())
+                modelCode = row.getCell(MACRO_COLUMNS.get("MODEL CD (incl \"-\")")).getValue();
+        }
+        for(MarginAnalystMacro macro : listMarginData) {
+            Calendar dbMonthYear = macro.getMonthYear();
+            if(
+                    macro.getModelCode().equals(modelCode)
+                    && macro.getPartNumber().equals(partNumber)
+                    && macro.getCurrency().getCurrency().equals(currency)
+                    && dbMonthYear.get(Calendar.YEAR) == monthYear.get(Calendar.YEAR)
+                    && dbMonthYear.get(Calendar.MONTH) == monthYear.get(Calendar.MONTH)
+            )
+                return macro;
+        }
+        return null;
     }
 
     private MarginAnalystMacro updateMacro(MarginAnalystMacro dbMacro, MarginAnalystMacro fileMacro) {
