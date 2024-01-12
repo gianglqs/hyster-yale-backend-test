@@ -1,0 +1,216 @@
+{
+	"info": {
+		"_postman_id": "a12d701a-6e7a-4266-bc6c-4a105745286c",
+		"name": "HY-API-testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28736460",
+		"_collection_link": "https://solar-spaceship-62938.postman.co/workspace/Hyster-Yale-Workspace~acb63f6f-2ff4-4e7c-8031-2f4b65c1f157/collection/28736460-a12d701a-6e7a-4266-bc6c-4a105745286c?action=share&source=collection_link&creator=28736460"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Test Login - Success",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"access_token\", \"Bearer \" + jsonData.data.access_token);",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has a JSON body\", function () {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response have a message\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.a('string');",
+									"})",
+									"",
+									"pm.test(\"Response have a token properties\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.access_token).to.be.a('string');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@gmail.com\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/oauth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"oauth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Login - Failed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"})",
+									"",
+									"pm.test(\"Response have a message of login failed\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.a('string');",
+									"    pm.expect(jsonData.message).to.eql(\"Username or password is incorrect!\")",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@gmail.com\",\n    \"password\": \"123456123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/oauth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"oauth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Controller",
+			"item": [
+				{
+					"name": "Test Get User by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Response has userDetails\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.userDetails).to.be.a('object');",
+									"})",
+									"",
+									"pm.test(\"Response returns user's information\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.userDetails.name).to.be.a('string');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/users/getDetails/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"getDetails",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get User by id - Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"})",
+									"",
+									"pm.test(\"Response has message of not-found\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.a('string');",
+									"    pm.expect(jsonData.message).to.contains('No user with id:');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/users/getDetails/091283",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"getDetails",
+								"091283"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
