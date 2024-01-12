@@ -425,7 +425,7 @@ public class BookingOrderService extends BasedService {
     }
 
     public BookingOrder importCostRMBOfEachParts(BookingOrder bookingOrder) {
-        List<String> listPartNumber = partService.getPartNumberByOrderNo(bookingOrder.getOrderNo());
+        List<String> listPartNumber = partService.getAllPartNumbersByOrderNo(bookingOrder.getOrderNo());
         Currency currency = partService.getCurrencyByOrderNo(bookingOrder.getOrderNo());
 
         Calendar orderDate = bookingOrder.getDate();
@@ -437,13 +437,19 @@ public class BookingOrderService extends BasedService {
         bookingOrder.setCurrency(currency);
         logInfo(bookingOrder.getOrderNo() + "   " + currency.getCurrency());
         double totalCost = 0;
-        if (!bookingOrder.getProductDimension().getPlant().equals("SN")) {
+        if (!bookingOrder.getProductDimension().getPlant().equals("SN")) { // plant is Hysteryale, Maximal, Ruyi, Staxx
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByHYMPlantAndListPartNumber(
                     bookingOrder.getModel(), listPartNumber, bookingOrder.getCurrency().getCurrency(), date);
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
                 totalCost += marginAnalystMacro.getCostRMB();
             }
-        } else {
+            // exchange rate
+            ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("CNY", bookingOrder.getCurrency().getCurrency());
+            if (exchangeRate != null) {
+                totalCost *= exchangeRate.getRate();
+                logInfo("None SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getModel() + "  " + exchangeRate.getRate());
+            }
+        } else { // plant is SN
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByPlantAndListPartNumber(
                     bookingOrder.getModel(), listPartNumber, bookingOrder.getCurrency().getCurrency(),
                     bookingOrder.getProductDimension().getPlant(), date);
@@ -451,12 +457,14 @@ public class BookingOrderService extends BasedService {
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
                 totalCost += marginAnalystMacro.getCostRMB();
             }
+            ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("USD", bookingOrder.getCurrency().getCurrency());
+            if (exchangeRate != null) {
+                totalCost *= exchangeRate.getRate();
+                logInfo(" SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getModel() + "  " + exchangeRate.getRate());
+            }
         }
 
-        // exchange rate
-        ExchangeRate exchangeRate = exchangeRateService.getExchangeRate("CNY", bookingOrder.getCurrency().getCurrency(), date);
-        if (exchangeRate != null)
-            totalCost *= exchangeRate.getRate();
+
         bookingOrder.setTotalCost(totalCost);
         logInfo(bookingOrder.getTotalCost() + "");
         return bookingOrder;

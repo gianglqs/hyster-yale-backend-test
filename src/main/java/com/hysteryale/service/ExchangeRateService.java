@@ -156,4 +156,12 @@ public class ExchangeRateService extends BasedService {
     public void saveExchangeRate(ExchangeRate exchangeRate) {
         exchangeRateRepository.save(exchangeRate);
     }
+
+    public ExchangeRate getNearestExchangeRate(String fromCurrency, String toCurrency) {
+        Optional<ExchangeRate> optionalExchangeRate = exchangeRateRepository.getNearestExchangeRateByFromToCurrency(fromCurrency, toCurrency);
+        if(optionalExchangeRate.isPresent())
+            return optionalExchangeRate.get();
+        else
+            return null;
+    }
 }
