@@ -172,7 +172,7 @@ public class UserControllerTest {
     public void testChangePassword() throws Exception {
         String email = "admin@gmail.com";
         String password = "123456";
-        String token = jwtService.generateToken(new User(email, password));
+        String token = jwtService.generateAccessToken(new User(email, password));
         MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders.multipart("/users/changePassword")
                         .param("oldPassword", "123456")
@@ -191,7 +191,7 @@ public class UserControllerTest {
     public void testChangePassword_wrongOldPassword() throws Exception {
         String email = "admin@gmail.com";
         String password = "123456";
-        String token = jwtService.generateToken(new User(email, password));
+        String token = jwtService.generateAccessToken(new User(email, password));
         MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders.multipart("/users/changePassword")
                         .param("oldPassword", "1234")
@@ -208,7 +208,7 @@ public class UserControllerTest {
     public void testChangePassword_weakNewPassword() throws Exception {
         String email = "admin@gmail.com";
         String password = "123456";
-        String token = jwtService.generateToken(new User(email, password));
+        String token = jwtService.generateAccessToken(new User(email, password));
         MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders.multipart("/users/changePassword")
                         .param("oldPassword", "123456")
@@ -288,7 +288,7 @@ public class UserControllerTest {
                                 .content(parseUserToJSONString(user))
                                 .contentType(MediaType.APPLICATION_JSON)
                         )
-                        .andExpect(jsonPath("$.data.access_token").exists())
+                        .andExpect(jsonPath("$.data.accessToken").exists())
                         .andReturn();
         Assertions.assertEquals(200, result.getResponse().getStatus());
         Assertions.assertTrue(result.getResponse().getContentAsString().contains("Login successfully"));
