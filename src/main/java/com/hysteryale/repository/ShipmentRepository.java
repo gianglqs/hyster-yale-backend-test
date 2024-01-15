@@ -184,4 +184,127 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
                             @Param("fromDate") Calendar fromDate,
                             @Param("toDate") Calendar toDate);
+
+    @Query(value =
+            "with exchange_rate_cte as (" +
+                    "select " +
+                    "   er.from_currency ," +
+                    "   er.rate as latest_rate " +
+                    "from" +
+                    "   exchange_rate er " +
+                    "join" +
+                    "   (" +
+                    "       select " +
+                    "           from_currency ," +
+                    "           max(date) as latest_date" +
+                    "       from" +
+                    "           exchange_rate" +
+                    "       where " +
+                    "           to_currency = 'USD' " +
+                    "       group by " +
+                    "           from_currency " +
+                    "   ) latest_date " +
+                    "on" +
+                    "   er.from_currency = latest_date.from_currency" +
+                    "   and er.date = latest_date.latest_date " +
+                    "where " +
+                    "   er.to_currency = 'USD' " +
+                    ")" +
+                    "select " +
+                    "   'Total' as order_no, " +
+                    "   0 as aopmargin_percentage, " +
+                    "   null as bill_to, " +
+                    "   null as comment, " +
+                    "   null as ctry_code, " +
+                    "   null as date, " +
+                    "   null as dealer_name, " +
+                    "   null as dealerpo, " +
+                    "   'USD' as currency, " +
+                    "   null as order_type, " +
+                    "   null as series, " +
+                    "   null as truck_class, " +
+                    "   null as serial_number, " +
+                    "   null as product_dimension, " +
+                    "   null as region, " +
+                    "   null as model, " +
+                    "   coalesce(total_cost, 0) as total_cost, " +
+                    "   coalesce(dealer_net, 0) as dealer_net, " +
+                    "   coalesce(netrevenue, 0) as netrevenue, " +
+                    "   coalesce(dealer_net_after_sur_charge, 0) as dealer_net_after_sur_charge, " +
+                    "   coalesce(dealer_net_after_sur_charge - total_cost, 0)as margin_after_sur_charge, " +
+                    "   coalesce((dealer_net_after_sur_charge - total_cost) / nullif(dealer_net_after_sur_charge, 0), 0) as margin_percentage_after_sur_charge, " +
+                    "   coalesce(quantity, 0) as quantity, " +
+                    "   0 as booking_margin_percentage_after_sur_charge " +
+                    "from " +
+                    "   (" +
+                    "   select" +
+                    "       sum(" +
+                    "            case " +
+                    "                when bo.currency = 'USD' then bo.total_cost " +
+                    "                when bo.currency is not null then coalesce(er.latest_rate, 1) * bo.total_cost " +
+                    "            end " +
+                    "        ) as total_cost," +
+                    "       sum( " +
+                    "            case " +
+                    "                when bo.currency = 'USD' then bo.dealer_net " +
+                    "                when bo.currency is not null then coalesce(er.latest_rate, 1) * bo.dealer_net " +
+                    "            end " +
+                    "        ) as dealer_net, " +
+                    "       sum( " +
+                    "            case " +
+                    "                when bo.currency = 'USD' then bo.netrevenue " +
+                    "                when bo.currency is not null then coalesce(er.latest_rate, 1) * bo.netrevenue " +
+                    "            end " +
+                    "        ) as netrevenue, " +
+                    "       sum(" +
+                    "            case " +
+                    "                when bo.currency = 'USD' then bo.dealer_net_after_sur_charge " +
+                    "                when bo.currency is not null then coalesce(er.latest_rate, 1) * bo.dealer_net_after_sur_charge " +
+                    "            end " +
+                    "        ) as dealer_net_after_sur_charge, " +
+                    "       sum(bo.quantity) as quantity " +
+                    "    from " +
+                    "       shipment bo " +
+                    "   left join exchange_rate_cte er on " +
+                    "       bo.currency = er.from_currency " +
+                    "   left join productdimension pd on " +
+                    "       bo.product_dimension = pd.id " +
+                    "   left join region r on " +
+                    "       bo.region = r.id " +
+                    "   where " +
+                    "      (:orderNo is null or lower(bo.order_no) = lower( :orderNo))  " +
+                    "       and (:regions is null or r.region in :regions) " +
+                    "       and (:dealerNames is null or bo.dealer_name in (:dealerNames)) " +
+                    "       and (:classes is null or pd.clazz in (:classes)) " +
+                    "       and (:plants is null or pd.plant in (:plants)) " +
+                    "       and (:segments is null or pd.segment in (:segments)) " +
+                    "       and (:metaSeries is null or substring(bo.series, 2, 3) in (:metaSeries)) " +
+                    "       and (:models is null or bo.model in (:models)) " +
+                    "       AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
+                    "           (:comparator = '<=' AND bo.margin_percentage_after_sur_charge <= :marginPercentageAfterSurCharge) OR" +
+                    "           (:comparator = '>=' AND bo.margin_percentage_after_sur_charge >= :marginPercentageAfterSurCharge) OR" +
+                    "           (:comparator = '<' AND bo.margin_percentage_after_sur_charge < :marginPercentageAfterSurCharge) OR" +
+                    "           (:comparator = '>' AND bo.margin_percentage_after_sur_charge > :marginPercentageAfterSurCharge) OR" +
+                    "           (:comparator = '=' AND bo.margin_percentage_after_sur_charge = :marginPercentageAfterSurCharge))" +
+                    "       and ((:AOPMarginPercentage) IS NULL or " +
+                    "           (:AOPMarginPercentage = 'Above AOP Margin %' and bo.margin_percentage_after_sur_charge > bo.aopmargin_percentage ) or " +
+                    "           (:AOPMarginPercentage = 'Below AOP Margin %' and bo.margin_percentage_after_sur_charge <= bo.aopmargin_percentage ) )" +
+                    "       and ( bo.date >= :fromDate) "+
+                    "       and ( bo.date <= :toDate) " +
+                    ") as subquery; ", nativeQuery = true)
+    List<Shipment> getTotalRowForShipmentPage(
+            @Param("orderNo") String orderNo,
+            @Param("regions") List<String> regions,
+            @Param("plants") List<String> plants,
+            @Param("metaSeries") List<String> metaSeries,
+            @Param("classes") List<String> classes,
+            @Param("models") List<String> models,
+            @Param("segments") List<String> segments,
+            @Param("dealerNames") List<String> dealerNames,
+            @Param("AOPMarginPercentage") String AOPMarginPercentage,
+            @Param("comparator") String comparator,
+            @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
+            @Param("fromDate") Calendar fromDate,
+            @Param("toDate") Calendar toDate
+    );
 }
