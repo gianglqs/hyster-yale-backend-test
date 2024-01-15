@@ -220,7 +220,7 @@ public class MarginAnalystMacroService {
             HashMap<String, String> columnMap = new HashMap<>();
             List<TargetMargin> targetMarginList = new ArrayList<>();
 
-            Sheet sheet = workbook.getSheet("AOPF " + monthYear.get(Calendar.YEAR));
+            Sheet sheet = workbook.getAOPFSheet();
             for(Row row : sheet.getRowList()) {
                 if(row.getRowNum() == 0) {
                     for(Cell cell : row.getCellList())
