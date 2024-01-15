@@ -715,7 +715,7 @@ public class BookingOrderService extends BasedService {
         result.put("listBookingOrder", bookingOrderList);
 
 
-        //get total Recode
+        //get count Recode
         int countAll = bookingOrderRepository.getCount((String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
