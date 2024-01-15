@@ -2,8 +2,10 @@ package com.hysteryale.service;
 
 import com.hysteryale.model.ProductDimension;
 import com.hysteryale.model.ProductDimension;
+import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ProductDimensionRepository;
 import com.hysteryale.repository.ProductDimensionRepository;
+import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.CellType;
@@ -18,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.util.*;
 
 
@@ -59,7 +62,7 @@ public class ProductDimensionService extends BasedService {
                 field.set(productDimension, row.getCell(APAC_COLUMNS.get("Class_wBT")).getStringCellValue());
             } else if (fieldName.equals("segment")) {
                 field.set(productDimension, row.getCell(APAC_COLUMNS.get("Segment")).getStringCellValue());
-            }else if (fieldName.equals("model")) {
+            } else if (fieldName.equals("model")) {
                 field.set(productDimension, row.getCell(APAC_COLUMNS.get("Model")).getStringCellValue());
             }
         }
@@ -167,10 +170,32 @@ public class ProductDimensionService extends BasedService {
         return segmentMap;
     }
 
-    public String getModelFromMetaSeries(String metaSeries){
+    public String getModelFromMetaSeries(String metaSeries) {
         Optional<String> modelOptional = productDimensionRepository.getModelByMetaSeries(metaSeries);
-        logInfo("mdoel"+modelOptional.get());
+        logInfo("mdoel" + modelOptional.get());
         return modelOptional.orElse(null);
     }
 
+    public Map<String, Object> getDataByFilter(FilterModel filters) throws ParseException {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
+        // product filter by: plant, segment, brand, family, metaSeries
+        List<ProductDimension> getData = productDimensionRepository.getDataByFilter(
+                (String) filterMap.get("modelCode"), (List<String>) filterMap.get("plantFilter"),
+                (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
+                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
+                (List<String>) filterMap.get("familyFilter")
+        );
+        result.put("listData", getData);
+        //Count data
+        long countAll = productDimensionRepository.countAll(
+                (String) filterMap.get("modelCode"), (List<String>) filterMap.get("plantFilter"),
+                (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
+                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
+                (List<String>) filterMap.get("familyFilter"));
+        result.put("total", countAll);
+
+        return result;
+
+    }
 }
