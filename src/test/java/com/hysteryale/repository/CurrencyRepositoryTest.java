@@ -1,4 +1,4 @@
-package com.hysteryale.repositories;
+package com.hysteryale.repository;
 
 import com.hysteryale.model.Currency;
 import com.hysteryale.repository.CurrencyRepository;

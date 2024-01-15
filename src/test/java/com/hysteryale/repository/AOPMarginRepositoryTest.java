@@ -1,4 +1,4 @@
-package com.hysteryale.repositories;
+package com.hysteryale.repository;
 
 public class AOPMarginRepositoryTest {
 }
