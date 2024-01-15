@@ -132,5 +132,14 @@ public class BookingOrder {
         this.marginPercentageAfterSurCharge = marginPercentageAfterSurCharge;
     }
 
+    public BookingOrder(String order_no, double sum_total_cost, double sum_dealer_net, double sum_dealer_net_after_sur_charge, double sum_margin_after_sur_charge, double sum_margin_percentage_after_surcharge, long sum_quantity){
+        this.orderNo = order_no;
+        this.totalCost = sum_total_cost;
+        this.dealerNet = sum_dealer_net;
+        this.dealerNetAfterSurCharge = sum_dealer_net_after_sur_charge;
+        this.marginAfterSurCharge = sum_margin_after_sur_charge;
+        this.marginPercentageAfterSurCharge = sum_margin_percentage_after_surcharge;
+        this.quantity = sum_quantity;
+    }
 
 }

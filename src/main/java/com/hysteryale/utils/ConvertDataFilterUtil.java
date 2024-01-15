@@ -54,7 +54,7 @@ public class ConvertDataFilterUtil {
     }
 
     private static List<String> checkListData(List<String> data) {
-        return data == null || data.isEmpty() ? null : data;
+        return data == null || data.isEmpty() ? Collections.emptyList() : data;
     }
 
     private static String checkStringData(String data) {

@@ -746,14 +746,20 @@ public class BookingOrderService extends BasedService {
         result.put("totalItems", countAll);
 
         // get data for totalRow
-        List<BookingOrder> getTotal = bookingOrderRepository.getTotal((String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
-                (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
-                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
-        result.put("total", listRowTotal);
 
+        System.out.println("Date"+((Calendar) filterMap.get("fromDateFilter")).getTime());
+        List<BookingOrder> getTotal = bookingOrderRepository.getTotalRowForBookingPage(
+                (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"),
+                (List<String>) filterMap.get("plantFilter"),
+                (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
+                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"),
+                (String) filterMap.get("aopMarginPercentageFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1))
+               ,((Calendar) filterMap.get("fromDateFilter")).getTime()// , (Calendar) filterMap.get("toDateFilter")
+        );
+        result.put("total", getTotal);
 
         return result;
     }
