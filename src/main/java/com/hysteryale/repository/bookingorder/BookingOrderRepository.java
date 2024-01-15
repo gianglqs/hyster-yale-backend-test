@@ -495,12 +495,12 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
                     "   null as product_dimension, " +
                     "   null as region, " +
                     "   null as model, " +
-                    "   total_cost, " +
-                    "   coalesce(dealer_net,0), " +
-                    "   dealer_net_after_sur_charge, " +
-                    "   (dealer_net_after_sur_charge - total_cost) as margin_after_sur_charge, " +
-                    "   ((dealer_net_after_sur_charge - total_cost) / nullif(dealer_net_after_sur_charge, 0)) as margin_percentage_after_sur_charge, " +
-                    "   quantity " +
+                    "   coalesce(total_cost, 0) as total_cost, " +
+                    "   coalesce(dealer_net, 0) as dealer_net, " +
+                    "   coalesce(dealer_net_after_sur_charge, 0) as dealer_net_after_sur_charge, " +
+                    "   coalesce(dealer_net_after_sur_charge - total_cost, 0)as margin_after_sur_charge, " +
+                    "   coalesce((dealer_net_after_sur_charge - total_cost) / nullif(dealer_net_after_sur_charge, 0), 0) as margin_percentage_after_sur_charge, " +
+                    "   coalesce(quantity, 0) as quantity " +
                     "from " +
                     "   (" +
                     "   select" +
@@ -549,7 +549,8 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
                     "       and ((:AOPMarginPercentage) IS NULL or " +
                     "           (:AOPMarginPercentage = 'Above AOP Margin %' and bo.margin_percentage_after_sur_charge > bo.aopmargin_percentage ) or " +
                     "           (:AOPMarginPercentage = 'Below AOP Margin %' and bo.margin_percentage_after_sur_charge <= bo.aopmargin_percentage ) )" +
-                    "       and (:fromDate is null or bo.date >= :fromDate) "+ //"and (:toDate is null or bo.date <= :toDate) " +
+                    "       and ( bo.date >= :fromDate) "+
+                    "       and ( bo.date <= :toDate) " +
                     ") as subquery; ", nativeQuery = true)
     List<BookingOrder> getTotalRowForBookingPage(
             @Param("orderNo") String orderNo,
@@ -563,8 +564,9 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             @Param("AOPMarginPercentage") String AOPMarginPercentage,
             @Param("comparator") String comparator,
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-            @Param("fromDate") java.util.Date fromDate
-           // @Param("toDate") Calendar toDate
+            @Param("fromDate") Calendar fromDate,
+            @Param("toDate") Calendar toDate
     );
+
 
 }

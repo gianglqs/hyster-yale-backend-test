@@ -26,6 +26,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -695,12 +696,6 @@ public class BookingOrderService extends BasedService {
         List<String> listCurrency = new ArrayList<>();
         List<ExchangeRate> exchangeRateList = new ArrayList<>();
         List<String> listTargetCurrency = TargetCurrency.getListTargetCurrency;
-        BookingOrder rowTotal = new BookingOrder();
-        List<BookingOrder> listRowTotal = List.of(rowTotal);
-        String defaultCurrency = "USD";
-        rowTotal.setCurrency(new Currency(defaultCurrency));
-        rowTotal.setOrderNo("Total");
-
 
         for (BookingOrder bookingOrder : bookingOrderList) {
             if (bookingOrder.getCurrency() != null) {
@@ -713,24 +708,8 @@ public class BookingOrderService extends BasedService {
                         }
                     }
                 }
-                // calculate RowTotal : Default currency : USD
-                if (currency.equals(defaultCurrency)) { // USD: don't exchange
-                    rowTotal.setDealerNet(rowTotal.getDealerNet() + bookingOrder.getDealerNet());
-                    rowTotal.setDealerNetAfterSurCharge(rowTotal.getDealerNetAfterSurCharge() + bookingOrder.getDealerNetAfterSurCharge());
-                    rowTotal.setTotalCost(rowTotal.getTotalCost() + bookingOrder.getTotalCost());
-                    rowTotal.setMarginAfterSurCharge(rowTotal.getDealerNetAfterSurCharge() - rowTotal.getTotalCost());
-                    rowTotal.setMarginPercentageAfterSurCharge(rowTotal.getMarginAfterSurCharge() / rowTotal.getDealerNetAfterSurCharge());
-                } else {// <> USD: exchange to USD
-                    double rate = exchangeRateService.getNearestExchangeRate(currency, defaultCurrency).getRate();
-                    rowTotal.setDealerNet(rowTotal.getDealerNet() + bookingOrder.getDealerNet() * rate);
-                    rowTotal.setDealerNetAfterSurCharge(rowTotal.getDealerNetAfterSurCharge() + bookingOrder.getDealerNetAfterSurCharge() * rate);
-                    rowTotal.setTotalCost(rowTotal.getTotalCost() + bookingOrder.getTotalCost() * rate);
-                    rowTotal.setMarginAfterSurCharge(rowTotal.getDealerNetAfterSurCharge() - rowTotal.getTotalCost());
-                    rowTotal.setMarginPercentageAfterSurCharge(rowTotal.getMarginAfterSurCharge() / rowTotal.getDealerNetAfterSurCharge());
-                }
             }
         }
-
 
         result.put("listExchangeRate", exchangeRateList);
         result.put("listBookingOrder", bookingOrderList);
@@ -746,21 +725,25 @@ public class BookingOrderService extends BasedService {
         result.put("totalItems", countAll);
 
         // get data for totalRow
-
-        System.out.println("Date"+((Calendar) filterMap.get("fromDateFilter")).getTime());
         List<BookingOrder> getTotal = bookingOrderRepository.getTotalRowForBookingPage(
-                (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"),
-                (List<String>) filterMap.get("plantFilter"),
-                (List<String>) filterMap.get("metaSeriesFilter"),
-                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
-                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"),
+                (String) filterMap.get("orderNoFilter"),
+                filterMap.get("regionFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("regionFilter"),
+                filterMap.get("plantFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("plantFilter"),
+                filterMap.get("metaSeriesFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("metaSeriesFilter"),
+                filterMap.get("classFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("classFilter"),
+                filterMap.get("modelFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("modelFilter"),
+                filterMap.get("segmentFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("segmentFilter"),
+                filterMap.get("dealerNameFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("dealerNameFilter"),
                 (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1))
-               ,((Calendar) filterMap.get("fromDateFilter")).getTime()// , (Calendar) filterMap.get("toDateFilter")
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
+                filterMap.get("fromDateFilter") == null ? new GregorianCalendar(1996, 10, 23) : (Calendar) filterMap.get("fromDateFilter"),
+                filterMap.get("toDateFilter") == null ? new GregorianCalendar(2996, 10, 23) : (Calendar) filterMap.get("toDateFilter")
         );
         result.put("total", getTotal);
 
         return result;
     }
+
+
 }
