@@ -3,7 +3,6 @@ package com.hysteryale.service.marginAnalyst;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.marginAnalyst.*;
-import com.hysteryale.repository.ExchangeRateRepository;
 import com.hysteryale.repository.marginAnalyst.*;
 import com.hysteryale.service.CurrencyService;
 import com.hysteryale.service.ExchangeRateService;
