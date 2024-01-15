@@ -3,7 +3,6 @@ package com.hysteryale.service.marginAnalyst;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.marginAnalyst.*;
-import com.hysteryale.repository.ExchangeRateRepository;
 import com.hysteryale.repository.marginAnalyst.*;
 import com.hysteryale.service.CurrencyService;
 import com.hysteryale.service.ExchangeRateService;
@@ -220,7 +219,7 @@ public class MarginAnalystMacroService {
             HashMap<String, String> columnMap = new HashMap<>();
             List<TargetMargin> targetMarginList = new ArrayList<>();
 
-            Sheet sheet = workbook.getSheet("AOPF " + monthYear.get(Calendar.YEAR));
+            Sheet sheet = workbook.getAOPFSheet();
             for(Row row : sheet.getRowList()) {
                 if(row.getRowNum() == 0) {
                     for(Cell cell : row.getCellList())

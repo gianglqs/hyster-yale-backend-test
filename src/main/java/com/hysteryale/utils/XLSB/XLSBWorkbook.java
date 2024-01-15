@@ -30,6 +30,30 @@ public class XLSBWorkbook {
         it = (XSSFBReader.SheetIterator) r.getSheetsData();
     }
 
+    public Sheet getAOPFSheet() throws IOException {
+        TestSheetHandler testSheetHandler = new TestSheetHandler();
+        while (it.hasNext()) {
+            InputStream is = it.next();
+            if(it.getSheetName().contains("AOPF"))
+            {
+                log.info("Found sheet: " + it.getSheetName());
+                testSheetHandler.startSheet();
+                XSSFBSheetHandler sheetHandler = new XSSFBSheetHandler(
+                        is,
+                        xssfbStylesTable,
+                        it.getXSSFBSheetComments(),
+                        sst,
+                        testSheetHandler,
+                        new DataFormatter(),
+                        false
+                );
+                sheetHandler.parse();
+                testSheetHandler.endSheet(it.getSheetName());
+            }
+        }
+        return testSheetHandler.getSheet();
+    }
+
     public Sheet getSheet(String sheetName) throws IOException {
         TestSheetHandler testSheetHandler = new TestSheetHandler();
         while (it.hasNext()) {
