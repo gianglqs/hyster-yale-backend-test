@@ -524,10 +524,11 @@ public class ImportService extends BasedService {
             throw new MissingColumnException("Missing column 'Serial Number'!");
         }
 
-        // Set model
+        // productDimension
         if (shipmentColumnsName.get("Model") != null) {
             String model = row.getCell(shipmentColumnsName.get("Model")).getStringCellValue();
-            shipment.setModel(model);
+            ProductDimension productDimension = productDimensionService.getProductDimensionByModelCode(model);
+            shipment.setProductDimension(productDimension);
         } else {
             throw new MissingColumnException("Missing column 'Model'!");
         }
@@ -603,10 +604,6 @@ public class ImportService extends BasedService {
         if (shipmentColumnsName.get("Series") != null) {
             String series = row.getCell(shipmentColumnsName.get("Series")).getStringCellValue();
             shipment.setSeries(series);
-
-            // productDimension
-            ProductDimension productDimension = productDimensionService.getProductDimensionByMetaseries(series);
-            shipment.setProductDimension(productDimension);
         } else {
             throw new MissingColumnException("Missing column 'Series'!");
         }

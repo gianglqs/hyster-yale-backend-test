@@ -118,14 +118,6 @@ public class BookingOrderService extends BasedService {
         if (ORDER_COLUMNS_NAME.get("SERIES") != null) {
             String series = row.getCell(ORDER_COLUMNS_NAME.get("SERIES")).getStringCellValue();
             bookingOrder.setSeries(series);
-
-            //set ProductDimension
-            ProductDimension productDimension = productDimensionService.getProductDimensionByMetaseries(series);
-            if (productDimension != null) {
-                bookingOrder.setProductDimension(productDimension);
-            } else {
-                logWarning("Not found ProductDimension with OrderNo" + bookingOrder.getOrderNo());
-            }
         } else {
             throw new MissingColumnException("Missing column 'SERIES'!");
         }
@@ -141,7 +133,13 @@ public class BookingOrderService extends BasedService {
         //set model
         if (ORDER_COLUMNS_NAME.get("MODEL") != null) {
             Cell modelCell = row.getCell(ORDER_COLUMNS_NAME.get("MODEL"));
-            bookingOrder.setModel(modelCell.getStringCellValue());
+            //set ProductDimension
+            ProductDimension productDimension = productDimensionService.getProductDimensionByModelCode(modelCell.getStringCellValue());
+            if (productDimension != null) {
+                bookingOrder.setProductDimension(productDimension);
+            } else {
+                logWarning("Not found ProductDimension with OrderNo" + bookingOrder.getOrderNo());
+            }
         } else {
             throw new MissingColumnException("Missing column 'MODEL'!");
         }
@@ -437,7 +435,7 @@ public class BookingOrderService extends BasedService {
         double totalCost = 0;
         if (!bookingOrder.getProductDimension().getPlant().equals("SN")) { // plant is Hysteryale, Maximal, Ruyi, Staxx
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByHYMPlantAndListPartNumber(
-                    bookingOrder.getModel(), listPartNumber, bookingOrder.getCurrency().getCurrency(), date);
+                    bookingOrder.getProductDimension().getModelCode(), listPartNumber, bookingOrder.getCurrency().getCurrency(), date);
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
                 totalCost += marginAnalystMacro.getCostRMB();
             }
@@ -445,11 +443,11 @@ public class BookingOrderService extends BasedService {
             ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("CNY", bookingOrder.getCurrency().getCurrency());
             if (exchangeRate != null) {
                 totalCost *= exchangeRate.getRate();
-                logInfo("None SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getModel() + "  " + exchangeRate.getRate());
+                logInfo("None SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getProductDimension().getModelCode() + "  " + exchangeRate.getRate());
             }
         } else { // plant is SN
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByPlantAndListPartNumber(
-                    bookingOrder.getModel(), listPartNumber, bookingOrder.getCurrency().getCurrency(),
+                    bookingOrder.getProductDimension().getModelCode(), listPartNumber, bookingOrder.getCurrency().getCurrency(),
                     bookingOrder.getProductDimension().getPlant(), date);
 
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
@@ -458,7 +456,7 @@ public class BookingOrderService extends BasedService {
             ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("USD", bookingOrder.getCurrency().getCurrency());
             if (exchangeRate != null) {
                 totalCost *= exchangeRate.getRate();
-                logInfo(" SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getModel() + "  " + exchangeRate.getRate());
+                logInfo(" SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getProductDimension().getModelCode() + "  " + exchangeRate.getRate());
             }
         }
 
