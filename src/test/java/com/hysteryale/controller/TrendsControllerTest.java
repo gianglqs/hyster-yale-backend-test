@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Slf4j
-public class BookingOrderControllerTest  {
+public class TrendsControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
     @Autowired
@@ -39,20 +39,36 @@ public class BookingOrderControllerTest  {
 
     @Test
     @WithMockUser(authorities = "USER")
-    public void testGetDataBooking() throws Exception {
+    public void testGetMarginVsCostData() throws Exception {
         FilterModel filters = new FilterModel();
-        log.info(JsonUtils.toJSONString(filters));
 
         MvcResult result =
                 mockMvc
                         .perform(
-                                post("/bookingOrders")
+                                post("/trends/getMarginVsCostData")
                                         .content(JsonUtils.toJSONString(filters))
                                         .contentType(MediaType.APPLICATION_JSON)
                         )
-                        .andExpect(jsonPath("$.totalItems"). isNumber())
-                        .andExpect(jsonPath("$.total").isArray())
-                        .andExpect(jsonPath("$.listBookingOrder").isArray())
+                        .andExpect(jsonPath("$.marginVsCostData.bookingData").isArray())
+                        .andExpect(jsonPath("$.marginVsCostData..shipmentData").isArray())
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER")
+    public void testGetMarginVsDNData() throws Exception {
+        FilterModel filters = new FilterModel();
+
+        MvcResult result =
+                mockMvc
+                        .perform(
+                                post("/trends/getMarginVsDNData")
+                                        .content(JsonUtils.toJSONString(filters))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                        )
+                        .andExpect(jsonPath("$.marginVsDNData.bookingData").isArray())
+                        .andExpect(jsonPath("$.marginVsDNData..shipmentData").isArray())
                         .andReturn();
         Assertions.assertEquals(200, result.getResponse().getStatus());
     }
