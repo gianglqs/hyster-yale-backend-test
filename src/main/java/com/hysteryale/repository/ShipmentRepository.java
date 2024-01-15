@@ -21,7 +21,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.productDimension.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
@@ -59,7 +59,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.productDimension.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
@@ -104,7 +104,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND ((:plants) IS NULL OR b.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR b.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR b.model IN (:models))" +
+            " AND ((:models) IS NULL OR b.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR b.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR b.dealerName IN (:dealerName)) " +
             " AND EXTRACT(year FROM b.date) = :year" +
@@ -130,7 +130,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND ((:plants) IS NULL OR b.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR b.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR b.model IN (:models))" +
+            " AND ((:models) IS NULL OR b.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR b.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR b.dealerName IN (:dealerName)) " +
             " AND EXTRACT(year FROM b.date) = :year" +
@@ -155,7 +155,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
@@ -279,7 +279,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                     "       and (:plants is null or pd.plant in (:plants)) " +
                     "       and (:segments is null or pd.segment in (:segments)) " +
                     "       and (:metaSeries is null or substring(bo.series, 2, 3) in (:metaSeries)) " +
-                    "       and (:models is null or bo.model in (:models)) " +
+                    "       and (:models is null or p.modelcode in (:models)) " +
                     "       AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
                     "           (:comparator = '<=' AND bo.margin_percentage_after_sur_charge <= :marginPercentageAfterSurCharge) OR" +
                     "           (:comparator = '>=' AND bo.margin_percentage_after_sur_charge >= :marginPercentageAfterSurCharge) OR" +
