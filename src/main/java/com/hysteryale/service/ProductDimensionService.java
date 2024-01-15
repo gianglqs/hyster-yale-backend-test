@@ -193,7 +193,7 @@ public class ProductDimensionService extends BasedService {
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
                 (List<String>) filterMap.get("familyFilter"));
-        result.put("total", countAll);
+        result.put("totalItems", countAll);
 
         return result;
 
