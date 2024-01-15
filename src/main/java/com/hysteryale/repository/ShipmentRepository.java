@@ -21,7 +21,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.productDimension.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
@@ -59,7 +59,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.productDimension.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +

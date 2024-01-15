@@ -23,10 +23,10 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
     @Query("SELECT DISTINCT p.segment FROM ProductDimension p")
     List<String> getAllSegments();
 
-    @Query("SELECT DISTINCT p.model FROM ProductDimension p")
+    @Query("SELECT DISTINCT p.modelCode FROM ProductDimension p")
     List<String> getAllModel();
 
-    @Query("SELECT p.model FROM ProductDimension p WHERE p.metaSeries = :metaSeries")
+    @Query("SELECT p.modelCode FROM ProductDimension p WHERE p.metaSeries = :metaSeries")
     Optional<String> getModelByMetaSeries(String metaSeries);
 
     @Query("SELECT p.plant FROM ProductDimension p WHERE p.metaSeries = ?1")
