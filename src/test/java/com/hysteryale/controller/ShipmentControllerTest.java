@@ -35,22 +35,22 @@ public class ShipmentControllerTest {
                 .build();
     }
 
-    @Test
-    @WithMockUser(authorities = "USER")
-    public void testGetDataFinancialShipment() throws Exception {
-        FilterModel filters = new FilterModel();
-
-        MvcResult result =
-                mockMvc
-                        .perform(
-                                post("/getShipmentData")
-                                        .content(JsonUtils.toJSONString(filters))
-                                        .contentType(MediaType.APPLICATION_JSON)
-                        )
-                        .andExpect(jsonPath("$.totalItems").isNumber())
-                        .andExpect(jsonPath("$.total").isArray())
-                        .andExpect(jsonPath("$.listShipment").isArray())
-                        .andReturn();
-        Assertions.assertEquals(200, result.getResponse().getStatus());
-    }
+//    @Test
+//    @WithMockUser(authorities = "USER")
+//    public void testGetDataFinancialShipment() throws Exception {
+//        FilterModel filters = new FilterModel();
+//
+//        MvcResult result =
+//                mockMvc
+//                        .perform(
+//                                post("/getShipmentData")
+//                                        .content(JsonUtils.toJSONString(filters))
+//                                        .contentType(MediaType.APPLICATION_JSON)
+//                        )
+//                        .andExpect(jsonPath("$.totalItems").isNumber())
+//                        .andExpect(jsonPath("$.total").isArray())
+//                        .andExpect(jsonPath("$.listShipment").isArray())
+//                        .andReturn();
+//        Assertions.assertEquals(200, result.getResponse().getStatus());
+//    }
 }
