@@ -13,6 +13,8 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class XLSBWorkbook {
@@ -28,6 +30,30 @@ public class XLSBWorkbook {
         sst = new XSSFBSharedStringsTable(pkg);
         xssfbStylesTable = r.getXSSFBStylesTable();
         it = (XSSFBReader.SheetIterator) r.getSheetsData();
+    }
+
+    public Sheet getAOPFSheet() throws IOException {
+        TestSheetHandler testSheetHandler = new TestSheetHandler();
+        while (it.hasNext()) {
+            InputStream is = it.next();
+            if(it.getSheetName().contains("AOPF"))
+            {
+                log.info("Found sheet: " + it.getSheetName());
+                testSheetHandler.startSheet();
+                XSSFBSheetHandler sheetHandler = new XSSFBSheetHandler(
+                        is,
+                        xssfbStylesTable,
+                        it.getXSSFBSheetComments(),
+                        sst,
+                        testSheetHandler,
+                        new DataFormatter(),
+                        false
+                );
+                sheetHandler.parse();
+                testSheetHandler.endSheet(it.getSheetName());
+            }
+        }
+        return testSheetHandler.getSheet();
     }
 
     public Sheet getSheet(String sheetName) throws IOException {
