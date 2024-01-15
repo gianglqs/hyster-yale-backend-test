@@ -17,4 +17,8 @@ public class Currency {
     private String currency;
     @Column(name = "currency_name")
     private String currencyName;
+
+    public Currency(String currency){
+        this.currency =currency;
+    }
 }

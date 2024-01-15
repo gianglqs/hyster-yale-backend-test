@@ -1,5 +1,7 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.model.filters.AdjustmentFilterModel;
+import com.hysteryale.model.filters.CalculatorModel;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayList;
+
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Slf4j
-public class BookingOrderControllerTest  {
+public class AdjustmentControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
     @Autowired
@@ -39,20 +43,40 @@ public class BookingOrderControllerTest  {
 
     @Test
     @WithMockUser(authorities = "USER")
-    public void testGetDataBooking() throws Exception {
-        FilterModel filters = new FilterModel();
-        log.info(JsonUtils.toJSONString(filters));
-
+    public void testGetDataAdjustment() throws Exception{
+        AdjustmentFilterModel adjustmentFilter =
+                new AdjustmentFilterModel(
+                        new CalculatorModel(0.0, 0.0, 0.0, 0.0),
+                        new FilterModel(
+                                "",
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                2023,
+                                100,
+                                1,
+                                ""
+                        )
+                );
         MvcResult result =
                 mockMvc
                         .perform(
-                                post("/bookingOrders")
-                                        .content(JsonUtils.toJSONString(filters))
+                                post("/getAdjustmentData")
+                                        .content(JsonUtils.toJSONString(adjustmentFilter))
                                         .contentType(MediaType.APPLICATION_JSON)
                         )
-                        .andExpect(jsonPath("$.totalItems"). isNumber())
                         .andExpect(jsonPath("$.total").isArray())
-                        .andExpect(jsonPath("$.listBookingOrder").isArray())
+                        .andExpect(jsonPath("$.totalItems").isNumber())
+                        .andExpect(jsonPath("$.listAdjustment").isArray())
                         .andReturn();
         Assertions.assertEquals(200, result.getResponse().getStatus());
     }

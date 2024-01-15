@@ -8,10 +8,7 @@ import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.repository.PartRepository;
 import com.hysteryale.repository.bookingorder.BookingOrderRepository;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
-import com.hysteryale.utils.ConvertDataFilterUtil;
-import com.hysteryale.utils.DateUtils;
-import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.PlantUtil;
+import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -29,6 +26,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -425,7 +423,7 @@ public class BookingOrderService extends BasedService {
     }
 
     public BookingOrder importCostRMBOfEachParts(BookingOrder bookingOrder) {
-        List<String> listPartNumber = partService.getPartNumberByOrderNo(bookingOrder.getOrderNo());
+        List<String> listPartNumber = partService.getAllPartNumbersByOrderNo(bookingOrder.getOrderNo());
         Currency currency = partService.getCurrencyByOrderNo(bookingOrder.getOrderNo());
 
         Calendar orderDate = bookingOrder.getDate();
@@ -437,13 +435,19 @@ public class BookingOrderService extends BasedService {
         bookingOrder.setCurrency(currency);
         logInfo(bookingOrder.getOrderNo() + "   " + currency.getCurrency());
         double totalCost = 0;
-        if (!bookingOrder.getProductDimension().getPlant().equals("SN")) {
+        if (!bookingOrder.getProductDimension().getPlant().equals("SN")) { // plant is Hysteryale, Maximal, Ruyi, Staxx
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByHYMPlantAndListPartNumber(
                     bookingOrder.getModel(), listPartNumber, bookingOrder.getCurrency().getCurrency(), date);
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
                 totalCost += marginAnalystMacro.getCostRMB();
             }
-        } else {
+            // exchange rate
+            ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("CNY", bookingOrder.getCurrency().getCurrency());
+            if (exchangeRate != null) {
+                totalCost *= exchangeRate.getRate();
+                logInfo("None SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getModel() + "  " + exchangeRate.getRate());
+            }
+        } else { // plant is SN
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByPlantAndListPartNumber(
                     bookingOrder.getModel(), listPartNumber, bookingOrder.getCurrency().getCurrency(),
                     bookingOrder.getProductDimension().getPlant(), date);
@@ -451,12 +455,14 @@ public class BookingOrderService extends BasedService {
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
                 totalCost += marginAnalystMacro.getCostRMB();
             }
+            ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("USD", bookingOrder.getCurrency().getCurrency());
+            if (exchangeRate != null) {
+                totalCost *= exchangeRate.getRate();
+                logInfo(" SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getModel() + "  " + exchangeRate.getRate());
+            }
         }
 
-        // exchange rate
-        ExchangeRate exchangeRate = exchangeRateService.getExchangeRate("CNY", bookingOrder.getCurrency().getCurrency(), date);
-        if (exchangeRate != null)
-            totalCost *= exchangeRate.getRate();
+
         bookingOrder.setTotalCost(totalCost);
         logInfo(bookingOrder.getTotalCost() + "");
         return bookingOrder;
@@ -685,8 +691,31 @@ public class BookingOrderService extends BasedService {
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
                 (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable")
         );
+
+        // get currency for order -> get exchange_rate
+        List<String> listCurrency = new ArrayList<>();
+        List<ExchangeRate> exchangeRateList = new ArrayList<>();
+        List<String> listTargetCurrency = TargetCurrency.getListTargetCurrency;
+
+        for (BookingOrder bookingOrder : bookingOrderList) {
+            if (bookingOrder.getCurrency() != null) {
+                String currency = bookingOrder.getCurrency().getCurrency();
+                if (!listCurrency.contains(currency)) { // get distinct currency in list order
+                    listCurrency.add(currency);
+                    for (String targetCurrency : listTargetCurrency) {
+                        if (!targetCurrency.equals(currency)) { // get exchange_rate FROM current currency of order TO targetCurrency
+                            exchangeRateList.add(exchangeRateService.getNearestExchangeRate(currency, targetCurrency));
+                        }
+                    }
+                }
+            }
+        }
+
+        result.put("listExchangeRate", exchangeRateList);
         result.put("listBookingOrder", bookingOrderList);
-        //get total Recode
+
+
+        //get count Recode
         int countAll = bookingOrderRepository.getCount((String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
@@ -695,15 +724,26 @@ public class BookingOrderService extends BasedService {
                 (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
         result.put("totalItems", countAll);
 
-        // get total
-        List<BookingOrder> getTotal = bookingOrderRepository.getTotal((String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
-                (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
-                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
+        // get data for totalRow
+        List<BookingOrder> getTotal = bookingOrderRepository.getTotalRowForBookingPage(
+                (String) filterMap.get("orderNoFilter"),
+                filterMap.get("regionFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("regionFilter"),
+                filterMap.get("plantFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("plantFilter"),
+                filterMap.get("metaSeriesFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("metaSeriesFilter"),
+                filterMap.get("classFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("classFilter"),
+                filterMap.get("modelFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("modelFilter"),
+                filterMap.get("segmentFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("segmentFilter"),
+                filterMap.get("dealerNameFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("dealerNameFilter"),
+                (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
+                filterMap.get("fromDateFilter") == null ? new GregorianCalendar(1996, 10, 23) : (Calendar) filterMap.get("fromDateFilter"),
+                filterMap.get("toDateFilter") == null ? new GregorianCalendar(2996, 10, 23) : (Calendar) filterMap.get("toDateFilter")
+        );
         result.put("total", getTotal);
 
         return result;
     }
+
+
 }

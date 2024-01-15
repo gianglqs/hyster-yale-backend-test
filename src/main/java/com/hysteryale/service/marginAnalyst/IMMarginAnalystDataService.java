@@ -4,14 +4,13 @@ import com.hysteryale.model.BookingOrder;
 import com.hysteryale.model.marginAnalyst.MarginAnalysisAOPRate;
 import com.hysteryale.model_h2.IMMarginAnalystData;
 import com.hysteryale.model_h2.IMMarginAnalystSummary;
+import com.hysteryale.repository.ProductDimensionRepository;
 import com.hysteryale.repository.marginAnalyst.MarginAnalysisAOPRateRepository;
 import com.hysteryale.repository_h2.IMMarginAnalystDataRepository;
 import com.hysteryale.service.BookingOrderService;
 import com.hysteryale.service.ExchangeRateService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.CurrencyFormatUtils;
-import com.hysteryale.utils.DateUtils;
-import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -25,8 +24,6 @@ import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -44,10 +41,12 @@ public class IMMarginAnalystDataService {
     BookingOrderService bookingOrderService;
     @Resource
     ExchangeRateService exchangeRateService;
+    @Resource
+    ProductDimensionRepository productDimensionRepository;
     static HashMap<String, Integer> COLUMN_NAME = new HashMap<>();
 
     void getColumnName(Row row) {
-        for(int i = 0; i < 22; i++) {
+        for(int i = 0; i < 23; i++) {
             String columnName = row.getCell(i).getStringCellValue();
             COLUMN_NAME.put(columnName, i);
         }
@@ -150,79 +149,9 @@ public class IMMarginAnalystDataService {
     }
 
     /**
-     * Get #, Plant, Series Code and Model Code of the first Part in uploaded NOVO file
-     */
-    public IMMarginAnalystData checkPlantOfFile(String fileUUID) throws IOException {
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String fileName = fileUploadService.getFileNameByUUID(fileUUID); // fileName has been hashed
-
-        FileInputStream is = new FileInputStream(baseFolder + "/" + fileName);
-        XSSFWorkbook workbook = new XSSFWorkbook(is);
-
-        Sheet sheet = workbook.getSheetAt(0);
-        Row columnRow = sheet.getRow(0);
-        getColumnName(columnRow);
-        Row row = sheet.getRow(1);
-
-        String modelCode = row.getCell(COLUMN_NAME.get("Model Code"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-
-
-        Optional<BookingOrder> optionalBooking = bookingOrderService.getDistinctBookingOrderByModelCode(modelCode);
-        if(optionalBooking.isPresent()) {
-            int type = (int) row.getCell(COLUMN_NAME.get("#")).getNumericCellValue();
-            String series = row.getCell(COLUMN_NAME.get("Series Code"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-            IMMarginAnalystData marginAnalystData = new IMMarginAnalystData();
-
-            marginAnalystData.setModelCode(modelCode);
-            marginAnalystData.setPlant(optionalBooking.get().getProductDimension().getPlant());
-            marginAnalystData.setType(type);
-            marginAnalystData.setSeries(series);
-            return marginAnalystData;
-        }
-        else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Model Code not found");
-    }
-
-    /**
-     * Calculate MarginAnalystData and save into In-memory database
-     * @param fileUUID identifier of uploaded file
-     */
-    public void calculateNonUSMarginAnalystData(String fileUUID, String plant, String currency) throws IOException {
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String fileName = fileUploadService.getFileNameByUUID(fileUUID); // fileName has been hashed
-
-        log.info("Start calculating non-US plant: " + plant);
-        FileInputStream is = new FileInputStream(baseFolder + "/" + fileName);
-        XSSFWorkbook workbook = new XSSFWorkbook(is);
-
-        Sheet sheet = workbook.getSheetAt(0);
-        List<IMMarginAnalystData> imMarginAnalystDataList = new ArrayList<>();
-
-        // Initialize variables for assigning later in for loop
-        Calendar monthYear = Calendar.getInstance();
-
-        for(Row row : sheet) {
-            if(row.getRowNum() == 0) {
-                getColumnName(row);
-            } else if (!row.getCell(COLUMN_NAME.get("Part Number"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
-                String strDate = row.getCell(COLUMN_NAME.get("Order Booked Date")).getStringCellValue();
-                if(!strDate.isEmpty()) {
-                    monthYear = parseMonthYear(strDate);
-                }
-                IMMarginAnalystData imMarginAnalystData = mapIMMarginAnalystData(row, plant, currency, monthYear);
-                imMarginAnalystData.setFileUUID(fileUUID);
-                imMarginAnalystDataList.add(imMarginAnalystData);
-            }
-        }
-        log.info("New IMMarginAnalystData saved: " + imMarginAnalystDataList.size());
-        imMarginAnalystDataRepository.saveAll(imMarginAnalystDataList);
-        imMarginAnalystDataList.clear();
-    }
-
-    /**
      * Calculate MarginAnalystSummary and save into In-memory database
      */
-    public IMMarginAnalystSummary calculateNonUSMarginAnalystSummary(String fileUUID, String plant, String strCurrency, String durationUnit, Integer type, String series, String modelCode) {
+    public IMMarginAnalystSummary calculateNonUSMarginAnalystSummary(String fileUUID, String plant, String strCurrency, String durationUnit, Integer type, String series, String modelCode, String orderNumber) {
 
         // calculate the total of List Price, Manufacturing Cost, Dealer Net of all Model Codes in a Series Code
         double totalListPrice = 0, totalManufacturingCost = 0, dealerNet = 0;
@@ -236,7 +165,7 @@ public class IMMarginAnalystDataService {
         for(String mc : modelCodeList) {
             List<IMMarginAnalystData> imMarginAnalystDataList =
                     imMarginAnalystDataRepository.getIMMarginAnalystData(
-                            mc, strCurrency, fileUUID, type, series
+                            mc, orderNumber, strCurrency, type, fileUUID, series
                     );
             if(imMarginAnalystDataList.isEmpty())
                 continue;
@@ -325,104 +254,13 @@ public class IMMarginAnalystDataService {
     }
 
     /**
-     * Parse String to Calendar with format MMM dd yyyy (Sep 12 2023)
-     */
-    private Calendar parseMonthYear(String strDate) {
-        Calendar calendar = Calendar.getInstance();
-        Pattern pattern = Pattern.compile("(\\w{3}) (\\d{2}) (\\d{4})");
-        Matcher matcher = pattern.matcher(strDate);
-        if(matcher.find()) {
-            String strMonth = matcher.group(1);
-            int year = Integer.parseInt(matcher.group(3));
-
-            int monthIndex = DateUtils.monthMap.get(strMonth);
-
-            calendar.set(year, monthIndex, 1);
-        }
-        return calendar;
-    }
-
-    /**
      * Get the In-memory Data which has already been calculated in the uploaded file if the plant is non-US
      * Calculate new MarginData (by getting Parts from DB) if the plant is US plant
      */
-    public List<IMMarginAnalystData> getIMMarginAnalystData(String modelCode, String strCurrency, String fileUUID, String orderNumber, Integer type, String series, String plant) {
-        return (!plant.equals("HYM") && !plant.equals("SN") && !plant.equals("Ruyi") && !plant.equals("Maximal") && !plant.equals("Staxx"))
-                ? imMarginAnalystDataRepository.getUSPlantIMMarginAnalystData(modelCode, orderNumber, strCurrency, type, fileUUID, series)
-                : imMarginAnalystDataRepository.getIMMarginAnalystData(modelCode, strCurrency, fileUUID, type, series);
+    public List<IMMarginAnalystData> getIMMarginAnalystData(String modelCode, String strCurrency, String fileUUID, String orderNumber, Integer type, String series) {
+        return imMarginAnalystDataRepository.getIMMarginAnalystData(modelCode, orderNumber, strCurrency, type, fileUUID, series);
     }
 
-    /**
-     * Calculate IMMarginAnalystData of US plant by querying Part from BookingOrder and Part
-     */
-    public void calculateUSPlantMarginData(String strCurrency, String orderNumber, String fileUUID) throws IOException {
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String fileName = fileUploadService.getFileNameByUUID(fileUUID); // fileName has been hashed
-
-        FileInputStream is = new FileInputStream(baseFolder + "/" + fileName);
-        XSSFWorkbook workbook = new XSSFWorkbook(is);
-
-        Sheet sheet = workbook.getSheetAt(0);
-        List<IMMarginAnalystData> imMarginAnalystDataList = new ArrayList<>();
-
-        // Initialize variables for assigning later in for loop
-        Calendar monthYear = Calendar.getInstance();
-
-        double manufacturingCost;
-        String plant;
-        Optional<BookingOrder> bookingOrder = bookingOrderService.getBookingOrderByOrderNumber(orderNumber);
-        if(bookingOrder.isPresent())
-        {
-            manufacturingCost = bookingOrder.get().getTotalCost();
-            plant = bookingOrder.get().getProductDimension().getPlant();
-        }
-        else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order Number not found: " + orderNumber);
-
-        for(Row row : sheet) {
-            if(row.getRowNum() == 0) {
-                getColumnName(row);
-            } else if (!row.getCell(COLUMN_NAME.get("Part Number"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
-                String strDate = row.getCell(COLUMN_NAME.get("Order Booked Date")).getStringCellValue();
-                if(!strDate.isEmpty())
-                    monthYear = parseMonthYear(strDate);
-
-                String modelCode = row.getCell(COLUMN_NAME.get("Model Code")).getStringCellValue();
-                String partNumber = row.getCell(COLUMN_NAME.get("Part Number")).getStringCellValue();
-                double listPrice = row.getCell(COLUMN_NAME.get("List Price")).getNumericCellValue();
-                double netPrice = row.getCell(COLUMN_NAME.get("Net Price Each")).getNumericCellValue();
-                String partDescription = row.getCell(COLUMN_NAME.get("Part Description"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                int type = (int) row.getCell(COLUMN_NAME.get("#")).getNumericCellValue();
-                String series = row.getCell(COLUMN_NAME.get("Series Code"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-
-                double manufacturingCostWithSPED = manufacturingCost;
-                boolean isSPED = false;
-                if(partDescription.contains("SPED"))
-                {
-                    isSPED = true;
-                    manufacturingCostWithSPED += 0.9 * netPrice;
-                }
-
-                // Assigning value for imMarginAnalystData
-                IMMarginAnalystData imMarginAnalystData = new IMMarginAnalystData(
-                                plant, modelCode, partNumber, partDescription,
-                                CurrencyFormatUtils.formatDoubleValue(listPrice, CurrencyFormatUtils.decimalFormatFourDigits),
-                                monthYear, strCurrency,
-                                CurrencyFormatUtils.formatDoubleValue(netPrice, CurrencyFormatUtils.decimalFormatFourDigits),
-                                series
-                        );
-                imMarginAnalystData.setOrderNumber(orderNumber);
-                imMarginAnalystData.setManufacturingCost(CurrencyFormatUtils.formatDoubleValue(manufacturingCostWithSPED, CurrencyFormatUtils.decimalFormatFourDigits));
-                imMarginAnalystData.setFileUUID(fileUUID);
-                imMarginAnalystData.setSPED(isSPED);
-                imMarginAnalystData.setType(type);
-                imMarginAnalystDataList.add(imMarginAnalystData);
-            }
-        }
-        log.info("IMMarginAnalystData saved: " + imMarginAnalystDataList.size());
-        imMarginAnalystDataRepository.saveAll(imMarginAnalystDataList);
-        imMarginAnalystDataList.clear();
-    }
     public IMMarginAnalystSummary calculateUSPlantMarginSummary(String modelCode, String series, String strCurrency, String durationUnit, String orderNumber, Integer type, String fileUUID) {
         double defMFGCost = 0;
         Calendar monthYear = Calendar.getInstance();
@@ -459,7 +297,7 @@ public class IMMarginAnalystDataService {
             modelCodeList = imMarginAnalystDataRepository.getModelCodesBySeries(fileUUID, series);
         // calculate total of List Price, Manufacturing Cost and Dealer Net of Model Codes in a Series Code
         for(String mc : modelCodeList) {
-            List<IMMarginAnalystData> imMarginAnalystDataList = imMarginAnalystDataRepository.getUSPlantIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series);
+            List<IMMarginAnalystData> imMarginAnalystDataList = imMarginAnalystDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series);
             for(IMMarginAnalystData data : imMarginAnalystDataList) {
                 totalListPrice += data.getListPrice();
                 dealerNet += data.getDealerNet();
@@ -521,5 +359,175 @@ public class IMMarginAnalystDataService {
             imMarginAnalystSummary.setMarginPercentAopRate(CurrencyFormatUtils.formatDoubleValue(marginPercentAopRate, CurrencyFormatUtils.decimalFormatFourDigits));
         }
         return imMarginAnalystSummary;
+    }
+
+    public void calculateMarginAnalysisData(String fileUUID, String currency) throws IOException {
+        String fileName = fileUploadService.getFileNameByUUID(fileUUID); // fileName has been hashed
+
+        FileInputStream is = new FileInputStream(fileName);
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+
+        Sheet sheet = workbook.getSheetAt(0);
+        List<IMMarginAnalystData> imMarginAnalystDataList = new ArrayList<>();
+
+        String orderNumber = "";
+
+        for(Row row : sheet) {
+            if(row.getRowNum() == 0)
+                getColumnName(row);
+            else if (!row.getCell(COLUMN_NAME.get("Model Code"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
+
+                // Check if the Part Number is "Commission" then ignore it.
+                if(row.getCell(COLUMN_NAME.get("Part Number"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("Commission"))
+                    continue;
+
+                // Get the value of Order number from file.
+                String orderIDCellValue = row.getCell(COLUMN_NAME.get("Order ID"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                if(!orderIDCellValue.isEmpty()) orderNumber = orderIDCellValue;
+
+                // Find Booking Order for checking plant and monthYear
+                Optional<BookingOrder> optionalBookingOrder = bookingOrderService.getBookingOrderByOrderNumber(orderNumber);
+                if(optionalBookingOrder.isEmpty())
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Booking Order: " + orderNumber);
+
+                String plant = optionalBookingOrder.get().getProductDimension().getPlant();
+                Calendar monthYear = optionalBookingOrder.get().getDate();
+                monthYear.set(monthYear.get(Calendar.YEAR), monthYear.get(Calendar.MONTH), 1);
+
+                IMMarginAnalystData imMarginAnalystData;
+                if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
+                    // calculate non US plant Margin Analysis Data
+                    imMarginAnalystData = mapIMMarginAnalystData(row, plant, currency, monthYear);
+                }
+                else {
+                    // calculate US plant Margin Analysis Data
+                    double manufacturingCost = optionalBookingOrder.get().getTotalCost();
+                    imMarginAnalystData = mapUSPlantMarginAnalysisData(row, manufacturingCost, currency, monthYear, orderNumber, plant);
+                }
+                imMarginAnalystData.setOrderNumber(orderNumber);
+                imMarginAnalystData.setFileUUID(fileUUID);
+                imMarginAnalystDataList.add(imMarginAnalystData);
+            }
+        }
+        log.info("Save Margin Analysis Data: " + imMarginAnalystDataList.size());
+        imMarginAnalystDataRepository.saveAll(imMarginAnalystDataList);
+
+    }
+
+    public Map<String, Object> calculateMarginAnalysisSummary(String fileUUID, Integer type, String modelCode, String series, String orderNumber, String currency) {
+        String plant = productDimensionRepository.getPlantByMetaSeries(series.substring(1));
+
+        IMMarginAnalystSummary monthly;
+        IMMarginAnalystSummary annually;
+        if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
+            monthly = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "monthly", type, series, modelCode, orderNumber);
+            annually = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "annually", type, series, modelCode, orderNumber);
+        }
+        else {
+            monthly = calculateUSPlantMarginSummary(modelCode, series, currency, "monthly", orderNumber, type, fileUUID);
+            annually = calculateUSPlantMarginSummary(modelCode, series, currency, "annually", orderNumber, type, fileUUID);
+        }
+        return Map.of(
+                "MarginAnalystSummaryMonthly", monthly,
+                "MarginAnalystSummaryAnnually", annually
+        );
+    }
+
+    public IMMarginAnalystData mapUSPlantMarginAnalysisData(Row row, double manufacturingCost, String strCurrency, Calendar monthYear, String orderNumber, String plant) {
+        String modelCode = row.getCell(COLUMN_NAME.get("Model Code")).getStringCellValue();
+        String partNumber = row.getCell(COLUMN_NAME.get("Part Number")).getStringCellValue();
+        double listPrice = row.getCell(COLUMN_NAME.get("List Price")).getNumericCellValue();
+        double netPrice = row.getCell(COLUMN_NAME.get("Net Price Each")).getNumericCellValue();
+        String partDescription = row.getCell(COLUMN_NAME.get("Part Description"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+        int type = (int) row.getCell(COLUMN_NAME.get("#")).getNumericCellValue();
+        String series = row.getCell(COLUMN_NAME.get("Series Code"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+
+        double manufacturingCostWithSPED = manufacturingCost;
+        boolean isSPED = false;
+        if(partDescription.contains("SPED"))
+        {
+            isSPED = true;
+            manufacturingCostWithSPED += 0.9 * netPrice;
+        }
+
+        // Assigning value for imMarginAnalystData
+        IMMarginAnalystData imMarginAnalystData = new IMMarginAnalystData(
+                plant, modelCode, partNumber, partDescription,
+                CurrencyFormatUtils.formatDoubleValue(listPrice, CurrencyFormatUtils.decimalFormatFourDigits),
+                monthYear, strCurrency,
+                CurrencyFormatUtils.formatDoubleValue(netPrice, CurrencyFormatUtils.decimalFormatFourDigits),
+                series
+        );
+        imMarginAnalystData.setOrderNumber(orderNumber);
+        imMarginAnalystData.setManufacturingCost(CurrencyFormatUtils.formatDoubleValue(manufacturingCostWithSPED, CurrencyFormatUtils.decimalFormatFourDigits));
+        imMarginAnalystData.setSPED(isSPED);
+        imMarginAnalystData.setType(type);
+
+        return imMarginAnalystData;
+    }
+
+    /**
+     * Read NOVO file and create populating values for showing on Dropdown box in Margin Screen
+     */
+    public Map<String, Object> populateMarginFilters(String fileUUID) throws IOException {
+        String fileName = fileUploadService.getFileNameByUUID(fileUUID); // fileName has been hashed
+
+        FileInputStream is = new FileInputStream(fileName);
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+
+        HashMap<String, Integer> modelCodeMap = new HashMap<>();
+        HashMap<String, Integer> seriesCodeMap = new HashMap<>();
+        HashMap<String, Integer> orderNumberMap = new HashMap<>();
+        HashMap<Integer, Integer> typeMap = new HashMap<>();
+
+        Sheet sheet = workbook.getSheetAt(0);
+        for(Row row : sheet) {
+            if(row.getRowNum() == 0)
+                getColumnName(row);
+            else if(!row.getCell(COLUMN_NAME.get("Model Code"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
+
+                String orderIDCellValue = row.getCell(COLUMN_NAME.get("Order ID"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                if(!orderIDCellValue.isEmpty())
+                    orderNumberMap.put(orderIDCellValue, 1);
+
+                modelCodeMap.put(row.getCell(COLUMN_NAME.get("Model Code")).getStringCellValue(), 1);
+                seriesCodeMap.put(row.getCell(COLUMN_NAME.get("Series Code")).getStringCellValue(), 1);
+                typeMap.put((int) row.getCell(COLUMN_NAME.get("#")).getNumericCellValue(), 1);
+            }
+        }
+
+        List<Object> modelCodeValues = new ArrayList<>();
+        for(String item : modelCodeMap.keySet()) {
+            modelCodeValues.add(Map.of("value", item));
+        }
+
+        List<Object> seriesCodeValues = new ArrayList<>();
+        for(String item : seriesCodeMap.keySet()) {
+            seriesCodeValues.add(Map.of("value", item));
+        }
+
+        List<Object> orderNumberValues = new ArrayList<>();
+        for(String item : orderNumberMap.keySet()) {
+            orderNumberValues.add(Map.of("value", item));
+        }
+
+        List<Object> typeValues = new ArrayList<>();
+        for(Integer item : typeMap.keySet()) {
+            typeValues.add(Map.of("value", item));
+        }
+
+        return Map.of(
+                "modelCodes", modelCodeValues,
+                "series", seriesCodeValues,
+                "orderNumbers", orderNumberValues,
+                "types", typeValues
+        );
+    }
+
+    /**
+     * Check a file which has fileUUID has already been calculated Margin Data or not
+     */
+    public boolean isFileCalculated(String fileUUID) {
+        return imMarginAnalystDataRepository.isFileCalculated(fileUUID);
     }
 }

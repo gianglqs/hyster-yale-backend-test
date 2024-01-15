@@ -1,7 +1,5 @@
 package com.hysteryale.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
@@ -10,6 +8,7 @@ import com.hysteryale.repository.UserRepository;
 import com.hysteryale.service.ImportService;
 import com.hysteryale.service.IndicatorService;
 import com.hysteryale.service.UserService;
+import com.hysteryale.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,7 +80,7 @@ public class IndicatorsControllerTest {
         MvcResult result =
                 mockMvc
                         .perform(post("/getCompetitorData")
-                                .content(parseFilterModelToJsonString(filters))
+                                .content(JsonUtils.toJSONString(filters))
                                 .contentType(MediaType.APPLICATION_JSON)
                         )
                         .andExpect(jsonPath("$.total").isArray())
@@ -98,7 +97,7 @@ public class IndicatorsControllerTest {
         MvcResult result =
                 mockMvc
                         .perform(post("/chart/getDataForRegionLineChart")
-                                .content(parseFilterModelToJsonString(filters))
+                                .content(JsonUtils.toJSONString(filters))
                                 .contentType(MediaType.APPLICATION_JSON)
                         )
                         .andExpect(jsonPath("$.lineChartRegion").isArray())
@@ -114,7 +113,7 @@ public class IndicatorsControllerTest {
         MvcResult result =
                 mockMvc
                         .perform(post("/chart/getDataForPlantLineChart")
-                                .content(parseFilterModelToJsonString(filters))
+                                .content(JsonUtils.toJSONString(filters))
                                 .contentType(MediaType.APPLICATION_JSON)
                         )
                         .andExpect(jsonPath("$.lineChartPlant").isArray())
@@ -136,7 +135,7 @@ public class IndicatorsControllerTest {
         MvcResult result =
                 mockMvc
                         .perform(post("/chart/getDataForCompetitorBubbleChart")
-                            .content(parseFilterModelToJsonString(filters))
+                            .content(JsonUtils.toJSONString(filters))
                             .contentType(MediaType.APPLICATION_JSON)
                         )
                         .andExpect(jsonPath("$.competitiveLandscape").isArray())
@@ -248,11 +247,10 @@ public class IndicatorsControllerTest {
         String newColorCode = "#323232";
         competitorColor.setGroupName(newGroupName);
         competitorColor.setColorCode(newColorCode);
-
         MvcResult result =
                 mockMvc
                         .perform(put("/competitorColors")
-                                .content(parseFilterModelToJsonString(competitorColor))
+                                .content(JsonUtils.toJSONString(competitorColor))
                                 .contentType(MediaType.APPLICATION_JSON)
                         )
                         .andReturn();
@@ -277,7 +275,7 @@ public class IndicatorsControllerTest {
         MvcResult result =
                 mockMvc
                         .perform(put("/competitorColors")
-                                .content(parseFilterModelToJsonString(competitorColor))
+                                .content(JsonUtils.toJSONString(competitorColor))
                                 .contentType(MediaType.APPLICATION_JSON)
                         )
                         .andReturn();
@@ -355,10 +353,5 @@ public class IndicatorsControllerTest {
                                         .file(file)
                         ).andReturn();
         Assertions.assertEquals(200, result.getResponse().getStatus());
-    }
-
-    private String parseFilterModelToJsonString(Object filters) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(filters);
     }
 }

@@ -619,6 +619,9 @@ public class ImportService extends BasedService {
             // set Region
             shipment.setRegion(booking.getRegion());
 
+            // currency
+            shipment.setCurrency(booking.getCurrency());
+
             // DN
             shipment.setDealerNet(booking.getDealerNet());
 
