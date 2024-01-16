@@ -264,7 +264,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             @Param("year") int year);
 
 
-    @Query("SELECT new BookingOrder(c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.productDimension.modelCode, " +
+    @Query("SELECT new BookingOrder(c.region.region, c.productDimension, c.series, " +
             "sum(c.totalCost), sum(c.dealerNetAfterSurCharge), sum(c.marginAfterSurCharge), count(c)) " +
             " FROM BookingOrder c WHERE " +
             " ((:regions) IS Null OR c.region.region IN (:regions))" +
