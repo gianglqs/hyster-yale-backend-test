@@ -528,7 +528,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
                     "   left join exchange_rate_cte er on " +
                     "       bo.currency = er.from_currency " +
                     "   left join productdimension pd on " +
-                    "       bo.product_dimension = pd.id " +
+                    "       bo.product_dimension = pd.modelcode " +
                     "   left join region r on " +
                     "       bo.region = r.id " +
                     "   where " +
@@ -539,7 +539,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
                     "       and (:plants is null or pd.plant in (:plants)) " +
                     "       and (:segments is null or pd.segment in (:segments)) " +
                     "       and (:metaSeries is null or substring(bo.series, 2, 3) in (:metaSeries)) " +
-                    "       and (:models is null or p.modelcost in (:models)) " +
+                    "       and (:models is null or pd.modelcode in (:models)) " +
                     "       AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
                     "           (:comparator = '<=' AND bo.margin_percentage_after_sur_charge <= :marginPercentageAfterSurCharge) OR" +
                     "           (:comparator = '>=' AND bo.margin_percentage_after_sur_charge >= :marginPercentageAfterSurCharge) OR" +
