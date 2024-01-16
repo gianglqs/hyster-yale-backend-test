@@ -533,13 +533,13 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
                     "       bo.region = r.id " +
                     "   where " +
                     "      (:orderNo is null or lower(bo.order_no) = lower( :orderNo))  " +
-                    "       and (:regions is null or r.region in :regions) " +
-                    "       and (:dealerNames is null or bo.dealer_name in (:dealerNames)) " +
-                    "       and (:classes is null or pd.clazz in (:classes)) " +
-                    "       and (:plants is null or pd.plant in (:plants)) " +
-                    "       and (:segments is null or pd.segment in (:segments)) " +
-                    "       and (:metaSeries is null or substring(bo.series, 2, 3) in (:metaSeries)) " +
-                    "       and (:models is null or pd.modelcode in (:models)) " +
+                    "       and ( (:regions) is null or r.region in (:regions)) " +
+                    "       and ((:dealerNames) is null or bo.dealer_name in (:dealerNames)) " +
+                    "       and ((:classes) is null or pd.clazz in (:classes)) " +
+                    "       and ((:plants) is null or pd.plant in (:plants)) " +
+                    "       and ((:segments) is null or pd.segment in (:segments)) " +
+                    "       and ((:metaSeries) is null or substring(bo.series, 2, 3) in (:metaSeries)) " +
+                    "       and ((:models) is null or pd.modelcode in (:models)) " +
                     "       AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
                     "           (:comparator = '<=' AND bo.margin_percentage_after_sur_charge <= :marginPercentageAfterSurCharge) OR" +
                     "           (:comparator = '>=' AND bo.margin_percentage_after_sur_charge >= :marginPercentageAfterSurCharge) OR" +
