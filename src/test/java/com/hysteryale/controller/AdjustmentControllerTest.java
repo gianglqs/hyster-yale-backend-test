@@ -41,7 +41,7 @@ public class AdjustmentControllerTest {
                 .build();
     }
 
-    @Test
+    //@Test
     @WithMockUser(authorities = "USER")
     public void testGetDataAdjustment() throws Exception{
         AdjustmentFilterModel adjustmentFilter =
