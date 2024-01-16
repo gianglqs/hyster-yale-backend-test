@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -69,6 +70,10 @@ public class ProductDimensionService extends BasedService {
         // family
         String family = row.getCell(COLUMNS.get("Family_Name")).getStringCellValue();
         productDimension.setFamily(family);
+
+        // truckType
+        String truckType = row.getCell(COLUMNS.get("Truck_Type")).getStringCellValue();
+        productDimension.setTruckType(truckType);
 
         return productDimension;
     }
@@ -183,12 +188,13 @@ public class ProductDimensionService extends BasedService {
     public Map<String, Object> getDataByFilter(FilterModel filters) throws ParseException {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
+        logInfo(filterMap.toString());
         // product filter by: plant, segment, brand, family, metaSeries
         List<ProductDimension> getData = productDimensionRepository.getDataByFilter(
                 (String) filterMap.get("modelCode"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
-                (List<String>) filterMap.get("familyFilter")
+                (List<String>) filterMap.get("familyFilter"),(Pageable) filterMap.get("pageable")
         );
         result.put("listData", getData);
         //Count data
