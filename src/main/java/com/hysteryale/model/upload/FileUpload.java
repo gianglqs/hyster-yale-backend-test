@@ -25,6 +25,7 @@ public class FileUpload {
     private String fileName;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "uploadedBy_id")
     private User uploadedBy;
 
     @Column(name = "uploaded_time")

@@ -2,7 +2,6 @@ package com.hysteryale.controller;
 
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.utils.JsonUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,8 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Slf4j
-public class BookingOrderControllerTest  {
+public class ShipmentControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
     @Autowired
@@ -39,20 +37,19 @@ public class BookingOrderControllerTest  {
 
 //    @Test
 //    @WithMockUser(authorities = "USER")
-//    public void testGetDataBooking() throws Exception {
+//    public void testGetDataFinancialShipment() throws Exception {
 //        FilterModel filters = new FilterModel();
-//        log.info(JsonUtils.toJSONString(filters));
 //
 //        MvcResult result =
 //                mockMvc
 //                        .perform(
-//                                post("/bookingOrders")
+//                                post("/getShipmentData")
 //                                        .content(JsonUtils.toJSONString(filters))
 //                                        .contentType(MediaType.APPLICATION_JSON)
 //                        )
-//                        .andExpect(jsonPath("$.totalItems"). isNumber())
+//                        .andExpect(jsonPath("$.totalItems").isNumber())
 //                        .andExpect(jsonPath("$.total").isArray())
-//                        .andExpect(jsonPath("$.listBookingOrder").isArray())
+//                        .andExpect(jsonPath("$.listShipment").isArray())
 //                        .andReturn();
 //        Assertions.assertEquals(200, result.getResponse().getStatus());
 //    }

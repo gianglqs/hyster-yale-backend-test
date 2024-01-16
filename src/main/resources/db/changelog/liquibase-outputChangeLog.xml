@@ -15,4 +15,9 @@
     <changeSet id="delete_competitorcolor_data" author="hoangnhan">
         <delete tableName="competitorcolor"/>
     </changeSet>
+
+    <changeSet id="rename_file_upload_field" author="hoangnhan">
+        <renameColumn tableName="file_upload" oldColumnName="uploadedBy_id" newColumnName="uploadedby_id"/>
+    </changeSet>
+
 </databaseChangeLog>
