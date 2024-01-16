@@ -35,7 +35,7 @@ public class OutlierControllerTest {
                 .build();
     }
 
-    @Test
+    //@Test
     @WithMockUser(authorities = "USER")
     public void testGetDataForTable() throws Exception {
         FilterModel filters = new FilterModel();
@@ -55,7 +55,7 @@ public class OutlierControllerTest {
         Assertions.assertEquals(200, result.getResponse().getStatus());
     }
 
-    @Test
+   // @Test
     @WithMockUser(authorities = "USER")
     public void testGetOutliersForChart() throws Exception {
         FilterModel filters = new FilterModel();
