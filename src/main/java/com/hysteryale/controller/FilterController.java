@@ -37,5 +37,8 @@ public class FilterController {
     @GetMapping("/trends")
     public Map<String, Object> getTrendsFilters(){ return filterService.getTrendsFilter();}
 
+    @GetMapping("/product")
+    public Map<String, Object> getProductFilters(){ return filterService.getProductFilter();}
+
 }
 

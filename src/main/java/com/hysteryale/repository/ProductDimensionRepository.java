@@ -38,7 +38,7 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
 
 
     @Query("SELECT p FROM ProductDimension p WHERE " +
-            "((:modelCode) IS Null OR p.modelCode = :orderNo )" +
+            "((:modelCode) IS Null OR p.modelCode = :modelCode )" +
             " AND ((:plants) IS NULL OR p.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(p.metaSeries, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
@@ -51,11 +51,12 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
                                            List<String> classes,
                                            List<String> segments,
                                            List<String> brands,
-                                           List<String> family
+                                           List<String> family,
+                                           Pageable pageable
     );
 
     @Query("SELECT COUNT(p) FROM ProductDimension p WHERE " +
-            "((:modelCode) IS Null OR p.modelCode = :orderNo )" +
+            "((:modelCode) IS Null OR p.modelCode = :modelCode )" +
             " AND ((:plants) IS NULL OR p.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(p.metaSeries, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
@@ -75,4 +76,13 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
 
     @Query("SELECT p FROM ProductDimension p WHERE p.modelCode = ?1")
     Optional<ProductDimension> findByModelCode(String modelCode);
+
+    @Query("SELECT DISTINCT p.brand FROM ProductDimension p ")
+    List<String> getAllBrands();
+
+    @Query("SELECT DISTINCT p.family FROM ProductDimension p ")
+    List<String> getAllFamily();
+
+    @Query("SELECT DISTINCT p.truckType FROM ProductDimension p ")
+    List<String> getAllTruckType();
 }
