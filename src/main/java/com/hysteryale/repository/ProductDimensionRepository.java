@@ -70,4 +70,7 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
                   List<String> brands,
                   List<String> family
     );
+
+    @Query("SELECT p FROM ProductDimension p WHERE p.modelCode = ?1")
+    Optional<ProductDimension> findByModelCode(String modelCode);
 }

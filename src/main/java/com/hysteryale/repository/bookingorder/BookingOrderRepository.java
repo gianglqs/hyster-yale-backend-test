@@ -17,25 +17,25 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
     @Query("SELECT DISTINCT b.dealerName FROM BookingOrder b ORDER BY b.dealerName")
     public List<String> getAllDealerName();
 
-    @Query("SELECT DISTINCT b.model FROM BookingOrder b ORDER BY b.model ASC ")
+    @Query("SELECT DISTINCT b.productDimension.modelCode FROM BookingOrder b ORDER BY b.productDimension.modelCode ASC ")
     List<String> getAllModel();
 
     @Query("SELECT b FROM BookingOrder b WHERE b.orderNo = ?1")
     Optional<BookingOrder> getBookingOrderByOrderNo(String orderNo);
 
     // it is not including condition on currency due to missing currency data
-    @Query("SELECT DISTINCT b FROM BookingOrder b WHERE b.model = ?1 AND extract(year from b.date) = ?2 AND extract(month from b.date ) = ?3")
+    @Query("SELECT DISTINCT b FROM BookingOrder b WHERE b.productDimension.modelCode = ?1 AND extract(year from b.date) = ?2 AND extract(month from b.date ) = ?3")
     List<BookingOrder> getDistinctBookingOrderByModelCode(String modelCode, int year, int month);
 
     @Query("SELECT new BookingOrder(c.region.region, c.productDimension.plant, c.productDimension.clazz," +
-            " c.series, c.model, sum(c.quantity), sum(c.totalCost), sum(c.dealerNet), " +
+            " c.series, c.productDimension.modelCode, sum(c.quantity), sum(c.totalCost), sum(c.dealerNet), " +
             " sum(c.dealerNetAfterSurCharge), sum(c.marginAfterSurCharge)) " +
             " FROM BookingOrder c WHERE " +
             " ((:regions) IS Null OR c.region.region IN (:regions))" +
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
             "   (:comparator = '<=' AND c.marginPercentageAfterSurCharge <= :marginPercentageAfterSurCharge) OR" +
@@ -46,7 +46,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))" +
-            " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.model" +
+            " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.productDimension.modelCode" +
             " ORDER BY c.region.region"
     )
     List<BookingOrder> getOrderForOutline(
@@ -69,7 +69,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
             "   (:comparator = '<=' AND c.marginPercentageAfterSurCharge <= :marginPercentageAfterSurCharge) OR" +
@@ -100,7 +100,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
             "   (:comparator = '<=' AND c.marginPercentageAfterSurCharge <= :marginPercentageAfterSurCharge) OR" +
@@ -111,7 +111,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))" +
-            " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.model"
+            " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.productDimension.modelCode"
     )
     List<Integer> countAllForOutline(
             @Param("regions") List<String> regions,
@@ -171,7 +171,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
@@ -217,7 +217,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:plants) IS NULL OR b.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR b.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR b.model IN (:models))" +
+            " AND ((:models) IS NULL OR b.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR b.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR b.dealerName IN (:dealerName)) " +
             " AND EXTRACT(year FROM b.date) = :year" +
@@ -244,7 +244,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:plants) IS NULL OR b.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR b.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR b.model IN (:models))" +
+            " AND ((:models) IS NULL OR b.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR b.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR b.dealerName IN (:dealerName)) " +
             " AND EXTRACT(year FROM b.date) = :year" +
@@ -264,7 +264,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             @Param("year") int year);
 
 
-    @Query("SELECT new BookingOrder(c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.model, " +
+    @Query("SELECT new BookingOrder(c.region.region, c.productDimension, c.series, " +
             "sum(c.totalCost), sum(c.dealerNetAfterSurCharge), sum(c.marginAfterSurCharge), count(c)) " +
             " FROM BookingOrder c WHERE " +
             " ((:regions) IS Null OR c.region.region IN (:regions))" +
@@ -272,7 +272,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
             "   (:comparator = '<=' AND c.marginPercentageAfterSurCharge <= :marginPercentageAfterSurCharge) OR" +
@@ -280,7 +280,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             "   (:comparator = '<' AND c.marginPercentageAfterSurCharge < :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '>' AND c.marginPercentageAfterSurCharge > :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '=' AND c.marginPercentageAfterSurCharge = :marginPercentageAfterSurCharge))" +
-            " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.model " +
+            " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.productDimension.modelCode " +
             " HAVING (:marginPercentageAfterSurChargeAfterAdj) IS NULL OR " +
             "   (:comparatorAfterAdj = '<' AND sum(c.dealerNetAfterSurCharge) <> 0 AND ((sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0))) < :marginPercentageAfterSurChargeAfterAdj) OR" +
             "   (:comparatorAfterAdj = '>=' AND sum(c.dealerNetAfterSurCharge) <> 0 AND ((sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0))) > :marginPercentageAfterSurChargeAfterAdj)"
@@ -310,7 +310,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
             "   (:comparator = '<=' AND c.marginPercentageAfterSurCharge <= :marginPercentageAfterSurCharge) OR" +
@@ -318,7 +318,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             "   (:comparator = '<' AND c.marginPercentageAfterSurCharge < :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '>' AND c.marginPercentageAfterSurCharge > :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '=' AND c.marginPercentageAfterSurCharge = :marginPercentageAfterSurCharge))" +
-            " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.model" +
+            " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.productDimension.modelCode" +
             " HAVING (:marginPercentageAfterSurChargeAfterAdj) IS NULL OR " +
             "   (:comparatorAfterAdj = '<' AND sum(c.dealerNetAfterSurCharge) <> 0 AND (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0)) < :marginPercentageAfterSurChargeAfterAdj) OR" +
             "   (:comparatorAfterAdj = '>=' AND sum(c.dealerNetAfterSurCharge) <> 0 AND (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0)) >= :marginPercentageAfterSurChargeAfterAdj)"
@@ -347,7 +347,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
@@ -384,7 +384,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
@@ -423,7 +423,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.model IN (:models))" +
+            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
             "   (:comparator = '<=' AND c.marginPercentageAfterSurCharge <= :marginPercentageAfterSurCharge) OR" +
@@ -431,7 +431,7 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             "   (:comparator = '<' AND c.marginPercentageAfterSurCharge < :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '>' AND c.marginPercentageAfterSurCharge > :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '=' AND c.marginPercentageAfterSurCharge = :marginPercentageAfterSurCharge))" +
-            " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.model" +
+            " GROUP BY c.region.region, c.productDimension.plant, c.productDimension.clazz, c.series, c.productDimension.modelCode" +
             " HAVING (:marginPercentageAfterSurChargeAfterAdj) IS NULL OR " +
             "   (:comparatorAfterAdj = '<' AND sum(c.dealerNetAfterSurCharge) <> 0 AND (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0)) < :marginPercentageAfterSurChargeAfterAdj) OR" +
             "   (:comparatorAfterAdj = '>=' AND sum(c.dealerNetAfterSurCharge) <> 0 AND (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurCharge) * (1 + :dnAdjPercentage / 100.0)) >= :marginPercentageAfterSurChargeAfterAdj)"
@@ -528,18 +528,18 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
                     "   left join exchange_rate_cte er on " +
                     "       bo.currency = er.from_currency " +
                     "   left join productdimension pd on " +
-                    "       bo.product_dimension = pd.id " +
+                    "       bo.product_dimension = pd.modelcode " +
                     "   left join region r on " +
                     "       bo.region = r.id " +
                     "   where " +
                     "      (:orderNo is null or lower(bo.order_no) = lower( :orderNo))  " +
-                    "       and (:regions is null or r.region in :regions) " +
-                    "       and (:dealerNames is null or bo.dealer_name in (:dealerNames)) " +
-                    "       and (:classes is null or pd.clazz in (:classes)) " +
-                    "       and (:plants is null or pd.plant in (:plants)) " +
-                    "       and (:segments is null or pd.segment in (:segments)) " +
-                    "       and (:metaSeries is null or substring(bo.series, 2, 3) in (:metaSeries)) " +
-                    "       and (:models is null or bo.model in (:models)) " +
+                    "       and ( (:regions) is null or r.region in (:regions)) " +
+                    "       and ((:dealerNames) is null or bo.dealer_name in (:dealerNames)) " +
+                    "       and ((:classes) is null or pd.clazz in (:classes)) " +
+                    "       and ((:plants) is null or pd.plant in (:plants)) " +
+                    "       and ((:segments) is null or pd.segment in (:segments)) " +
+                    "       and ((:metaSeries) is null or substring(bo.series, 2, 3) in (:metaSeries)) " +
+                    "       and ((:models) is null or pd.modelcode in (:models)) " +
                     "       AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
                     "           (:comparator = '<=' AND bo.margin_percentage_after_sur_charge <= :marginPercentageAfterSurCharge) OR" +
                     "           (:comparator = '>=' AND bo.margin_percentage_after_sur_charge >= :marginPercentageAfterSurCharge) OR" +

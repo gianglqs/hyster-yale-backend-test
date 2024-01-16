@@ -207,7 +207,7 @@ public class ImportService extends BasedService {
      */
     public Country getCountry(String countryName, String strRegion) {
         Optional<Country> optional = countryService.getCountryByName(countryName);
-        if(optional.isPresent())
+        if (optional.isPresent())
             return optional.get();
         else {
             Region region = regionService.getRegionByName(strRegion);
@@ -282,7 +282,7 @@ public class ImportService extends BasedService {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.forecast-pricing");
         List<String> fileList = getAllFilesInFolder(folderPath, -1);
-        if(fileList.isEmpty())
+        if (fileList.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Forecast Dynamic Pricing Excel file");
 
         List<ForeCastValue> foreCastValues = new ArrayList<>();
@@ -436,7 +436,11 @@ public class ImportService extends BasedService {
             if (row.getRowNum() == 0) getOrderColumnsName(row, SHIPMENT_COLUMNS_NAME);
             else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
                 Shipment newShipment = mapExcelDataIntoShipmentObject(row, SHIPMENT_COLUMNS_NAME);
-                shipmentList.add(newShipment);
+
+                // check it has BookingOrder
+                if (newShipment.getProductDimension() != null) {
+                    shipmentList.add(newShipment);
+                }
             }
         }
 
@@ -525,14 +529,6 @@ public class ImportService extends BasedService {
             throw new MissingColumnException("Missing column 'Serial Number'!");
         }
 
-        // Set model
-        if (shipmentColumnsName.get("Model") != null) {
-            String model = row.getCell(shipmentColumnsName.get("Model")).getStringCellValue();
-            shipment.setModel(model);
-        } else {
-            throw new MissingColumnException("Missing column 'Model'!");
-        }
-
         // netRevenue
         double revenue, discount;
         if (shipmentColumnsName.get("Revenue") != null) {
@@ -604,10 +600,6 @@ public class ImportService extends BasedService {
         if (shipmentColumnsName.get("Series") != null) {
             String series = row.getCell(shipmentColumnsName.get("Series")).getStringCellValue();
             shipment.setSeries(series);
-
-            // productDimension
-            ProductDimension productDimension = productDimensionService.getProductDimensionByMetaseries(series);
-            shipment.setProductDimension(productDimension);
         } else {
             throw new MissingColumnException("Missing column 'Series'!");
         }
@@ -616,6 +608,9 @@ public class ImportService extends BasedService {
         Optional<BookingOrder> bookingOrderOptional = bookingOrderRepository.getBookingOrderByOrderNo(orderNo);
         if (bookingOrderOptional.isPresent()) {
             BookingOrder booking = bookingOrderOptional.get();
+
+            // productDimension
+            shipment.setProductDimension(booking.getProductDimension());
 
             // set Region
             shipment.setRegion(booking.getRegion());
@@ -645,10 +640,9 @@ public class ImportService extends BasedService {
             // AOP Margin %
             shipment.setAOPMarginPercentage(booking.getAOPMarginPercentage());
 
+        } else {
+            logWarning("Not found BookingOrder with OrderNo:  " + orderNo);
         }
-//        else {
-//            logWarning("Not found BookingOrder with OrderNo:  " + orderNo);
-//        }
 
         return shipment;
     }

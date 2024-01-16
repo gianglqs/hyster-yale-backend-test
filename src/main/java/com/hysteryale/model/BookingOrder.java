@@ -50,7 +50,6 @@ public class BookingOrder {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_dimension")
     private ProductDimension productDimension;
-    private String model;
 
     @Column(name = "truck_class")
     private String truckClass;
@@ -88,21 +87,19 @@ public class BookingOrder {
         this.dealerNet = dealerNet;
         this.dealerNetAfterSurCharge = dealerNetAfterSurCharge;
         this.marginAfterSurCharge = marginAfterSurCharge;
-        this.model = model;
     }
 
-    public BookingOrder(String region, String plant, String clazz, String series, String model, double totalCost, double dealerNetAfterSurCharge, double marginAfterSurCharge, long quantity) {
+    public BookingOrder(String region, ProductDimension productDimension, String series, double totalCost, double dealerNetAfterSurCharge, double marginAfterSurCharge, long quantity) {
 
-        ProductDimension p = new ProductDimension(plant, clazz, model);
+
         Region r = new Region(region);
         this.region = r;
-        this.productDimension = p;
+        this.productDimension = productDimension;
         this.series = series;
         this.quantity = quantity;
         this.totalCost = totalCost;
         this.dealerNetAfterSurCharge = dealerNetAfterSurCharge;
         this.marginAfterSurCharge = marginAfterSurCharge;
-        this.model = model;
     }
 
     public BookingOrder(String id, long quantity, double dealerNet, double dealerNetAfterSurCharge, double totalCost, double marginAfterSurCharge, double marginPercentageAfterSurCharge) {

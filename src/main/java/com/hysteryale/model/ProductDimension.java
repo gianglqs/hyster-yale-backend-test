@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Setter
 public class ProductDimension {
     @Id
+    @Column(name = "modelcode")
     private String modelCode;
     private String metaSeries;
     private String brand;
@@ -21,11 +22,10 @@ public class ProductDimension {
     private String clazz;
     private String segment;
     private String family;
-    private String description;
-    private String image;
-    public ProductDimension(String plant, String clazz, String model) {
+
+    public ProductDimension(String plant, String clazz, String modelCode) {
         this.plant = plant;
         this.clazz = clazz;
-        this.modelCode = model;
+        this.modelCode = modelCode;
     }
 }
