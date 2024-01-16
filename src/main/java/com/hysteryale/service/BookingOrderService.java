@@ -118,14 +118,6 @@ public class BookingOrderService extends BasedService {
         if (ORDER_COLUMNS_NAME.get("SERIES") != null) {
             String series = row.getCell(ORDER_COLUMNS_NAME.get("SERIES")).getStringCellValue();
             bookingOrder.setSeries(series);
-
-            //set ProductDimension
-            ProductDimension productDimension = productDimensionService.getProductDimensionByMetaseries(series);
-            if (productDimension != null) {
-                bookingOrder.setProductDimension(productDimension);
-            } else {
-                logWarning("Not found ProductDimension with OrderNo" + bookingOrder.getOrderNo());
-            }
         } else {
             throw new MissingColumnException("Missing column 'SERIES'!");
         }
@@ -141,7 +133,13 @@ public class BookingOrderService extends BasedService {
         //set model
         if (ORDER_COLUMNS_NAME.get("MODEL") != null) {
             Cell modelCell = row.getCell(ORDER_COLUMNS_NAME.get("MODEL"));
-            bookingOrder.setModel(modelCell.getStringCellValue());
+            //set ProductDimension
+            ProductDimension productDimension = productDimensionService.getProductDimensionByModelCode(modelCell.getStringCellValue());
+            if (productDimension != null) {
+                bookingOrder.setProductDimension(productDimension);
+            } else {
+                logWarning("Not found ProductDimension with OrderNo: " + bookingOrder.getOrderNo());
+            }
         } else {
             throw new MissingColumnException("Missing column 'MODEL'!");
         }
@@ -290,16 +288,17 @@ public class BookingOrderService extends BasedService {
                 // import DN, DNAfterSurcharge
                 newBookingOrder = importDNAndDNAfterSurcharge(newBookingOrder);
 
-                if (USPlant.contains(newBookingOrder.getProductDimension().getPlant())) {
-                    newBookingOrder = setTotalCostAndCurrency(newBookingOrder, listCostDataByMonthAndYear);
-                    logInfo("US Plant");
-                } else {
-                    newBookingOrder = importCostRMBOfEachParts(newBookingOrder);
+                if (newBookingOrder.getProductDimension() != null) { // check productDimension
+                    if (USPlant.contains(newBookingOrder.getProductDimension().getPlant())) {
+                        newBookingOrder = setTotalCostAndCurrency(newBookingOrder, listCostDataByMonthAndYear);
+                        logInfo("US Plant");
+                    } else {
+                        newBookingOrder = importCostRMBOfEachParts(newBookingOrder);
+                    }
+                    newBookingOrder = calculateMargin(newBookingOrder);
+                    newBookingOrder = importAOPMargin(newBookingOrder);
+                    bookingOrderList.add(newBookingOrder);
                 }
-
-                newBookingOrder = calculateMargin(newBookingOrder);
-                newBookingOrder = importAOPMargin(newBookingOrder);
-                bookingOrderList.add(newBookingOrder);
             }
         }
         bookingOrderRepository.saveAll(bookingOrderList);
@@ -324,29 +323,32 @@ public class BookingOrderService extends BasedService {
             if (row.getRowNum() == numRowName) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
             else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
                 BookingOrder newBookingOrder = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
-                // import DN, DNAfterSurcharge
-                newBookingOrder = importDNAndDNAfterSurcharge(newBookingOrder);
 
-                if (USPlant.contains(newBookingOrder.getProductDimension().getPlant())) {
-                    logInfo("US Plant");
-                    // import totalCost when import file totalCost
+                if (newBookingOrder.getProductDimension() != null) {
+                    // import DN, DNAfterSurcharge
+                    newBookingOrder = importDNAndDNAfterSurcharge(newBookingOrder);
 
-                    Optional<BookingOrder> orderExisted = bookingOrderRepository.getBookingOrderByOrderNo(newBookingOrder.getOrderNo());
-                    if (orderExisted.isPresent()) {
-                        BookingOrder oldBooking = orderExisted.get();
-                        newBookingOrder.setCurrency(oldBooking.getCurrency());
-                        newBookingOrder.setAOPMarginPercentage(oldBooking.getAOPMarginPercentage());
-                        newBookingOrder.setMarginPercentageAfterSurCharge(oldBooking.getMarginPercentageAfterSurCharge());
-                        newBookingOrder.setMarginAfterSurCharge(oldBooking.getMarginAfterSurCharge());
-                        newBookingOrder.setTotalCost(oldBooking.getTotalCost());
+                    if (USPlant.contains(newBookingOrder.getProductDimension().getPlant())) {
+                        logInfo("US Plant");
+                        // import totalCost when import file totalCost
+
+                        Optional<BookingOrder> orderExisted = bookingOrderRepository.getBookingOrderByOrderNo(newBookingOrder.getOrderNo());
+                        if (orderExisted.isPresent()) {
+                            BookingOrder oldBooking = orderExisted.get();
+                            newBookingOrder.setCurrency(oldBooking.getCurrency());
+                            newBookingOrder.setAOPMarginPercentage(oldBooking.getAOPMarginPercentage());
+                            newBookingOrder.setMarginPercentageAfterSurCharge(oldBooking.getMarginPercentageAfterSurCharge());
+                            newBookingOrder.setMarginAfterSurCharge(oldBooking.getMarginAfterSurCharge());
+                            newBookingOrder.setTotalCost(oldBooking.getTotalCost());
+                        }
+                    } else {
+                        newBookingOrder = importCostRMBOfEachParts(newBookingOrder);
                     }
-                } else {
-                    newBookingOrder = importCostRMBOfEachParts(newBookingOrder);
-                }
 
-                newBookingOrder = calculateMargin(newBookingOrder);
-                newBookingOrder = importAOPMargin(newBookingOrder);
-                bookingOrderList.add(newBookingOrder);
+                    newBookingOrder = calculateMargin(newBookingOrder);
+                    newBookingOrder = importAOPMargin(newBookingOrder);
+                    bookingOrderList.add(newBookingOrder);
+                }
             }
         }
         logInfo("list booked" + bookingOrderList.size());
@@ -378,13 +380,16 @@ public class BookingOrderService extends BasedService {
         for (Row row : orderSheet) {
             if (row.getRowNum() == 0) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
             else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 1) {
+                // map data from excel file
                 BookingOrder newBookingOrder = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
 
-                newBookingOrder = importDNAndDNAfterSurcharge(newBookingOrder);
-                newBookingOrder = importOldMarginPercentageAndCurrency(newBookingOrder, marginDataFileList);
-                newBookingOrder = calculateTotalCostAndMarginAfterSurcharge(newBookingOrder);
-                newBookingOrder = importAOPMargin(newBookingOrder);
-                bookingOrderList.add(newBookingOrder);
+                if (newBookingOrder.getProductDimension() != null) {
+                    newBookingOrder = importDNAndDNAfterSurcharge(newBookingOrder);
+                    newBookingOrder = importOldMarginPercentageAndCurrency(newBookingOrder, marginDataFileList);
+                    newBookingOrder = calculateTotalCostAndMarginAfterSurcharge(newBookingOrder);
+                    newBookingOrder = importAOPMargin(newBookingOrder);
+                    bookingOrderList.add(newBookingOrder);
+                }
             }
         }
 
@@ -416,9 +421,11 @@ public class BookingOrderService extends BasedService {
     }
 
     private BookingOrder importAOPMargin(BookingOrder booking) {
-        Double aopMargin = aopMarginService.getAOPMargin(booking.getSeries(), booking.getRegion().getRegion(), booking.getProductDimension().getPlant());
-        if (aopMargin != null)
-            booking.setAOPMarginPercentage(aopMargin);
+        if (booking.getProductDimension() != null) {
+            Double aopMargin = aopMarginService.getAOPMargin(booking.getSeries(), booking.getRegion().getRegion(), booking.getProductDimension().getPlant());
+            if (aopMargin != null)
+                booking.setAOPMarginPercentage(aopMargin);
+        }
         return booking;
     }
 
@@ -437,7 +444,7 @@ public class BookingOrderService extends BasedService {
         double totalCost = 0;
         if (!bookingOrder.getProductDimension().getPlant().equals("SN")) { // plant is Hysteryale, Maximal, Ruyi, Staxx
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByHYMPlantAndListPartNumber(
-                    bookingOrder.getModel(), listPartNumber, bookingOrder.getCurrency().getCurrency(), date);
+                    bookingOrder.getProductDimension().getModelCode(), listPartNumber, bookingOrder.getCurrency().getCurrency(), date);
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
                 totalCost += marginAnalystMacro.getCostRMB();
             }
@@ -445,11 +452,11 @@ public class BookingOrderService extends BasedService {
             ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("CNY", bookingOrder.getCurrency().getCurrency());
             if (exchangeRate != null) {
                 totalCost *= exchangeRate.getRate();
-                logInfo("None SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getModel() + "  " + exchangeRate.getRate());
+                logInfo("None SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getProductDimension().getModelCode() + "  " + exchangeRate.getRate());
             }
         } else { // plant is SN
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByPlantAndListPartNumber(
-                    bookingOrder.getModel(), listPartNumber, bookingOrder.getCurrency().getCurrency(),
+                    bookingOrder.getProductDimension().getModelCode(), listPartNumber, bookingOrder.getCurrency().getCurrency(),
                     bookingOrder.getProductDimension().getPlant(), date);
 
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
@@ -458,7 +465,7 @@ public class BookingOrderService extends BasedService {
             ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("USD", bookingOrder.getCurrency().getCurrency());
             if (exchangeRate != null) {
                 totalCost *= exchangeRate.getRate();
-                logInfo(" SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getModel() + "  " + exchangeRate.getRate());
+                logInfo(" SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getProductDimension().getModelCode() + "  " + exchangeRate.getRate());
             }
         }
 

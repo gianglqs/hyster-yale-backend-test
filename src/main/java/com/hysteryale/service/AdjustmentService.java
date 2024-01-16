@@ -51,7 +51,7 @@ public class AdjustmentService extends BasedService {
         setIdForList(listAdj);
         result.put("listAdjustment", listAdj);
         // get total
-        List<BookingOrder> getAll = bookingOrderRepository.selectTotalForAdjustment(
+        List<BookingOrder> getSumAllRow = bookingOrderRepository.selectTotalForAdjustment(
                 (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
                 (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
                 (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
@@ -61,7 +61,7 @@ public class AdjustmentService extends BasedService {
                 ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageAfterAdjFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageAfterAdjFilter")).get(1)),
                 calculatorModel.getCostAdjPercentage(), calculatorModel.getFreightAdj(), calculatorModel.getFxAdj(), calculatorModel.getDnAdjPercentage());
-        List<AdjustmentPayLoad> totalAdj = convertToListAdjustment(getAll, calculatorModel);
+        List<AdjustmentPayLoad> totalAdj = convertToListAdjustment(getSumAllRow, calculatorModel);
         List<AdjustmentPayLoad> calculateAll = calculateTotal(totalAdj, calculatorModel);
         result.put("total", calculateAll);
 
@@ -140,11 +140,12 @@ public class AdjustmentService extends BasedService {
         if (booking.getProductDimension() != null) {
             adjustmentPayLoad.setPlant(booking.getProductDimension().getPlant());
             adjustmentPayLoad.setClazz(booking.getProductDimension().getClazz());
+            adjustmentPayLoad.setModel(booking.getProductDimension().getModelCode());
+            if (booking.getSeries() != null)
+                adjustmentPayLoad.setMetaSeries(booking.getSeries().substring(1));
         }
 
-        adjustmentPayLoad.setModel(booking.getModel());
-        if (booking.getSeries() != null)
-            adjustmentPayLoad.setMetaSeries(booking.getSeries().substring(1));
+
 
         adjustmentPayLoad.setNoOfOrder(booking.getQuantity());
 
