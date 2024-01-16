@@ -499,6 +499,7 @@ public class ImportService extends BasedService {
         Double marginPercentage = margin / s1.getDealerNetAfterSurCharge();
         s1.setMarginAfterSurCharge(margin);
         s1.setMarginPercentageAfterSurCharge(marginPercentage);
+        s1.setQuantity(s1.getQuantity()+s2.getQuantity());
         return s1;
     }
 
