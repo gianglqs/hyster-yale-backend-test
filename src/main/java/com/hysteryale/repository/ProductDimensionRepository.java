@@ -61,6 +61,7 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
             " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
             " AND ((:segments) IS NULL OR p.segment IN (:segments))" +
             " AND ((:brands) IS NULL OR p.brand IN (:brands))" +
+            " AND ((:truckTypes) IS NULL OR p.truckType IN (:truckTypes))" +
             " AND ((:family) IS NULL OR p.family IN (:family))")
     long countAll(String modelCode,
                   List<String> plants,
@@ -68,6 +69,7 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
                   List<String> classes,
                   List<String> segments,
                   List<String> brands,
+                  List<String> truckTypes,
                   List<String> family
     );
 

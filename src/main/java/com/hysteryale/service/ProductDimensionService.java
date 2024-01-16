@@ -196,7 +196,7 @@ public class ProductDimensionService extends BasedService {
                 (String) filterMap.get("modelCode"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
-                (List<String>) filterMap.get("familyFilter"));
+                (List<String>) filterMap.get("truckType"), (List<String>) filterMap.get("familyFilter"));
         result.put("totalItems", countAll);
 
         return result;

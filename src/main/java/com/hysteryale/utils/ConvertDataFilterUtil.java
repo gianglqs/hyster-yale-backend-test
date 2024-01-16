@@ -32,6 +32,7 @@ public class ConvertDataFilterUtil {
         String modelCodeFilter = checkStringData(filterModel.getModelCode());
         List<String> brandFilter = checkListData(filterModel.getBrands());
         List<String> familyFilter = checkListData(filterModel.getFamily());
+        List<String> truckTypeFilter = checkListData(filterModel.getTruckType());
 
         Calendar calendar = Calendar.getInstance();
         Integer year = filterModel.getYear() == null ? calendar.get(Calendar.YEAR) : filterModel.getYear();
@@ -56,7 +57,8 @@ public class ConvertDataFilterUtil {
         //for ProductDimensionUI
         result.put("modelCodeFilter", modelCodeFilter);
         result.put("brandFilter", brandFilter);
-        result.put("familyFilter",familyFilter);
+        result.put("familyFilter", familyFilter);
+        result.put("truckTypeFilter", truckTypeFilter);
 
         return result;
     }

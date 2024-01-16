@@ -32,5 +32,6 @@ public class FilterModel {
     private String modelCode;
     private List<String> brands;
     private List<String> family;
+    private List<String> truckType;
 
 }

@@ -22,6 +22,7 @@ public class ProductDimension {
     private String clazz;
     private String segment;
     private String family;
+    private String truckType;
 
     public ProductDimension(String plant, String clazz, String modelCode) {
         this.plant = plant;
