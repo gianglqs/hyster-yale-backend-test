@@ -14,19 +14,18 @@ import javax.persistence.*;
 @Setter
 public class ProductDimension {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    @Column(unique = true)
+    @Column(name = "modelcode")
+    private String modelCode;
     private String metaSeries;
     private String brand;
     private String plant;
     private String clazz;
     private String segment;
-    private String model;
+    private String family;
 
-    public ProductDimension(String plant, String clazz, String model) {
+    public ProductDimension(String plant, String clazz, String modelCode) {
         this.plant = plant;
         this.clazz = clazz;
-        this.model = model;
+        this.modelCode = modelCode;
     }
 }

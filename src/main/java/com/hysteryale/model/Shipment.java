@@ -46,8 +46,6 @@ public class Shipment {
     @Column(name = "serial_number")
     private String serialNumber;
 
-    private String model;
-
     private long quantity;
 
     private double netRevenue;

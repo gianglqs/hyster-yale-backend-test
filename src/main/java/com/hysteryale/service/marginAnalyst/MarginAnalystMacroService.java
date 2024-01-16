@@ -100,7 +100,7 @@ public class MarginAnalystMacroService {
     // Import Macro from a file
     public void importMarginAnalystMacroFromFile(String fileName, String filePath) {
         // Extract monthYear from fileName pattern
-        Pattern pattern = Pattern.compile(".* Macro_(\\w{3}) (\\d{4}).*");
+        Pattern pattern = Pattern.compile(".* Macro_(\\w{3})\\s*(\\d{4}).*");
         Matcher matcher = pattern.matcher(fileName);
         String month;
         int year;
