@@ -89,12 +89,12 @@ public class BookingOrder {
         this.marginAfterSurCharge = marginAfterSurCharge;
     }
 
-    public BookingOrder(String region, String plant, String clazz, String series, String model, double totalCost, double dealerNetAfterSurCharge, double marginAfterSurCharge, long quantity) {
+    public BookingOrder(String region, ProductDimension productDimension, String series, double totalCost, double dealerNetAfterSurCharge, double marginAfterSurCharge, long quantity) {
 
-        ProductDimension p = new ProductDimension(plant, clazz, model);
+
         Region r = new Region(region);
         this.region = r;
-        this.productDimension = p;
+        this.productDimension = productDimension;
         this.series = series;
         this.quantity = quantity;
         this.totalCost = totalCost;
