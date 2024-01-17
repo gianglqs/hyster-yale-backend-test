@@ -37,23 +37,23 @@ public class BookingOrderControllerTest  {
                 .build();
     }
 
-//    @Test
-//    @WithMockUser(authorities = "USER")
-//    public void testGetDataBooking() throws Exception {
-//        FilterModel filters = new FilterModel();
-//        log.info(JsonUtils.toJSONString(filters));
-//
-//        MvcResult result =
-//                mockMvc
-//                        .perform(
-//                                post("/bookingOrders")
-//                                        .content(JsonUtils.toJSONString(filters))
-//                                        .contentType(MediaType.APPLICATION_JSON)
-//                        )
-//                        .andExpect(jsonPath("$.totalItems"). isNumber())
-//                        .andExpect(jsonPath("$.total").isArray())
-//                        .andExpect(jsonPath("$.listBookingOrder").isArray())
-//                        .andReturn();
-//        Assertions.assertEquals(200, result.getResponse().getStatus());
-//    }
+    @Test
+    @WithMockUser(authorities = "USER")
+    public void testGetDataBooking() throws Exception {
+        FilterModel filters = new FilterModel();
+        log.info(JsonUtils.toJSONString(filters));
+
+        MvcResult result =
+                mockMvc
+                        .perform(
+                                post("/bookingOrders")
+                                        .content(JsonUtils.toJSONString(filters))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                        )
+                        .andExpect(jsonPath("$.totalItems"). isNumber())
+                        .andExpect(jsonPath("$.total").isArray())
+                        .andExpect(jsonPath("$.listBookingOrder").isArray())
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
 }
