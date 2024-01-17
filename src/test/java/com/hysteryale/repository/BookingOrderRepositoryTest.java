@@ -1,10 +1,7 @@
 package com.hysteryale.repository;
 
 import com.hysteryale.model.BookingOrder;
-import com.hysteryale.model.ProductDimension;
-import com.hysteryale.model.Region;
 import com.hysteryale.repository.bookingorder.BookingOrderRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -28,9 +25,11 @@ public class BookingOrderRepositoryTest {
     @Test
     void getBookingOrderByOrderNo() {
         String orderNo = "H54334A";
-        BookingOrder booking = new BookingOrder(orderNo, "QUOCBAO", "A3C4", "E50XN");
+        BookingOrder booking = new BookingOrder(orderNo, "QUOCBAO", "A3C4");
         entityManager.persist(booking);
         Optional<BookingOrder> retrievedBooking = bookingOrderRepository.getBookingOrderByOrderNo(orderNo);
+
+        Assertions.assertTrue(retrievedBooking.isPresent());
         Assertions.assertEquals(retrievedBooking.get(), booking);
     }
 
