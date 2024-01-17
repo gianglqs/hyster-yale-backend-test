@@ -29,6 +29,10 @@ public class ConvertDataFilterUtil {
         Calendar fromDateFilter = checkDateData(filterModel.getFromDate());
         Calendar toDateFilter = checkDateData(filterModel.getToDate());
         Pageable pageable = PageRequest.of(filterModel.getPageNo() == 0 ? filterModel.getPageNo() : filterModel.getPageNo() - 1, filterModel.getPerPage() == 0 ? 100 : filterModel.getPerPage());
+        String modelCodeFilter = checkStringData(filterModel.getModelCode());
+        List<String> brandFilter = checkListData(filterModel.getBrands());
+        List<String> familyFilter = checkListData(filterModel.getFamily());
+        List<String> truckTypeFilter = checkListData(filterModel.getTruckType());
 
         Calendar calendar = Calendar.getInstance();
         Integer year = filterModel.getYear() == null ? calendar.get(Calendar.YEAR) : filterModel.getYear();
@@ -49,6 +53,12 @@ public class ConvertDataFilterUtil {
         result.put("toDateFilter", toDateFilter);
         result.put("pageable", pageable);
         result.put("year", year);
+
+        //for ProductDimensionUI
+        result.put("modelCodeFilter", modelCodeFilter);
+        result.put("brandFilter", brandFilter);
+        result.put("familyFilter", familyFilter);
+        result.put("truckTypeFilter", truckTypeFilter);
 
         return result;
     }
