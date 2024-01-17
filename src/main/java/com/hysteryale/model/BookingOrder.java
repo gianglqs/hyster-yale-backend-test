@@ -138,11 +138,10 @@ public class BookingOrder {
     /**
      * for test Repository in Junit Test
      */
-    public BookingOrder(String orderNo, String dealerName, String series, String model){
+    public BookingOrder(String orderNo, String dealerName, String series){
         this.orderNo = orderNo;
         this.dealerName = dealerName;
         this.series = series;
-        this.model = model;
     }
 
 
