@@ -3,4 +3,8 @@
     <changeSet id="delete-duplicate-field-competitorcolor" author="hoangnhan">
         <dropColumn tableName="competitorcolor" columnName="groupName"/>
     </changeSet>
+    
+    <changeSet id="rename-upload-by-id-column" author="hoangnhan">
+        <renameColumn tableName="file_upload" oldColumnName="uploadedBy_id" newColumnName="uploadedby_id"/>
+    </changeSet>
 </databaseChangeLog>
