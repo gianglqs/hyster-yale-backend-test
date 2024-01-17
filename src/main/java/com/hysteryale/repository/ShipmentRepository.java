@@ -273,7 +273,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                     "       bo.region = r.id " +
                     "   where " +
                     "      (:orderNo is null or lower(bo.order_no) = lower( :orderNo))  " +
-                    "       and ((:regions) is null or r.region in :regions) " +
+                    "       and ((:regions) is null or r.region in (:regions)) " +
                     "       and ((:dealerNames) is null or bo.dealer_name in (:dealerNames)) " +
                     "       and ((:classes) is null or pd.clazz in (:classes)) " +
                     "       and ((:plants) is null or pd.plant in (:plants)) " +
