@@ -37,7 +37,7 @@
                 encoding="UTF-8"
                 file="classpath:db/database/productdimension.csv"
                 onlyUpdate="false"
-                primaryKey="id"
+                primaryKey="modelcode"
                 quotchar="'"
                 separator=","
                 tableName="productdimension">

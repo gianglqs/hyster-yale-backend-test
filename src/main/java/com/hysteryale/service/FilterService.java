@@ -90,6 +90,55 @@ public class FilterService {
         return filters;
     }
 
+    public Map<String, Object> getProductFilter() {
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("plants", getAllPlants());
+        filters.put("metaSeries", getAllMetaSeries());
+        filters.put("classes", getAllClasses());
+        filters.put("segments", getAllSegments());
+        filters.put("brands", getAllBrands());
+        filters.put("truckType", getAllTruckTypes());
+        filters.put("family", getAllFamily());
+
+        return filters;
+    }
+
+    private List<Map<String, String>> getAllFamily() {
+        List<Map<String, String>> familyMaps = new ArrayList<>();
+        List<String> listFamily = productDimensionRepository.getAllFamily();
+        listFamily.sort(String::compareTo);
+        for (String m : listFamily) {
+            Map<String, String> mMap = new HashMap<>();
+            mMap.put("value", m);
+            familyMaps.add(mMap);
+        }
+        return familyMaps;
+    }
+
+    private List<Map<String, String>> getAllTruckTypes() {
+        List<Map<String, String>> truckTypeMaps = new ArrayList<>();
+        List<String> truckTypes = productDimensionRepository.getAllTruckType();
+        truckTypes.sort(String::compareTo);
+        for (String m : truckTypes) {
+            Map<String, String> mMap = new HashMap<>();
+            mMap.put("value", m);
+            truckTypeMaps.add(mMap);
+        }
+        return truckTypeMaps;
+    }
+
+    private List<Map<String, String>> getAllBrands() {
+        List<Map<String, String>> brandMaps = new ArrayList<>();
+        List<String> brands = productDimensionRepository.getAllBrands();
+        brands.sort(String::compareTo);
+        for (String m : brands) {
+            Map<String, String> mMap = new HashMap<>();
+            mMap.put("value", m);
+            brandMaps.add(mMap);
+        }
+        return brandMaps;
+    }
+
     private List<Map<String, Integer>> getRecentYears() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);

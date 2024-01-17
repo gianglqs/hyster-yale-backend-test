@@ -2,66 +2,35 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <changeSet author="hoangnhan" id="loadData-3" context="!prod">
-        <loadUpdateData
-                encoding="UTF-8"
-                file="classpath:db/database/_role_.csv"
-                onlyUpdate="false"
-                primaryKey="id"
-                quotchar="'"
-                separator=","
-                tableName="role">
-        </loadUpdateData>
+<!--    <changeSet author="songiang" id="loadData-1" context="!prod">-->
+<!--    <loadUpdateData-->
+<!--            encoding="UTF-8"-->
+<!--            file="classpath:db/database/_role_.csv"-->
+<!--            onlyUpdate="false"-->
+<!--            primaryKey="id"-->
+<!--            quotchar="'"-->
+<!--            separator=","-->
+<!--            tableName="role">-->
+<!--    </loadUpdateData>-->
 
-        <loadUpdateData
-                encoding="UTF-8"
-                file="classpath:db/database/_user_.csv"
-                onlyUpdate="false"
-                primaryKey="id"
-                quotchar="'"
-                separator=","
-                tableName="user">
-        </loadUpdateData>
+<!--    <loadUpdateData-->
+<!--            encoding="UTF-8"-->
+<!--            file="classpath:db/database/_user_.csv"-->
+<!--            onlyUpdate="false"-->
+<!--            primaryKey="id"-->
+<!--            quotchar="'"-->
+<!--            separator=","-->
+<!--            tableName="user">-->
+<!--    </loadUpdateData>-->
 
-        <loadUpdateData
-                encoding="UTF-8"
-                file="classpath:db/database/currency.csv"
-                onlyUpdate="false"
-                primaryKey="currency"
-                quotchar="'"
-                separator=","
-                tableName="currency">
-        </loadUpdateData>
-
-        <loadUpdateData
-                encoding="UTF-8"
-                file="classpath:db/database/productdimension.csv"
-                onlyUpdate="false"
-                primaryKey="id"
-                quotchar="'"
-                separator=","
-                tableName="productdimension">
-        </loadUpdateData>
-
-        <loadUpdateData
-                encoding="UTF-8"
-                file="classpath:db/database/region.csv"
-                onlyUpdate="false"
-                primaryKey="id"
-                quotchar="'"
-                separator=","
-                tableName="region">
-        </loadUpdateData>
-
-        <loadUpdateData
-                encoding="UTF-8"
-                file="classpath:db/database/booking.csv"
-                onlyUpdate="false"
-                primaryKey="order_no"
-                quotchar="'"
-                separator=","
-                tableName="booking_order">
-        </loadUpdateData>
-
-    </changeSet>
+<!--    <loadUpdateData-->
+<!--            encoding="UTF-8"-->
+<!--            file="classpath:db/database/currency.csv"-->
+<!--            onlyUpdate="false"-->
+<!--            primaryKey="currency"-->
+<!--            quotchar="'"-->
+<!--            separator=","-->
+<!--            tableName="currency">-->
+<!--    </loadUpdateData>-->
+<!--    </changeSet>-->
 </databaseChangeLog>

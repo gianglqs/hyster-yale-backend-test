@@ -1,23 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <changeSet id="rename_competitorcolor_field" author="hoangnhan">
-        <renameColumn tableName="competitorcolor" oldColumnName="competitorname" newColumnName="groupName"/>
+    <changeSet id="delete-duplicate-field-competitorcolor" author="hoangnhan">
+        <dropColumn tableName="competitorcolor" columnName="groupName"/>
     </changeSet>
-
-    <changeSet id="rename_competitorcolor_field_2" author="hoangnhan">
-        <renameColumn tableName="competitorcolor" oldColumnName="groupName" newColumnName="groupname"/>
-    </changeSet>
-
-    <changeSet id="delete_competitor_pricing_data" author="hoangnhan">
-        <delete tableName="competitorpricing"/>
-    </changeSet>
-
-    <changeSet id="delete_competitorcolor_data" author="hoangnhan">
-        <delete tableName="competitorcolor"/>
-    </changeSet>
-
-    <changeSet id="rename_file_upload_field" author="hoangnhan">
-        <renameColumn tableName="file_upload" oldColumnName="uploadedBy_id" newColumnName="uploadedby_id"/>
-    </changeSet>
-
 </databaseChangeLog>
