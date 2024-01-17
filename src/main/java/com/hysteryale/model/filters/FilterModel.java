@@ -28,5 +28,10 @@ public class FilterModel {
     private int perPage;
     private int pageNo;
     private String marginPercentageAfterAdj;
+    //for ProductDimension
+    private String modelCode;
+    private List<String> brands;
+    private List<String> family;
+    private List<String> truckType;
 
 }
