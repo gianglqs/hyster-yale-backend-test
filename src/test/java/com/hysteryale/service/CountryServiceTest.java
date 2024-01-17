@@ -22,7 +22,7 @@ public class CountryServiceTest {
     public void testGetCountryByName() {
         String countryName = "New Country";
 
-        countryRepository.save(new Country(countryName, new Region("New Region")));
+        countryRepository.save(new Country(countryName, new Region(1, "Asia", "A")));
         Optional<Country> dbCountry = countryService.getCountryByName(countryName);
 
         Assertions.assertTrue(dbCountry.isPresent());
@@ -36,7 +36,7 @@ public class CountryServiceTest {
 
     @Test
     public void testAddCountry() {
-        String countryName = "New Country";
+        String countryName = "New Country 123";
 
         countryService.addCountry(new Country(countryName, new Region(1, "Asia", "A")));
         Optional<Country> dbCountry = countryRepository.getCountryByName(countryName);

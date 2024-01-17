@@ -22,6 +22,7 @@ public class ExchangeRateServiceTest {
         String from = "VND";
         String to = "USD";
         Calendar monthYear = Calendar.getInstance();
+        monthYear.set(2050, Calendar.DECEMBER, 21);
         exchangeRateRepository.save(new ExchangeRate(new Currency(from), new Currency(to), 1.01, monthYear));
 
         ExchangeRate dbExchangeRate = exchangeRateService.getExchangeRate(from, to, monthYear);
