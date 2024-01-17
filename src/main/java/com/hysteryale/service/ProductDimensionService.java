@@ -191,7 +191,7 @@ public class ProductDimensionService extends BasedService {
         logInfo(filterMap.toString());
         // product filter by: plant, segment, brand, family, metaSeries
         List<ProductDimension> getData = productDimensionRepository.getDataByFilter(
-                (String) filterMap.get("modelCode"), (List<String>) filterMap.get("plantFilter"),
+                (String) filterMap.get("modelCodeFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
                 (List<String>) filterMap.get("familyFilter"),(Pageable) filterMap.get("pageable")
