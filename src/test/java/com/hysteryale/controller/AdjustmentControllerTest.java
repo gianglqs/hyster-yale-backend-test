@@ -41,7 +41,7 @@ public class AdjustmentControllerTest {
                 .build();
     }
 
-    //@Test
+    @Test
     @WithMockUser(authorities = "USER")
     public void testGetDataAdjustment() throws Exception{
         AdjustmentFilterModel adjustmentFilter =
@@ -64,7 +64,11 @@ public class AdjustmentControllerTest {
                                 2023,
                                 100,
                                 1,
-                                ""
+                                "",
+                                "",
+                                new ArrayList<>(),
+                                new ArrayList<>(),
+                                new ArrayList<>()
                         )
                 );
         MvcResult result =

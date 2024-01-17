@@ -1,304 +1,293 @@
-'id','brand','clazz','metaseries','model','plant','segment'
-1,Y,Class 1,'881',FB15PYE,SN,C1 1-3.5T - Standard and Premium
-2,H,Class 1,'114',E40ZS,Greenville,C1 1-3.5T - Standard and Premium
-3,H,Class 1,'225',J1.50EX,SN,C1 1-3.5T - Standard and Premium
-4,H,Class 1,'269',E40XN,Greenville,C1 1-3.5T - Standard and Premium
-5,Y,Class 1,'814',EREC040AH,Greenville,C1 1-3.5T - Standard and Premium
-6,Y,Class 1,'969',ERC040VA,Greenville,C1 1-3.5T - Standard and Premium
-7,H,Class 1,'021',E60XM2G,Greenville,C1 1-3.5T - Standard and Premium
-8,H,Class 1,'108',E507E,Greenville,C1 1-3.5T - Standard and Premium
-9,H,Class 1,'268',E70XN,Greenville,C1 1-3.5T - Standard and Premium
-10,Y,Class 1,'908',ERC060RF,Greenville,C1 1-3.5T - Standard and Premium
-11,Y,Class 1,'968',ERC35VG,Greenville,C1 1-3.5T - Standard and Premium
-12,H,Class 1,'098',E80Z,Greenville,C1 4-9T - Standard and Premium
-13,H,Class 1,'099',E80XN,Greenville,C1 4-9T - Standard and Premium
-14,Y,Class 1,'839',ERC120HH,Greenville,C1 4-9T - Standard and Premium
-15,H,Class 1,'203',A1.00-1.50XL,Craigavon,C1 1-3.5T - Standard and Premium
-16,Y,Class 1,'888',ERC/P 10-15 RCF,Craigavon,C1 1-3.5T - Standard and Premium
-17,H,Class 1,'160',J40XNT,Craigavon,C1 1-3.5T - Standard and Premium
-18,Y,Class 1,'807',ERP040VT,Craigavon,C1 1-3.5T - Standard and Premium
-19,H,Class 1,'219',E40HSD2,Greenville,C1 1-3.5T - Standard and Premium
-20,Y,Class 1,'883',ESC035FA,Greenville,C1 1-3.5T - Standard and Premium
-21,H,Class 1,'943',E50FR,Masate,C1 1-3.5T - Standard and Premium
-22,Y,Class 1,'945',ESC050ZA,Greenville,C1 1-3.5T - Standard and Premium
-23,Y,Class 1,'824',ESC030AD,Greenville,C1 1-3.5T - Standard and Premium
-24,H,Class 1,'935',J40XN,Craigavon,C1 1-3.5T - Standard and Premium
-25,Y,Class 1,'955',ERPVF,Craigavon,C1 1-3.5T - Standard and Premium
-26,H,Class 1,'216',ERP065DH,Craigavon,C1 1-3.5T - Standard and Premium
-27,H,Class 1,'226',J3.00EX,SN,C1 1-3.5T - Standard and Premium
-28,H,Class 1,'276',J70XN,Craigavon,C1 1-3.5T - Standard and Premium
-29,H,Class 1,'416',J65Z,Craigavon,C1 1-3.5T - Standard and Premium
-30,Y,Class 1,'882',FB20PYE,SN,C1 1-3.5T - Standard and Premium
-31,Y,Class 1,'976',ERP070VL,Craigavon,C1 1-3.5T - Standard and Premium
-32,H,Class 2,'138',N45XMR3,Greenville,C2 - Standard and Premium
-33,Y,Class 2,'224',FBR20-30 STY,SN,C2 - Standard and Premium
-34,H,Class 2,'264',N45ZR,Greenville,C2 - Standard and Premium
-35,Y,Class 2,'816',NS050AE,Greenville,C2 - Standard and Premium
-36,Y,Class 2,'829',NR045CA,Greenville,C2 - Standard and Premium
-37,Y,Class 2,'861',NR045GA,Greenville,C2 - Standard and Premium
-38,Y,Class 2,'900',FBR13-18SY/WY,SN,C2 - Standard and Premium
-39,H,Class 2,'915',R1.25-1.80EX/WEX,SN,C2 - Standard and Premium
-40,H,Class 2,'265',N40ZRS,Greenville,C2 - Standard and Premium
-41,Y,Class 2,'295',NR040DA,Greenville,C2 - Standard and Premium
-42,H,Class 2,'435',R2.0WA,Masate,C2 - Standard and Premium
-43,H,Class 2,'470',N40ZR,Greenville,C2 - Standard and Premium
-44,H,Class 2,'471',N50XMA3,Greenville,C2 - Standard and Premium
-45,Y,Class 2,'815',NR045AC,Greenville,C2 - Standard and Premium
-46,Y,Class 2,'849',MR20A,Masate,C2 - Standard and Premium
-47,H,Class 2,'925',R2.00-3.00EX *,SN,C2 - Standard and Premium
-48,H,Class 2,'118',R30XMF2,Greenville,C2 - Standard and Premium
-49,H,Class 2,'457',K1.0L,Masate,C2 - Standard and Premium
-50,H,Class 2,'460',K1.0,Masate,C2 - Standard and Premium
-51,Y,Class 2,'826',SS030BE,Greenville,C2 - Standard and Premium
-52,Y,Class 2,'862',MO 10E,Masate,C2 - Standard and Premium
-53,Y,Class 2,'865',MO 10/S,Masate,C2 - Standard and Premium
-54,Y,Class 2,'474',SS030BF,Greenville,C2 - Standard and Premium
-55,H,Class 2,'174',R30XMS2,Greenville,C2 - Standard and Premium
-56,Y,Class 2,'801',OS030EC,Greenville,C2 - Standard and Premium
-57,H,Class 2,'463',V30ZMU,Masate,C2 - Standard and Premium
-58,H,Class 2,'464',V35ZMU,Masate,C2 - Standard and Premium
-59,H,Class 2,'465',V40XMU,Masate,C2 - Standard and Premium
-60,H,Class 2,'467',V30XMU,Masate,C2 - Standard and Premium
-61,H,Class 2,'468',V35XMU,Masate,C2 - Standard and Premium
-62,H,Class 2,'469',V40XMU,Masate,C2 - Standard and Premium
-63,Y,Class 2,'868',NTA035SB,Masate,C2 - Standard and Premium
-64,Y,Class 2,'869',NTA035SB,Masate,C2 - Standard and Premium
-65,H,Class 2,'210',V30ZMD,Greenville,C2 - Standard and Premium
-66,H,Class 2,'448',RP3.0A,Masate,C2 - Standard and Premium
-67,H,Class 2,'449',RP2.0NA,Masate,C2 - Standard and Premium
-68,H,Class 2,'450',RS1.0-1.5/D,Masate,C2 - Standard and Premium
-69,Y,Class 2,'853',MP 20-30 S,Masate,C2 - Standard and Premium
-70,Y,Class 2,'854',MP 20T,Masate,C2 - Standard and Premium
-71,Y,Class 2,'855',MS/MOS 10-15 S,Masate,C2 - Standard and Premium
-72,H,Class 3,'218',Basic Model W40ZB,Greenville,C3 - Standard and Premium
-73,H,Class 3,'437',P1.8A,Masate,C3 - Standard and Premium
-74,H,Class 3,'472',P2.0HL,Masate,C3 - Standard and Premium
-75,Y,Class 3,'473',MP 20DL,Masate,C3 - Standard and Premium
-76,Y,Class 3,'827',MPB040-E,Greenville,C3 - Standard and Premium
-77,Y,Class 3,'841',MP 13-16,Masate,C3 - Standard and Premium
-78,H,Class 3,'447',S1.0-1.5C,Masate,C3 - Standard and Premium
-79,H,Class 3,'454',W40ZC,Greenville,C3 - Standard and Premium
-80,Y,Class 3,'819',MCW040-E,Greenville,C3 - Standard and Premium
-81,Y,Class 3,'860',MC 10-15,Masate,C3 - Standard and Premium
-82,H,Class 3,'440',S1.0E,Masate,C3 - Standard and Premium
-83,H,Class 3,'441',S1.2 ACA,Masate,C3 - Standard and Premium
-84,H,Class 3,'442',S1.5SA,Masate,C3 - Standard and Premium
-85,H,Class 3,'453',W40ZA,Greenville,C3 - Standard and Premium
-86,H,Class 3,'456',S1.4 ACA,Masate,C3 - Standard and Premium
-87,H,Class 3,'495',W30ZA2,Greenville,C3 - Standard and Premium
-88,Y,Class 3,'820',MSW040,Greenville,C3 - Standard and Premium
-89,Y,Class 3,'846',MS10/12,Masate,C3 - Standard and Premium
-90,Y,Class 3,'847',MS15XA,Masate,C3 - Standard and Premium
-91,Y,Class 3,'852',MS16/46,Masate,C3 - Standard and Premium
-92,Y,Class 3,'895',MSW040-E,Greenville,C3 - Standard and Premium
-93,H,Class 3,'455',W30ZR,Greenville,C3 - Standard and Premium
-94,Y,Class 3,'821',MRW030-E,Greenville,C3 - Standard and Premium
-95,H,Class 3,'215',W50Z,Greenville,C3 - Standard and Premium
-96,H,Class 3,'438',P2.2,Masate,C3 - Standard and Premium
-97,H,Class 3,'443',MP 25-30HD,Masate,C3 - Standard and Premium
-98,Y,Class 3,'802',MPW050E,Greenville,C3 - Standard and Premium
-99,Y,Class 3,'842',MP22A,Masate,C3 - Standard and Premium
-100,Y,Class 3,'856',MP 25-30HD,Masate,C3 - Standard and Premium
-101,H,Class 3,'433',P2.0SD,Masate,C3 - Standard and Premium
-102,H,Class 3,'439',P2.0S,Masate,C3 - Standard and Premium
-103,H,Class 3,'444',LO2.0L,Masate,C3 - Standard and Premium
-104,H,Class 3,'445',LO2.0L,Masate,C3 - Standard and Premium
-105,Y,Class 3,'843',MP20XA FBW,Masate,C3 - Standard and Premium
-106,Y,Class 3,'857',MO 20/S,Masate,C3 - Standard and Premium
-107,Y,Class 3,'892',MP 20XD,Masate,C3 - Standard and Premium
-108,H,Class 3,'939',LO2.0M,Masate,C3 - Standard and Premium
-109,Y,Class 3,'943a',MO 20F,Masate,C3 - Standard and Premium
-110,H,Class 3,'978',P2.0SE,Masate,C3 - Standard and Premium
-111,Y,Class 3,'979',MP 20XV,Masate,C3 - Standard and Premium
-112,Y,Class 3,'858',MO20FA,Masate,C3 - Standard and Premium
-113,H,Class 3,'230',B60ZAC,Greenville,C3 - Standard and Premium
-114,H,Class 3,'262',B60ZHD,Greenville,C3 - Standard and Premium
-115,Y,Class 3,'292',MPE060-VG,Greenville,C3 - Standard and Premium
-116,H,Class 3,'478',C60ZAC,Greenville,C3 - Standard and Premium
-117,Y,Class 3,'896',MPE060,Greenville,C3 - Standard and Premium
-118,Y,Class 3,'904',MPC060LE,Greenville,C3 - Standard and Premium
-119,Y,Class 3,'828',MLW060,Greenville,C3 - Standard and Premium
-120,H,Class 3,'135',W80XT,Greenville,C3 - Standard and Premium
-121,H,Class 3,'229',W65Z,Greenville,C3 - Standard and Premium
-122,Y,Class 3,'894',MPW065,Greenville,C3 - Standard and Premium
-123,H,Class 3,'231',W60Z,Greenville,C3 - Standard and Premium
-124,Y,Class 3,'897',MPW060E,Greenville,C3 - Standard and Premium
-125,H,Class 3,'234',W80Z,Greenville,C3 - Standard and Premium
-126,Y,Class 3,'891',MPW080,Greenville,C3 - Standard and Premium
-127,H,Class 3,'199',B80XT,Greenville,C3 - Standard and Premium
-128,H,Class 3,'499',C80XT2,Greenville,C3 - Standard and Premium
-129,Y,Class 3,'898',MPC080AD,Greenville,C3 - Standard and Premium
-130,Y,Class 3,'899',MPC080LD,Greenville,C3 - Standard and Premium
-131,H,Class 3,'233',B80ZAC,Greenville,C3 - Standard and Premium
-132,H,Class 3,'257',B80ZHD,Greenville,C3 - Standard and Premium
-133,Y,Class 3,'287',MPE080-VG,Greenville,C3 - Standard and Premium
-134,H,Class 3,'479',C80ZAC,Greenville,C3 - Standard and Premium
-135,Y,Class 3,'890',MPE080,Greenville,C3 - Standard and Premium
-136,Y,Class 3,'905',MPC080LE,Greenville,C3 - Standard and Premium
-137,H,Class 3,'142',T5XT,Greenville,C3 - Standard and Premium
-138,H,Class 3,'476',T5ZAC,Greenville,C3 - Standard and Premium
-139,H,Class 3,'477',T7ZAC,Greenville,C3 - Standard and Premium
-140,Y,Class 3,'902',MTR005-E,Greenville,C3 - Standard and Premium
-141,Y,Class 3,'903',MTR007E,Greenville,C3 - Standard and Premium
-142,H,Class 4,'010',S40FTS,Berea,C4 1-3.5T - Standard and Premium
-143,Y,Class 4,'809',GC040AF,Berea,C4 1-3.5T - Standard and Premium
-144,H,Class 4,'073',S60XMM,Berea,C4 1-3.5T - Standard and Premium
-145,H,Class 4,'074',S60XMG,Berea,C4 1-3.5T - Standard and Premium
-146,H,Class 4,'173',S60FTM,Berea,C4 1-3.5T - Standard and Premium
-147,H,Class 4,'187',H50FT,Berea,C4 1-3.5T - Standard and Premium
-148,Y,Class 4,'910',GC070VX,Berea,C4 1-3.5T - Standard and Premium
-149,H,Class 4,'267',S50CT,Berea,C4 1-3.5T - Standard and Premium
-150,Y,Class 4,'967',GC050LX,Berea,C4 1-3.5T - Standard and Premium
-151,H,Class 4,'004',S4.5FT,Berea,C4 4-9T - Standard and Premium
-152,Y,Class 4,'818',GC120VX,Berea,C4 4-9T - Standard and Premium
-153,H,Class 4,'024',S7.0FT,Berea,C4 4-9T - Standard and Premium
-154,Y,Class 4,'879',GC70VX,Berea,C4 4-9T - Standard and Premium
-155,H,Class 5 BT,'003',H280XL,Nijmegen,Big Forklift Trucks 10-16T
-156,H,Class 5 BT,'007',H280HD,Nijmegen,Big Forklift Trucks 10-16T
-157,Y,Class 5 BT,'876',GP250DB,Nijmegen,Big Forklift Trucks 10-16T
-158,H,Class 5 BT,'019',H360HD,Nijmegen,Big Forklift Trucks 10-16T
-159,Y,Class 5 BT,'877',GDP300EB,Nijmegen,Big Forklift Trucks 10-16T
-160,H,Class 5 BT,'019a',H10.00-12.00XM-12EC,Nijmegen,Big Forklift Trucks 10-16T
-161,H,Class 5 BT,'236',H450HDS,Nijmegen,Big Forklift Trucks >16T
-162,H,Class 5 BT,'214',H500HD-EC,Nijmegen,Port Equipment - Empty Container Handlers
-163,H,Class 5 BT,'008',H700HD,Nijmegen,Big Forklift Trucks >16T
-164,H,Class 5 BT,'917',H970HDS,Nijmegen,Big Forklift Trucks >16T
-165,H,Class 5 BT,'117',H1150HD-CH,Nijmegen,Port Equipment - Empty Container Handlers
-166,H,Class 5 BT,'222',HR45-41L,Nijmegen,Port Equipment - Reachstackers
-167,H,Class 5 BT,'289',RS45-30CH/RS46-30IH,India,Port Equipment - Reachstackers
-168,H,Class 5 BT,'227',HR45-45LSX,Terex,Big Forklift Trucks >16T
-169,H,Class 5 BT,'228',HR48-EC,Terex,Big Forklift Trucks >16T
-170,H,Class 5 not BT,'001',S50FT,Craigavon,C5 1-3.5T - Standard and Premium
-171,Y,Class 5 not BT,'810',GP040AF,Craigavon,C5 1-3.5T - Standard and Premium
-172,H,Class 5 not BT,'475',H2.0TXS-ET,SN,C5 1-3.5T - Standard and Premium
-173,Y,Class 5 not BT,'812',GTP20AK,SN,C5 1-3.5T - Standard and Premium
-174,H,Class 5 not BT,'027',H60XM-AF,Berea,C5 1-3.5T - Standard and Premium
-175,H,Class 5 not BT,'070',H60XMM,Berea,C5 1-3.5T - Standard and Premium
-176,H,Class 5 not BT,'072',H40XM-AF,Berea,C5 1-3.5T - Standard and Premium
-177,H,Class 5 not BT,'170',H60FTM,Berea,C5 1-3.5T - Standard and Premium
-178,H,Class 5 not BT,'172',H60FT-AF,Berea,C5 1-3.5T - Standard and Premium
-179,H,Class 5 not BT,'177',S50FT,Craigavon,C5 1-3.5T - Standard and Premium
-180,H,Class 5 not BT,'806',H60XM,Berea,C5 1-3.5T - Standard and Premium
-181,H,Class 5 not BT,'281',UT5.0P,Hangcha,C5 1-3.5T - Low Intensity
-182,Y,Class 5 not BT,'285',UT50P,Hangcha,C5 1-3.5T - Low Intensity
-183,Y,Class 5 not BT,'875',GP060TF-NI,Craigavon,C5 1-3.5T - Standard and Premium
-184,Y,Class 5 not BT,'887',GP040ZG,Berea,C5 1-3.5T - Standard and Premium
-185,Y,Class 5 not BT,'974',GP050LX,Craigavon,C5 1-3.5T - Standard and Premium
-186,H,Class 5 not BT,'274',H50CT,Craigavon,C5 1-3.5T - Standard and Premium
-187,H,Class 5 not BT,'466',H3.5TX -98,SN,C5 1-3.5T - Standard and Premium
-188,Y,Class 5 not BT,'871',GTP35TK,SN,C5 1-3.5T - Standard and Premium
-189,H,Class 5 not BT,'005',H90FT,Craigavon,C5 4-9T - Standard and Premium
-190,H,Class 5 not BT,'232',H4.0-5.0DX,SN,C5 4-9T - Standard and Premium
-191,Y,Class 5 not BT,'813',GP120MJ,Craigavon,C5 4-9T - Standard and Premium
-192,Y,Class 5 not BT,'889',GP35-50 LH/MH,SN,C5 4-9T - Standard and Premium
-193,H,Class 5 not BT,'002',H155XL2,Berea,C5 4-9T - Standard and Premium
-194,H,Class 5 not BT,'006',H155FTM,Berea,C5 4-9T - Standard and Premium
-195,H,Class 5 not BT,'029',H155XL2-AF,Berea,C5 4-9T - Standard and Premium
-196,Y,Class 5 not BT,'878',GP155VX,Berea,C5 4-9T - Standard and Premium
-197,H,Class 5 BT,'299',H8.0FT-9,Berea,Big Forklift Trucks 10-16T
-198,Y,Class 5 BT,'909',GP190VX,Berea,Big Forklift Trucks 10-16T
-199,H,Class 5 not BT,'261',UT15P,Hangcha,C5 1-3.5T - Low Intensity
-200,H,Class 1,'970',J4.0XN,Craigavon,C1 4-9T - Standard and Premium
-201,Y,Class 1,'985',ERPVF,Craigavon,C1 4-9T - Standard and Premium
-202,Y,Class 5 not BT,'266',UT1.5P,Hangcha,C5 1-3.5T - Low Intensity
-203,H,Class 2,'169',R30XMF3,Greenville,C2 - Standard and Premium
-204,H,Class 2,'185',R30XMF3,Greenville,C2 - Standard and Premium
-205,H,Class 2,'217',N30FR,Greenville,C2 - Standard and Premium
-206,H,Class 3,'290',P2.0,Hangcha,C3 - Low Intensity
-207,Y,Class 3,'249',MP20,Hangcha,C3 - Low Intensity
-208,Y,Class 2,'497',FS030BF,Greenville,C2 - Standard and Premium
-209,Y,Class 1,'901',FB35-40PYE,SN,C1 4-9T - Standard and Premium
-210,H,Class 1,'920',J3.50-4.00EX,SN,C1 4-9T - Standard and Premium
-211,Y,Class 3,'485',MP20AP,Hangcha,C3 - Low Intensity
-212,H,Class 3,'280',AP2.0MS,Hangcha,C3 - Low Intensity
-213,H,Class 1,'370',UT18PTE,Hangcha,C1 1-3.5T - Low Intensity
-214,Y,Class 1,'377',UT18_PTE,Hangcha,C1 1-3.5T - Low Intensity
-215,Y,Class 1,'938',ERC080VH,Greenville,C1 4-9T - Standard and Premium
-216,Y,Class 4,'273',UT25C,Hangcha,C4 1-3.5T - Low Intensity
-217,H,Class 5 BT,'238',H16XM-12,Nijmegen,Big Forklift Trucks >16T
-218,Y,Class 3,'283',MPC080-VG,Greenville,C3 - Standard and Premium
-219,Y,Class 5 not BT,'411',UT40-50PS,Hangcha,C5 4-9T - Low Intensity
-220,H,Class 5 not BT,'408',UT40-49P,Hangcha,C5 4-9T - Low Intensity
-221,H,Class 5 not BT,'413',UT50-70P,Hangcha,C5 4-9T - Low Intensity
-222,Y,Class 5 not BT,'417',UT5.0-7.0P,Hangcha,C5 4-9T - Low Intensity
-223,H,Class 5 BT,'253',UT80-100P,Hangcha,Big Forklift Trucks 10-16T
-224,Y,Class 5 BT,'973',UT8.0-10.0P,Hangcha,Big Forklift Trucks 10-16T
-225,Y,Class 2,'284',MPR080VG,Greenville,C2 - Standard and Premium
-226,Y,Class 3,'245',MPB045VG        ,Greenville,C3 - Standard and Premium
-227,H,Class 5 BT,'404',RS45-27CH,Nijmegen,Port Equipment - Reachstackers
-228,H,Class 5 BT,'366',RS45-27CH,Nijmegen,Port Equipment - Reachstackers
-229,H,Class 2,'244',BE80-100ZHD         ,Greenville,C2 - Standard and Premium
-230,H,Class 3,'419',W45ZHD,Greenville,C3 - Standard and Premium
-231,Y,Class 3,'956',UT15WE,Ruyi,C3 - Low Intensity
-232,H,Class 3,'378',UT15WE,Ruyi,C3 - Low Intensity
-233,Y,Class 1,'379',UT1.5-1.8PFE,Hangcha,C1 1-3.5T - Low Intensity
-234,H,Class 1,'374',UT1.5-1.8 PFE,Hangcha,C1 1-3.5T - Low Intensity
-235,H,Class 1,'402',J2.00-2.5EX,Shanghai,C1 1-3.5T - Low Intensity
-236,Y,Class 1,'396',UT30PFE,Hangcha,C1 1-3.5T - Low Intensity
-237,Y,Class 3,'428',MP20,Masate,C3 - Standard and Premium
-238,H,Class 5 not BT,'966',H2.5-H3.5DX,Shanghai,C5 1-3.5T - Low Intensity
-239,H,Class 2,'406',R1.6,Maximal,C2 - Standard and Premium
-240,H,Class 2,'432',R1.0-1.4E,Masate,C2 - Standard and Premium
-242,H,Class 3,'3B5',P2.0UT ,Ruyi,C3 - Low Intensity
-243,H,Class 3,'3B0',P2.0KUT,Ruyi,C3 - Low Intensity
-244,H,Class 3,'3B1',P2.0RUT,Ruyi,C3 - Low Intensity
-245,H,Class 3,'3C3',S1.5WUT,Ruyi,C3 - Low Intensity
-246,H,Class 3,'3C2',S1.5WLUT,Ruyi,C3 - Low Intensity
-247,H,Class 3,'3B3',S1.5RUT,Ruyi,C3 - Low Intensity
-248,H,Class 3,'3B6',SL1.5WUT,Ruyi,C3 - Low Intensity
-249,H,Class 3,'3B7',SL1.5RUT,Ruyi,C3 - Low Intensity
-250,Y,Class 3,'7R5',MP20UX ,Ruyi,C3 - Low Intensity
-251,Y,Class 3,'7R0',MP20KUX,Ruyi,C3 - Low Intensity
-252,Y,Class 3,'7R1',MP20XUX,Ruyi,C3 - Low Intensity
-253,Y,Class 3,'7S3',MS15UX,Ruyi,C3 - Low Intensity
-254,Y,Class 3,'7S2',MS15LUX,Ruyi,C3 - Low Intensity
-255,Y,Class 3,'7R3',MS15XUX,Ruyi,C3 - Low Intensity
-256,Y,Class 3,'7R6',MSL15WUX,Ruyi,C3 - Low Intensity
-257,Y,Class 3,'7R7',MSL15XUX,Ruyi,C3 - Low Intensity
-258,H,Class 5 not BT,'3C1',UT2.0-3.5UT,Maximal,C5 1-3.5T - Low Intensity
-259,Y,Class 5 not BT,'7S1',GP20-35UX,Maximal,C5 1-3.5T - Low Intensity
-260,H,Class 2,'254',AP20Z,Berea,C2 - Standard and Premium
-261,Y,Class 2,'944',AER020AA,Berea,C2 - Standard and Premium
-262,H,Class 5 BT,'3C0',H9XM-EC7,Maximal,Port Equipment - Empty Container Handlers
-263,H,Class 1,'3C4',J1.5-3.5UT,Maximal,C1 1-3.5T - Low Intensity
-264,Y,Class 1,'7S4',ERP1.5-3.5UX,Maximal,C1 1-3.5T - Low Intensity
-265,H,Class 3,'3D1',P1.5UT,Ruyi,C3 - Low Intensity
-266,H,Class 5 not BT,'3D0',H5.0-7.0UT,Maximal,C5 4-9T - Low Intensity
-267,Y,Class 5 not BT,'7T0',GP50-70UX,Maximal,C5 4-9T - Low Intensity
-268,Y,Class 3,'3D4',MPC15,Staxx,C3 - Low Intensity
-269,H,Class 3,'6W9',PC1.5,Staxx,C3 - Low Intensity
-270,Y,Class 3,'7T1',MP15UX,Ruyi,C3 - Low Intensity
-271,H,Class 3,'3C7',T6.0UT,Ruyi,C3 - Low Intensity
-272,Y,Class 3,'7S7',MT60UX,Ruyi,C3 - Low Intensity
-273,H,Class 3,'3C9',T3.0UT,Ruyi,C3 - Low Intensity
-274,Y,Class 3,'7S9',MT30UX,Ruyi,C3 - Low Intensity
-275,H,Class 3,'3C8',T3.0UTS,Ruyi,C3 - Low Intensity
-276,Y,Class 3,'7S8',MT30XUX,Ruyi,C3 - Low Intensity
-277,H,Class 1,'3C5',J1.6-2.0UTT,Maximal,C1 1-3.5T - Low Intensity
-278,Y,Class 1,'7S5',ERP16-20UXT,Maximal,C1 1-3.5T - Low Intensity
-279,H,Class 5 not BT,'3C6',H4.0-5.0UT,Maximal,C5 4-9T - Low Intensity
-280,Y,Class 5 not BT,'7S6',GP40-50UX,Maximal,C5 4-9T - Low Intensity
-281,H,Class 2,'3D5',AP10Z,Ruyi,C2 - Low Intensity
-282,Y,Class 2,'7T5',AER010,Ruyi,C2 - Low Intensity
-283,H,Class 5 not BT,'3B8',F1.8-3.5UT,Maximal,C5 1-3.5T - Low Intensity
-284,Y,Class 5 not BT,'7R8',KDP18-35UX,Maximal,C5 1-3.5T - Low Intensity
-285,H,Class 5 not BT,'3B9',F5.0UT,Maximal,C5 4-9T - Low Intensity
-286,Y,Class 5 not BT,'7R9',KDP50UX,Maximal,C5 4-9T - Low Intensity
-287,Y,Class 5 BT,'674',GDP160EF12,Nijmegen,Big Forklift Trucks >16T
-288,H,Class 5 BT,'921',RS45-27CH/RS45-31CH,Maximal,Port Equipment - Reachstackers
-289,H,Class 3,'418',P2.0,Masate,C3 - Standard and Premium
-290,H,Class 1,'250',J8.0XNSL,Nijmegen,C1 4-9T - Standard and Premium
-291,Y,Class 1,'410',ERP70-90VNL ,Nijmegen,C1 4-9T - Standard and Premium
-292,Y,Class 2,'942',MR14E,Masate,C2 - Standard and Premium
-293,Y,Class 2,'961',MR16,Maximal,C2 - Standard and Premium
-294,H,Class 3,'3D9',P2.0-3.0S,Maximal,C3 - Standard and Premium
-295,Y,Class 3,'7T9',MP20-30X,Maximal,C3 - Standard and Premium
-296,H,Class 5 not BT,'3B4',F1.8-3.5UT4,Maximal,C5 1-3.5T - Low Intensity
-297,Y,Class 5 not BT,'7S0',KDP18-35UX4,Maximal,C5 1-3.5T - Low Intensity
-298,H,Class 5 not BT,'177a',H2.0-3.5A,Maximal,C5 1-3.5T - Standard and Premium
-299,Y,Class 5 not BT,'875a',GP2.0-3.5N,Maximal,C5 1-3.5T - Standard and Premium
-300,H,Class 1,'935a',J30-40XN,Greenville,C1 1-3.5T - Standard and Premium
-301,Y,Class 1,'955a',ERP030-040VF,Greenville,C1 1-3.5T - Standard and Premium
-302,H,Class 1,'160a',J30-40XNT,Greenville,C1 1-3.5T - Standard and Premium
-303,Y,Class 1,'807a',ERP030-040VT,Greenville,C1 1-3.5T - Standard and Premium
-241,Y,Class 3,'845',MS10,Masate,C3 - Standard and Premium
+'modelcode','brand','clazz','family','metaseries','plant','segment','description','image','trucktype'
+FBR20-30 STY,Y,Class 2,NA  Large Reach,'224',SN,C2 - Standard and Premium, , , 
+FB15PYE,Y,Class 1,'1-2 Ton Electric DBB','881',SN,C1 1-3.5T - Standard and Premium, , , 
+E40ZS,H,Class 1,'1-2 Ton Elec 4 Wheel','114',Greenville,C1 1-3.5T - Standard and Premium, , , 
+J1.50EX,H,Class 1,'1-2 Ton Electric DBB','225',SN,C1 1-3.5T - Standard and Premium, , , 
+E40XN,H,Class 1,'1-2 Ton Elec 4 Wheel','269',Greenville,C1 1-3.5T - Standard and Premium, , , 
+EREC040AH,Y,Class 1,'1-2 Ton Elec 4 Wheel','814',Greenville,C1 1-3.5T - Standard and Premium, , , 
+ERC040VA,Y,Class 1,'1-2 Ton Elec 4 Wheel','969',Greenville,C1 1-3.5T - Standard and Premium, , , 
+E60XM2G,H,Class 1,'2-3 Ton Elec 4 Wheel','021',Greenville,C1 1-3.5T - Standard and Premium, , , 
+E507E,H,Class 1,'2-3 Ton Elec 4 Wheel','108',Greenville,C1 1-3.5T - Standard and Premium, , , 
+E70XN,H,Class 1,'2-3 Ton Elec 4 Wheel','268',Greenville,C1 1-3.5T - Standard and Premium, , , 
+ERC060RF,Y,Class 1,'2-3 Ton Elec 4 Wheel','908',Greenville,C1 1-3.5T - Standard and Premium, , , 
+ERC35VG,Y,Class 1,'2-3 Ton Elec 4 Wheel','968',Greenville,C1 1-3.5T - Standard and Premium, , , 
+E80Z,H,Class 1,'3.2-5.5 Ton Elec 4Wh','098',Greenville,C1 4-9T - Standard and Premium, , , 
+E80XN,H,Class 1,'3.2-5.5 Ton Elec 4Wh','099',Greenville,C1 4-9T - Standard and Premium, , , 
+ERC120HH,Y,Class 1,'3.2-5.5 Ton Elec 4Wh','839',Greenville,C1 4-9T - Standard and Premium, , , 
+A1.00-1.50XL,H,Class 1,'1-2 Ton 3 Wheel RWD','203',Craigavon,C1 1-3.5T - Standard and Premium, , , 
+ERC/P 10-15 RCF,Y,Class 1,'1-2 Ton 3 Wheel RWD','888',Craigavon,C1 1-3.5T - Standard and Premium, , , 
+J40XNT,H,Class 1,'1-2 Ton 3 Wheel FWD','160',Craigavon,C1 1-3.5T - Standard and Premium, , , 
+ERP040VT,Y,Class 1,'1-2 Ton 3 Wheel FWD','807',Craigavon,C1 1-3.5T - Standard and Premium, , , 
+E40HSD2,H,Class 1,'3 Wheel Stand Up FWD','219',Greenville,C1 1-3.5T - Standard and Premium, , , 
+ESC035FA,Y,Class 1,'3 Wheel Stand Up FWD','883',Greenville,C1 1-3.5T - Standard and Premium, , , 
+E50FR,H,Class 1,'3 Wheel Stand Up FWD','943',Masate,C1 1-3.5T - Standard and Premium, , , 
+ESC050ZA,Y,Class 1,'3 Wheel Stand Up FWD','945',Greenville,C1 1-3.5T - Standard and Premium, , , 
+ESC030AD,Y,Class 1,'3 Wheel Stand Up RWD','824',Greenville,C1 1-3.5T - Standard and Premium, , , 
+J40XN,H,Class 1,'1-2 Ton Electric DBB','935',Craigavon,C1 1-3.5T - Standard and Premium, , , 
+ERP065DH,H,Class 1,'2-3 Ton Electric DBB','216',Craigavon,C1 1-3.5T - Standard and Premium, , , 
+J3.00EX,H,Class 1,'2-3 Ton Electric DBB','226',SN,C1 1-3.5T - Standard and Premium, , , 
+J70XN,H,Class 1,'2-3 Ton Electric DBB','276',Craigavon,C1 1-3.5T - Standard and Premium, , , 
+J65Z,H,Class 1,'2-3 Ton Electric DBB','416',Craigavon,C1 1-3.5T - Standard and Premium, , , 
+FB20PYE,Y,Class 1,'2-3 Ton Electric DBB','882',SN,C1 1-3.5T - Standard and Premium, , , 
+ERP070VL,Y,Class 1,'2-3 Ton Electric DBB','976',Craigavon,C1 1-3.5T - Standard and Premium, , , 
+N45XMR3,H,Class 2,NA  Large Reach,'138',Greenville,C2 - Standard and Premium, , , 
+N45ZR,H,Class 2,NA  Large Reach,'264',Greenville,C2 - Standard and Premium, , , 
+NS050AE,Y,Class 2,NA  Large Reach,'816',Greenville,C2 - Standard and Premium, , , 
+NR045CA,Y,Class 2,NA  Large Reach,'829',Greenville,C2 - Standard and Premium, , , 
+NR045GA,Y,Class 2,NA  Large Reach,'861',Greenville,C2 - Standard and Premium, , , 
+FBR13-18SY/WY,Y,Class 2,NA  Large Reach,'900',SN,C2 - Standard and Premium, , , 
+R1.25-1.80EX/WEX,H,Class 2,NA  Large Reach,'915',SN,C2 - Standard and Premium, , , 
+N40ZRS,H,Class 2,NA  Small Reach,'265',Greenville,C2 - Standard and Premium, , , 
+NR040DA,Y,Class 2,NA  Small Reach,'295',Greenville,C2 - Standard and Premium, , , 
+R2.0WA,H,Class 2,NA  Small Reach,'435',Masate,C2 - Standard and Premium, , , 
+N40ZR,H,Class 2,NA  Small Reach,'470',Greenville,C2 - Standard and Premium, , , 
+N50XMA3,H,Class 2,NA  Small Reach,'471',Greenville,C2 - Standard and Premium, , , 
+NR045AC,Y,Class 2,NA  Small Reach,'815',Greenville,C2 - Standard and Premium, , , 
+MR20A,Y,Class 2,NA  Small Reach,'849',Masate,C2 - Standard and Premium, , , 
+R2.00-3.00EX *,H,Class 2,NA  Small Reach,'925',SN,C2 - Standard and Premium, , , 
+R30XMF2,H,Class 2,NA  Prem Ord Picker,'118',Greenville,C2 - Standard and Premium, , , 
+K1.0L,H,Class 2,NA  Prem Ord Picker,'457',Masate,C2 - Standard and Premium, , , 
+K1.0,H,Class 2,NA  Prem Ord Picker,'460',Masate,C2 - Standard and Premium, , , 
+SS030BE,Y,Class 2,NA  Prem Ord Picker,'826',Greenville,C2 - Standard and Premium, , , 
+MO 10E,Y,Class 2,NA  Prem Ord Picker,'862',Masate,C2 - Standard and Premium, , , 
+MO 10/S,Y,Class 2,NA  Prem Ord Picker,'865',Masate,C2 - Standard and Premium, , , 
+SS030BF,Y,Class 2,NA  Prem Ord Picker,'474',Greenville,C2 - Standard and Premium, , , 
+R30XMS2,H,Class 2,NA  Stand Ord Picker,'174',Greenville,C2 - Standard and Premium, , , 
+OS030EC,Y,Class 2,NA  Stand Ord Picker,'801',Greenville,C2 - Standard and Premium, , , 
+V30ZMU,H,Class 2,NA  Man Up Turret,'463',Masate,C2 - Standard and Premium, , , 
+V35ZMU,H,Class 2,NA  Man Up Turret,'464',Masate,C2 - Standard and Premium, , , 
+V30XMU,H,Class 2,NA  Man Up Turret,'467',Masate,C2 - Standard and Premium, , , 
+V35XMU,H,Class 2,NA  Man Up Turret,'468',Masate,C2 - Standard and Premium, , , 
+V40XMU,H,Class 2,NA  Man Up Turret,'469',Masate,C2 - Standard and Premium, , , 
+NTA035SB,Y,Class 2,NA  Man Up Turret,'869',Masate,C2 - Standard and Premium, , , 
+V30ZMD,H,Class 2,NA  Man Down Turret,'210',Greenville,C2 - Standard and Premium, , , 
+RP3.0A,H,Class 2,'2-3 Ton Rider Pallet','448',Masate,C2 - Standard and Premium, , , 
+RP2.0NA,H,Class 2,'2-3 Ton Rider Pallet','449',Masate,C2 - Standard and Premium, , , 
+RS1.0-1.5/D,H,Class 2,'2-3 Ton Rider Pallet','450',Masate,C2 - Standard and Premium, , , 
+MP 20-30 S,Y,Class 2,'2-3 Ton Rider Pallet','853',Masate,C2 - Standard and Premium, , , 
+MP 20T,Y,Class 2,'2-3 Ton Rider Pallet','854',Masate,C2 - Standard and Premium, , , 
+MS/MOS 10-15 S,Y,Class 2,'2-3 Ton Rider Pallet','855',Masate,C2 - Standard and Premium, , , 
+Basic Model W40ZB,H,Class 3,'1-2 Ton MH LL Walkie','218',Greenville,C3 - Standard and Premium, , , 
+P1.8A,H,Class 3,'1-2 Ton MH LL Walkie','437',Masate,C3 - Standard and Premium, , , 
+P2.0HL,H,Class 3,'2-3 Ton MH LL Walkie','472',Masate,C3 - Standard and Premium, , , 
+MP 20DL,Y,Class 3,'2-3 Ton MH LL Walkie','473',Masate,C3 - Standard and Premium, , , 
+MPB040-E,Y,Class 3,'1-2 Ton MH LL Walkie','827',Greenville,C3 - Standard and Premium, , , 
+MP 13-16,Y,Class 3,'1-2 Ton MH LL Walkie','841',Masate,C3 - Standard and Premium, , , 
+S1.0-1.5C,H,Class 3,'1-2 Ton MH CB Stack','447',Masate,C3 - Standard and Premium, , , 
+W40ZC,H,Class 3,'1-2 Ton MH CB Stack','454',Greenville,C3 - Standard and Premium, , , 
+MCW040-E,Y,Class 3,'1-2 Ton MH CB Stack','819',Greenville,C3 - Standard and Premium, , , 
+MC 10-15,Y,Class 3,'1-2 Ton MH CB Stack','860',Masate,C3 - Standard and Premium, , , 
+S1.0E,H,Class 3,'1-2 Ton MH Strad Stk','440',Masate,C3 - Standard and Premium, , , 
+S1.2 ACA,H,Class 3,'1-2 Ton MH Strad Stk','441',Masate,C3 - Standard and Premium, , , 
+S1.5SA,H,Class 3,'1-2 Ton MH Strad Stk','442',Masate,C3 - Standard and Premium, , , 
+W40ZA,H,Class 3,'1-2 Ton MH Strad Stk','453',Greenville,C3 - Standard and Premium, , , 
+S1.4 ACA,H,Class 3,'1-2 Ton MH Strad Stk','456',Masate,C3 - Standard and Premium, , , 
+W30ZA2,H,Class 3,'1-2 Ton MH Strad Stk','495',Greenville,C3 - Standard and Premium, , , 
+MSW040,Y,Class 3,'1-2 Ton MH Strad Stk','820',Greenville,C3 - Standard and Premium, , , 
+MS10/12,Y,Class 3,'1-2 Ton MH Strad Stk','846',Masate,C3 - Standard and Premium, , , 
+MS15XA,Y,Class 3,'1-2 Ton MH Strad Stk','847',Masate,C3 - Standard and Premium, , , 
+MS16/46,Y,Class 3,'1-2 Ton MH Strad Stk','852',Masate,C3 - Standard and Premium, , , 
+MSW040-E,Y,Class 3,'1-2 Ton MH Strad Stk','895',Greenville,C3 - Standard and Premium, , , 
+W30ZR,H,Class 3,'1-2 Ton MH Reach Stk','455',Greenville,C3 - Standard and Premium, , , 
+MRW030-E,Y,Class 3,'1-2 Ton MH Reach Stk','821',Greenville,C3 - Standard and Premium, , , 
+W50Z,H,Class 3,'2-3 Ton MH LL Walkie','215',Greenville,C3 - Standard and Premium, , , 
+P2.2,H,Class 3,'2-3 Ton MH LL Walkie','438',Masate,C3 - Standard and Premium, , , 
+MPW050E,Y,Class 3,'2-3 Ton MH LL Walkie','802',Greenville,C3 - Standard and Premium, , , 
+MP22A,Y,Class 3,'2-3 Ton MH LL Walkie','842',Masate,C3 - Standard and Premium, , , 
+MP 25-30HD,Y,Class 3,'2-3 Ton MH LL Walkie','856',Masate,C3 - Standard and Premium, , , 
+P2.0SD,H,Class 3,'2-3 Ton MH LL Rider','433',Masate,C3 - Standard and Premium, , , 
+P2.0S,H,Class 3,'2-3 Ton MH LL Rider','439',Masate,C3 - Standard and Premium, , , 
+LO2.0L,H,Class 3,'2-3 Ton MH LL Rider','445',Masate,C3 - Standard and Premium, , , 
+MP20XA FBW,Y,Class 3,'2-3 Ton MH LL Rider','843',Masate,C3 - Standard and Premium, , , 
+MO 20/S,Y,Class 3,'2-3 Ton MH LL Rider','857',Masate,C3 - Standard and Premium, , , 
+MP 20XD,Y,Class 3,'2-3 Ton MH LL Rider','892',Masate,C3 - Standard and Premium, , , 
+LO2.0M,H,Class 3,'2-3 Ton MH LL Rider','939',Masate,C3 - Standard and Premium, , , 
+MO 20F,Y,Class 3,'2-3 Ton MH LL Rider','943a',Masate,C3 - Standard and Premium, , , 
+P2.0SE,H,Class 3,'2-3 Ton MH LL Rider','978',Masate,C3 - Standard and Premium, , , 
+MP 20XV,Y,Class 3,'2-3 Ton MH LL Rider','979',Masate,C3 - Standard and Premium, , , 
+MO20FA,Y,Class 3,'2-3 Ton MH LL Rider','858',Masate,C3 - Standard and Premium, , , 
+B60ZAC,H,Class 3,'3 Ton MH LL Rider','230',Greenville,C3 - Standard and Premium, , , 
+B60ZHD,H,Class 3,'3 Ton MH LL Rider','262',Greenville,C3 - Standard and Premium, , , 
+MPE060-VG,Y,Class 3,'3 Ton MH LL Rider','292',Greenville,C3 - Standard and Premium, , , 
+C60ZAC,H,Class 3,'3 Ton MH LL Rider','478',Greenville,C3 - Standard and Premium, , , 
+MPE060,Y,Class 3,'3 Ton MH LL Rider','896',Greenville,C3 - Standard and Premium, , , 
+MPC060LE,Y,Class 3,'3 Ton MH LL Rider','904',Greenville,C3 - Standard and Premium, , , 
+MLW060,Y,Class 3,'2-3 Ton MH LL Platfm','828',Greenville,C3 - Standard and Premium, , , 
+W80XT,H,Class 3,'3-4 Ton MH LL Walkie','135',Greenville,C3 - Standard and Premium, , , 
+W65Z,H,Class 3,'3-4 Ton MH LL Walkie','229',Greenville,C3 - Standard and Premium, , , 
+MPW065,Y,Class 3,'3-4 Ton MH LL Walkie','894',Greenville,C3 - Standard and Premium, , , 
+W60Z,H,Class 3,'3 Ton MH LL Walkie','231',Greenville,C3 - Standard and Premium, , , 
+MPW060E,Y,Class 3,'3 Ton MH LL Walkie','897',Greenville,C3 - Standard and Premium, , , 
+W80Z,H,Class 3,'4 Ton MH LL Walkie','234',Greenville,C3 - Standard and Premium, , , 
+MPW080,Y,Class 3,'4 Ton MH LL Walkie','891',Greenville,C3 - Standard and Premium, , , 
+B80XT,H,Class 3,'3-4 Ton MH LL Rider','199',Greenville,C3 - Standard and Premium, , , 
+C80XT2,H,Class 3,'3-4 Ton MH LL Rider','499',Greenville,C3 - Standard and Premium, , , 
+MPC080AD,Y,Class 3,'3-4 Ton MH LL Rider','898',Greenville,C3 - Standard and Premium, , , 
+MPC080LD,Y,Class 3,'3-4 Ton MH LL Rider','899',Greenville,C3 - Standard and Premium, , , 
+B80ZAC,H,Class 3,'4 Ton MH LL Rider','233',Greenville,C3 - Standard and Premium, , , 
+B80ZHD,H,Class 3,'4 Ton MH LL Rider','257',Greenville,C3 - Standard and Premium, , , 
+MPE080-VG,Y,Class 3,'4 Ton MH LL Rider','287',Greenville,C3 - Standard and Premium, , , 
+C80ZAC,H,Class 3,'4 Ton MH LL Rider','479',Greenville,C3 - Standard and Premium, , , 
+MPE080,Y,Class 3,'4 Ton MH LL Rider','890',Greenville,C3 - Standard and Premium, , , 
+MPC080LE,Y,Class 3,'4 Ton MH LL Rider','905',Greenville,C3 - Standard and Premium, , , 
+T5XT,H,Class 3,MH Tractor,'142',Greenville,C3 - Standard and Premium, , , 
+T5ZAC,H,Class 3,MH Tractor,'476',Greenville,C3 - Standard and Premium, , , 
+T7ZAC,H,Class 3,MH Tractor,'477',Greenville,C3 - Standard and Premium, , , 
+MTR005-E,Y,Class 3,MH Tractor,'902',Greenville,C3 - Standard and Premium, , , 
+MTR007E,Y,Class 3,MH Tractor,'903',Greenville,C3 - Standard and Premium, , , 
+S40FTS,H,Class 4,'1-2 Ton ICE Cushion','010',Berea,C4 1-3.5T - Standard and Premium, , , 
+GC040AF,Y,Class 4,'1-2 Ton ICE Cushion','809',Berea,C4 1-3.5T - Standard and Premium, , , 
+S60XMM,H,Class 4,'2-3 Ton ICE Cushion','073',Berea,C4 1-3.5T - Standard and Premium, , , 
+S60XMG,H,Class 4,'2-3 Ton ICE Cushion','074',Berea,C4 1-3.5T - Standard and Premium, , , 
+S60FTM,H,Class 4,'2-3 Ton ICE Cushion','173',Berea,C4 1-3.5T - Standard and Premium, , , 
+H50FT,H,Class 4,'2-3 Ton ICE Cushion','187',Berea,C4 1-3.5T - Standard and Premium, , , 
+GC070VX,Y,Class 4,'2-3 Ton ICE Cushion','910',Berea,C4 1-3.5T - Standard and Premium, , , 
+S50CT,H,Class 4,'2-3 Ton ICE Cushion','267',Berea,C4 1-3.5T - Standard and Premium, , , 
+GC050LX,Y,Class 4,'2-3 Ton ICE Cushion-BST','967',Berea,C4 1-3.5T - Standard and Premium, , , 
+S4.5FT,H,Class 4,'3.5-5.5 Ton ICE Cush','004',Berea,C4 4-9T - Standard and Premium, , , 
+GC120VX,Y,Class 4,'3.5-5.5 Ton ICE Cush','818',Berea,C4 4-9T - Standard and Premium, , , 
+S7.0FT,H,Class 4,'6-8 Ton ICE Cushion','024',Berea,C4 4-9T - Standard and Premium, , , 
+GC70VX,Y,Class 4,'6-8 Ton ICE Cushion','879',Berea,C4 4-9T - Standard and Premium, , , 
+H280XL,H,Class 5 BT,'8-12 Ton ICE Pneu','003',Nijmegen,Big Forklift Trucks 10-16T, , , 
+H280HD,H,Class 5 BT,'8-12 Ton ICE Pneu','007',Nijmegen,Big Forklift Trucks 10-16T, , , 
+GP250DB,Y,Class 5 BT,'8-12 Ton ICE Pneu','876',Nijmegen,Big Forklift Trucks 10-16T, , , 
+H360HD,H,Class 5 BT,'13-16 Ton ICE Pneu','019',Nijmegen,Big Forklift Trucks 10-16T, , , 
+GDP300EB,Y,Class 5 BT,'13-16 Ton ICE Pneu','877',Nijmegen,Big Forklift Trucks 10-16T, , , 
+H10.00-12.00XM-12EC,H,Class 5 BT,'10-12 Ton ICE Pneu EC','019a',Nijmegen,Big Forklift Trucks 10-16T, , , 
+H450HDS,H,Class 5 BT,'14-18 Ton ICE Pneu FLT','236',Nijmegen,Big Forklift Trucks >16T, , , 
+H500HD-EC,H,Class 5 BT,'16-25 Ton ICE Pneu CH','214',Nijmegen,Port Equipment - Empty Container Handlers, , , 
+H700HD,H,Class 5 BT,'20-32 Ton ICE Pneu','008',Nijmegen,Big Forklift Trucks >16T, , , 
+H970HDS,H,Class 5 BT,'36-48 Ton ICE Pneu','917',Nijmegen,Big Forklift Trucks >16T, , , 
+H1150HD-CH,H,Class 5 BT,'36-48 Ton ICE Pneu CH','117',Nijmegen,Port Equipment - Empty Container Handlers, , , 
+HR45-41L,H,Class 5 BT,Reachstacker,'222',Nijmegen,Port Equipment - Reachstackers, , , 
+RS45-30CH/RS46-30IH,H,Class 5 BT,Reachstacker,'289',India,Port Equipment - Reachstackers, , , 
+HR45-45LSX,H,Class 5 BT,Yardmaster,'227',Terex,Big Forklift Trucks >16T, , , 
+HR48-EC,H,Class 5 BT,Yardmaster,'228',Terex,Big Forklift Trucks >16T, , , 
+GP040AF,Y,Class 5 not BT,'1-2 Ton ICE Pneu','810',Craigavon,C5 1-3.5T - Standard and Premium, , , 
+H2.0TXS-ET,H,Class 5 not BT,'1-2 Ton ICE Pneu - SN','475',SN,C5 1-3.5T - Standard and Premium, , , 
+GTP20AK,Y,Class 5 not BT,'1-2 Ton ICE Pneu - SN','812',SN,C5 1-3.5T - Standard and Premium, , , 
+H60XM-AF,H,Class 5 not BT,'2-3 Ton ICE Pneu','027',Berea,C5 1-3.5T - Standard and Premium, , , 
+H60XMM,H,Class 5 not BT,'2-3 Ton ICE Pneu','070',Berea,C5 1-3.5T - Standard and Premium, , , 
+H40XM-AF,H,Class 5 not BT,'2-3 Ton ICE Pneu','072',Berea,C5 1-3.5T - Standard and Premium, , , 
+H60FTM,H,Class 5 not BT,'2-3 Ton ICE Pneu','170',Berea,C5 1-3.5T - Standard and Premium, , , 
+H60FT-AF,H,Class 5 not BT,'2-3 Ton ICE Pneu','172',Berea,C5 1-3.5T - Standard and Premium, , , 
+S50FT,H,Class 5 not BT,'2-3 Ton ICE Pneu','177',Craigavon,C5 1-3.5T - Standard and Premium, , , 
+H60XM,H,Class 5 not BT,'2-3 Ton ICE Pneu','806',Berea,C5 1-3.5T - Standard and Premium, , , 
+UT5.0P,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','281',Hangcha,C5 1-3.5T - Low Intensity, , , 
+UT50P,Y,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','285',Hangcha,C5 1-3.5T - Low Intensity, , , 
+GP060TF-NI,Y,Class 5 not BT,'2-3 Ton ICE Pneu','875',Craigavon,C5 1-3.5T - Standard and Premium, , , 
+GP040ZG,Y,Class 5 not BT,'2-3 Ton ICE Pneu','887',Berea,C5 1-3.5T - Standard and Premium, , , 
+GP050LX,Y,Class 5 not BT,'2-3 Ton ICE Pneu - BST','974',Craigavon,C5 1-3.5T - Standard and Premium, , , 
+H50CT,H,Class 5 not BT,'2-3 Ton ICE Pneu - BST','274',Craigavon,C5 1-3.5T - Standard and Premium, , , 
+H3.5TX -98,H,Class 5 not BT,'2-3 Ton ICE Pneu - SN','466',SN,C5 1-3.5T - Standard and Premium, , , 
+GTP35TK,Y,Class 5 not BT,'2-3 Ton ICE Pneu - SN','871',SN,C5 1-3.5T - Standard and Premium, , , 
+H90FT,H,Class 5 not BT,'3.5-5.5 Ton ICE Pneu','005',Craigavon,C5 4-9T - Standard and Premium, , , 
+H4.0-5.0DX,H,Class 5 not BT,'3.5-5.5 Ton ICE Pneu','232',SN,C5 4-9T - Standard and Premium, , , 
+GP120MJ,Y,Class 5 not BT,'3.5-5.5 Ton ICE Pneu','813',Craigavon,C5 4-9T - Standard and Premium, , , 
+GP35-50 LH/MH,Y,Class 5 not BT,'3.5-5.5 Ton ICE Pneu','889',SN,C5 4-9T - Standard and Premium, , , 
+H155XL2,H,Class 5 not BT,'6-8 Ton ICE Pneu','002',Berea,C5 4-9T - Standard and Premium, , , 
+H155FTM,H,Class 5 not BT,'6-8 Ton ICE Pneu','006',Berea,C5 4-9T - Standard and Premium, , , 
+H155XL2-AF,H,Class 5 not BT,'6-8 Ton ICE Pneu','029',Berea,C5 4-9T - Standard and Premium, , , 
+GP155VX,Y,Class 5 not BT,'6-8 Ton ICE Pneu','878',Berea,C5 4-9T - Standard and Premium, , , 
+H8.0FT-9,H,Class 5 BT,'8-9 Ton ICE Pneu','299',Berea,Big Forklift Trucks 10-16T, , , 
+GP190VX,Y,Class 5 BT,'8-9 Ton ICE Pneu','909',Berea,Big Forklift Trucks 10-16T, , , 
+UT15P,H,Class 5 not BT,'1-2 Ton ICE Pneu','261',Hangcha,C5 1-3.5T - Low Intensity, , , 
+J4.0XN,H,Class 1,'3.5-5.5 Ton Elect DBB','970',Craigavon,C1 4-9T - Standard and Premium, , , 
+ERPVF,Y,Class 1,'3.5-5.5 Ton Elect DBB','985',Craigavon,C1 4-9T - Standard and Premium, , , 
+UT1.5P,Y,Class 5 not BT,'1-2 Ton ICE Pneu','266',Hangcha,C5 1-3.5T - Low Intensity, , , 
+R30XMF3,H,Class 2,NA  Prem Ord Picker,'185',Greenville,C2 - Standard and Premium, , , 
+N30FR,H,Class 2,NA  Prem Ord Picker,'217',Greenville,C2 - Standard and Premium, , , 
+FS030BF,Y,Class 2,NA  Prem Ord Picker,'497',Greenville,C2 - Standard and Premium, , , 
+FB35-40PYE,Y,Class 1,'3.5-5.5 Ton Elect DBB','901',SN,C1 4-9T - Standard and Premium, , , 
+J3.50-4.00EX,H,Class 1,'3.5-5.5 Ton Elect DBB','920',SN,C1 4-9T - Standard and Premium, , , 
+MP20AP,Y,Class 3,'1-2 Ton MH LL Wlk UT','485',Hangcha,C3 - Low Intensity, , , 
+AP2.0MS,H,Class 3,'1-2 Ton MH LL Wlk UT','280',Hangcha,C3 - Low Intensity, , , 
+UT18PTE,H,Class 1,'1-2 Ton 3 Whl FWD UT','370',Hangcha,C1 1-3.5T - Low Intensity, , , 
+UT18_PTE,Y,Class 1,'1-2 Ton 3 Whl FWD UT','377',Hangcha,C1 1-3.5T - Low Intensity, , , 
+ERC080VH,Y,Class 1,'3.2-5.5 Ton Elec 4Wh','938',Greenville,C1 4-9T - Standard and Premium, , , 
+UT25C,Y,Class 4,'2-3 Ton ICE Cush- LCT','273',Hangcha,C4 1-3.5T - Low Intensity, , , 
+H16XM-12,H,Class 5 BT,'14-18 Ton ICE Pneu FLT','238',Nijmegen,Big Forklift Trucks >16T, , , 
+MPC080-VG,Y,Class 3,'4 Ton MH LL Rider','283',Greenville,C3 - Standard and Premium, , , 
+UT40-50PS,Y,Class 5 not BT,'3.5-5.5 Ton ICE P UT','411',Hangcha,C5 4-9T - Low Intensity, , , 
+UT40-49P,H,Class 5 not BT,'3.5-5.5 Ton ICE P UT','408',Hangcha,C5 4-9T - Low Intensity, , , 
+UT50-70P,H,Class 5 not BT,'5.0-7.0 Ton ICE P UT','413',Hangcha,C5 4-9T - Low Intensity, , , 
+UT5.0-7.0P,Y,Class 5 not BT,'5.0-7.0 Ton ICE P UT','417',Hangcha,C5 4-9T - Low Intensity, , , 
+UT80-100P,H,Class 5 BT,'8-10 Ton ICE Pneu UT','253',Hangcha,Big Forklift Trucks 10-16T, , , 
+UT8.0-10.0P,Y,Class 5 BT,'8-10 Ton ICE Pneu UT','973',Hangcha,Big Forklift Trucks 10-16T, , , 
+MPR080VG,Y,Class 2,'3-4 Ton Rider Pallet','284',Greenville,C2 - Standard and Premium, , , 
+P2.0,H,Class 3,'1-2 Ton MH LL Walkie','418',Masate,C3 - Standard and Premium, , , 
+MPB045VG        ,Y,Class 3,'2-3 Ton MH LL Walkie','245',Greenville,C3 - Standard and Premium, , , 
+RS45-27CH,H,Class 5 BT,Reachstacker,'366',Nijmegen,Port Equipment - Reachstackers, , , 
+BE80-100ZHD         ,H,Class 2,'3-4 Ton Rider Pallet','244',Greenville,C2 - Standard and Premium, , , 
+W45ZHD,H,Class 3,'2-3 Ton MH LL Walkie','419',Greenville,C3 - Standard and Premium, , , 
+UT15WE,H,Class 3,'1-2 Ton MH LL Wlk CP','378',Ruyi,C3 - Low Intensity, , , 
+UT1.5-1.8PFE,Y,Class 1,'1-2 Ton 3 Whl FWD UT','379',Hangcha,C1 1-3.5T - Low Intensity, , , 
+UT1.5-1.8 PFE,H,Class 1,'1-2 Ton 3 Whl FWD UT','374',Hangcha,C1 1-3.5T - Low Intensity, , , 
+J2.00-2.5EX,H,Class 1,'2-3 Ton Electric DBB','402',Shanghai,C1 1-3.5T - Low Intensity, , , 
+UT30PFE,Y,Class 1,'2-3 Ton Elec 4 Wh UT','396',Hangcha,C1 1-3.5T - Low Intensity, , , 
+MP20,Y,Class 3,'1-2 Ton MH LL Walkie','428',Masate,C3 - Standard and Premium, , , 
+H2.5-H3.5DX,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','966',Shanghai,C5 1-3.5T - Low Intensity, , , 
+R1.6,H,Class 2,NA  Small Reach,'406',Maximal,C2 - Standard and Premium, , , 
+R1.0-1.4E,H,Class 2,NA  Small Reach,'432',Masate,C2 - Standard and Premium, , , 
+MS10E,Y,Class 3,'1-2 Ton MH Strad Stk','845',Masate,C3 - Standard and Premium, , , 
+P2.0UT ,H,Class 3,'1-2 Ton MH LL Wlk UT','3B5',Ruyi,C3 - Low Intensity, , , 
+P2.0KUT,H,Class 3,'1-2 Ton MH LL Wlk UT','3B0',Ruyi,C3 - Low Intensity, , , 
+P2.0RUT,H,Class 3,'1-2 Ton MH LL Wlk UT','3B1',Ruyi,C3 - Low Intensity, , , 
+S1.5WUT,H,Class 3,'1-2 Ton MH Strad Stk','3C3',Ruyi,C3 - Low Intensity, , , 
+S1.5WLUT,H,Class 3,'1-2 Ton MH Strad Stk','3C2',Ruyi,C3 - Low Intensity, , , 
+S1.5RUT,H,Class 3,'1-2 Ton MH Strad Stk','3B3',Ruyi,C3 - Low Intensity, , , 
+SL1.5WUT,H,Class 3,'1-2 Ton MH Strad Stk','3B6',Ruyi,C3 - Low Intensity, , , 
+SL1.5RUT,H,Class 3,'1-2 Ton MH Strad Stk','3B7',Ruyi,C3 - Low Intensity, , , 
+MP20UX ,Y,Class 3,'1-2 Ton MH LL Wlk UT','7R5',Ruyi,C3 - Low Intensity, , , 
+MP20KUX,Y,Class 3,'1-2 Ton MH LL Wlk UT','7R0',Ruyi,C3 - Low Intensity, , , 
+MP20XUX,Y,Class 3,'1-2 Ton MH LL Wlk UT','7R1',Ruyi,C3 - Low Intensity, , , 
+MS15UX,Y,Class 3,'1-2 Ton MH Strad Stk','7S3',Ruyi,C3 - Low Intensity, , , 
+MS15LUX,Y,Class 3,'1-2 Ton MH Strad Stk','7S2',Ruyi,C3 - Low Intensity, , , 
+MS15XUX,Y,Class 3,'1-2 Ton MH Strad Stk','7R3',Ruyi,C3 - Low Intensity, , , 
+MSL15WUX,Y,Class 3,'1-2 Ton MH Strad Stk','7R6',Ruyi,C3 - Low Intensity, , , 
+MSL15XUX,Y,Class 3,'1-2 Ton MH Strad Stk','7R7',Ruyi,C3 - Low Intensity, , , 
+UT2.0-3.5UT,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','3C1',Maximal,C5 1-3.5T - Low Intensity, , , 
+GP20-35UX,Y,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','7S1',Maximal,C5 1-3.5T - Low Intensity, , , 
+AP20Z,H,Class 2,Aerial Lift,'254',Berea,C2 - Standard and Premium, , , 
+AER020AA,Y,Class 2,Aerial Lift,'944',Berea,C2 - Standard and Premium, , , 
+H9XM-EC7,H,Class 5 BT,'16-25 Ton ICE Pneu CH','3C0',Maximal,Port Equipment - Empty Container Handlers, , , 
+J1.5-3.5UT,H,Class 1,'2-3 Ton Elec 4 Wh UT','3C4',Maximal,C1 1-3.5T - Low Intensity, , , 
+ERP1.5-3.5UX,Y,Class 1,'2-3 Ton Elec 4 Wh UT','7S4',Maximal,C1 1-3.5T - Low Intensity, , , 
+P1.5UT,H,Class 3,'1-2 Ton MH LL Wlk CP','3D1',Ruyi,C3 - Low Intensity, , , 
+H5.0-7.0UT,H,Class 5 not BT,'5.0-7.0 Ton ICE P UT','3D0',Maximal,C5 4-9T - Low Intensity, , , 
+GP50-70UX,Y,Class 5 not BT,'5.0-7.0 Ton ICE P UT','7T0',Maximal,C5 4-9T - Low Intensity, , , 
+MPC15,Y,Class 3,'1-2 Ton MH LL Wlk CP','3D4',Staxx,C3 - Low Intensity, , , 
+PC1.5,H,Class 3,'1-2 Ton MH LL Wlk CP','6W9',Staxx,C3 - Low Intensity, , , 
+MP15UX,Y,Class 3,'1-2 Ton MH LL Wlk CP','7T1',Ruyi,C3 - Low Intensity, , , 
+T6.0UT,H,Class 3,MH Tractor,'3C7',Ruyi,C3 - Low Intensity, , , 
+MT60UX,Y,Class 3,MH Tractor,'7S7',Ruyi,C3 - Low Intensity, , , 
+T3.0UT,H,Class 3,MH Tractor,'3C9',Ruyi,C3 - Low Intensity, , , 
+MT30UX,Y,Class 3,MH Tractor,'7S9',Ruyi,C3 - Low Intensity, , , 
+T3.0UTS,H,Class 3,MH Tractor,'3C8',Ruyi,C3 - Low Intensity, , , 
+MT30XUX,Y,Class 3,MH Tractor,'7S8',Ruyi,C3 - Low Intensity, , , 
+J1.6-2.0UTT,H,Class 1,'1-2 Ton 3 Whl FWD UT','3C5',Maximal,C1 1-3.5T - Low Intensity, , , 
+ERP16-20UXT,Y,Class 1,'1-2 Ton 3 Whl FWD UT','7S5',Maximal,C1 1-3.5T - Low Intensity, , , 
+H4.0-5.0UT,H,Class 5 not BT,'3.5-5.5 Ton ICE P UT','3C6',Maximal,C5 4-9T - Low Intensity, , , 
+GP40-50UX,Y,Class 5 not BT,'3.5-5.5 Ton ICE P UT','7S6',Maximal,C5 4-9T - Low Intensity, , , 
+AP10Z,H,Class 2,Aerial Lift,'3D5',Ruyi,C2 - Low Intensity, , , 
+AER010,Y,Class 2,Aerial Lift,'7T5',Ruyi,C2 - Low Intensity, , , 
+F1.8-3.5UT,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','3B8',Maximal,C5 1-3.5T - Low Intensity, , , 
+KDP18-35UX,Y,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','7R8',Maximal,C5 1-3.5T - Low Intensity, , , 
+F5.0UT,H,Class 5 not BT,'3.5-5.5 Ton ICE P UT','3B9',Maximal,C5 4-9T - Low Intensity, , , 
+KDP50UX,Y,Class 5 not BT,'3.5-5.5 Ton ICE P UT','7R9',Maximal,C5 4-9T - Low Intensity, , , 
+GDP160EF12,Y,Class 5 BT,'14-18 Ton ICE Pneu FLT','674',Nijmegen,Big Forklift Trucks >16T, , , 
+RS45-27CH/RS45-31CH,H,Class 5 BT,Reachstacker,'921',Maximal,Port Equipment - Reachstackers, , , 
+J8.0XNSL,H,Class 1,'8-9 Ton Elec 4Wh DBB','250',Nijmegen,C1 4-9T - Standard and Premium, , , 
+ERP70-90VNL ,Y,Class 1,'8-9 Ton Elec 4Wh DBB','410',Nijmegen,C1 4-9T - Standard and Premium, , , 
+MR14E,Y,Class 2,NA  Small Reach,'942',Masate,C2 - Standard and Premium, , , 
+MR16,Y,Class 2,NA  Small Reach,'961',Maximal,C2 - Standard and Premium, , , 
+P2.0-3.0S,H,Class 3,'2-3 Ton MH LL Rider','3D9',Maximal,C3 - Standard and Premium, , , 
+MP20-30X,Y,Class 3,'2-3 Ton MH LL Rider','7T9',Maximal,C3 - Standard and Premium, , , 
+F1.8-3.5UT4,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','3B4',Maximal,C5 1-3.5T - Low Intensity, , , 
+KDP18-35UX4,Y,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','7S0',Maximal,C5 1-3.5T - Low Intensity, , , 
+H2.0-3.5A,H,Class 5 not BT,'2-3 Ton ICE Pneu','177a',Maximal,C5 1-3.5T - Standard and Premium, , , 
+GP2.0-3.5N,Y,Class 5 not BT,'2-3 Ton ICE Pneu','875a',Maximal,C5 1-3.5T - Standard and Premium, , , 
+J30-40XN,H,Class 1,'1-2 Ton Electric DBB','935a',Greenville,C1 1-3.5T - Standard and Premium, , , 
+ERP030-040VF,Y,Class 1,'1-2 Ton Electric DBB','955a',Greenville,C1 1-3.5T - Standard and Premium, , , 
+J30-40XNT,H,Class 1,'1-2 Ton 3 Wheel FWD','160a',Greenville,C1 1-3.5T - Standard and Premium, , , 
+ERP030-040VT,Y,Class 1,'1-2 Ton 3 Wheel FWD','807a',Greenville,C1 1-3.5T - Standard and Premium, , , 
