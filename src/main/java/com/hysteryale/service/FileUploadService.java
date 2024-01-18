@@ -84,8 +84,7 @@ public class FileUploadService {
         }
     }
 
-    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication) throws Exception {
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication, String baseFolder) throws Exception {
 
         Date uploadedTime = new Date();
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
