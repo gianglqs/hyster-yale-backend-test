@@ -44,7 +44,7 @@ public class ProductDimensionService extends BasedService {
         ProductDimension productDimension = new ProductDimension();
 
         // brand
-        String brand =  row.getCell(COLUMNS.get("Brand")).getStringCellValue();
+        String brand = row.getCell(COLUMNS.get("Brand")).getStringCellValue();
         productDimension.setBrand(brand);
 
         // metaseries
@@ -52,7 +52,7 @@ public class ProductDimensionService extends BasedService {
         productDimension.setMetaSeries(metaSeries);
 
         // plant
-        String plant =row.getCell(COLUMNS.get("Plant")).getStringCellValue();
+        String plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
         productDimension.setPlant(plant);
 
         // Class
@@ -193,7 +193,7 @@ public class ProductDimensionService extends BasedService {
                 (String) filterMap.get("modelCodeFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
-                (List<String>) filterMap.get("familyFilter"),(Pageable) filterMap.get("pageable")
+                (List<String>) filterMap.get("familyFilter"), (Pageable) filterMap.get("pageable")
         );
         result.put("listData", getData);
         //Count data
@@ -206,5 +206,17 @@ public class ProductDimensionService extends BasedService {
 
         return result;
 
+    }
+
+    public void updateImageAndDescription(String modelCode, String imagePath, String description) {
+        if (description.isEmpty()) {
+            productDimensionRepository.updateImage(modelCode, imagePath);
+        } else
+            productDimensionRepository.updateImageAndDescription(modelCode, imagePath, description);
+    }
+
+
+    public void updateDescription(String modelCode, String description) {
+        productDimensionRepository.updateDescription(modelCode, description);
     }
 }
