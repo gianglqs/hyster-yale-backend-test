@@ -1,3 +1,4 @@
 'id','default_locale','email','is_active','last_login','password','user_name','role_id'
 9,us,user1@gmail.com,true,,$2a$10$S6bP/0svT6DwgM1kVId5BOT6M4zj9eMMEvR5zqVJfcC4hFd541lUC,user1,2
 1,us,admin@gmail.com,true,2023-09-06,$2a$10$3nMFovtB1fDWgPLHO/HtweaYnrEmGIswJXx.yNjr19Px0j935CMhK,admin,1
+2,us,giang@gmail.com,false,2023-09-06,$2a$10$3nMFovtB1fDWgPLHO/HtweaYnrEmGIswJXx.yNjr19Px0j935CMhK,giang,1

@@ -12,6 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Getter
 @Setter
+@Table(name = "productdimension")
 public class ProductDimension {
     @Id
     @Column(name = "modelcode")

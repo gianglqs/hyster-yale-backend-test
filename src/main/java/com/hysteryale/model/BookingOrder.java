@@ -1,9 +1,6 @@
 package com.hysteryale.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Calendar;
@@ -138,5 +135,14 @@ public class BookingOrder {
         this.marginPercentageAfterSurCharge = sum_margin_percentage_after_surcharge;
         this.quantity = sum_quantity;
     }
+    /**
+     * for test Repository in Junit Test
+     */
+    public BookingOrder(String orderNo, String dealerName, String series){
+        this.orderNo = orderNo;
+        this.dealerName = dealerName;
+        this.series = series;
+    }
+
 
 }
