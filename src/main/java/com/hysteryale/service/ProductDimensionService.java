@@ -181,7 +181,6 @@ public class ProductDimensionService extends BasedService {
 
     public String getModelFromMetaSeries(String metaSeries) {
         Optional<String> modelOptional = productDimensionRepository.getModelByMetaSeries(metaSeries);
-        logInfo("mdoel" + modelOptional.get());
         return modelOptional.orElse(null);
     }
 
