@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 
 @RestController()
@@ -39,8 +40,12 @@ public class ProductDimensionController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public void updateProduct(@RequestParam("modelCode") String modelCode,
                               @RequestParam(name = "image", required = false) MultipartFile image,
-                              @RequestParam("description") String description, Authentication authentication) throws Exception {
-        // save file into folder Upload ProductImage if any
+                              @RequestParam(name = "description", required = false) String description,
+                              Authentication authentication) throws Exception {
+
+        if (modelCode == null)
+            throw new InvalidPropertiesFormatException("ModelCode was not found!");
+
         if (image != null) {
             String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
             String saveImageFolder = baseFolder + "/" + EnvironmentUtils.getEnvironmentValue("upload_files.product-images");
@@ -48,18 +53,22 @@ public class ProductDimensionController {
 
             String savedImageName = fileUploadService.saveFileUploaded(image, authentication, saveImageFolder, imageFileExtension);
             String saveFilePath = saveImageFolder + "/" + savedImageName;
-            // check if it is an image or not
-            if (FileUtils.isImageFile(saveFilePath)) {
-                //update
-                productDimensionService.updateImageAndDescription(modelCode, savedImageName, description);
-            } else {
-                //delete file on disk
-                fileUploadService.deleteFileInDisk(saveFilePath);
 
-                // update
-                productDimensionService.updateDescription(modelCode, description);
+            if (FileUtils.isImageFile(saveFilePath)) {
+                if (description != null) {
+                    productDimensionService.updateImageAndDescription(modelCode, savedImageName, description);
+                    return;
+                }
+                productDimensionService.updateImage(modelCode, savedImageName);
+                return;
             }
+
+            // else -> throws Exception
+            throw new InvalidPropertiesFormatException("File is not Image!");
         }
-        // update ProductDimension
+
+        if (description == null)
+            return;
+        productDimensionService.updateDescription(modelCode, description);
     }
 }
