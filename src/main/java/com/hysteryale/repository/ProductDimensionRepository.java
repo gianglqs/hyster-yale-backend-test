@@ -47,7 +47,7 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
             " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
             " AND ((:segments) IS NULL OR p.segment IN (:segments))" +
             " AND ((:brands) IS NULL OR p.brand IN (:brands))" +
-            " AND ((:family) IS NULL OR p.family IN (:family))")
+            " AND ((:family) IS NULL OR p.family IN (:family)) ORDER BY p.modelCode")
     List<ProductDimension> getDataByFilter(String modelCode,
                                            List<String> plants,
                                            List<String> metaSeries,

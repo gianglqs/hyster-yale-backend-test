@@ -95,7 +95,7 @@ public class FileUploadService {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
             saveFileUpLoadIntoDB(authentication, encodedFileName);
-            return baseFolder + "/" + encodedFileName;
+            return encodedFileName;
         } else {
             log.info("Can not create new file: " + encodedFileName);
             throw new Exception("Can not create new file: " + encodedFileName);

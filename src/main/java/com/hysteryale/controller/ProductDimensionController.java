@@ -7,9 +7,11 @@ import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ProductDimensionService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -33,25 +35,29 @@ public class ProductDimensionController {
         return productDimensionService.getDataByFilter(filters);
     }
 
-    @PutMapping("/updateProduct")
+    @PostMapping(path = "/updateProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void updateProduct(@RequestBody UpdateProductDimensionPayLoad product, Authentication authentication) throws Exception {
+    public void updateProduct(@RequestParam("modelCode") String modelCode,
+                              @RequestParam(name = "image", required = false) MultipartFile image,
+                              @RequestParam("description") String description, Authentication authentication) throws Exception {
         // save file into folder Upload ProductImage if any
-        if (product.getImage() != null) {
+        if (image != null) {
             String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
             String saveImageFolder = baseFolder + "/" + EnvironmentUtils.getEnvironmentValue("upload_files.product-images");
+            String imageFileExtension = FileUtils.IMAGE_FILE_EXTENSION;
 
-            String imagePath = fileUploadService.saveFileUploaded(product.getImage(), authentication, saveImageFolder);
+            String savedImageName = fileUploadService.saveFileUploaded(image, authentication, saveImageFolder, imageFileExtension);
+            String saveFilePath = saveImageFolder + "/" + savedImageName;
             // check if it is an image or not
-            if(FileUtils.isImageFile(imagePath)){
+            if (FileUtils.isImageFile(saveFilePath)) {
                 //update
-                productDimensionService.updateImageAndDescription(product.getModelCode(), imagePath, product.getDescription());
-            }else{
+                productDimensionService.updateImageAndDescription(modelCode, savedImageName, description);
+            } else {
                 //delete file on disk
-                fileUploadService.deleteFileInDisk(imagePath);
+                fileUploadService.deleteFileInDisk(saveFilePath);
 
                 // update
-                productDimensionService.updateDescription(product.getModelCode(), product.getDescription());
+                productDimensionService.updateDescription(modelCode, description);
             }
         }
         // update ProductDimension
