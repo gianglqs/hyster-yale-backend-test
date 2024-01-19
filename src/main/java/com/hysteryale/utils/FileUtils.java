@@ -22,6 +22,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public class FileUtils {
 
+    public static final String IMAGE_FILE_EXTENSION=".png";
+    public static final String EXCEL_FILE_EXTENSION=".xlsx";
+
     /**
      * Return all file names in a folder
      *

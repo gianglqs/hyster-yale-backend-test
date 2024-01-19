@@ -90,7 +90,8 @@ public class FileUploadServiceTest {
                 MediaType.MULTIPART_FORM_DATA_VALUE,
                 fileResource.getInputStream()
         );
-        String filePath = fileUploadService.saveFileUploaded(file, authentication, baseFolder);
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        String filePath = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
         String encodedFileName = FileUtils.encoding(file.getOriginalFilename());
 
         Assertions.assertTrue(filePath.contains(baseFolder));

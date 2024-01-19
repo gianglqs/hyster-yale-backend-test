@@ -84,11 +84,11 @@ public class FileUploadService {
         }
     }
 
-    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication, String baseFolder) throws Exception {
+    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication, String baseFolder, String extensionFile) throws Exception {
 
         Date uploadedTime = new Date();
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
-        String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + ".xlsx";
+        String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + extensionFile;
 
         File file = new File(baseFolder + "/" + encodedFileName);
         if (file.createNewFile()) {
