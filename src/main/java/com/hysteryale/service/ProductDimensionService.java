@@ -209,7 +209,7 @@ public class ProductDimensionService extends BasedService {
     }
 
     public void updateImageAndDescription(String modelCode, String imagePath, String description) {
-        if (description.isEmpty()) {
+        if (description.equals("null")) { //
             productDimensionRepository.updateImage(modelCode, imagePath);
         } else
             productDimensionRepository.updateImageAndDescription(modelCode, imagePath, description);
