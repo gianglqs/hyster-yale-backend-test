@@ -34,7 +34,7 @@ public class ProductDimensionController {
         return productDimensionService.getDataByFilter(filters);
     }
 
-    @PostMapping(path = "/updateProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(path = "/updateProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
     public void updateProduct(@RequestParam("modelCode") String modelCode,
                               @RequestParam(name = "image", required = false) MultipartFile image,
