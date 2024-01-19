@@ -1,8 +1,6 @@
 package com.hysteryale.controller;
 
-import com.hysteryale.model.ProductDimension;
 import com.hysteryale.model.filters.FilterModel;
-import com.hysteryale.model.payLoad.UpdateProductDimensionPayLoad;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ProductDimensionService;
 import com.hysteryale.utils.EnvironmentUtils;
