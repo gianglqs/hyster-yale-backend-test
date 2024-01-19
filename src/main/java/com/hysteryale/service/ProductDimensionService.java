@@ -219,4 +219,8 @@ public class ProductDimensionService extends BasedService {
     public void updateDescription(String modelCode, String description) {
         productDimensionRepository.updateDescription(modelCode, description);
     }
+
+    public void updateImage(String modelCode, String imageName) {
+        productDimensionRepository.updateImage(modelCode, imageName);
+    }
 }
