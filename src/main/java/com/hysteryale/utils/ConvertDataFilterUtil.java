@@ -62,7 +62,7 @@ public class ConvertDataFilterUtil {
         result.put("truckTypeFilter", truckTypeFilter);
 
         // for ProductDimension detail
-        result.put("orderNumberList", orderNumberListFilter);
+        result.put("orderNumberListFilter", orderNumberListFilter);
 
         return result;
     }
