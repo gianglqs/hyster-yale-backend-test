@@ -11,10 +11,9 @@ import java.io.FileNotFoundException;
 @Service
 public class LoadImageService {
 
-    public Resource getImageProduct(String imageName) throws FileNotFoundException {
+    public Resource getImage(String folder, String imageName) throws FileNotFoundException {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String productFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product-images");
-        String pathFile = baseFolder + productFolder + "/" + imageName;
+        String pathFile = baseFolder + folder + "/" + imageName;
         File file = new File(pathFile);
         if (file.exists())
             return new FileSystemResource(file) {
