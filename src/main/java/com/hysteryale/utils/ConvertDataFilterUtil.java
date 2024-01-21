@@ -33,6 +33,7 @@ public class ConvertDataFilterUtil {
         List<String> brandFilter = checkListData(filterModel.getBrands());
         List<String> familyFilter = checkListData(filterModel.getFamily());
         List<String> truckTypeFilter = checkListData(filterModel.getTruckType());
+        List<String> orderNumberListFilter = checkListData(filterModel.getOrderNumbers());
 
         Calendar calendar = Calendar.getInstance();
         Integer year = filterModel.getYear() == null ? calendar.get(Calendar.YEAR) : filterModel.getYear();
@@ -59,6 +60,9 @@ public class ConvertDataFilterUtil {
         result.put("brandFilter", brandFilter);
         result.put("familyFilter", familyFilter);
         result.put("truckTypeFilter", truckTypeFilter);
+
+        // for ProductDimension detail
+        result.put("orderNumberList", orderNumberListFilter);
 
         return result;
     }

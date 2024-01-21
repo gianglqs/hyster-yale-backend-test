@@ -2,11 +2,13 @@ package com.hysteryale.service;
 
 import com.hysteryale.repository.*;
 import com.hysteryale.repository.bookingorder.BookingOrderRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
 
+@Slf4j
 @Service
 public class FilterService {
 
@@ -21,7 +23,7 @@ public class FilterService {
 
     @Resource
     ShipmentRepository shipmentRepository;
-    
+
     @Resource
     BookingOrderRepository bookingOrderRepository;
     @Resource
@@ -147,9 +149,8 @@ public class FilterService {
                 Map.of("value", year - 1),
                 Map.of("value", year),
                 Map.of("value", year + 1)
-                );
+        );
     }
-
 
 
     private List<Map<String, String>> getChineseBrandFilter() {
@@ -171,7 +172,7 @@ public class FilterService {
         List<String> classes = productDimensionRepository.getAllClass();
         classes.sort(String::compareTo);
         for (String m : classes) {
-            if(m.equals("Class 5 not BT"))
+            if (m.equals("Class 5 not BT"))
                 m = "Class 5 non BT";
             Map<String, String> mMap = new HashMap<>();
             mMap.put("value", m);
@@ -330,7 +331,7 @@ public class FilterService {
         List<Map<String, String>> listCategories = new ArrayList<>();
         List<String> categories = competitorPricingRepository.getDistinctCategory();
         categories.sort(String::compareTo);
-        for(String category : categories) {
+        for (String category : categories) {
             listCategories.add(Map.of("value", category));
         }
         return listCategories;
@@ -343,7 +344,7 @@ public class FilterService {
         List<Map<String, String>> listSeries = new ArrayList<>();
         List<String> series = competitorPricingRepository.getDistinctSeries();
         series.sort(String::compareTo);
-        for(String s : series) {
+        for (String s : series) {
             listSeries.add(Map.of("value", s));
         }
         return listSeries;
@@ -356,12 +357,28 @@ public class FilterService {
         List<Map<String, String>> listCountries = new ArrayList<>();
         List<String> countries = countryRepository.getAllCountryNames();
         countries.sort(String::compareTo);
-        for(String country : countries) {
+        for (String country : countries) {
             listCountries.add(Map.of("value", country));
         }
         return listCountries;
     }
 
 
+    public Map<String, Object> getProductDetailFilter(String modelCode) {
+        List<Map<String, String>> listOrderMaps = getListOrderNoByModelCode(modelCode);
+        return Map.of("orderNos", listOrderMaps);
 
+
+    }
+
+    private List<Map<String, String>> getListOrderNoByModelCode(String modelCode) {
+        List<String> orderNos = bookingOrderRepository.getOrderNosByModelCode(modelCode);
+        log.info(orderNos.toString());
+        List<Map<String, String>> listResult = new ArrayList<>();
+        orderNos.sort(String::compareToIgnoreCase);
+        for (String orderNo : orderNos) {
+            listResult.add(Map.of("value", orderNo));
+        }
+        return listResult;
+    }
 }
