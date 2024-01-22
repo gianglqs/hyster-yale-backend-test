@@ -4,7 +4,7 @@ import com.hysteryale.model.marginAnalyst.MarginAnalystData;
 import com.hysteryale.model.marginAnalyst.MarginAnalystSummary;
 
 import java.io.IOException;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +17,7 @@ public interface MarginAnalystService {
      * @param currency
      * @return
      */
-    Map<String, List<MarginAnalystData>> getMarginAnalystData(String modelCode, String currency, Calendar monthYear);
+    Map<String, List<MarginAnalystData>> getMarginAnalystData(String modelCode, String currency, LocalDate monthYear);
 
     /**
      * To query the margin analyst summarized of a model code
@@ -25,10 +25,10 @@ public interface MarginAnalystService {
      * @param currency
      * @return
      */
-    Map<String, MarginAnalystSummary> getMarginAnalystSummary(String modelCode, String currency, Calendar monthYear);
+    Map<String, MarginAnalystSummary> getMarginAnalystSummary(String modelCode, String currency, LocalDate monthYear);
 
     void importMarginAnalystData() throws IOException;
     Map<String, List<Map<String, String>>>  getDealersFromMarginAnalystData();
-    Map<String, List<MarginAnalystData>> getMarginDataForAnalysisByDealer(String modelCode, String currency, Calendar monthYear, String dealer);
+    Map<String, List<MarginAnalystData>> getMarginDataForAnalysisByDealer(String modelCode, String currency, LocalDate monthYear, String dealer);
 
 }
