@@ -33,10 +33,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
 @Slf4j
+@SuppressWarnings("unchecked")
 public class IndicatorService extends BasedService {
     @Resource
     CompetitorPricingRepository competitorPricingRepository;
@@ -240,8 +242,7 @@ public class IndicatorService extends BasedService {
                         String strRegion = competitorPricing.getRegion();
                         String metaSeries = competitorPricing.getSeries().substring(1); // extract metaSeries from series
 
-                        Calendar time = Calendar.getInstance();
-                        int currentYear = time.get(Calendar.YEAR);
+                        int currentYear = LocalDate.now().getYear();
 
                         ForeCastValue actualForeCast = importService.findForeCastValue(forecastValueList, strRegion, metaSeries, currentYear - 1);
                         ForeCastValue AOPFForeCast = importService.findForeCastValue(forecastValueList, strRegion, metaSeries, currentYear);
