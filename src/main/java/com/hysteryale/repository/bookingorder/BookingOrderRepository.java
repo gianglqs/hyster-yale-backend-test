@@ -7,15 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Calendar;
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public interface BookingOrderRepository extends JpaRepository<BookingOrder, String> {
 
     @Query("SELECT DISTINCT b.dealerName FROM BookingOrder b ORDER BY b.dealerName")
-    public List<String> getAllDealerName();
+    List<String> getAllDealerName();
 
     @Query("SELECT DISTINCT b.productDimension.modelCode FROM BookingOrder b ORDER BY b.productDimension.modelCode ASC ")
     List<String> getAllModel();
@@ -58,8 +57,8 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             @Param("dealerName") List<String> dealerName,
             @Param("comparator") String comparator,
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-            @Param("fromDate") Calendar fromDate,
-            @Param("toDate") Calendar toDate,
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate,
             Pageable pageable);
 
     @Query("SELECT new BookingOrder( COALESCE(sum(c.quantity), 0), COALESCE(sum(c.totalCost), 0), COALESCE(sum(c.dealerNet), 0), " +
@@ -90,8 +89,8 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             @Param("dealerName") List<String> dealerName,
             @Param("comparator") String comparator,
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-            @Param("fromDate") Calendar fromDate,
-            @Param("toDate") Calendar toDate);
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate);
 
     //   @Query("SELECT COUNT(distinct (c.region.regionShortName || c.productDimension.plant || c.productDimension.clazz || c.series || c.productDimension.model) )" +
     @Query("SELECT COUNT(c)" +
@@ -122,8 +121,8 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             @Param("dealerName") List<String> dealerName,
             @Param("comparator") String comparator,
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-            @Param("fromDate") Calendar fromDate,
-            @Param("toDate") Calendar toDate);
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate);
 
 
     @Query(value = "SELECT * FROM booking_order WHERE model = ?1 LIMIT 1", nativeQuery = true)
@@ -162,8 +161,8 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
                  @Param("AOPMarginPercentage") String AOPMarginPercentage,
                  @Param("comparator") String comparator,
                  @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-                 @Param("fromDate") Calendar fromDate,
-                 @Param("toDate") Calendar toDate);
+                 @Param("fromDate") LocalDate fromDate,
+                 @Param("toDate") LocalDate toDate);
 
     @Query("SELECT c FROM BookingOrder c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
@@ -199,8 +198,8 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             @Param("AOPMarginPercentage") String AOPMarginPercentage,
             @Param("comparator") String comparator,
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-            @Param("fromDate") Calendar fromDate,
-            @Param("toDate") Calendar toData,
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toData,
             @Param("pageable") Pageable pageable
     );
 
@@ -375,8 +374,8 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             @Param("AOPMarginPercentage") String AOPMarginPercentage,
             @Param("comparator") String comparator,
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-            @Param("fromDate") Calendar fromDate,
-            @Param("toDate") Calendar toDate);
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate);
 
     @Query("SELECT COALESCE((sum(c.marginAfterSurCharge) / NULLIF( sum(c.dealerNetAfterSurCharge),0)),0) FROM BookingOrder c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
@@ -412,8 +411,8 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             @Param("AOPMarginPercentage") String AOPMarginPercentage,
             @Param("comparator") String comparator,
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-            @Param("fromDate") Calendar fromDate,
-            @Param("toDate") Calendar toDate);
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate);
 
 
     @Query("SELECT new BookingOrder( sum(c.dealerNetAfterSurCharge), sum(c.totalCost), sum(c.marginAfterSurCharge), count(c)) " +
@@ -564,8 +563,8 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
             @Param("AOPMarginPercentage") String AOPMarginPercentage,
             @Param("comparator") String comparator,
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-            @Param("fromDate") Calendar fromDate,
-            @Param("toDate") Calendar toDate
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate
     );
 
 

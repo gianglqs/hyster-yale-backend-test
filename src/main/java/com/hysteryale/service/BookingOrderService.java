@@ -26,14 +26,16 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 @Slf4j
+@SuppressWarnings("unchecked")
 public class BookingOrderService extends BasedService {
     @Resource
     BookingOrderRepository bookingOrderRepository;
@@ -169,11 +171,7 @@ public class BookingOrderService extends BasedService {
                 month = Integer.parseInt(matcher.group(2));
                 day = Integer.parseInt(matcher.group(3));
 
-                GregorianCalendar orderDate = new GregorianCalendar();
-                // {month - 1} is the index to get value in List of month {Jan, Feb, March, April, May, ...}
-                orderDate.set(year, month - 1, day);
-                orderDate.add(Calendar.DATE, 1);
-                bookingOrder.setDate(orderDate);
+                bookingOrder.setDate(LocalDate.of(year, DateUtils.getMonth(month), day));
             }
         } else {
             throw new MissingColumnException("Missing column 'DATE'!");
@@ -433,9 +431,7 @@ public class BookingOrderService extends BasedService {
         List<String> listPartNumber = partService.getAllPartNumbersByOrderNo(bookingOrder.getOrderNo());
         Currency currency = partService.getCurrencyByOrderNo(bookingOrder.getOrderNo());
 
-        Calendar orderDate = bookingOrder.getDate();
-        Calendar date = Calendar.getInstance();
-        date.set(orderDate.get(Calendar.YEAR), orderDate.get(Calendar.MONTH), 1);
+        LocalDate date = LocalDate.of(bookingOrder.getDate().getYear(), bookingOrder.getDate().getMonth(), 1);
 
         if (currency == null)
             return bookingOrder;
@@ -491,8 +487,7 @@ public class BookingOrderService extends BasedService {
             // if data is new extract file name Cost_Data_10_09_2023_11_01_37 -> Date -> month,year
 
             if (fileName.contains(year) && listMonth.get(extractDate(fileName).getMonth()).toLowerCase().contains(month.toLowerCase())) {
-                InputStream is = new FileInputStream(folderPath + "/" + fileName);
-                return is;
+                return new FileInputStream(folderPath + "/" + fileName);
             }
         }
         return null;
@@ -696,7 +691,7 @@ public class BookingOrderService extends BasedService {
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable")
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable")
         );
 
         // get currency for order -> get exchange_rate
@@ -728,7 +723,7 @@ public class BookingOrderService extends BasedService {
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"));
         result.put("totalItems", countAll);
 
         // get data for totalRow
@@ -744,8 +739,8 @@ public class BookingOrderService extends BasedService {
                 (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                filterMap.get("fromDateFilter") == null ? new GregorianCalendar(1996, 10, 23) : (Calendar) filterMap.get("fromDateFilter"),
-                filterMap.get("toDateFilter") == null ? new GregorianCalendar(2996, 10, 23) : (Calendar) filterMap.get("toDateFilter")
+                filterMap.get("fromDateFilter") == null ? LocalDate.of(1996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("fromDateFilter"),
+                filterMap.get("toDateFilter") == null ? LocalDate.of(2996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("toDateFilter")
         );
         result.put("total", getTotal);
 
