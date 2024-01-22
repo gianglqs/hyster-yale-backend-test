@@ -18,7 +18,7 @@
 							"script": {
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
-									"postman.setEnvironmentVariable(\"access_token\", \"Bearer \" + jsonData.data.access_token);",
+									"postman.setEnvironmentVariable(\"access_token\", \"Bearer \" + jsonData.data.accessToken);",
 									"",
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -35,7 +35,7 @@
 									"",
 									"pm.test(\"Response have a token properties\", function () {",
 									"    const jsonData = pm.response.json();",
-									"    pm.expect(jsonData.data.access_token).to.be.a('string');",
+									"    pm.expect(jsonData.data.accessToken).to.be.a('string');",
 									"})"
 								],
 								"type": "text/javascript"
