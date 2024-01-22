@@ -11,11 +11,12 @@ import org.springframework.data.domain.Pageable;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
+@SuppressWarnings("unchecked")
 public class OutlierServiceTest {
     @Resource
     OutlierService outlierService;
@@ -32,7 +33,7 @@ public class OutlierServiceTest {
                 (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"), (List<String>) filterMap.get("dealerNameFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"),
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"),
                 (Pageable) filterMap.get("pageable"));
 
         List<Integer> countAll = bookingOrderRepository.countAllForOutline(
@@ -40,7 +41,7 @@ public class OutlierServiceTest {
                 (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"), (List<String>) filterMap.get("dealerNameFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"));
 
         // Assertions
         Map<String, Object> result = outlierService.getDataForTable(filters);
