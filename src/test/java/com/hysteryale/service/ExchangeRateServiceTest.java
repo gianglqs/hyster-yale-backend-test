@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.Month;
 
 @SpringBootTest
 public class ExchangeRateServiceTest {
@@ -21,20 +22,19 @@ public class ExchangeRateServiceTest {
     public void testGetExchangeRate() {
         String from = "VND";
         String to = "USD";
-        Calendar monthYear = Calendar.getInstance();
-        monthYear.set(2050, Calendar.DECEMBER, 21);
+        LocalDate monthYear = LocalDate.of(2050, Month.DECEMBER, 21);
         exchangeRateRepository.save(new ExchangeRate(new Currency(from), new Currency(to), 1.01, monthYear));
 
         ExchangeRate dbExchangeRate = exchangeRateService.getExchangeRate(from, to, monthYear);
         Assertions.assertEquals(from, dbExchangeRate.getFrom().getCurrency());
         Assertions.assertEquals(to, dbExchangeRate.getTo().getCurrency());
-        Assertions.assertEquals(monthYear.get(Calendar.MONTH), dbExchangeRate.getDate().get(Calendar.MONTH));
-        Assertions.assertEquals(monthYear.get(Calendar.YEAR), dbExchangeRate.getDate().get(Calendar.YEAR));
+        Assertions.assertEquals(monthYear.getMonth(), dbExchangeRate.getDate().getMonth());
+        Assertions.assertEquals(monthYear.getYear(), dbExchangeRate.getDate().getYear());
     }
 
     @Test
     public void testGetExchangeRate_notFound() {
-        ExchangeRate dbExchangeRate = exchangeRateService.getExchangeRate("abc", "def", Calendar.getInstance());
+        ExchangeRate dbExchangeRate = exchangeRateService.getExchangeRate("abc", "def", LocalDate.now());
         Assertions.assertNull(dbExchangeRate);
     }
 
@@ -42,14 +42,14 @@ public class ExchangeRateServiceTest {
     public void testGetNearestExchangeRate() {
         String from = "VND";
         String to = "USD";
-        Calendar monthYear = Calendar.getInstance();
+        LocalDate monthYear = LocalDate.now();
         exchangeRateRepository.save(new ExchangeRate(new Currency(from), new Currency(to), 1.01, monthYear));
 
         ExchangeRate dbExchangeRate = exchangeRateService.getNearestExchangeRate(from, to);
         Assertions.assertEquals(from, dbExchangeRate.getFrom().getCurrency());
         Assertions.assertEquals(to, dbExchangeRate.getTo().getCurrency());
-        Assertions.assertEquals(monthYear.get(Calendar.MONTH), dbExchangeRate.getDate().get(Calendar.MONTH));
-        Assertions.assertEquals(monthYear.get(Calendar.YEAR), dbExchangeRate.getDate().get(Calendar.YEAR));
+        Assertions.assertEquals(monthYear.getMonth(), dbExchangeRate.getDate().getMonth());
+        Assertions.assertEquals(monthYear.getYear(), dbExchangeRate.getDate().getYear());
     }
 
     @Test
