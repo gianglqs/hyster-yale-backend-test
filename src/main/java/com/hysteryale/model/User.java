@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -43,9 +44,8 @@ public class User implements UserDetails {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "last_login")
-    private Date lastLogin;
+    private LocalDate lastLogin;
 
     public User(String userName, String email, String password, Role role) {
         this.name = userName;
