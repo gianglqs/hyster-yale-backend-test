@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,5 +29,5 @@ public class FileUpload {
     private User uploadedBy;
 
     @Column(name = "uploaded_time")
-    private Date uploadedTime;
+    private LocalDateTime uploadedTime;
 }
