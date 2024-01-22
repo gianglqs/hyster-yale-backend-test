@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -22,8 +23,8 @@ import java.util.regex.Pattern;
 @Slf4j
 public class FileUtils {
 
-    public static final String IMAGE_FILE_EXTENSION=".png";
-    public static final String EXCEL_FILE_EXTENSION=".xlsx";
+    public static final String IMAGE_FILE_EXTENSION = ".png";
+    public static final String EXCEL_FILE_EXTENSION = ".xlsx";
 
     /**
      * Return all file names in a folder
@@ -103,7 +104,7 @@ public class FileUtils {
         if (!file.exists())
             return false;
         Image img = null;
-        try{
+        try {
             img = ImageIO.read(file);
             return img != null && img.getWidth(null) > 0 && img.getHeight(null) > 0;
         } catch (IOException e) {
@@ -146,5 +147,16 @@ public class FileUtils {
         fileName = multipartFile.getOriginalFilename();
         assert fileName != null;
         return fileName.toLowerCase().contains(regex);
+    }
+
+    public static String convertImageFileToString(String pathFile) throws IOException {
+        File file = new File(pathFile);
+        BufferedImage image = ImageIO.read(file);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", baos);
+        byte[] bytes = baos.toByteArray();
+
+        //encode
+        return Base64.getEncoder().encodeToString(bytes);
     }
 }

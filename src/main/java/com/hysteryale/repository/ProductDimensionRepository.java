@@ -100,4 +100,7 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
     @Modifying
     @Query("UPDATE ProductDimension p SET p.description = :description WHERE p.modelCode = :modelCode")
     void updateDescription(String modelCode, String description);
+
+    @Query("SELECT p FROM ProductDimension p WHERE p.modelCode = :modelCode")
+    Optional<ProductDimension> getProductByModelCode(String modelCode);
 }

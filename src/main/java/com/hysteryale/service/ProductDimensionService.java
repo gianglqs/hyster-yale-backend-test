@@ -7,6 +7,9 @@ import com.hysteryale.repository.ProductDimensionRepository;
 import com.hysteryale.repository.ProductDimensionRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.FileUtils;
+import javassist.NotFoundException;
+import liquibase.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.swing.text.html.Option;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -222,5 +226,27 @@ public class ProductDimensionService extends BasedService {
 
     public void updateImage(String modelCode, String imageName) {
         productDimensionRepository.updateImage(modelCode, imageName);
+    }
+
+    public ProductDimension getProductDimensionDetail(String modelCode) throws NotFoundException, IOException {
+        Map<String, Object> productDetail = new HashMap<>();
+        Optional<ProductDimension> productOptional = productDimensionRepository.getProductByModelCode(modelCode);
+        if (productOptional.isEmpty())
+            throw new NotFoundException("Not found Product with ModelCode " + modelCode);
+
+        ProductDimension product = productOptional.get();
+
+        if (product.getImage() != null) {
+            String imagePath = getProductImagePathFromFileName(product.getImage());
+            String imageString = FileUtils.convertImageFileToString(imagePath);
+            product.setImage(imageString);
+        }
+        return product;
+    }
+
+    public String getProductImagePathFromFileName(String fileName) {
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String productImageFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product-images");
+        return baseFolder + productImageFolder + "/" + fileName;
     }
 }

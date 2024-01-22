@@ -1,10 +1,12 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.model.ProductDimension;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ProductDimensionService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import javassist.NotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 
@@ -68,5 +71,10 @@ public class ProductDimensionController {
         if (description == null)
             return;
         productDimensionService.updateDescription(modelCode, description);
+    }
+
+    @GetMapping("/getProductDetail")
+    public ProductDimension getDataForProductDetail(@RequestParam String modelCode) throws NotFoundException, IOException {
+        return productDimensionService.getProductDimensionDetail(modelCode);
     }
 }
