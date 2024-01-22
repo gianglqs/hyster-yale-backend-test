@@ -93,5 +93,15 @@
                 tableName="competitorpricing">
         </loadUpdateData>
 
+        <loadUpdateData
+                encoding="UTF-8"
+                file="classpath:db/database/shipment.csv"
+                onlyUpdate="false"
+                primaryKey="order_no"
+                quotchar="'"
+                separator=","
+                tableName="shipment">
+        </loadUpdateData>
+
     </changeSet>
 </databaseChangeLog>
