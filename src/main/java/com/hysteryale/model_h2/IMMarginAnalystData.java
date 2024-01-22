@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -35,9 +35,8 @@ public class IMMarginAnalystData {
     @Column(name = "margin_aop")
     private double margin_aop;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "month_year")
-    private Calendar monthYear; // we only needs to care month and year, so the day is always 1
+    private LocalDate monthYear; // we only needs to care month and year, so the day is always 1
 
     private String currency;
     private double manufacturingCost;
@@ -53,7 +52,7 @@ public class IMMarginAnalystData {
     private int type;
     private String series;
 
-    public IMMarginAnalystData(String plant, String modelCode, String optionCode, String description, double listPrice, Calendar monthYear, String currency, double dealerNet, String series) {
+    public IMMarginAnalystData(String plant, String modelCode, String optionCode, String description, double listPrice, LocalDate monthYear, String currency, double dealerNet, String series) {
         this.plant = plant;
         this.modelCode = modelCode;
         this.optionCode = optionCode;
