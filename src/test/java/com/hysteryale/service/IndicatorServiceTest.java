@@ -9,6 +9,10 @@ import com.hysteryale.repository.CompetitorPricingRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,12 +33,13 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SpringBootTest
 @Transactional
@@ -665,5 +670,85 @@ public class IndicatorServiceTest {
 
         // Assertions
         Assertions.assertDoesNotThrow(() -> indicatorService.uploadForecastFile(file, authentication));
+    }
+
+    @Test
+    public void testImportIndicatorsFromFile() throws IOException {
+        String filePath = "import_files/competitor_pricing/Competitor Pricing Database.xlsx";
+        indicatorService.importIndicatorsFromFile(filePath);
+
+        InputStream is = new FileInputStream(filePath);
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+        Sheet sheet = workbook.getSheetAt(0);
+
+        String country;
+        String competitorName;
+        String group;
+        String region;
+        String clazz;
+        double marketShare;
+        double price;
+        int leadTime;
+        String category;
+        String series;
+        String model;
+
+        HashMap<String, Integer> columns = getColumnNameInFile(sheet.getRow(0));
+        Pattern seriesPattern = Pattern.compile("(.{4})/(.{4})");
+        Matcher matcher;
+
+        Random random = new Random();
+        for(int i = 0; i < 10; i++) {
+            int nextRow = random.nextInt(356);
+            if(nextRow != 0) {
+                Row row = sheet.getRow(nextRow);
+                country = row.getCell(columns.get("Country"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                competitorName = row.getCell(columns.get("Brand"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                group = row.getCell(columns.get("Group"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                region = row.getCell(columns.get("Region"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                clazz = row.getCell(columns.get("Class"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                marketShare = row.getCell(columns.get("Normalized Market Share")).getNumericCellValue();
+                price = row.getCell(columns.get("Price (USD)")).getNumericCellValue();
+                leadTime = (int) row.getCell(columns.get("Lead Time")).getNumericCellValue();
+                category = row.getCell(columns.get("Category"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                series = row.getCell(columns.get("HYG Series"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                model = row.getCell(columns.get("Model"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+
+                matcher = seriesPattern.matcher(series);
+                if(matcher.find()) {
+                    series = matcher.group(1);
+                }
+
+                Optional<CompetitorPricing> cp = competitorPricingRepository.getCompetitorPricing(country, clazz, category, series, competitorName, model);
+
+                if(cp.isPresent())
+                    assertCompetitorPricing(cp.get(), country, competitorName, group, region, clazz , marketShare, price, leadTime, category, series, model);
+            }
+        }
+    }
+
+    private void assertCompetitorPricing(CompetitorPricing cp, String country, String competitorName,
+                                         String group, String region, String clazz ,
+                                         double marketShare, double price, int leadTime,
+                                         String category, String series, String model) {
+       Assertions.assertEquals(country, cp.getCountry().getCountryName());
+       Assertions.assertEquals(competitorName, cp.getCompetitorName());
+       Assertions.assertEquals(group, cp.getColor().getGroupName());
+       Assertions.assertEquals(region, cp.getRegion());
+       Assertions.assertEquals(clazz, cp.getClazz());
+       Assertions.assertEquals(marketShare, cp.getMarketShare());
+       Assertions.assertEquals(price, cp.getCompetitorPricing());
+       Assertions.assertEquals(leadTime, cp.getCompetitorLeadTime());
+       Assertions.assertEquals(category, cp.getCategory());
+       Assertions.assertEquals(series, cp.getSeries());
+       Assertions.assertEquals(model, cp.getModel());
+    }
+
+    private HashMap<String, Integer> getColumnNameInFile(Row row) {
+       HashMap<String, Integer> columns = new HashMap<>();
+       for(Cell cell : row) {
+           columns.put(cell.getStringCellValue(), cell.getColumnIndex());
+       }
+       return columns;
     }
 }
