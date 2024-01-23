@@ -2,6 +2,7 @@ package com.hysteryale.service;
 
 import com.hysteryale.model.CostUplift;
 import com.hysteryale.repository.CostUpliftRepository;
+import com.hysteryale.utils.DateUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
@@ -17,6 +18,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,25 +28,6 @@ import java.util.regex.Pattern;
 public class CostUpliftService {
     @Resource
     CostUpliftRepository costUpliftRepository;
-    public static HashMap<String, Integer> monthMap = new HashMap<>();
-
-    /**
-     * Initialize HashMap for getting month -> Calendar[index]
-     */
-    public void initMonthMap() {
-        monthMap.put("Jan", 0);
-        monthMap.put("Feb", 1);
-        monthMap.put("Mar", 2);
-        monthMap.put("Apr", 3);
-        monthMap.put("May", 4);
-        monthMap.put("June", 5);
-        monthMap.put("July", 6);
-        monthMap.put("Aug", 7);
-        monthMap.put("Sept", 8);
-        monthMap.put("Oct", 9);
-        monthMap.put("Nov", 10);
-        monthMap.put("Dec", 11);
-    }
 
     public List<String> getAllFilesInFolder(String folderPath) {
         Pattern pattern = Pattern.compile("^(01. Bookings Register).*(.xlsx)$");
@@ -84,14 +67,13 @@ public class CostUpliftService {
             Pattern pattern = Pattern.compile(".{24}(.{4}).*(\\d{4}).*");
             Matcher matcher = pattern.matcher(fileName);
 
-            initMonthMap();
-            Calendar date = new GregorianCalendar();
+            LocalDate date = LocalDate.now();
 
             // Assign date
             if(matcher.find()) {
                 String month = matcher.group(1).strip().replace("-", "");
                 int year = Integer.parseInt(matcher.group(2));
-                date.set(year, monthMap.get(month), 1);
+                date = LocalDate.of(year, DateUtils.getMonth(month), 1);
             }
 
             Sheet sheet = workbook.getSheet("Currency & Conversion");

@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -121,7 +122,7 @@ public class UserService extends BasedService implements UserDetailsService {
     }
     @Transactional
     public void setNewLastLogin(User user) {
-        user.setLastLogin(new Date());
+        user.setLastLogin(LocalDate.now());
     }
     @Transactional
     public void resetUserPassword(String email) throws MailjetSocketTimeoutException, MailjetException {

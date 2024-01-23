@@ -5,6 +5,7 @@ import com.hysteryale.repository.bookingorder.BookingOrderRepository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -140,8 +141,7 @@ public class FilterService {
     }
 
     private List<Map<String, Integer>> getRecentYears() {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
+        int year = LocalDate.now().getYear();
 
         return List.of(
                 Map.of("value", year - 1),

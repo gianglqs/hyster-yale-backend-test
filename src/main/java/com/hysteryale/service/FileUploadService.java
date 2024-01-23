@@ -15,11 +15,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -48,7 +49,7 @@ public class FileUploadService {
             // generate random UUID
             fileUpload.setUuid(UUID.randomUUID().toString());
             fileUpload.setUploadedBy(uploadedBy);
-            fileUpload.setUploadedTime(new Date());
+            fileUpload.setUploadedTime(LocalDateTime.now());
 
             // append suffix into fileName
             fileUpload.setFileName(filePath);
@@ -110,12 +111,11 @@ public class FileUploadService {
         if (optionalUploadedBy.isPresent()) {
             User uploadedBy = optionalUploadedBy.get();
             FileUpload fileUpload = new FileUpload();
-            Date uploadedTime = new Date();
 
             // generate random UUID
             fileUpload.setUuid(UUID.randomUUID().toString());
             fileUpload.setUploadedBy(uploadedBy);
-            fileUpload.setUploadedTime(uploadedTime);
+            fileUpload.setUploadedTime(LocalDateTime.now());
 
             // append suffix into fileName
             fileUpload.setFileName(encodeFileName);
