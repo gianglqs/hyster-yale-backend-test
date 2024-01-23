@@ -89,18 +89,6 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
     @Query("SELECT DISTINCT p.truckType FROM ProductDimension p ")
     List<String> getAllTruckType();
 
-    @Modifying
-    @Query("UPDATE ProductDimension p SET p.image = :imagePath WHERE p.modelCode = :modelCode")
-    void updateImage(String modelCode, String imagePath);
-
-    @Modifying
-    @Query("UPDATE ProductDimension p SET p.image = :imagePath, p.description = :description WHERE p.modelCode = :modelCode")
-    void updateImageAndDescription(String modelCode, String imagePath, String description);
-
-    @Modifying
-    @Query("UPDATE ProductDimension p SET p.description = :description WHERE p.modelCode = :modelCode")
-    void updateDescription(String modelCode, String description);
-
     @Query("SELECT p FROM ProductDimension p WHERE p.modelCode = :modelCode")
     Optional<ProductDimension> getProductByModelCode(String modelCode);
 }

@@ -47,30 +47,21 @@ public class ProductDimensionController {
         if (modelCode == null)
             throw new InvalidPropertiesFormatException("ModelCode was not found!");
 
+        String imageName = null;
         if (image != null) {
-            String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-            String saveImageFolder = baseFolder + "/" + EnvironmentUtils.getEnvironmentValue("upload_files.product-images");
+            String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+            String targetFolder = EnvironmentUtils.getEnvironmentValue("image-folder.product");
+            String saveImageFolder = baseFolder + targetFolder;
             String imageFileExtension = FileUtils.IMAGE_FILE_EXTENSION;
 
             String savedImageName = fileUploadService.saveFileUploaded(image, authentication, saveImageFolder, imageFileExtension);
             String saveFilePath = saveImageFolder + "/" + savedImageName;
 
             if (FileUtils.isImageFile(saveFilePath)) {
-                if (description != null) {
-                    productDimensionService.updateImageAndDescription(modelCode, savedImageName, description);
-                    return;
-                }
-                productDimensionService.updateImage(modelCode, savedImageName);
-                return;
+                imageName = targetFolder + savedImageName;
             }
-
-            // else -> throws Exception
-            throw new InvalidPropertiesFormatException("File is not Image!");
         }
-
-        if (description == null)
-            return;
-        productDimensionService.updateDescription(modelCode, description);
+        productDimensionService.updateImageAndDescription(modelCode, imageName, description);
     }
 
     @GetMapping("/getProductDetail")

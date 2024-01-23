@@ -212,20 +212,19 @@ public class ProductDimensionService extends BasedService {
 
     }
 
-    public void updateImageAndDescription(String modelCode, String imagePath, String description) {
-        if (description.equals("null")) { //
-            productDimensionRepository.updateImage(modelCode, imagePath);
-        } else
-            productDimensionRepository.updateImageAndDescription(modelCode, imagePath, description);
-    }
+    public void updateImageAndDescription(String modelCode, String imagePath, String description) throws NotFoundException {
+        Optional<ProductDimension> productOptional = productDimensionRepository.findByModelCode(modelCode);
+        if (productOptional.isEmpty())
+            throw new NotFoundException("No product found with modelCode: " + modelCode);
 
+        ProductDimension product = productOptional.get();
+        if (imagePath != null)
+            product.setImage(imagePath);
 
-    public void updateDescription(String modelCode, String description) {
-        productDimensionRepository.updateDescription(modelCode, description);
-    }
+        if (description != null)
+            product.setDescription(description);
 
-    public void updateImage(String modelCode, String imageName) {
-        productDimensionRepository.updateImage(modelCode, imageName);
+        productDimensionRepository.save(product);
     }
 
     public ProductDimension getProductDimensionDetail(String modelCode) throws NotFoundException, IOException {
