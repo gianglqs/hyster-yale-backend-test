@@ -227,25 +227,12 @@ public class ProductDimensionService extends BasedService {
         productDimensionRepository.save(product);
     }
 
-    public ProductDimension getProductDimensionDetail(String modelCode) throws NotFoundException, IOException {
-        Map<String, Object> productDetail = new HashMap<>();
+    public ProductDimension getProductDimensionDetail(String modelCode) throws NotFoundException {
         Optional<ProductDimension> productOptional = productDimensionRepository.getProductByModelCode(modelCode);
         if (productOptional.isEmpty())
             throw new NotFoundException("Not found Product with ModelCode " + modelCode);
 
-        ProductDimension product = productOptional.get();
-
-        if (product.getImage() != null) {
-            String imagePath = getProductImagePathFromFileName(product.getImage());
-            String imageString = FileUtils.convertImageFileToString(imagePath);
-            product.setImage(imageString);
-        }
-        return product;
+        return productOptional.get();
     }
 
-    public String getProductImagePathFromFileName(String fileName) {
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String productImageFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product-images");
-        return baseFolder + productImageFolder + "/" + fileName;
-    }
 }
