@@ -206,7 +206,6 @@ public class IndicatorService extends BasedService {
      * Check the existence of Competitor Pricing in DB then update value
      */
     private CompetitorPricing checkExistAndUpdateCompetitorPricing(CompetitorPricing competitorPricing) {
-        log.info(competitorPricing.getClazz() + " " + competitorPricing.getCategory() + " " + competitorPricing.getCompetitorName() + " " + competitorPricing.getCountry().getCountryName());
         Optional<CompetitorPricing> dbCompetitorPricing = competitorPricingRepository.getCompetitorPricing(
                 competitorPricing.getCountry().getCountryName(),
                 competitorPricing.getClazz(),
