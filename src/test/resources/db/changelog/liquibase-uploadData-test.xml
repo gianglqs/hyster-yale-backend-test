@@ -63,5 +63,45 @@
                 tableName="booking_order">
         </loadUpdateData>
 
+        <loadUpdateData
+                encoding="UTF-8"
+                file="classpath:db/database/country.csv"
+                onlyUpdate="false"
+                primaryKey="id"
+                quotchar="'"
+                separator=","
+                tableName="country">
+        </loadUpdateData>
+
+        <loadUpdateData
+                encoding="UTF-8"
+                file="classpath:db/database/competitorcolor.csv"
+                onlyUpdate="false"
+                primaryKey="id"
+                quotchar="'"
+                separator=","
+                tableName="competitorcolor">
+        </loadUpdateData>
+
+        <loadUpdateData
+                encoding="UTF-8"
+                file="classpath:db/database/competitorpricing.csv"
+                onlyUpdate="false"
+                primaryKey="id"
+                quotchar="'"
+                separator=","
+                tableName="competitorpricing">
+        </loadUpdateData>
+
+        <loadUpdateData
+                encoding="UTF-8"
+                file="classpath:db/database/shipment.csv"
+                onlyUpdate="false"
+                primaryKey="order_no"
+                quotchar="'"
+                separator=","
+                tableName="shipment">
+        </loadUpdateData>
+
     </changeSet>
 </databaseChangeLog>
