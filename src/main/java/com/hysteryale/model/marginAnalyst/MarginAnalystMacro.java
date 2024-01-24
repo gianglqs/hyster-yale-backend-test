@@ -38,4 +38,6 @@ public class MarginAnalystMacro {
 
     @Column(name = "month_year")
     private LocalDate monthYear;
+
+    private String region;
 }

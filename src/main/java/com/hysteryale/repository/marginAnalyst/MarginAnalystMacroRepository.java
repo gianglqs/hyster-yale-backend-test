@@ -19,14 +19,17 @@ public interface MarginAnalystMacroRepository extends JpaRepository<MarginAnalys
     Optional<MarginAnalystMacro> getMarginAnalystMacroByMonthYear(@Param("modelCode") String modelCode, @Param("partNumber") String partNumber,
                                                                   @Param("currency") String strCurrency, @Param("monthYear") LocalDate monthYear);
 
-    @Query("SELECT m FROM MarginAnalystMacro m WHERE m.modelCode = ?1 AND m.partNumber = ?2 AND m.currency.currency = ?3")
-    Optional<MarginAnalystMacro> getMarginAnalystMacro(String modelCode, String partNumber, String currency);
-
-    @Query("SELECT m FROM MarginAnalystMacro m WHERE m.modelCode LIKE CONCAT ('%', ?1, '%') AND m.partNumber = ?2 AND m.currency.currency = ?3 AND m.plant = ?4 AND m.monthYear = ?5")
-    List<MarginAnalystMacro> getMarginAnalystMacroByPlant(String modelCode, String partNumber, String currency, String plant, LocalDate monthYear);
-
-    @Query("SELECT m FROM MarginAnalystMacro m WHERE m.modelCode LIKE CONCAT ('%', ?1, '%') AND m.partNumber = ?2 AND m.currency.currency = ?3 AND m.plant != 'SN' AND m.monthYear = ?4")
-    List<MarginAnalystMacro> getMarginAnalystMacroByHYMPlant(String modelCode, String partNumber, String currency, LocalDate monthYear);
+    @Query(value = "SELECT * FROM margin_analyst_macro m " +
+            "WHERE m.model_code = :model_code " +
+            "AND m.part_number = :part_number " +
+            "AND m.currency_currency = :currency " +
+            "AND m.month_year = :month_year " +
+            "AND m.description = :description " +
+            "AND m.clazz = :class " +
+            "AND m.region = :region LIMIT 1", nativeQuery = true)
+    Optional<MarginAnalystMacro> getMacroForTesting(@Param("model_code") String modelCode, @Param("part_number") String partNumber,
+                                                    @Param("currency") String strCurrency, @Param("month_year") LocalDate monthYear,
+                                                    @Param("description") String description, @Param("class") String clazz, @Param("region") String region);
 
     @Query(value = "SELECT m.costrmb FROM margin_analyst_macro m " +
             "WHERE m.model_code LIKE CONCAT ('%', :modelCode, '%') " +
@@ -42,14 +45,11 @@ public interface MarginAnalystMacroRepository extends JpaRepository<MarginAnalys
     @Query("SELECT m FROM MarginAnalystMacro m WHERE m.modelCode LIKE CONCAT ('%', ?1, '%') AND m.partNumber IN (?2) AND m.currency.currency = ?3  AND m.plant != 'SN' AND m.monthYear = ?4")
     List<MarginAnalystMacro> getMarginAnalystMacroByHYMPlantAndListPartNumber(String modelCode, List<String> partNumber, String currency, LocalDate monthYear);
 
-    @Query("SELECT CASE WHEN(COUNT(m) > 0) THEN 1 ELSE 0 END FROM MarginAnalystMacro m WHERE m.modelCode = ?1 AND m.partNumber = ?2 AND m.currency.currency = ?3 AND m.monthYear = ?4")
-    Integer isMacroExisted(String modelCode, String partNumber, String currency, LocalDate monthYear);
-
     @Query(value = "SELECT m.clazz FROM margin_analyst_macro m WHERE m.model_code LIKE CONCAT('%', :model_code, '%') LIMIT 1", nativeQuery = true)
     String getClassByModelCode(@Param("model_code") String modelCode);
 
-    @Query("SELECT m FROM MarginAnalystMacro m WHERE m.plant = ?1 AND m.currency.currency = ?2 AND monthYear = ?3")
-    List<MarginAnalystMacro> loadListMacroData(String plant, String currency, LocalDate monthYear);
+    @Query("SELECT m FROM MarginAnalystMacro m WHERE m.plant = ?1 AND m.currency.currency = ?2 AND m.monthYear = ?3 AND m.region.region = ?4")
+    List<MarginAnalystMacro> loadListMacroData(String plant, String currency, LocalDate monthYear, String region);
 
     @Query("SELECT m FROM MarginAnalystMacro m WHERE m.plant != 'SN' AND m.currency.currency = ?1 AND monthYear = ?2")
     List<MarginAnalystMacro> loadListHYMMacroData(String currency, LocalDate monthYear);
