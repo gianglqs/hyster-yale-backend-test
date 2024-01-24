@@ -26,6 +26,7 @@ public class Part {
 
     private String description;
     private int quantity;
+    private String image;
 
     @Column(name = "model_code")
     private String modelCode;

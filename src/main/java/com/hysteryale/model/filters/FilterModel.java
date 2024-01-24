@@ -33,5 +33,6 @@ public class FilterModel {
     private List<String> brands;
     private List<String> family;
     private List<String> truckType;
-
+    //for productDimension detail
+    private List<String> orderNumbers;
 }

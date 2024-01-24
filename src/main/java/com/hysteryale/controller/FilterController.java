@@ -3,6 +3,7 @@ package com.hysteryale.controller;
 import com.hysteryale.service.FilterService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -39,6 +40,11 @@ public class FilterController {
 
     @GetMapping("/product")
     public Map<String, Object> getProductFilters(){ return filterService.getProductFilter();}
+
+    @GetMapping("/productDetail")
+    public Map<String, Object> getOrderNoForProductDetail(@RequestParam String modelCode){
+        return filterService.getProductDetailFilter(modelCode);
+    }
 
 }
 

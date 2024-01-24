@@ -568,4 +568,6 @@ public interface BookingOrderRepository extends JpaRepository<BookingOrder, Stri
     );
 
 
+    @Query(value = "SELECT b.order_no FROM booking_order b WHERE b.product_dimension = :modelCode", nativeQuery = true)
+    List<String> getOrderNosByModelCode(String modelCode);
 }

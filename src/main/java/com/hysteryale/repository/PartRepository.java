@@ -2,6 +2,7 @@ package com.hysteryale.repository;
 
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.Part;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -60,4 +61,18 @@ public interface PartRepository extends JpaRepository<Part, String> {
     Optional<Part> getPart(@Param("modelCode") String modelCode, @Param("partNumber") String partNumber,
                            @Param("orderNumber") String orderNumber, @Param("recordedTime") LocalDate recordedTime, @Param("currency") String currency);
 
+    @Query(value =  "SELECT p FROM Part p WHERE " +
+                    "   p.modelCode = :modelCode " +
+                    "   AND (:orderNumbers IS NULL OR p.orderNumber in (:orderNumbers))"+
+                    "   ORDER BY p.partNumber"
+
+    )
+    List<Part> getPartForProductDimensionDetail(String modelCode,
+                                                List<String> orderNumbers,
+                                                Pageable pageable);
+
+    @Query(value =  "SELECT COUNT(p) FROM Part p WHERE " +
+            "   p.modelCode = :modelCode " +
+            "   AND (:orderNumbers IS NULL OR p.orderNumber in (:orderNumbers))")
+    long countAllForProductDetail(String modelCode, List<String> orderNumbers);
 }

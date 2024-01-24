@@ -4,7 +4,6 @@ import com.hysteryale.rollbar.RollbarInitializer;
 import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.Resource;
 import java.io.*;
 import io.sentry.Sentry;
 
@@ -52,7 +51,7 @@ public class BasedService extends RollbarInitializer {
 
     protected void updateStateImportFile(String pathFile) {
         //Get path of file imported-file.log
-        String pathLogFile = EnvironmentUtils.getEnvironmentValue("import-files.imported");
+        String pathLogFile = EnvironmentUtils.getEnvironmentValue("import-files.imported-files");
         try {
             File file = new File(pathLogFile);
             BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
@@ -68,7 +67,7 @@ public class BasedService extends RollbarInitializer {
 
     public boolean isImported(String pathFile) {
         //Get path of file imported-file.log
-        String pathLogFile = EnvironmentUtils.getEnvironmentValue("import-files.imported");
+        String pathLogFile = EnvironmentUtils.getEnvironmentValue("import-files.imported-files");
         try {
             BufferedReader reader = new BufferedReader(new FileReader(pathLogFile));
             String line = reader.readLine();

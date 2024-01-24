@@ -4,6 +4,7 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.BookingOrderService;
 import com.hysteryale.service.FileUploadService;
+import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -66,11 +67,13 @@ public class BookingOrderController {
 
                 //save file on disk
                 if (FileUtils.isExcelFile(file.getInputStream())) {
+                    String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+                    String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
                     // save file to disk
                     if (FileUtils.checkFileNameValid(file,"booked") || FileUtils.checkFileNameValid(file,"booking")) {
-                        pathFileBooking = fileUploadService.saveFileUploaded(file, authentication);
+                        pathFileBooking = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
                     } else if (FileUtils.checkFileNameValid(file,"cost_data")) {
-                        pathFileCostData = fileUploadService.saveFileUploaded(file,authentication);
+                        pathFileCostData = fileUploadService.saveFileUploaded(file,authentication, baseFolder, excelFileExtension);
                     }
                 }
 
