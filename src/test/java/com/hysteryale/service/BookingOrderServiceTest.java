@@ -1,6 +1,7 @@
 package com.hysteryale.service;
 
 import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class BookingOrderServiceTest {
     @Resource
     BookingOrderService bookingOrderService;
+    @Resource
+    ExchangeRateService exchangeRateService;
     FilterModel filters;
+    double rate;
 
 
     /**
@@ -53,11 +57,13 @@ public class BookingOrderServiceTest {
                 null,
                 new ArrayList<>(),
                 new ArrayList<>(),
+                new ArrayList<>(),
                 new ArrayList<>());
     }
     @BeforeEach
     public void setUp(){
         resetFilters();
+        rate = exchangeRateService.getNearestExchangeRate("AUD", "USD").getRate();
     }
 
     @Test
@@ -79,6 +85,7 @@ public class BookingOrderServiceTest {
 
     private void assertTotalResultValue(BookingOrder totalResult, long quantity, double totalDealerNet, double totalDNAfterSurcharge,
                                         double totalCost, double totalMarginAfterSurcharge, double totalMarginPercentage) {
+
         Assertions.assertEquals(quantity, totalResult.getQuantity());
 
         Assertions.assertEquals(
@@ -129,10 +136,18 @@ public class BookingOrderServiceTest {
             Assertions.assertEquals(region, bo.getRegion().getRegion());
 
             quantity += bo.getQuantity();
-            totalDealerNet += bo.getDealerNet();
-            totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
-            totalCost += bo.getTotalCost();
-            totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            if(bo.getCurrency().getCurrency().equals("AUD")) {
+                totalDealerNet += bo.getDealerNet() * rate;
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge() * rate;
+                totalCost += bo.getTotalCost() * rate;
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge() * rate;
+            }
+            else {
+                totalDealerNet += bo.getDealerNet();
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
+                totalCost += bo.getTotalCost();
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            }
         }
         double totalMarginPercentage = (totalDealerNet - totalCost) / totalDealerNet;
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
@@ -164,10 +179,18 @@ public class BookingOrderServiceTest {
             Assertions.assertEquals(plant, bo.getProductDimension().getPlant());
 
             quantity += bo.getQuantity();
-            totalDealerNet += bo.getDealerNet();
-            totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
-            totalCost += bo.getTotalCost();
-            totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            if(bo.getCurrency().getCurrency().equals("AUD")) {
+                totalDealerNet += bo.getDealerNet() * rate;
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge() * rate;
+                totalCost += bo.getTotalCost() * rate;
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge() * rate;
+            }
+            else {
+                totalDealerNet += bo.getDealerNet();
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
+                totalCost += bo.getTotalCost();
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            }
         }
         double totalMarginPercentage = (totalDealerNet - totalCost) / totalDealerNet;
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
@@ -199,10 +222,18 @@ public class BookingOrderServiceTest {
             Assertions.assertEquals(metaSeries, bo.getProductDimension().getMetaSeries());
 
             quantity += bo.getQuantity();
-            totalDealerNet += bo.getDealerNet();
-            totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
-            totalCost += bo.getTotalCost();
-            totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            if(bo.getCurrency().getCurrency().equals("AUD")) {
+                totalDealerNet += bo.getDealerNet() * rate;
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge() * rate;
+                totalCost += bo.getTotalCost() * rate;
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge() * rate;
+            }
+            else {
+                totalDealerNet += bo.getDealerNet();
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
+                totalCost += bo.getTotalCost();
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            }
         }
         double totalMarginPercentage = (totalDealerNet - totalCost) / totalDealerNet;
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
@@ -234,10 +265,18 @@ public class BookingOrderServiceTest {
             Assertions.assertEquals(dealer, bo.getDealerName());
 
             quantity += bo.getQuantity();
-            totalDealerNet += bo.getDealerNet();
-            totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
-            totalCost += bo.getTotalCost();
-            totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            if(bo.getCurrency().getCurrency().equals("AUD")) {
+                totalDealerNet += bo.getDealerNet() * rate;
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge() * rate;
+                totalCost += bo.getTotalCost() * rate;
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge() * rate;
+            }
+            else {
+                totalDealerNet += bo.getDealerNet();
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
+                totalCost += bo.getTotalCost();
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            }
         }
         double totalMarginPercentage = (totalDealerNet - totalCost) / totalDealerNet;
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
@@ -269,11 +308,19 @@ public class BookingOrderServiceTest {
             Assertions.assertEquals(clazz, bo.getProductDimension().getClazz());
 
             quantity += bo.getQuantity();
-            totalDealerNet += bo.getDealerNet();
-            totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
-            totalCost += bo.getTotalCost();
-            totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
-        }
+            if(bo.getCurrency().getCurrency().equals("AUD")) {
+                totalDealerNet += bo.getDealerNet() * rate;
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge() * rate;
+                totalCost += bo.getTotalCost() * rate;
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge() * rate;
+            }
+            else {
+                totalDealerNet += bo.getDealerNet();
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
+                totalCost += bo.getTotalCost();
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            }
+         }
         double totalMarginPercentage = (totalDealerNet - totalCost) / totalDealerNet;
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
     }
@@ -304,10 +351,18 @@ public class BookingOrderServiceTest {
             Assertions.assertEquals(modelCode, bo.getProductDimension().getModelCode());
 
             quantity += bo.getQuantity();
-            totalDealerNet += bo.getDealerNet();
-            totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
-            totalCost += bo.getTotalCost();
-            totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            if(bo.getCurrency().getCurrency().equals("AUD")) {
+                totalDealerNet += bo.getDealerNet() * rate;
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge() * rate;
+                totalCost += bo.getTotalCost() * rate;
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge() * rate;
+            }
+            else {
+                totalDealerNet += bo.getDealerNet();
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
+                totalCost += bo.getTotalCost();
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            }
         }
         double totalMarginPercentage = (totalDealerNet - totalCost) / totalDealerNet;
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
@@ -339,10 +394,18 @@ public class BookingOrderServiceTest {
             Assertions.assertEquals(segment, bo.getProductDimension().getSegment());
 
             quantity += bo.getQuantity();
-            totalDealerNet += bo.getDealerNet();
-            totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
-            totalCost += bo.getTotalCost();
-            totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            if(bo.getCurrency().getCurrency().equals("AUD")) {
+                totalDealerNet += bo.getDealerNet() * rate;
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge() * rate;
+                totalCost += bo.getTotalCost() * rate;
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge() * rate;
+            }
+            else {
+                totalDealerNet += bo.getDealerNet();
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
+                totalCost += bo.getTotalCost();
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            }
         }
         double totalMarginPercentage = (totalDealerNet - totalCost) / totalDealerNet;
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
@@ -374,10 +437,18 @@ public class BookingOrderServiceTest {
             Assertions.assertTrue(bo.getMarginPercentageAfterSurCharge() < 0.2);
 
             quantity += bo.getQuantity();
-            totalDealerNet += bo.getDealerNet();
-            totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
-            totalCost += bo.getTotalCost();
-            totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            if(bo.getCurrency().getCurrency().equals("AUD")) {
+                totalDealerNet += bo.getDealerNet() * rate;
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge() * rate;
+                totalCost += bo.getTotalCost() * rate;
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge() * rate;
+            }
+            else {
+                totalDealerNet += bo.getDealerNet();
+                totalDNAfterSurcharge += bo.getDealerNetAfterSurCharge();
+                totalCost += bo.getTotalCost();
+                totalMarginAfterSurcharge += bo.getMarginAfterSurCharge();
+            }
         }
         double totalMarginPercentage = (totalDealerNet - totalCost) / totalDealerNet;
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
