@@ -1,4 +1,4 @@
-package com.hysteryale.repository.bookingorder;
+package com.hysteryale.repository;
 
 import com.hysteryale.model.BookingOrder;
 import com.hysteryale.model.TrendData;
