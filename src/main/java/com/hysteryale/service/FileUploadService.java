@@ -6,20 +6,23 @@ import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -48,7 +51,7 @@ public class FileUploadService {
             // generate random UUID
             fileUpload.setUuid(UUID.randomUUID().toString());
             fileUpload.setUploadedBy(uploadedBy);
-            fileUpload.setUploadedTime(new Date());
+            fileUpload.setUploadedTime(LocalDateTime.now());
 
             // append suffix into fileName
             fileUpload.setFileName(filePath);
@@ -84,38 +87,55 @@ public class FileUploadService {
         }
     }
 
-    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication) throws Exception {
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication, String baseFolder, String extensionFile) throws Exception {
 
         Date uploadedTime = new Date();
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
-        String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + ".xlsx";
+        String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + extensionFile;
 
         File file = new File(baseFolder + "/" + encodedFileName);
         if (file.createNewFile()) {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
             saveFileUpLoadIntoDB(authentication, encodedFileName);
-            return baseFolder + "/" + encodedFileName;
+            return encodedFileName;
         } else {
             log.info("Can not create new file: " + encodedFileName);
             throw new Exception("Can not create new file: " + encodedFileName);
         }
     }
 
-    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName ){
+    public String upLoadImage(MultipartFile multipartFile, String targetFolder) throws Exception {
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String uploadFolder = baseFolder + targetFolder;
+
+        Date uploadedTime = new Date();
+        String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
+        String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + "png";
+        File file = new File(uploadFolder + encodedFileName);
+        if (file.createNewFile()) {
+            log.info("File " + encodedFileName + " created");
+            multipartFile.transferTo(file);
+            return  encodedFileName;
+        } else {
+            log.info("Can not create new file: " + encodedFileName);
+            throw new Exception("Can not create new file: " + encodedFileName);
+        }
+
+    }
+
+    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName) {
         String uploadedByEmail = authentication.getName();
         Optional<User> optionalUploadedBy = userService.getActiveUserByEmail(uploadedByEmail);
 
         if (optionalUploadedBy.isPresent()) {
             User uploadedBy = optionalUploadedBy.get();
             FileUpload fileUpload = new FileUpload();
-            Date uploadedTime = new Date();
 
             // generate random UUID
             fileUpload.setUuid(UUID.randomUUID().toString());
             fileUpload.setUploadedBy(uploadedBy);
-            fileUpload.setUploadedTime(uploadedTime);
+            fileUpload.setUploadedTime(LocalDateTime.now());
 
             // append suffix into fileName
             fileUpload.setFileName(encodeFileName);
@@ -127,10 +147,6 @@ public class FileUploadService {
         } else
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot find user with email: " + uploadedByEmail);
     }
-
-
-
-
 
 
     /**

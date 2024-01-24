@@ -1,16 +1,17 @@
 package com.hysteryale.repository;
 
 import com.hysteryale.model.ProductDimension;
-import com.hysteryale.model.Shipment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 public interface ProductDimensionRepository extends JpaRepository<ProductDimension, String> {
     @Query("SELECT DISTINCT a.plant FROM ProductDimension a")
     List<String> getPlants();
@@ -44,7 +45,7 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
             " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
             " AND ((:segments) IS NULL OR p.segment IN (:segments))" +
             " AND ((:brands) IS NULL OR p.brand IN (:brands))" +
-            " AND ((:family) IS NULL OR p.family IN (:family))")
+            " AND ((:family) IS NULL OR p.family IN (:family)) ORDER BY p.modelCode")
     List<ProductDimension> getDataByFilter(String modelCode,
                                            List<String> plants,
                                            List<String> metaSeries,
@@ -85,4 +86,7 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
 
     @Query("SELECT DISTINCT p.truckType FROM ProductDimension p ")
     List<String> getAllTruckType();
+
+    @Query("SELECT p FROM ProductDimension p WHERE p.modelCode = :modelCode")
+    Optional<ProductDimension> getProductByModelCode(String modelCode);
 }

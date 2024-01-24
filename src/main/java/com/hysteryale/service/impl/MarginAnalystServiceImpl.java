@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,7 +40,7 @@ public class MarginAnalystServiceImpl implements MarginAnalystService {
      * Get List of MarginAnalystData having modelCode, currency in a month {monthYear}
      */
     @Override
-    public Map<String, List<MarginAnalystData>> getMarginAnalystData(String modelCode, String currency, Calendar monthYear) {
+    public Map<String, List<MarginAnalystData>> getMarginAnalystData(String modelCode, String currency, LocalDate monthYear) {
         List<MarginAnalystData> marginAnalystDataList = marginAnalystDataRepository.getMarginDataForAnalysis(modelCode, currency, monthYear);
         return Map.of("MarginAnalystData", marginAnalystDataList);
     }
@@ -49,7 +51,7 @@ public class MarginAnalystServiceImpl implements MarginAnalystService {
      * @return
      */
     @Override
-    public Map<String, MarginAnalystSummary> getMarginAnalystSummary(String modelCode, String currency, Calendar monthYear) {
+    public Map<String, MarginAnalystSummary> getMarginAnalystSummary(String modelCode, String currency, LocalDate monthYear) {
         // Based on the model Code, we can query all the parts related to it
         // At first, Yurini said that we can find all the parts in the "Novo Quotation Download", after that she said if we do this way
         // then they will have to download for each model code
@@ -67,8 +69,7 @@ public class MarginAnalystServiceImpl implements MarginAnalystService {
 
         Map<String, MarginAnalystSummary> marginAnalystSummaryMap = new HashMap<>();
 
-        Calendar calendarForAnnually = Calendar.getInstance();
-        calendarForAnnually.set(monthYear.get(Calendar.YEAR), Calendar.JANUARY, 28);
+        LocalDate calendarForAnnually = LocalDate.of(monthYear.getYear(), Month.JANUARY, 28);
 
         Optional<MarginAnalystSummary> optionalMarginAnalystSummaryMonthly = marginAnalystSummaryRepository.getMarginAnalystSummaryMonthly(modelCode, currency, monthYear);
         Optional<MarginAnalystSummary> optionalMarginAnalystSummaryAnnually = marginAnalystSummaryRepository.getMarginAnalystSummaryAnnually(modelCode, currency, calendarForAnnually);
@@ -153,8 +154,7 @@ public class MarginAnalystServiceImpl implements MarginAnalystService {
         if(matcher.find()) {
            month = matcher.group(1);
         }
-        Calendar monthYear = Calendar.getInstance();
-        monthYear.set(year, DateUtils.monthMap.get(month), 1);
+        LocalDate monthYear = LocalDate.of(year, DateUtils.getMonth(month), 1);
 
         String[] currencies = {"USD", "AUD"};
 
@@ -193,7 +193,7 @@ public class MarginAnalystServiceImpl implements MarginAnalystService {
      * @param monthYear
      * @param currency
      */
-    public void calculateMarginAnalystSummary(Calendar monthYear, String currency, String durationUnit) {
+    public void calculateMarginAnalystSummary(LocalDate monthYear, String currency, String durationUnit) {
         // Get all distinct modelCode based on {monthYear} and {currency} from MarginAnalystData
         List<String> modelCodeList = marginAnalystDataRepository.getModelCodesByMonthYearAndCurrency(monthYear, currency);
         List<MarginAnalystSummary> marginAnalystSummaryList = new ArrayList<>();
@@ -273,8 +273,7 @@ public class MarginAnalystServiceImpl implements MarginAnalystService {
                 // annually valued
 
                 // if MarginAnalystSummary is annual then set {Date into 28, Month into JANUARY} (monthly date would be 1)
-                Calendar annualDate = Calendar.getInstance();
-                annualDate.set(monthYear.get(Calendar.YEAR), Calendar.JANUARY, 28);
+                LocalDate annualDate = LocalDate.of(monthYear.getYear(), Month.JANUARY, 28);
 
                 marginAnalystSummary.setMonthYear(annualDate);
                 marginAnalystSummary.setFullCostAopRate(CurrencyFormatUtils.formatDoubleValue(fullCostAOPRate, CurrencyFormatUtils.decimalFormatFourDigits));
@@ -322,7 +321,7 @@ public class MarginAnalystServiceImpl implements MarginAnalystService {
         return Map.of("dealers", dealerNameList);
     }
     @Override
-    public Map<String, List<MarginAnalystData>> getMarginDataForAnalysisByDealer(String modelCode, String currency, Calendar monthYear, String dealer) {
+    public Map<String, List<MarginAnalystData>> getMarginDataForAnalysisByDealer(String modelCode, String currency, LocalDate monthYear, String dealer) {
         return Map.of("MarginAnalystData", marginAnalystDataRepository.getMarginDataForAnalysisByDealer(modelCode, currency, monthYear, dealer));
     }
 }

@@ -1,40 +1,54 @@
 package com.hysteryale.service;
 
+import com.hysteryale.model.Currency;
 import com.hysteryale.repository.CurrencyRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 
+@SpringBootTest
 public class CurrencyServiceTest {
-
-    String curencyFolder = "import_files/currency_exchangerate";
-
     @Resource
-    @Mock
-    CurrencyRepository currencyRepository;
-    @Resource
-    @InjectMocks
     CurrencyService currencyService;
-    AutoCloseable autoCloseable;
 
-    @BeforeEach
-    void setUp() {
-        autoCloseable = MockitoAnnotations.openMocks(this);
-    }
-    @AfterEach
-    void tearDown() throws Exception {
-        autoCloseable.close();
+    @Resource
+    CurrencyRepository currencyRepository;
+
+    @Test
+    public void testGetCurrencyByName() {
+        String currencyName = "abc";
+        currencyRepository.save(new Currency("abc", "ABC"));
+
+        Currency dbCurrency = currencyService.getCurrenciesByName(currencyName);
+        Assertions.assertEquals(currencyName, dbCurrency.getCurrency());
     }
 
     @Test
-    void testImportCurrencies() throws IOException {
-     //   currencyService.importCurrencies();
+    public void testGetCurrencyByName_notFound() {
+        String currencyName = "asdfnbbf";
+        ResponseStatusException exception =
+                Assertions.assertThrows(ResponseStatusException.class, () -> currencyService.getCurrenciesByName(currencyName));
+
+        Assertions.assertEquals(404, exception.getStatus().value());
+        Assertions.assertEquals("No currencies found with " + currencyName, exception.getReason());
     }
 
+    @Test
+    public void testGetCurrencies() {
+        String currencyName = "abc";
+        currencyRepository.save(new Currency("abc", "ABC"));
+
+        Currency dbCurrency = currencyService.getCurrencies(currencyName);
+        Assertions.assertEquals(currencyName, dbCurrency.getCurrency());
+    }
+
+    @Test
+    public void testGetCurrencies_notFound() {
+        String currencyName = "asdfnbbf";
+        Currency dbCurrency = currencyService.getCurrencies(currencyName);
+        Assertions.assertNull(dbCurrency);
+    }
 }

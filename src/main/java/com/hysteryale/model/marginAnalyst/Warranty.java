@@ -5,8 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
-import java.util.Calendar;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.time.LocalDate;
 
 @Entity
 @Setter
@@ -19,11 +22,10 @@ public class Warranty {
     private int id;
     private String clazz;
 
-    @Temporal(TemporalType.DATE)
-    private Calendar monthYear;
+    private LocalDate monthYear;
     private double warranty;
 
-    public Warranty (String clazz, Calendar monthYear, double warranty) {
+    public Warranty (String clazz, LocalDate monthYear, double warranty) {
         this.clazz = clazz;
         this.monthYear = monthYear;
         this.warranty = warranty;

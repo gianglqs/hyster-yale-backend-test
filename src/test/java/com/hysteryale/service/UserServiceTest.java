@@ -3,207 +3,210 @@ package com.hysteryale.service;
 import com.hysteryale.model.Role;
 import com.hysteryale.model.User;
 import com.hysteryale.repository.UserRepository;
-import com.hysteryale.service.impl.EmailServiceImpl;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertThrows;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @Slf4j
+@SpringBootTest
+@Transactional
 public class UserServiceTest {
     @Resource
-    @Mock
-    private UserRepository userRepository;
-    @Resource @InjectMocks
-    private UserService underTest;
+    UserService userService;
+
     @Resource
-    @Mock
-    EmailServiceImpl emailService;
-    private AutoCloseable autoCloseable;
-    int pageNo = 1;
-    int perPage = 100;
-    String sortType = "ascending";
+    UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        autoCloseable = MockitoAnnotations.openMocks(this);
+    private PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
+    @Test
+    public void testGetUserById() {
+        User newUser = userRepository.save(new User("New User", "newuser@gmail.com", "12345678", new Role(2, "USER")));
 
-    @AfterEach
-    void tearDown() throws Exception{
-        autoCloseable.close();
+        int userId = newUser.getId();
+        User dbUser = userService.getUserById(userId);
+
+        Assertions.assertEquals(userId, dbUser.getId());
     }
 
     @Test
-    void testGetAllUsers() {
-        // GIVEN
-        Role role = new Role(1, "admin");
-        User given1 = new User(1,"user","admin2@gmail.com","$2a$10$oTxck2rZyU6y6LbUrUM3Zey/CBjNRonGAQ3cM5.QjzkRVIw5.hOhm",role,"us", true);
-        User given2 = new User(2, "given2", "given2@gmail.com", "given", role, "us", true);
-        List<User> userList = new ArrayList<>();
-        userList.add(given1);
-        userList.add(given2);
+    public void testGetUserById_notFound() {
+        int userId = 123123123;
+        ResponseStatusException responseStatusException = Assertions.assertThrows(ResponseStatusException.class, () -> userService.getUserById(userId));
 
-        underTest.addUser(given1);
-        underTest.addUser(given2);
-
-        // WHEN
-        when(userRepository.findAll()).thenReturn(userList);
-        List<User> result = underTest.getAllUsers();
-
-        // THEN
-        Assertions.assertEquals(userList.size(), result.size());     // assert the result
-        verify(userRepository).findAll();                            // verify the flow of function
-    }
-    @Test
-    void testThrowNotFoundIfIdIsNotExisted() {
-        //GIVEN
-        Integer accountId = 0;
-
-        //WHEN
-//        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, ()-> underTest.getUserById(accountId));
-
-            // expected
-    //    HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
-            //return
-  //      HttpStatus returnStatus = responseStatusException.getStatus();
-
-        // THEN
-    //    Assertions.assertEquals(expectedStatus, returnStatus);
+        Assertions.assertEquals(404, responseStatusException.getStatus().value());
+        Assertions.assertEquals("No user with id: " + userId, responseStatusException.getReason());
     }
 
     @Test
-    void testAddUser() {
-        // GIVEN
-        Role role = new Role(1, "admin");
-        User givenUser = new User("givenUser", "test@gmail.com", "123456", role);
+    public void testAddUser() {
+        User newUser = new User("New User", "newuser@gmail.com", "12345678", new Role(2, "USER"));
+        userService.addUser(newUser);
 
-        // WHEN
-        underTest.addUser(givenUser);
-
-        // THEN
-        ArgumentCaptor<User> accountArgumentCaptor = ArgumentCaptor.forClass(User.class);
-        verify(userRepository).save(accountArgumentCaptor.capture());
-        User capturedUser = accountArgumentCaptor.getValue();
-
-        Assertions.assertEquals(capturedUser, givenUser);
-    }
-    @Test
-    void testThrowExceptionIfEmailIsTaken() {
-        //GIVEN
-        Role role = new Role(1, "admin");
-        String email = "admin@gmail.com";
-        User givenUser = new User("givenUser", email, "123456", role);
-        given(userRepository.isEmailExisted(givenUser.getEmail())).willReturn(true);
-
-        //THEN
-        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, () -> underTest.addUser(givenUser));
-
-        HttpStatus expectedStatus = HttpStatus.BAD_REQUEST;
-        HttpStatus returnStatus = responseStatusException.getStatus();
-
-        Assertions.assertEquals(returnStatus, expectedStatus);
+        Optional<User> optionalUser = userRepository.findById(newUser.getId());
+        Assertions.assertTrue(optionalUser.isPresent());
+        Assertions.assertEquals("newuser@gmail.com", optionalUser.get().getEmail());
     }
 
     @Test
-    void testCheckIfEmailIsExisted() {
-        // GIVEN
-        Role role = new Role(1, "admin");
-        String email = "admin@gmail.com";
-        User givenUser = new User("givenUser", email, "123456", role);
+    public void testAddUser_emailTaken() {
+        User newUser = new User("admin", "admin@gmail.com", "12345678", new Role(2, "ADMIN"));
+        ResponseStatusException responseStatusException = Assertions.assertThrows(ResponseStatusException.class, () -> userService.addUser(newUser));
 
-        //WHEN
-        underTest.addUser(givenUser);
-
-        //THEN
-        verify(userRepository).isEmailExisted(email);
+        Assertions.assertEquals(400, responseStatusException.getStatus().value());
+        Assertions.assertEquals("Email has been already taken", responseStatusException.getReason());
     }
 
     @Test
-    void testGetUserByEmail() {
-        //GIVEN
-        Role role = new Role(1, "admin");
-        User given1 = new User(1, "given1", "admin@gmail.com", "given", role, "us", true);
+    public void testGetUserByEmail() {
         String email = "admin@gmail.com";
 
-        //WHEN
-        when(userRepository.getUserByEmail(email)).thenReturn(Optional.of(given1));
-        underTest.getUserByEmail(email);
-
-        //THEN
-        ArgumentCaptor<String> emailArgumentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(userRepository).getUserByEmail(emailArgumentCaptor.capture());
-        String capturedEmail = emailArgumentCaptor.getValue();
-
-        Assertions.assertEquals(capturedEmail, email);
-    }
-    @Test
-    void testGetActiveUserByEmail() {
-        // GIVEN
-        String email = "user1@gmail.com";
-
-        // WHEN
-        underTest.getActiveUserByEmail(email);
-
-        // THEN
-        Mockito.verify(userRepository).getActiveUserByEmail(email);
-    }
-    @Test
-    void testSearchUserByUserName() {
-        // GIVEN
-//        Role role = new Role(1, "admin");
-//        User given1 = new User(1, "given1", "given1@gmail.com", "given", role, "us", true);
-//        User given2 = new User(2, "given2", "given2@gmail.com", "given", role, "us", true);
-//        List<User> userList = new ArrayList<>();
-//        userList.add(given1);
-//        userList.add(given2);
-//
-//        String userName = "given";
-//
-//        // WHEN
-//        when(userRepository.searchUser(userName, PageRequest.of(pageNo - 1, perPage, Sort.by("userName").ascending()))).thenReturn(new PageImpl<>(userList));
-//        Page<User> result = underTest.searchUser(userName, pageNo, perPage, sortType);
-//
-//        // THEN
-//        Mockito.verify(userRepository).searchUser(userName, PageRequest.of(pageNo - 1, perPage, Sort.by("userName").ascending()));
-//        Assertions.assertEquals(userList.size(), result.getContent().size());
+        User dbUser = userService.getUserByEmail(email);
+        Assertions.assertEquals(email, dbUser.getEmail());
     }
 
     @Test
-    void testResetPassword() throws MailjetSocketTimeoutException, MailjetException {
+    public void testGetUserByEmail_notFound() {
+        String email = "2137hdgdyete21@gmail.com";
 
-        // GIVEN
-        Role role = new Role(1, "admin");
-        User given1 = new User(1, "given1", "given1@gmail.com", "given", role, "us", true);
+        ResponseStatusException responseStatusException =
+                Assertions.assertThrows(ResponseStatusException.class, () -> userService.getUserByEmail(email));
 
-        String email = "given1@gmail.com";
-        String oldPassword = given1.getPassword();
-
-        // WHEN
-        when(userRepository.getUserByEmail(email)).thenReturn(Optional.of(given1));
-        underTest.resetUserPassword(email);
-
-        // THEN
-        Assertions.assertNotEquals(oldPassword, given1.getPassword());
+        Assertions.assertEquals(404, responseStatusException.getStatus().value());
+        Assertions.assertEquals("No email found with " + email, responseStatusException.getReason());
     }
+
+    @Test
+    public void testGetActiveUserByEmail() {
+        String email = "admin@gmail.com";
+
+        Optional<User> optionalUser = userService.getActiveUserByEmail(email);
+        Assertions.assertTrue(optionalUser.isPresent());
+        Assertions.assertEquals(email, optionalUser.get().getEmail());
+    }
+
+    @Test
+    public void testGetActiveUserByEmail_notFound() {
+        String email = "12312379uih21isd@gmail.com";
+
+        Optional<User> optionalUser = userService.getActiveUserByEmail(email);
+        Assertions.assertTrue(optionalUser.isEmpty());
+    }
+
+    @Test
+    public void testSetActiveState() {
+        boolean isActive = true;
+        User newUser = userRepository.save(new User("New User", "admin@gmail.com", "12345678", new Role(2, "ADMIN"), isActive));
+
+        userService.setUserActiveState(newUser, !isActive);
+        User dbUser = userService.getUserById(newUser.getId());
+        Assertions.assertEquals(!isActive, dbUser.isActive());
+    }
+
+    @Test
+    public void testUpdateUserInformation() {
+        String updatedUsername = "New User 123456";
+        User newUser = userRepository.save(new User("New User", "newuser@gmail.com", "12345678", new Role(1, "ADMIN"), true));
+        userService.updateUserInformation(newUser, new User("New User 123456", "newuser@gmail.com", "123456789", new Role(1, "ADMIN")));
+
+        User dbUser = userService.getUserById(newUser.getId());
+        Assertions.assertEquals(updatedUsername, dbUser.getName());
+    }
+
+    @Test
+    public void testChangeUserPassword() {
+        String originalPassword = "123456789";
+        String updatedPassword = "Newuser123456;";
+        User newUser = userRepository.save(new User("New User", "newuser@gmail.com", "12345678", new Role(1, "ADMIN"), true));
+
+        userService.changeUserPassword(newUser, updatedPassword);
+        User dbUser = userService.getUserById(newUser.getId());
+
+        Assertions.assertNotEquals(originalPassword, dbUser.getPassword());
+        Assertions.assertTrue(passwordEncoder().matches(updatedPassword, dbUser.getPassword()));
+    }
+
+    @Test
+    public void testResetUserPassword() throws MailjetSocketTimeoutException, MailjetException {
+        String originalPassword = "123456789";
+        User newUser = userRepository.save(new User("New User", "newuser@gmail.com", originalPassword, new Role(1, "ADMIN"), true));
+        userService.resetUserPassword(newUser.getEmail());
+
+        User dbUser = userService.getUserById(newUser.getId());
+        Assertions.assertNotEquals(originalPassword, dbUser.getPassword());
+    }
+
+    @Test
+    public void testSearchUser() {
+        String searchString = "ad";
+        int pageNo = 1;
+        int perPage = 100;
+
+        Page<User> userPage = userService.searchUser(searchString, pageNo, perPage, "");
+        List<User> userList = userPage.getContent();
+
+        Assertions.assertFalse(userList.isEmpty());
+        Assertions.assertEquals(pageNo, userPage.getNumber() + 1);
+    }
+
+    @Test
+    public void testSearchUser_notFound() {
+        String searchString = "12381723iuasehiqe";
+        int pageNo = 1;
+        int perPage = 100;
+
+        Page<User> userPage = userService.searchUser(searchString, pageNo, perPage, "");
+        List<User> userList = userPage.getContent();
+
+        Assertions.assertTrue(userList.isEmpty());
+        Assertions.assertEquals(pageNo, userPage.getNumber() + 1);
+    }
+
+    @Test
+    public void testLoadUserByUsername() {
+        String username = "admin@gmail.com";
+
+        UserDetails dbUser = userService.loadUserByUsername(username);
+        Assertions.assertEquals(username, dbUser.getUsername());
+    }
+
+    @Test
+    public void testLoadUserByUsername_notFound() {
+        String username = "asdjiuh1i3126378@gmail.com";
+
+        UsernameNotFoundException exception = Assertions.assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(username));
+        Assertions.assertEquals("User not found: " + username, exception.getLocalizedMessage());
+    }
+
+    @Test
+    public void testIsPasswordMatched() {
+        String rawPassword = "123456789";
+        User newUser = userRepository.save(new User("New User", "newuser@gmail.com", passwordEncoder().encode(rawPassword), new Role(1, "ADMIN"), true));
+
+        Assertions.assertTrue(userService.isPasswordMatched(rawPassword, newUser));
+    }
+
+    @Test
+    public void testIsPasswordMatched_notMatched() {
+        String rawPassword = "123456789";
+        User newUser = userRepository.save(new User("New User", "newuser@gmail.com", passwordEncoder().encode(rawPassword), new Role(1, "ADMIN"), true));
+
+        Assertions.assertFalse(userService.isPasswordMatched("udbfhusbfuebfe", newUser));
+    }
+
 }

@@ -2,6 +2,7 @@ package com.hysteryale.controller;
 
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.utils.JsonUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Slf4j
 public class OutlierControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -35,7 +37,7 @@ public class OutlierControllerTest {
                 .build();
     }
 
-    //@Test
+    @Test
     @WithMockUser(authorities = "USER")
     public void testGetDataForTable() throws Exception {
         FilterModel filters = new FilterModel();
@@ -55,7 +57,7 @@ public class OutlierControllerTest {
         Assertions.assertEquals(200, result.getResponse().getStatus());
     }
 
-   // @Test
+    @Test
     @WithMockUser(authorities = "USER")
     public void testGetOutliersForChart() throws Exception {
         FilterModel filters = new FilterModel();
@@ -69,7 +71,6 @@ public class OutlierControllerTest {
                         )
                         .andExpect(jsonPath("$.chartOutliersData").isArray())
                         .andReturn();
-
         Assertions.assertEquals(200, result.getResponse().getStatus());
     }
 }

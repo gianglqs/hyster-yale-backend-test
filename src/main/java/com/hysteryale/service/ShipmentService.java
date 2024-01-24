@@ -9,17 +9,16 @@ import com.hysteryale.repository.bookingorder.BookingOrderRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.TargetCurrency;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.*;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.*;
 
 @Service
+@SuppressWarnings("unchecked")
 public class ShipmentService extends BasedService {
     @Resource
     ShipmentRepository shipmentRepository;
@@ -42,7 +41,7 @@ public class ShipmentService extends BasedService {
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable"));
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable"));
         result.put("listShipment", shipmentList);
         // get currency for order -> get exchange_rate
         List<String> listCurrency = new ArrayList<>();
@@ -71,7 +70,7 @@ public class ShipmentService extends BasedService {
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"));
         result.put("totalItems", countAll);
 
         // get total
@@ -87,31 +86,36 @@ public class ShipmentService extends BasedService {
                 (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                filterMap.get("fromDateFilter") == null ? new GregorianCalendar(1996, 10, 23) : (Calendar) filterMap.get("fromDateFilter"),
-                filterMap.get("toDateFilter") == null ? new GregorianCalendar(2996, 10, 23) : (Calendar) filterMap.get("toDateFilter")
+                filterMap.get("fromDateFilter") == null ? LocalDate.of(1996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("fromDateFilter"),
+                filterMap.get("toDateFilter") == null ? LocalDate.of(2996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("toDateFilter")
         );
         result.put("total", getTotal);
 
         // get totalMarginPercentage of bookingOrder
-        double getTotalBookingMarginPercentage = bookingOrderRepository.getTotalMarginPercentage(
-                (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
-                (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
-                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
+
+        List<BookingOrder> getTotalRowBooking = bookingOrderRepository.getTotalRowForBookingPage(
+                (String) filterMap.get("orderNoFilter"),
+                filterMap.get("regionFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("regionFilter"),
+                filterMap.get("plantFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("plantFilter"),
+                filterMap.get("metaSeriesFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("metaSeriesFilter"),
+                filterMap.get("classFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("classFilter"),
+                filterMap.get("modelFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("modelFilter"),
+                filterMap.get("segmentFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("segmentFilter"),
+                filterMap.get("dealerNameFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("dealerNameFilter"),
+                (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (Calendar) filterMap.get("fromDateFilter"), (Calendar) filterMap.get("toDateFilter"));
-        getTotal.get(0).setBookingMarginPercentageAfterSurCharge(getTotalBookingMarginPercentage);
+                filterMap.get("fromDateFilter") == null ? LocalDate.of(1996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("fromDateFilter"),
+                filterMap.get("toDateFilter") == null ? LocalDate.of(2996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("toDateFilter"));
+        getTotal.get(0).setBookingMarginPercentageAfterSurCharge(getTotalRowBooking.get(0).getMarginPercentageAfterSurCharge());
 
         return result;
     }
 
     public Shipment getShipmentByOrderNo(String orderNo) {
         Optional<Shipment> optionalShipment = shipmentRepository.findShipmentByOrderNo(orderNo);
-        if (optionalShipment.isPresent())
-            return optionalShipment.get();
-        return null;
+        return optionalShipment.orElse(null);
     }
-
 
 
 //    private Time

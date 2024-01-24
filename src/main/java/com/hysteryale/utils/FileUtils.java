@@ -6,6 +6,9 @@ import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.StringUtil;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -20,8 +23,12 @@ import java.util.regex.Pattern;
 @Slf4j
 public class FileUtils {
 
+    public static final String IMAGE_FILE_EXTENSION = ".png";
+    public static final String EXCEL_FILE_EXTENSION = ".xlsx";
+
     /**
      * Return all file names in a folder
+     *
      * @param folderPath
      * @return @{@link List}
      */
@@ -29,24 +36,26 @@ public class FileUtils {
         File file = new File(folderPath);
         List<String> fileNames = new ArrayList<>();
 
-        if(file.isDirectory() && file.exists()){
-            if(file.canRead()){
+        if (file.isDirectory() && file.exists()) {
+            if (file.canRead()) {
                 for (File f : file.listFiles()) {
                     fileNames.add(f.getName());
                 }
-            }else{
+            } else {
                 log.info(folderPath + " can't be read");
             }
-        }else{
+        } else {
             log.info(folderPath + " does not exist or it is not a folder");
         }
 
         return new ArrayList<>(fileNames);
     }
+
     /**
      * Return all file names in a folder
+     *
      * @param folderPath
-     * @param @{@link Pattern pattern}
+     * @param @{@link    Pattern pattern}
      * @return @{@link List}
      */
     public static List<String> getAllFilesInFolderWithPattern(String folderPath, Pattern pattern) {
@@ -56,9 +65,9 @@ public class FileUtils {
         Matcher matcher;
         try {
             DirectoryStream<Path> folder = Files.newDirectoryStream(Paths.get(folderPath));
-            for(Path path : folder) {
+            for (Path path : folder) {
                 matcher = pattern.matcher(path.getFileName().toString());
-                if(matcher.matches())
+                if (matcher.matches())
                     fileList.add(path.getFileName().toString());
                 else
                     log.error("Wrong formatted file's name: " + path.getFileName().toString());
@@ -74,20 +83,33 @@ public class FileUtils {
      * Verify whether the file's name is Excel file or not
      */
     public static boolean isExcelFile(String filePath) throws IOException {
-        if(StringUtil.isNotBlank(filePath)) {
+        if (StringUtil.isNotBlank(filePath)) {
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filePath));
             //OLE2 is XLS and OOXML is XLSX
             return (FileMagic.valueOf(bis) == FileMagic.OLE2) || (FileMagic.valueOf(bis) == FileMagic.OOXML);
-        }else {
+        } else {
             throw new FileNotFoundException(filePath + "does not exist");
         }
     }
 
-    public static boolean isExcelFile( InputStream is) throws IOException {
+    public static boolean isExcelFile(InputStream is) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(is);
 
         //OLE2 is XLS and OOXML is XLSX
         return (FileMagic.valueOf(bis) == FileMagic.OLE2) || (FileMagic.valueOf(bis) == FileMagic.OOXML);
+    }
+
+    public static boolean isImageFile(String path) {
+        File file = new File(path);
+        if (!file.exists())
+            return false;
+        Image img = null;
+        try {
+            img = ImageIO.read(file);
+            return img != null && img.getWidth(null) > 0 && img.getHeight(null) > 0;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void saveFile(MultipartFile multipartFile, String uploadDirectory) throws IOException {
@@ -102,10 +124,10 @@ public class FileUtils {
 
     /**
      * @param baseFolder
-     * @param file or folder target
+     * @param file       or folder target
      * @return path of file or folder
      */
-    public static String getPath(String baseFolder, String file){
+    public static String getPath(String baseFolder, String file) {
         return baseFolder + File.separator + file;
     }
 
@@ -120,10 +142,21 @@ public class FileUtils {
         return new String(decodedBytes);
     }
 
-    public static boolean checkFileNameValid(MultipartFile multipartFile, String regex){
-        String fileName ;
+    public static boolean checkFileNameValid(MultipartFile multipartFile, String regex) {
+        String fileName;
         fileName = multipartFile.getOriginalFilename();
         assert fileName != null;
         return fileName.toLowerCase().contains(regex);
+    }
+
+    public static String convertImageFileToString(String pathFile) throws IOException {
+        File file = new File(pathFile);
+        BufferedImage image = ImageIO.read(file);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", baos);
+        byte[] bytes = baos.toByteArray();
+
+        //encode
+        return Base64.getEncoder().encodeToString(bytes);
     }
 }

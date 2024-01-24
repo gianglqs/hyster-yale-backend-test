@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.Optional;
 
 public interface TargetMarginRepository extends JpaRepository<TargetMargin, Integer> {
@@ -16,6 +16,6 @@ public interface TargetMarginRepository extends JpaRepository<TargetMargin, Inte
             "AND t.metaseries = :meta_series " +
             "AND t.monthyear = :month_year " +
             "LIMIT 1", nativeQuery = true)
-    Optional<TargetMargin> getTargetMargin(@Param("region") String region, @Param("meta_series") String metaSeries, @Param("month_year") Calendar monthYear);
+    Optional<TargetMargin> getTargetMargin(@Param("region") String region, @Param("meta_series") String metaSeries, @Param("month_year") LocalDate monthYear);
 
 }

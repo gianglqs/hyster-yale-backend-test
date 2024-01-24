@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.xmlbeans.impl.store.Cur;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -25,10 +24,9 @@ public class ExchangeRate {
     @ManyToOne(fetch = FetchType.EAGER)
     private Currency to;
     private double rate;
-    @Temporal(TemporalType.DATE)
-    private Calendar date;
+    private LocalDate date;
 
-    public ExchangeRate (Currency fromCurrency, Currency toCurrency, double rate, Calendar date) {
+    public ExchangeRate (Currency fromCurrency, Currency toCurrency, double rate, LocalDate date) {
         this.from = fromCurrency;
         this.to = toCurrency;
         this.rate = rate;

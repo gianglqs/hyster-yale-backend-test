@@ -61,7 +61,9 @@ public class ShipmentController {
 
             if (FileUtils.isExcelFile(is)) {
                 // save file in folder tmp/UploadFiles
-               String pathFile =  fileUploadService.saveFileUploaded(file, authentication);
+                String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+                String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+               String pathFile =  fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
                 // open file to import
 
                 InputStream inputStream = new FileInputStream(pathFile);

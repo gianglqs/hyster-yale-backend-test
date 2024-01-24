@@ -7,6 +7,9 @@ import com.hysteryale.repository.ProductDimensionRepository;
 import com.hysteryale.repository.ProductDimensionRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.FileUtils;
+import javassist.NotFoundException;
+import liquibase.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.swing.text.html.Option;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +48,7 @@ public class ProductDimensionService extends BasedService {
         ProductDimension productDimension = new ProductDimension();
 
         // brand
-        String brand =  row.getCell(COLUMNS.get("Brand")).getStringCellValue();
+        String brand = row.getCell(COLUMNS.get("Brand")).getStringCellValue();
         productDimension.setBrand(brand);
 
         // metaseries
@@ -52,7 +56,7 @@ public class ProductDimensionService extends BasedService {
         productDimension.setMetaSeries(metaSeries);
 
         // plant
-        String plant =row.getCell(COLUMNS.get("Plant")).getStringCellValue();
+        String plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
         productDimension.setPlant(plant);
 
         // Class
@@ -181,7 +185,6 @@ public class ProductDimensionService extends BasedService {
 
     public String getModelFromMetaSeries(String metaSeries) {
         Optional<String> modelOptional = productDimensionRepository.getModelByMetaSeries(metaSeries);
-        logInfo("mdoel" + modelOptional.get());
         return modelOptional.orElse(null);
     }
 
@@ -194,7 +197,7 @@ public class ProductDimensionService extends BasedService {
                 (String) filterMap.get("modelCodeFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
-                (List<String>) filterMap.get("familyFilter"),(Pageable) filterMap.get("pageable")
+                (List<String>) filterMap.get("familyFilter"), (Pageable) filterMap.get("pageable")
         );
         result.put("listData", getData);
         //Count data
@@ -208,4 +211,28 @@ public class ProductDimensionService extends BasedService {
         return result;
 
     }
+
+    public void updateImageAndDescription(String modelCode, String imagePath, String description) throws NotFoundException {
+        Optional<ProductDimension> productOptional = productDimensionRepository.findByModelCode(modelCode);
+        if (productOptional.isEmpty())
+            throw new NotFoundException("No product found with modelCode: " + modelCode);
+
+        ProductDimension product = productOptional.get();
+        if (imagePath != null)
+            product.setImage(imagePath);
+
+        if (description != null)
+            product.setDescription(description);
+
+        productDimensionRepository.save(product);
+    }
+
+    public ProductDimension getProductDimensionDetail(String modelCode) throws NotFoundException {
+        Optional<ProductDimension> productOptional = productDimensionRepository.getProductByModelCode(modelCode);
+        if (productOptional.isEmpty())
+            throw new NotFoundException("Not found Product with ModelCode " + modelCode);
+
+        return productOptional.get();
+    }
+
 }

@@ -5,8 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
-import java.util.Calendar;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.time.LocalDate;
 
 @Entity
 @Setter
@@ -20,10 +23,9 @@ public class Freight {
     private String metaSeries;
     private double freight;
 
-    @Temporal(TemporalType.DATE)
-    private Calendar monthYear;
+    private LocalDate monthYear;
 
-    public Freight (String metaSeries, double freight, Calendar monthYear) {
+    public Freight (String metaSeries, double freight, LocalDate monthYear) {
         this.metaSeries = metaSeries;
         this.freight = freight;
         this.monthYear = monthYear;

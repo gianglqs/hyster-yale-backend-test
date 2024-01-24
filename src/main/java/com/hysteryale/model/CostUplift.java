@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -22,7 +22,6 @@ public class CostUplift {
 
     @Column(name = "cost_uplift")
     private double costUplift;
-    @Temporal(TemporalType.DATE)
-    private Calendar date;
+    private LocalDate date;
 
 }

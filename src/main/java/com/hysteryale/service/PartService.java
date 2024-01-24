@@ -2,7 +2,10 @@ package com.hysteryale.service;
 
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.Part;
+import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.PartRepository;
+import com.hysteryale.response.ResponseObject;
+import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.DateUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
@@ -12,7 +15,9 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,6 +25,8 @@ import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -99,7 +106,7 @@ public class PartService extends BasedService {
     /**
      * Verify if Part is existed or not
      */
-    public boolean isPartExisted(String modelCode, String partNumber, String orderNumber, Calendar recordedTime, String strCurrency) {
+    public boolean isPartExisted(String modelCode, String partNumber, String orderNumber, LocalDate recordedTime, String strCurrency) {
         int isPartExisted = partRepository.isPartExisted(modelCode, partNumber, orderNumber, recordedTime, strCurrency);
         return isPartExisted == 1;
     }
@@ -121,11 +128,9 @@ public class PartService extends BasedService {
         if (matcher.find()) {
             month = matcher.group(1);
             year = 2000 + Integer.parseInt(matcher.group(2));
-        }
-        else
+        } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is not in appropriate format");
-        Calendar recordedTime = Calendar.getInstance();
-        recordedTime.set(year, DateUtils.monthMap.get(month), 1);
+        LocalDate recordedTime = LocalDate.of(year, DateUtils.getMonth(month), 1);
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0)
@@ -137,10 +142,9 @@ public class PartService extends BasedService {
                 String strCurrency = row.getCell(powerBIExportColumns.get("Currency")).getStringCellValue().strip();
 
                 Part part = mapExcelDataToPart(row);
-                if(!isPartExisted(modelCode, partNumber, orderNumber, recordedTime, strCurrency)) {
+                if (!isPartExisted(modelCode, partNumber, orderNumber, recordedTime, strCurrency)) {
                     part.setRecordedTime(recordedTime);
-                }
-                else {
+                } else {
                     part.setRecordedTime(recordedTime);
                     updatePart(getPart(modelCode, partNumber, orderNumber, recordedTime, strCurrency), part);
                 }
@@ -171,7 +175,7 @@ public class PartService extends BasedService {
         }
     }
 
-    public Part getPart(String modelCode, String partNumber, String orderNumber, Calendar recordedTime, String strCurrency) {
+    public Part getPart(String modelCode, String partNumber, String orderNumber, LocalDate recordedTime, String strCurrency) {
         Optional<Part> optionalPart = partRepository.getPart(modelCode, partNumber, orderNumber, recordedTime, strCurrency);
         return optionalPart.orElse(null);
     }
@@ -180,7 +184,7 @@ public class PartService extends BasedService {
         filePart.setId(dbPart.getId());
     }
 
-    public List<String> getDistinctModelCodeByMonthYear(Calendar monthYear) {
+    public List<String> getDistinctModelCodeByMonthYear(LocalDate monthYear) {
         return partRepository.getDistinctModelCodeByMonthYear(monthYear);
     }
 
@@ -199,5 +203,27 @@ public class PartService extends BasedService {
 
     public Currency getCurrencyByOrderNo(String orderNo){
         return partRepository.getCurrencyByOrderNo(orderNo);
+    }
+
+
+    public Map<String, Object> getPartByFilter(FilterModel filters) throws ParseException {
+        Map<String, Object> result = new HashMap<>();
+
+        Map<String, Object> filtersMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
+
+        // get Parts by modelCode and orderNos
+        List<Part> partList = partRepository.getPartForProductDimensionDetail(
+                (String) filtersMap.get("modelCodeFilter"),
+                (List<String>) filtersMap.get("orderNumberListFilter"),
+                (Pageable) filtersMap.get("pageable")
+        );
+        result.put("listPart", partList);
+
+        // count
+        long countAll = partRepository.countAllForProductDetail( (String) filtersMap.get("modelCodeFilter"),
+                (List<String>) filtersMap.get("orderNumberListFilter"));
+        result.put("totalItems", countAll);
+
+        return result;
     }
 }

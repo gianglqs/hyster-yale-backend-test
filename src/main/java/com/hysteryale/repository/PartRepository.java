@@ -2,11 +2,12 @@ package com.hysteryale.repository;
 
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.Part;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -19,16 +20,16 @@ public interface PartRepository extends JpaRepository<Part, String> {
 
     @Query("SELECT CASE WHEN (COUNT(p) > 0) THEN 1 ELSE 0 END " +
             "FROM Part p WHERE p.modelCode = ?1 AND p.partNumber = ?2 AND p.orderNumber = ?3 AND p.recordedTime = ?4 and p.currency.currency = ?5")
-    Integer isPartExisted(String modelCode, String partNumber, String orderNumber, Calendar recordedTime, String currency);
+    Integer isPartExisted(String modelCode, String partNumber, String orderNumber, LocalDate recordedTime, String currency);
 
     @Query("SELECT p FROM Part p WHERE p.modelCode = ?1 AND p.currency.currency = ?2 AND p.recordedTime = ?3 AND p.partNumber = ?4")
-    List<Part> getNetPriceInPart(String modelCode, String currency, Calendar recordedTime, String partNumber);
+    List<Part> getNetPriceInPart(String modelCode, String currency, LocalDate recordedTime, String partNumber);
 
     @Query("SElECT DISTINCT p FROM Part p WHERE p.partNumber = ?1 AND p.series = ?2 ")
     public Set<Part> getPartByPartNumberAndSeries(String partNumber, String series);
 
     @Query("SELECT DISTINCT p.modelCode FROM Part p WHERE p.recordedTime = ?1")
-    public List<String> getDistinctModelCodeByMonthYear(Calendar monthYear);
+    public List<String> getDistinctModelCodeByMonthYear(LocalDate monthYear);
 
     @Query(
             value =
@@ -43,7 +44,7 @@ public interface PartRepository extends JpaRepository<Part, String> {
     public List<Part> getDistinctPart(@Param("modelCode") String modelCode, @Param("currency") String currency);
 
     @Query("SELECT DISTINCT p FROM Part p WHERE p.partNumber IN ?1 ")
-    public Set<Part> getPartsByPartNumbers(List<String> partNumbers, Calendar date, String series);
+    public Set<Part> getPartsByPartNumbers(List<String> partNumbers, LocalDate date, String series);
 
     @Query("SELECT AVG(p.netPriceEach) FROM Part p WHERE p.region = ?1 AND p.clazz = ?2 AND p.series = ?3")
     Double getAverageDealerNet(String region, String clazz, String series);
@@ -58,6 +59,20 @@ public interface PartRepository extends JpaRepository<Part, String> {
             "p.model_code = :modelCode AND p.part_number = :partNumber AND p.order_number = :orderNumber " +
             "AND p.recorded_time = :recordedTime AND p.currency_currency = :currency LIMIT 1", nativeQuery = true)
     Optional<Part> getPart(@Param("modelCode") String modelCode, @Param("partNumber") String partNumber,
-                           @Param("orderNumber") String orderNumber, @Param("recordedTime") Calendar recordedTime, @Param("currency") String currency);
+                           @Param("orderNumber") String orderNumber, @Param("recordedTime") LocalDate recordedTime, @Param("currency") String currency);
 
+    @Query(value =  "SELECT p FROM Part p WHERE " +
+                    "   p.modelCode = :modelCode " +
+                    "   AND (:orderNumbers IS NULL OR p.orderNumber in (:orderNumbers))"+
+                    "   ORDER BY p.partNumber"
+
+    )
+    List<Part> getPartForProductDimensionDetail(String modelCode,
+                                                List<String> orderNumbers,
+                                                Pageable pageable);
+
+    @Query(value =  "SELECT COUNT(p) FROM Part p WHERE " +
+            "   p.modelCode = :modelCode " +
+            "   AND (:orderNumbers IS NULL OR p.orderNumber in (:orderNumbers))")
+    long countAllForProductDetail(String modelCode, List<String> orderNumbers);
 }

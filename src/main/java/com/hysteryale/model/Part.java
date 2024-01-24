@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -21,14 +21,12 @@ public class Part {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "partSequence")
     private int id;
 
-    //TODO this one is temporarily replaced by quoteId
-//    @OneToOne
-//    private NovoQuote novoQuote;
     @Column(name = "quote_id")
     private String quoteId;
 
     private String description;
     private int quantity;
+    private String image;
 
     @Column(name = "model_code")
     private String modelCode;
@@ -76,8 +74,7 @@ public class Part {
     private Date orderRequestDate;
 
     @Column(name = "recorded_time")
-    @Temporal(TemporalType.DATE)
-    private Calendar recordedTime;
+    private LocalDate recordedTime;
     @ManyToOne(fetch = FetchType.EAGER)
     private Currency currency;
     private boolean isSPED;

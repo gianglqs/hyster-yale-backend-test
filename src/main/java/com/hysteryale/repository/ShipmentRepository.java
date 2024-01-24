@@ -1,6 +1,5 @@
 package com.hysteryale.repository;
 
-import com.hysteryale.model.BookingOrder;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.TrendData;
 import org.springframework.data.domain.Pageable;
@@ -8,8 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,8 +46,8 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                                                 @Param("AOPMarginPercentage") String AOPMarginPercentage,
                                                 @Param("comparator") String comparator,
                                                 @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-                                                @Param("fromDate") Calendar fromDate,
-                                                @Param("toDate") Calendar toDate,
+                                                @Param("fromDate") LocalDate fromDate,
+                                                @Param("toDate") LocalDate toDate,
                                                 @Param("pageable") Pageable pageable);
 
 
@@ -86,8 +84,8 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                  @Param("AOPMarginPercentage") String AOPMarginPercentage,
                  @Param("comparator") String comparator,
                  @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-                 @Param("fromDate") Calendar fromDate,
-                 @Param("toDate") Calendar toDate);
+                 @Param("fromDate") LocalDate fromDate,
+                 @Param("toDate") LocalDate toDate);
 
     @Query("SELECT DISTINCT s.dealerName from Shipment s WHERE s.dealerName IS NOT NULL")
     List<String> findAllDealerName();
@@ -182,8 +180,8 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                             @Param("AOPMarginPercentage") String AOPMarginPercentage,
                             @Param("comparator") String comparator,
                             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-                            @Param("fromDate") Calendar fromDate,
-                            @Param("toDate") Calendar toDate);
+                            @Param("fromDate") LocalDate fromDate,
+                            @Param("toDate") LocalDate toDate);
 
     @Query(value =
             "with exchange_rate_cte as (" +
@@ -304,7 +302,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             @Param("AOPMarginPercentage") String AOPMarginPercentage,
             @Param("comparator") String comparator,
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
-            @Param("fromDate") Calendar fromDate,
-            @Param("toDate") Calendar toDate
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate
     );
 }
