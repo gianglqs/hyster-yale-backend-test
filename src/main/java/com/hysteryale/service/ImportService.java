@@ -283,12 +283,6 @@ public class ImportService extends BasedService {
 
         for (String fileName : fileList) {
             String pathFile = folderPath + "/" + fileName;
-            //check file has been imported ?
-            if (isImported(pathFile)) {
-                logWarning("file '" + fileName + "' has been imported");
-                continue;
-            }
-            logInfo("{ Start importing file: '" + fileName + "'");
 
             InputStream is = new FileInputStream(pathFile);
             XSSFWorkbook workbook = new XSSFWorkbook(is);
