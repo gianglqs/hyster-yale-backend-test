@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -23,9 +23,8 @@ public class MarginAnalystSummary {
     @Column(name = "model_code")
     private String modelCode;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "month_year")
-    private Calendar monthYear;
+    private LocalDate monthYear;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Currency currency;

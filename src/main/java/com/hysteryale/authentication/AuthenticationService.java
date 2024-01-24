@@ -72,6 +72,8 @@ public class AuthenticationService {
                     userDB.get().getEmail(),
                     userDB.get().getRole().getRoleName());
 
+            userService.setNewLastLogin(userDB.get());
+
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ResponseObject(

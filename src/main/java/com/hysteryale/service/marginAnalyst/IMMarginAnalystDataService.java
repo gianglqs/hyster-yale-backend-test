@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -58,7 +59,7 @@ public class IMMarginAnalystDataService {
      * if plant == HYM or SN -> then find manufacturingCost(or CostRMB) in Macro
      * else plant == [EU_Plant] -> then getting from BookingOrder (Cost_Data file)
      */
-    double getManufacturingCost(String modelCode, String partNumber, String strCurrency, String plant, Calendar monthYear, double dealerNet, double exchangeRate) {
+    double getManufacturingCost(String modelCode, String partNumber, String strCurrency, String plant, LocalDate monthYear, double dealerNet, double exchangeRate) {
 
 
         //HYM can be Ruyi, Staxx or Maximal
@@ -76,7 +77,7 @@ public class IMMarginAnalystDataService {
     /**
      * Mapping the data from uploaded files / template files as SN_AUD ... into a model
      */
-    private IMMarginAnalystData mapIMMarginAnalystData(Row row, String plant, String strCurrency, Calendar monthYear) {
+    private IMMarginAnalystData mapIMMarginAnalystData(Row row, String plant, String strCurrency, LocalDate monthYear) {
         // Initialize variables
         double aopRate = 1;
         double costUplift = 0.0;
@@ -155,7 +156,7 @@ public class IMMarginAnalystDataService {
 
         // calculate the total of List Price, Manufacturing Cost, Dealer Net of all Model Codes in a Series Code
         double totalListPrice = 0, totalManufacturingCost = 0, dealerNet = 0;
-        Calendar monthYear = Calendar.getInstance();
+        LocalDate monthYear = LocalDate.now();
 
         List<String> modelCodeList = Collections.singletonList(modelCode);
         if(modelCode == null)
@@ -249,7 +250,7 @@ public class IMMarginAnalystDataService {
         }
         return imMarginAnalystSummary;
     }
-    private Optional<MarginAnalysisAOPRate> getMarginAnalysisAOPRate(String currency, Calendar monthYear, String plant, String durationUnit) {
+    private Optional<MarginAnalysisAOPRate> getMarginAnalysisAOPRate(String currency, LocalDate monthYear, String plant, String durationUnit) {
         return marginAnalysisAOPRateRepository.getMarginAnalysisAOPRate(plant, currency, monthYear, durationUnit);
     }
 
@@ -263,7 +264,7 @@ public class IMMarginAnalystDataService {
 
     public IMMarginAnalystSummary calculateUSPlantMarginSummary(String modelCode, String series, String strCurrency, String durationUnit, String orderNumber, Integer type, String fileUUID) {
         double defMFGCost = 0;
-        Calendar monthYear = Calendar.getInstance();
+        LocalDate monthYear = LocalDate.now();
         Optional<BookingOrder> optionalBookingOrder = bookingOrderService.getBookingOrderByOrderNumber(orderNumber);
         if(optionalBookingOrder.isPresent())
         {
@@ -285,7 +286,7 @@ public class IMMarginAnalystDataService {
         double freight = marginAnalystMacroService.getFreightValue(series.substring(1), monthYear);
 
         // ExchangeRate from strCurrency to USD
-        monthYear.set(monthYear.get(Calendar.YEAR), monthYear.get(Calendar.MONTH), 1);
+        monthYear = LocalDate.of(monthYear.getYear(), monthYear.getMonth(), 1);
         double aopRate = exchangeRateService.getExchangeRate(strCurrency, "USD", monthYear) == null
                 ? 1
                 : exchangeRateService.getExchangeRate(strCurrency, "USD", monthYear).getRate();     // considered as the ExchangeRate
@@ -391,8 +392,8 @@ public class IMMarginAnalystDataService {
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Booking Order: " + orderNumber);
 
                 String plant = optionalBookingOrder.get().getProductDimension().getPlant();
-                Calendar monthYear = optionalBookingOrder.get().getDate();
-                monthYear.set(monthYear.get(Calendar.YEAR), monthYear.get(Calendar.MONTH), 1);
+                LocalDate monthYear = optionalBookingOrder.get().getDate();
+                monthYear = LocalDate.of(monthYear.getYear(), monthYear.getMonth(), 1);
 
                 IMMarginAnalystData imMarginAnalystData;
                 if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
@@ -433,7 +434,7 @@ public class IMMarginAnalystDataService {
         );
     }
 
-    public IMMarginAnalystData mapUSPlantMarginAnalysisData(Row row, double manufacturingCost, String strCurrency, Calendar monthYear, String orderNumber, String plant) {
+    public IMMarginAnalystData mapUSPlantMarginAnalysisData(Row row, double manufacturingCost, String strCurrency, LocalDate monthYear, String orderNumber, String plant) {
         String modelCode = row.getCell(COLUMN_NAME.get("Model Code")).getStringCellValue();
         String partNumber = row.getCell(COLUMN_NAME.get("Part Number")).getStringCellValue();
         double listPrice = row.getCell(COLUMN_NAME.get("List Price")).getNumericCellValue();

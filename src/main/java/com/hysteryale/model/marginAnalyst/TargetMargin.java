@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -21,11 +21,10 @@ public class TargetMargin {
     private String region;
     private String metaSeries;
 
-    @Temporal(TemporalType.DATE)
-    private Calendar monthYear;
+    private LocalDate monthYear;
     private double stdMarginPercentage;
 
-    public TargetMargin (String region, String metaSeries, Calendar monthYear, double stdMarginPercentage) {
+    public TargetMargin (String region, String metaSeries, LocalDate monthYear, double stdMarginPercentage) {
         this.region = region;
         this.metaSeries = metaSeries;
         this.monthYear = monthYear;

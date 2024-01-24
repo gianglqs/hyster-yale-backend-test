@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -105,7 +106,7 @@ public class PartService extends BasedService {
     /**
      * Verify if Part is existed or not
      */
-    public boolean isPartExisted(String modelCode, String partNumber, String orderNumber, Calendar recordedTime, String strCurrency) {
+    public boolean isPartExisted(String modelCode, String partNumber, String orderNumber, LocalDate recordedTime, String strCurrency) {
         int isPartExisted = partRepository.isPartExisted(modelCode, partNumber, orderNumber, recordedTime, strCurrency);
         return isPartExisted == 1;
     }
@@ -129,8 +130,7 @@ public class PartService extends BasedService {
             year = 2000 + Integer.parseInt(matcher.group(2));
         } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is not in appropriate format");
-        Calendar recordedTime = Calendar.getInstance();
-        recordedTime.set(year, DateUtils.monthMap.get(month), 1);
+        LocalDate recordedTime = LocalDate.of(year, DateUtils.getMonth(month), 1);
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0)
@@ -175,7 +175,7 @@ public class PartService extends BasedService {
         }
     }
 
-    public Part getPart(String modelCode, String partNumber, String orderNumber, Calendar recordedTime, String strCurrency) {
+    public Part getPart(String modelCode, String partNumber, String orderNumber, LocalDate recordedTime, String strCurrency) {
         Optional<Part> optionalPart = partRepository.getPart(modelCode, partNumber, orderNumber, recordedTime, strCurrency);
         return optionalPart.orElse(null);
     }
@@ -184,7 +184,7 @@ public class PartService extends BasedService {
         filePart.setId(dbPart.getId());
     }
 
-    public List<String> getDistinctModelCodeByMonthYear(Calendar monthYear) {
+    public List<String> getDistinctModelCodeByMonthYear(LocalDate monthYear) {
         return partRepository.getDistinctModelCodeByMonthYear(monthYear);
     }
 
@@ -201,7 +201,7 @@ public class PartService extends BasedService {
         return partRepository.getPartNumberByOrderNo(orderNo);
     }
 
-    public Currency getCurrencyByOrderNo(String orderNo) {
+    public Currency getCurrencyByOrderNo(String orderNo){
         return partRepository.getCurrencyByOrderNo(orderNo);
     }
 

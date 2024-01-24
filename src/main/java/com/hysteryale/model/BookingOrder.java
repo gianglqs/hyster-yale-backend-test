@@ -1,9 +1,12 @@
 package com.hysteryale.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -16,8 +19,7 @@ public class BookingOrder {
     @Column(name = "order_no")
     private String orderNo;
 
-    @Temporal(TemporalType.DATE)
-    private Calendar date;
+    private LocalDate date;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "currency")
     private Currency currency;
@@ -75,8 +77,7 @@ public class BookingOrder {
     public BookingOrder(String region, String plant, String clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurCharge, double marginAfterSurCharge) {
 
         ProductDimension p = new ProductDimension(plant, clazz, model);
-        Region r = new Region(region);
-        this.region = r;
+        this.region = new Region(region);
         this.productDimension = p;
         this.series = series;
         this.quantity = quantity;
@@ -89,8 +90,7 @@ public class BookingOrder {
     public BookingOrder(String region, ProductDimension productDimension, String series, double totalCost, double dealerNetAfterSurCharge, double marginAfterSurCharge, long quantity) {
 
 
-        Region r = new Region(region);
-        this.region = r;
+        this.region = new Region(region);
         this.productDimension = productDimension;
         this.series = series;
         this.quantity = quantity;

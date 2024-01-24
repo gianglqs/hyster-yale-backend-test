@@ -7,7 +7,14 @@ import com.hysteryale.model.filters.SwotFilters;
 import com.hysteryale.repository.CompetitorColorRepository;
 import com.hysteryale.repository.CompetitorPricingRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
+import com.hysteryale.utils.CurrencyFormatUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
@@ -25,15 +32,19 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SpringBootTest
 @Transactional
+@SuppressWarnings("unchecked")
+@Slf4j
 public class IndicatorServiceTest {
     @Resource
     IndicatorService indicatorService;
@@ -44,23 +55,105 @@ public class IndicatorServiceTest {
     @Resource
     AuthenticationManager authenticationManager;
 
+    FilterModel filters;
+    SwotFilters swotFilters;
+
+   @BeforeEach
+   public void setUp() {
+       resetFilters();
+       resetSwotFilters();
+
+       File uploadedFiles = new File("/tmp/UploadFiles/forecast_pricing");
+       if(uploadedFiles.mkdirs())
+           log.info("Create UploadFiles in /tmp");
+       else
+           log.info("Folders have already been created");
+   }
+
+    /**
+     * Reset the filters to initial state
+     */
+   private void resetFilters() {
+       filters = new FilterModel(
+               "",
+               new ArrayList<>(),
+               new ArrayList<>(),
+               new ArrayList<>(),
+               new ArrayList<>(),
+               new ArrayList<>(),
+               new ArrayList<>(),
+               new ArrayList<>(),
+               "",
+               "",
+               "",
+               "",
+               "",
+               null,
+               1000,
+               1,
+               "",
+               null,
+               new ArrayList<>(),
+               new ArrayList<>(),
+               new ArrayList<>());
+   }
+
+    /**
+     * Reset SwotFilters to initial state
+     */
+   private void resetSwotFilters() {
+       swotFilters = new SwotFilters(
+               "Asia",
+               new ArrayList<>(),
+               new ArrayList<>(),
+               new ArrayList<>(),
+               new ArrayList<>()
+       );
+   }
+
+    /**
+     * Assert Total Value return by getCompetitorPricingForTable
+     */
+   private void assertTotalValue(CompetitorPricing totalResult, double actualTotal,
+                                 double AOPFTotal, double LRFFTotal,
+                                 double dealerStreetPricingTotal, double dealerHandlingCostTotal,
+                                 double competitorPricingTotal, double averageDealerNetTotal) {
+       Assertions.assertEquals(
+               CurrencyFormatUtils.formatDoubleValue(actualTotal, CurrencyFormatUtils.decimalFormatFourDigits),
+               CurrencyFormatUtils.formatDoubleValue(totalResult.getActual(), CurrencyFormatUtils.decimalFormatFourDigits)
+       );
+       Assertions.assertEquals(
+               CurrencyFormatUtils.formatDoubleValue(AOPFTotal, CurrencyFormatUtils.decimalFormatFourDigits),
+               CurrencyFormatUtils.formatDoubleValue(totalResult.getAOPF(), CurrencyFormatUtils.decimalFormatFourDigits)
+       );
+       Assertions.assertEquals(
+               CurrencyFormatUtils.formatDoubleValue(LRFFTotal, CurrencyFormatUtils.decimalFormatFourDigits),
+               CurrencyFormatUtils.formatDoubleValue(totalResult.getLRFF(), CurrencyFormatUtils.decimalFormatFourDigits)
+       );
+       Assertions.assertEquals(
+               CurrencyFormatUtils.formatDoubleValue(dealerStreetPricingTotal, CurrencyFormatUtils.decimalFormatFourDigits),
+               CurrencyFormatUtils.formatDoubleValue(totalResult.getDealerStreetPricing(), CurrencyFormatUtils.decimalFormatFourDigits)
+       );
+       Assertions.assertEquals(
+               CurrencyFormatUtils.formatDoubleValue(dealerHandlingCostTotal, CurrencyFormatUtils.decimalFormatFourDigits),
+               CurrencyFormatUtils.formatDoubleValue(totalResult.getDealerHandlingCost(), CurrencyFormatUtils.decimalFormatFourDigits)
+       );
+       Assertions.assertEquals(
+               CurrencyFormatUtils.formatDoubleValue(competitorPricingTotal, CurrencyFormatUtils.decimalFormatFourDigits),
+               CurrencyFormatUtils.formatDoubleValue(totalResult.getCompetitorPricing(), CurrencyFormatUtils.decimalFormatFourDigits)
+       );
+       Assertions.assertEquals(
+               CurrencyFormatUtils.formatDoubleValue(averageDealerNetTotal, CurrencyFormatUtils.decimalFormatFourDigits),
+               CurrencyFormatUtils.formatDoubleValue(totalResult.getAverageDN(), CurrencyFormatUtils.decimalFormatFourDigits)
+       );
+   }
+
     @Test
-    public void testGetCompetitorPriceForTableByFilter() throws ParseException {
-        FilterModel filters = new FilterModel();
+    public void testGetCompetitorPriceForTableByFilter_region() throws ParseException {
+        resetFilters();
 
-        // Expected value
-        Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
-        List<CompetitorPricing> competitorPricingList = competitorPricingRepository.findCompetitorByFilterForTable(
-                (List<String>)   filterMap.get("regionFilter"),(List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
-                (List<String>)   filterMap.get("classFilter"),(List<String>) filterMap.get("modelFilter"),(Boolean) filterMap.get("ChineseBrandFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((String)((List) filterMap.get("marginPercentageFilter")).get(0)),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((Double)((List) filterMap.get("marginPercentageFilter")).get(1)), (Pageable) filterMap.get("pageable"));
-
-        int totalCompetitor = competitorPricingRepository.getCountAll(
-                (List<String>)   filterMap.get("regionFilter"),(List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
-                (List<String>)   filterMap.get("classFilter"),(List<String>) filterMap.get("modelFilter"),(Boolean) filterMap.get("ChineseBrandFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((String)((List) filterMap.get("marginPercentageFilter")).get(0)),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((Double)((List) filterMap.get("marginPercentageFilter")).get(1)));
+        String expectedRegion = "Asia";
+        filters.setRegions(Collections.singletonList(expectedRegion));
 
         //Assertions
         Map<String, Object> result = indicatorService.getCompetitorPriceForTableByFilter(filters);
@@ -68,8 +161,276 @@ public class IndicatorServiceTest {
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("total"));
 
-        Assertions.assertEquals(competitorPricingList.size(), ((List<Object>) result.get("listCompetitor")).size());
-        Assertions.assertEquals(totalCompetitor, (Integer) result.get("totalItems"));
+        List<CompetitorPricing> competitorPricingList = (List<CompetitorPricing>) result.get("listCompetitor");
+        CompetitorPricing totalResult = ((List<CompetitorPricing>) result.get("total")).get(0);
+        Assertions.assertFalse(competitorPricingList.isEmpty());
+
+
+        double actualTotal = 0.0;
+        double AOPFTotal = 0.0;
+        double LRFFTotal = 0.0;
+        double dealerStreetPricingTotal = 0.0;
+        double dealerHandlingCostTotal = 0.0;
+        double competitorPricingTotal = 0.0;
+        double averageDealerNetTotal = 0.0;
+        for (CompetitorPricing cp : competitorPricingList) {
+            Assertions.assertEquals(expectedRegion, cp.getRegion());
+
+            actualTotal += cp.getActual();
+            AOPFTotal += cp.getAOPF();
+            LRFFTotal += cp.getLRFF();
+            dealerStreetPricingTotal += cp.getDealerStreetPricing();
+            dealerHandlingCostTotal += cp.getDealerHandlingCost();
+            competitorPricingTotal += cp.getCompetitorPricing();
+            averageDealerNetTotal += cp.getAverageDN();
+        }
+
+        assertTotalValue(totalResult, actualTotal, AOPFTotal, LRFFTotal, dealerStreetPricingTotal, dealerHandlingCostTotal, competitorPricingTotal, averageDealerNetTotal);
+    }
+
+    @Test
+    public void testGetCompetitorPriceForTableByFilter_plant() throws ParseException {
+        resetFilters();
+
+        String expectedPlant = "Greenville";
+        filters.setPlants(Collections.singletonList(expectedPlant));
+
+        //Assertions
+        Map<String, Object> result = indicatorService.getCompetitorPriceForTableByFilter(filters);
+        Assertions.assertNotNull(result.get("listCompetitor"));
+        Assertions.assertNotNull(result.get("totalItems"));
+        Assertions.assertNotNull(result.get("total"));
+
+        List<CompetitorPricing> competitorPricingList = (List<CompetitorPricing>) result.get("listCompetitor");
+        CompetitorPricing totalResult = ((List<CompetitorPricing>) result.get("total")).get(0);
+        Assertions.assertFalse(competitorPricingList.isEmpty());
+
+        double actualTotal = 0.0;
+        double AOPFTotal = 0.0;
+        double LRFFTotal = 0.0;
+        double dealerStreetPricingTotal = 0.0;
+        double dealerHandlingCostTotal = 0.0;
+        double competitorPricingTotal = 0.0;
+        double averageDealerNetTotal = 0.0;
+        for (CompetitorPricing cp : competitorPricingList) {
+            Assertions.assertEquals(expectedPlant, cp.getPlant());
+
+            actualTotal += cp.getActual();
+            AOPFTotal += cp.getAOPF();
+            LRFFTotal += cp.getLRFF();
+            dealerStreetPricingTotal += cp.getDealerStreetPricing();
+            dealerHandlingCostTotal += cp.getDealerHandlingCost();
+            competitorPricingTotal += cp.getCompetitorPricing();
+            averageDealerNetTotal += cp.getAverageDN();
+        }
+
+        assertTotalValue(totalResult, actualTotal, AOPFTotal, LRFFTotal, dealerStreetPricingTotal, dealerHandlingCostTotal, competitorPricingTotal, averageDealerNetTotal);
+    }
+
+    @Test
+    public void testGetCompetitorPriceForTableByFilter_metaSeries() throws ParseException {
+        resetFilters();
+
+        String expectedMetaSeries = "466";
+        filters.setMetaSeries(Collections.singletonList(expectedMetaSeries));
+
+        //Assertions
+        Map<String, Object> result = indicatorService.getCompetitorPriceForTableByFilter(filters);
+        Assertions.assertNotNull(result.get("listCompetitor"));
+        Assertions.assertNotNull(result.get("totalItems"));
+        Assertions.assertNotNull(result.get("total"));
+
+        List<CompetitorPricing> competitorPricingList = (List<CompetitorPricing>) result.get("listCompetitor");
+        CompetitorPricing totalResult = ((List<CompetitorPricing>) result.get("total")).get(0);
+        Assertions.assertFalse(competitorPricingList.isEmpty());
+
+        double actualTotal = 0.0;
+        double AOPFTotal = 0.0;
+        double LRFFTotal = 0.0;
+        double dealerStreetPricingTotal = 0.0;
+        double dealerHandlingCostTotal = 0.0;
+        double competitorPricingTotal = 0.0;
+        double averageDealerNetTotal = 0.0;
+
+        for (CompetitorPricing cp : competitorPricingList) {
+            Assertions.assertEquals(expectedMetaSeries, cp.getSeries().substring(1));
+
+            actualTotal += cp.getActual();
+            AOPFTotal += cp.getAOPF();
+            LRFFTotal += cp.getLRFF();
+            dealerStreetPricingTotal += cp.getDealerStreetPricing();
+            dealerHandlingCostTotal += cp.getDealerHandlingCost();
+            competitorPricingTotal += cp.getCompetitorPricing();
+            averageDealerNetTotal += cp.getAverageDN();
+        }
+
+        assertTotalValue(totalResult, actualTotal, AOPFTotal, LRFFTotal, dealerStreetPricingTotal, dealerHandlingCostTotal, competitorPricingTotal, averageDealerNetTotal);
+    }
+
+    @Test
+    public void testGetCompetitorPriceForTableByFilter_class() throws ParseException {
+        resetFilters();
+
+        String expectedClass = "Class 1";
+        filters.setClasses(Collections.singletonList(expectedClass));
+
+        //Assertions
+        Map<String, Object> result = indicatorService.getCompetitorPriceForTableByFilter(filters);
+        Assertions.assertNotNull(result.get("listCompetitor"));
+        Assertions.assertNotNull(result.get("totalItems"));
+        Assertions.assertNotNull(result.get("total"));
+
+        List<CompetitorPricing> competitorPricingList = (List<CompetitorPricing>) result.get("listCompetitor");
+        CompetitorPricing totalResult = ((List<CompetitorPricing>) result.get("total")).get(0);
+        Assertions.assertFalse(competitorPricingList.isEmpty());
+
+        double actualTotal = 0.0;
+        double AOPFTotal = 0.0;
+        double LRFFTotal = 0.0;
+        double dealerStreetPricingTotal = 0.0;
+        double dealerHandlingCostTotal = 0.0;
+        double competitorPricingTotal = 0.0;
+        double averageDealerNetTotal = 0.0;
+
+        for (CompetitorPricing cp : competitorPricingList) {
+            Assertions.assertEquals(expectedClass, cp.getClazz());
+
+            actualTotal += cp.getActual();
+            AOPFTotal += cp.getAOPF();
+            LRFFTotal += cp.getLRFF();
+            dealerStreetPricingTotal += cp.getDealerStreetPricing();
+            dealerHandlingCostTotal += cp.getDealerHandlingCost();
+            competitorPricingTotal += cp.getCompetitorPricing();
+            averageDealerNetTotal += cp.getAverageDN();
+        }
+
+        assertTotalValue(totalResult, actualTotal, AOPFTotal, LRFFTotal, dealerStreetPricingTotal, dealerHandlingCostTotal, competitorPricingTotal, averageDealerNetTotal);
+    }
+
+    @Test
+    public void testGetCompetitorPriceForTableByFilter_chineseBrand() throws ParseException {
+        resetFilters();
+
+        String expectedChineseBrand = "Chinese Brand";
+        filters.setChineseBrand(expectedChineseBrand);
+
+        //Assertions
+        Map<String, Object> result = indicatorService.getCompetitorPriceForTableByFilter(filters);
+        Assertions.assertNotNull(result.get("listCompetitor"));
+        Assertions.assertNotNull(result.get("totalItems"));
+        Assertions.assertNotNull(result.get("total"));
+
+        List<CompetitorPricing> competitorPricingList = (List<CompetitorPricing>) result.get("listCompetitor");
+        CompetitorPricing totalResult = ((List<CompetitorPricing>) result.get("total")).get(0);
+        Assertions.assertFalse(competitorPricingList.isEmpty());
+
+        double actualTotal = 0.0;
+        double AOPFTotal = 0.0;
+        double LRFFTotal = 0.0;
+        double dealerStreetPricingTotal = 0.0;
+        double dealerHandlingCostTotal = 0.0;
+        double competitorPricingTotal = 0.0;
+        double averageDealerNetTotal = 0.0;
+
+        for (CompetitorPricing cp : competitorPricingList) {
+            Assertions.assertTrue(cp.getChineseBrand());
+
+            actualTotal += cp.getActual();
+            AOPFTotal += cp.getAOPF();
+            LRFFTotal += cp.getLRFF();
+            dealerStreetPricingTotal += cp.getDealerStreetPricing();
+            dealerHandlingCostTotal += cp.getDealerHandlingCost();
+            competitorPricingTotal += cp.getCompetitorPricing();
+            averageDealerNetTotal += cp.getAverageDN();
+        }
+
+        assertTotalValue(totalResult, actualTotal, AOPFTotal, LRFFTotal, dealerStreetPricingTotal, dealerHandlingCostTotal, competitorPricingTotal, averageDealerNetTotal);
+    }
+
+    @Test
+    public void testGetCompetitorPriceForTableByFilter_marginPercentageGroup() throws ParseException {
+        resetFilters();
+
+        String expectedMarginPercentageGroup = "<10% Margin";
+        filters.setChineseBrand(expectedMarginPercentageGroup);
+
+        //Assertions
+        Map<String, Object> result = indicatorService.getCompetitorPriceForTableByFilter(filters);
+        Assertions.assertNotNull(result.get("listCompetitor"));
+        Assertions.assertNotNull(result.get("totalItems"));
+        Assertions.assertNotNull(result.get("total"));
+
+        List<CompetitorPricing> competitorPricingList = (List<CompetitorPricing>) result.get("listCompetitor");
+        CompetitorPricing totalResult = ((List<CompetitorPricing>) result.get("total")).get(0);
+        Assertions.assertFalse(competitorPricingList.isEmpty());
+
+        double actualTotal = 0.0;
+        double AOPFTotal = 0.0;
+        double LRFFTotal = 0.0;
+        double dealerStreetPricingTotal = 0.0;
+        double dealerHandlingCostTotal = 0.0;
+        double competitorPricingTotal = 0.0;
+        double averageDealerNetTotal = 0.0;
+
+        for (CompetitorPricing cp : competitorPricingList) {
+            Assertions.assertTrue(cp.getDealerPremiumPercentage() <= 0.1);
+
+            actualTotal += cp.getActual();
+            AOPFTotal += cp.getAOPF();
+            LRFFTotal += cp.getLRFF();
+            dealerStreetPricingTotal += cp.getDealerStreetPricing();
+            dealerHandlingCostTotal += cp.getDealerHandlingCost();
+            competitorPricingTotal += cp.getCompetitorPricing();
+            averageDealerNetTotal += cp.getAverageDN();
+        }
+
+        assertTotalValue(totalResult, actualTotal, AOPFTotal, LRFFTotal, dealerStreetPricingTotal, dealerHandlingCostTotal, competitorPricingTotal, averageDealerNetTotal);
+    }
+
+    @Test
+    public void testGetCompetitorPriceForTableByFilter_multipleFilters() throws ParseException {
+        resetFilters();
+
+        String expectedRegion = "Asia";
+        String expectedPlant = "Greenville";
+        String expectedClass = "Class 1";
+        filters.setRegions(Collections.singletonList(expectedRegion));
+        filters.setPlants(Collections.singletonList(expectedPlant));
+        filters.setClasses(Collections.singletonList(expectedClass));
+
+        //Assertions
+        Map<String, Object> result = indicatorService.getCompetitorPriceForTableByFilter(filters);
+        Assertions.assertNotNull(result.get("listCompetitor"));
+        Assertions.assertNotNull(result.get("totalItems"));
+        Assertions.assertNotNull(result.get("total"));
+
+        List<CompetitorPricing> competitorPricingList = (List<CompetitorPricing>) result.get("listCompetitor");
+        CompetitorPricing totalResult = ((List<CompetitorPricing>) result.get("total")).get(0);
+        Assertions.assertFalse(competitorPricingList.isEmpty());
+
+        double actualTotal = 0.0;
+        double AOPFTotal = 0.0;
+        double LRFFTotal = 0.0;
+        double dealerStreetPricingTotal = 0.0;
+        double dealerHandlingCostTotal = 0.0;
+        double competitorPricingTotal = 0.0;
+        double averageDealerNetTotal = 0.0;
+
+        for (CompetitorPricing cp : competitorPricingList) {
+            Assertions.assertEquals(expectedRegion, cp.getRegion());
+            Assertions.assertEquals(expectedPlant, cp.getPlant());
+            Assertions.assertEquals(expectedClass, cp.getClazz());
+
+            actualTotal += cp.getActual();
+            AOPFTotal += cp.getAOPF();
+            LRFFTotal += cp.getLRFF();
+            dealerStreetPricingTotal += cp.getDealerStreetPricing();
+            dealerHandlingCostTotal += cp.getDealerHandlingCost();
+            competitorPricingTotal += cp.getCompetitorPricing();
+            averageDealerNetTotal += cp.getAverageDN();
+        }
+
+        assertTotalValue(totalResult, actualTotal, AOPFTotal, LRFFTotal, dealerStreetPricingTotal, dealerHandlingCostTotal, competitorPricingTotal, averageDealerNetTotal);
     }
 
     @Test
@@ -109,29 +470,90 @@ public class IndicatorServiceTest {
     }
 
     @Test
-    public void testGetCompetitiveLandscape() {
-        SwotFilters filters = new SwotFilters(
-                "Asia",
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>()
-        );
-
+    public void testGetCompetitiveLandscape_region() {
         // Expected value
-        String regions = filters.getRegions();
+        String expectedRegion = "Asia";
+        swotFilters.setRegions(expectedRegion);
         List<CompetitorPricing> expected =
-                competitorPricingRepository.getDataForBubbleChart(Collections.singletonList(regions), null, null, null, null);
+                competitorPricingRepository.getDataForBubbleChart(Collections.singletonList(expectedRegion), null, null, null, null);
 
         // Assertions
-        List<CompetitorPricing> result = indicatorService.getCompetitiveLandscape(filters);
-        Assertions.assertNotNull(result);
+        List<CompetitorPricing> result = indicatorService.getCompetitiveLandscape(swotFilters);
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(expected.size(), result.size());
+    }
+
+    @Test
+    public void testGetCompetitiveLandscape_country() {
+        // Expected value
+        String expectedCountry = "South Korea";
+        swotFilters.setCountries(Collections.singletonList(expectedCountry));
+        List<CompetitorPricing> expected =
+                competitorPricingRepository.getDataForBubbleChart(Collections.singletonList("Asia"), Collections.singletonList(expectedCountry), null, null, null);
+
+        // Assertions
+        List<CompetitorPricing> result = indicatorService.getCompetitiveLandscape(swotFilters);
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(expected.size(), result.size());
+    }
+
+    @Test
+    public void testGetCompetitiveLandscape_class() {
+        // Expected value
+        String expectedClass = "Class 1";
+        swotFilters.setClasses(Collections.singletonList(expectedClass));
+        List<CompetitorPricing> expected = competitorPricingRepository.getDataForBubbleChart(
+                Collections.singletonList("Asia"),
+                null,
+                Collections.singletonList(expectedClass),
+                null,
+                null);
+
+        // Assertions
+        List<CompetitorPricing> result = indicatorService.getCompetitiveLandscape(swotFilters);
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(expected.size(), result.size());
+    }
+
+    @Test
+    public void testGetCompetitiveLandscape_category() {
+        // Expected value
+        String expectedCategory = "Lead Acid";
+        swotFilters.setCategories(Collections.singletonList(expectedCategory));
+        List<CompetitorPricing> expected = competitorPricingRepository.getDataForBubbleChart(
+                Collections.singletonList("Asia"),
+                null,
+                null,
+                Collections.singletonList(expectedCategory),
+                null);
+
+        // Assertions
+        List<CompetitorPricing> result = indicatorService.getCompetitiveLandscape(swotFilters);
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(expected.size(), result.size());
+    }
+
+    @Test
+    public void testGetCompetitiveLandscape_series() {
+        // Expected value
+        String expectedSeries = "A3C4";
+        swotFilters.setSeries(Collections.singletonList(expectedSeries));
+        List<CompetitorPricing> expected = competitorPricingRepository.getDataForBubbleChart(
+                Collections.singletonList("Asia"),
+                null,
+                null,
+                null,
+                Collections.singletonList(expectedSeries));
+
+        // Assertions
+        List<CompetitorPricing> result = indicatorService.getCompetitiveLandscape(swotFilters);
+        Assertions.assertFalse(result.isEmpty());
         Assertions.assertEquals(expected.size(), result.size());
     }
 
     @Test
     public void testGetCompetitorColor() {
-        String groupName = "HYG";
+        String groupName = "HYG 123 123";
         String colorCode = "#000000";
         competitorColorRepository.save(new CompetitorColor(groupName, colorCode));
 
@@ -142,7 +564,7 @@ public class IndicatorServiceTest {
 
     @Test
     public void testGetCompetitorColor_notFoundGroupName() {
-        String groupName = "HYG";
+        String groupName = "HYG 123 123 123";
 
         CompetitorColor result = indicatorService.getCompetitorColor(groupName);
         Assertions.assertEquals(groupName, result.getGroupName());
@@ -150,7 +572,7 @@ public class IndicatorServiceTest {
 
     @Test
     public void testGetCompetitorById() {
-        String groupName = "HYG";
+        String groupName = "HYG 123 123";
         String colorCode = "#000000";
         CompetitorColor competitorColor = competitorColorRepository.save(new CompetitorColor(groupName, colorCode));
 
@@ -186,10 +608,14 @@ public class IndicatorServiceTest {
         // Assertions
         Page<CompetitorColor> result = indicatorService.searchCompetitorColor(search, pageNo, perPage);
 
-        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.isEmpty());
         Assertions.assertEquals(expected.getTotalElements(), result.getTotalElements());
         Assertions.assertEquals(expected.getTotalPages(), result.getTotalPages());
         Assertions.assertEquals(expected.getNumber(), result.getNumber());
+
+        for(CompetitorColor color : result) {
+            Assertions.assertTrue(color.getGroupName().contains(search));
+        }
     }
 
     @Test
@@ -244,5 +670,85 @@ public class IndicatorServiceTest {
 
         // Assertions
         Assertions.assertDoesNotThrow(() -> indicatorService.uploadForecastFile(file, authentication));
+    }
+
+    @Test
+    public void testImportIndicatorsFromFile() throws IOException {
+        String filePath = "import_files/competitor_pricing/Competitor Pricing Database.xlsx";
+        indicatorService.importIndicatorsFromFile(filePath);
+
+        InputStream is = new FileInputStream(filePath);
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+        Sheet sheet = workbook.getSheetAt(0);
+
+        String country;
+        String competitorName;
+        String group;
+        String region;
+        String clazz;
+        double marketShare;
+        double price;
+        int leadTime;
+        String category;
+        String series;
+        String model;
+
+        HashMap<String, Integer> columns = getColumnNameInFile(sheet.getRow(0));
+        Pattern seriesPattern = Pattern.compile("(.{4})/(.{4})");
+        Matcher matcher;
+
+        Random random = new Random();
+        for(int i = 0; i < 10; i++) {
+            int nextRow = random.nextInt(356);
+            if(nextRow != 0) {
+                Row row = sheet.getRow(nextRow);
+                country = row.getCell(columns.get("Country"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                competitorName = row.getCell(columns.get("Brand"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                group = row.getCell(columns.get("Group"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                region = row.getCell(columns.get("Region"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                clazz = row.getCell(columns.get("Class"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                marketShare = row.getCell(columns.get("Normalized Market Share")).getNumericCellValue();
+                price = row.getCell(columns.get("Price (USD)")).getNumericCellValue();
+                leadTime = (int) row.getCell(columns.get("Lead Time")).getNumericCellValue();
+                category = row.getCell(columns.get("Category"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                series = row.getCell(columns.get("HYG Series"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                model = row.getCell(columns.get("Model"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+
+                matcher = seriesPattern.matcher(series);
+                if(matcher.find()) {
+                    series = matcher.group(1);
+                }
+
+                Optional<CompetitorPricing> cp = competitorPricingRepository.getCompetitorPricing(country, clazz, category, series, competitorName, model);
+
+                if(cp.isPresent())
+                    assertCompetitorPricing(cp.get(), country, competitorName, group, region, clazz , marketShare, price, leadTime, category, series, model);
+            }
+        }
+    }
+
+    private void assertCompetitorPricing(CompetitorPricing cp, String country, String competitorName,
+                                         String group, String region, String clazz ,
+                                         double marketShare, double price, int leadTime,
+                                         String category, String series, String model) {
+       Assertions.assertEquals(country, cp.getCountry().getCountryName());
+       Assertions.assertEquals(competitorName, cp.getCompetitorName());
+       Assertions.assertEquals(group, cp.getColor().getGroupName());
+       Assertions.assertEquals(region, cp.getRegion());
+       Assertions.assertEquals(clazz, cp.getClazz());
+       Assertions.assertEquals(marketShare, cp.getMarketShare());
+       Assertions.assertEquals(price, cp.getCompetitorPricing());
+       Assertions.assertEquals(leadTime, cp.getCompetitorLeadTime());
+       Assertions.assertEquals(category, cp.getCategory());
+       Assertions.assertEquals(series, cp.getSeries());
+       Assertions.assertEquals(model, cp.getModel());
+    }
+
+    private HashMap<String, Integer> getColumnNameInFile(Row row) {
+       HashMap<String, Integer> columns = new HashMap<>();
+       for(Cell cell : row) {
+           columns.put(cell.getStringCellValue(), cell.getColumnIndex());
+       }
+       return columns;
     }
 }

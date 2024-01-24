@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 @Entity
 @Setter
@@ -37,6 +37,5 @@ public class MarginAnalystMacro {
     private Currency currency;
 
     @Column(name = "month_year")
-    @Temporal(TemporalType.DATE)
-    private Calendar monthYear;
+    private LocalDate monthYear;
 }

@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,8 +28,8 @@ public class ConvertDataFilterUtil {
         String aopMarginPercentageFilter = checkStringData(filterModel.getAopMarginPercentageGroup());
         List<Object> marginPercentageFilter = checkComparator(filterModel.getMarginPercentage());
         List<Object> marginPercentageAfterAdjFilter = checkComparator(filterModel.getMarginPercentageAfterAdj());
-        Calendar fromDateFilter = checkDateData(filterModel.getFromDate());
-        Calendar toDateFilter = checkDateData(filterModel.getToDate());
+        LocalDate fromDateFilter = checkDateData(filterModel.getFromDate());
+        LocalDate toDateFilter = checkDateData(filterModel.getToDate());
         Pageable pageable = PageRequest.of(filterModel.getPageNo() == 0 ? filterModel.getPageNo() : filterModel.getPageNo() - 1, filterModel.getPerPage() == 0 ? 100 : filterModel.getPerPage());
         String modelCodeFilter = checkStringData(filterModel.getModelCode());
         List<String> brandFilter = checkListData(filterModel.getBrands());
@@ -35,8 +37,8 @@ public class ConvertDataFilterUtil {
         List<String> truckTypeFilter = checkListData(filterModel.getTruckType());
         List<String> orderNumberListFilter = checkListData(filterModel.getOrderNumbers());
 
-        Calendar calendar = Calendar.getInstance();
-        Integer year = filterModel.getYear() == null ? calendar.get(Calendar.YEAR) : filterModel.getYear();
+        LocalDate calendar = LocalDate.now();
+        Integer year = filterModel.getYear() == null ? calendar.getYear() : filterModel.getYear();
 
         result.put("orderNoFilter", orderNoFilter);
         result.put("regionFilter", regionFilter);
@@ -81,14 +83,11 @@ public class ConvertDataFilterUtil {
         return data.equals("Chinese Brand");
     }
 
-    private static Calendar checkDateData(String data) throws ParseException {
+    private static LocalDate checkDateData(String data) throws ParseException {
         if (data == null || data.isEmpty())
             return null;
-        Calendar cal = Calendar.getInstance();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        cal.setTime(formatter.parse(data));
-        cal.add(Calendar.DAY_OF_MONTH, 1);
-        return cal;
+        return (formatter.parse(data).toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         //  return formatter.parse(data);
     }
 

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,7 +53,7 @@ public class MarginAnalystMacroService {
         log.info(MACRO_COLUMNS + "");
     }
 
-    private MarginAnalystMacro mapExcelDataToMarginAnalystMacro(Row row, String strCurrency, Calendar monthYear, String plant) {
+    private MarginAnalystMacro mapExcelDataToMarginAnalystMacro(Row row, String strCurrency, LocalDate monthYear, String plant) {
         MarginAnalystMacro marginAnalystMacro = new MarginAnalystMacro();
 
         double costRMB;
@@ -111,8 +112,8 @@ public class MarginAnalystMacroService {
         }
         else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is not in appropriate format");
-        Calendar monthYear = Calendar.getInstance();
-        monthYear.set(year, DateUtils.monthMap.get(month), 1);
+
+        LocalDate monthYear = LocalDate.of(year, DateUtils.getMonth(month), 1);
 
         log.info("Reading " + fileName);
         XLSBWorkbook workbook = new XLSBWorkbook();
@@ -180,7 +181,7 @@ public class MarginAnalystMacroService {
     /**
      * Import Freight data from Macro file (from 'Freight' tab)
      */
-    public void importFreightFromFile(String filePath, Calendar monthYear) {
+    public void importFreightFromFile(String filePath, LocalDate monthYear) {
         try{
             XLSBWorkbook workbook = new XLSBWorkbook();
             workbook.openFile(filePath);
@@ -211,7 +212,7 @@ public class MarginAnalystMacroService {
     /**
      * Import TargetMargin and Margin Guideline from Macro file (in 'AOPF 2023' tab)
      */
-    public void importTargetMarginFromFile(String filePath, Calendar monthYear) {
+    public void importTargetMarginFromFile(String filePath, LocalDate monthYear) {
         try {
             XLSBWorkbook workbook = new XLSBWorkbook();
             workbook.openFile(filePath);
@@ -247,7 +248,7 @@ public class MarginAnalystMacroService {
     /**
      * Import Warranty from Macro file (in 'Mappting' tab)
      */
-    public void importWarrantyFromFile(String filePath, Calendar monthYear) {
+    public void importWarrantyFromFile(String filePath, LocalDate monthYear) {
         try {
             XLSBWorkbook workbook = new XLSBWorkbook();
             workbook.openFile(filePath);
@@ -297,7 +298,7 @@ public class MarginAnalystMacroService {
         }
     }
 
-    private Optional<MarginAnalystMacro> getMarginAnalystMacro(Row row, String plant, String currency, Calendar monthYear) {
+    private Optional<MarginAnalystMacro> getMarginAnalystMacro(Row row, String plant, String currency, LocalDate monthYear) {
         String modelCode;
         String partNumber = row.getCell(MACRO_COLUMNS.get("Option Code")).getValue();
 
@@ -308,11 +309,10 @@ public class MarginAnalystMacroService {
             if(modelCode.isEmpty())
                 modelCode = row.getCell(MACRO_COLUMNS.get("MODEL CD (incl \"-\")")).getValue();
         }
-//        log.info(modelCode + " - " + partNumber + " -  " + currency + " - " + monthYear.get(Calendar.MONTH));
         return marginAnalystMacroRepository.getMarginAnalystMacroByMonthYear(modelCode, partNumber, currency, monthYear);
     }
 
-    private MarginAnalystMacro isMacroExisted(Row row, String plant, String currency, Calendar monthYear) {
+    private MarginAnalystMacro isMacroExisted(Row row, String plant, String currency, LocalDate monthYear) {
         String modelCode;
         String partNumber = row.getCell(MACRO_COLUMNS.get("Option Code")).getValue();
 
@@ -324,13 +324,13 @@ public class MarginAnalystMacroService {
                 modelCode = row.getCell(MACRO_COLUMNS.get("MODEL CD (incl \"-\")")).getValue();
         }
         for(MarginAnalystMacro macro : listMarginData) {
-            Calendar dbMonthYear = macro.getMonthYear();
+            LocalDate dbMonthYear = macro.getMonthYear();
             if(
                     macro.getModelCode().equals(modelCode)
                     && macro.getPartNumber().equals(partNumber)
                     && macro.getCurrency().getCurrency().equals(currency)
-                    && dbMonthYear.get(Calendar.YEAR) == monthYear.get(Calendar.YEAR)
-                    && dbMonthYear.get(Calendar.MONTH) == monthYear.get(Calendar.MONTH)
+                    && dbMonthYear.getYear() == monthYear.getYear()
+                    && dbMonthYear.getMonthValue() == monthYear.getMonthValue()
             )
                 return macro;
         }
@@ -346,7 +346,7 @@ public class MarginAnalystMacroService {
     /**
      * Get Margin Analysis @ AOP Rate from Excel sheet: 'USD HYM Ruyi Staxx', 'SN AUD Template' and 'AUD HYM Ruyi Staxx'
      */
-    void saveMarginAnalysisAOPRate(Sheet sheet, String currency, Calendar monthYear, String durationUnit) {
+    void saveMarginAnalysisAOPRate(Sheet sheet, String currency, LocalDate monthYear, String durationUnit) {
 
         if(sheet.getSheetName().equals("USD HYM Ruyi Staxx") || sheet.getSheetName().equals("SN AUD Template") ||sheet.getSheetName().equals("AUD HYM Ruyi Staxx")) {
             MarginAnalysisAOPRate marginAnalysisAOPRate = new MarginAnalysisAOPRate();
@@ -403,25 +403,25 @@ public class MarginAnalystMacroService {
 
     }
 
-    public Optional<MarginAnalystMacro> getMarginAnalystMacroByMonthYear(String modelCode, String partNumber, String strCurrency, Calendar monthYear) {
+    public Optional<MarginAnalystMacro> getMarginAnalystMacroByMonthYear(String modelCode, String partNumber, String strCurrency, LocalDate monthYear) {
         return marginAnalystMacroRepository.getMarginAnalystMacroByMonthYear(modelCode, partNumber, strCurrency, monthYear);
     }
 
-    public Double getManufacturingCost(String modelCode, String partNumber, String strCurrency, List<String> plants, Calendar monthYear) {
+    public Double getManufacturingCost(String modelCode, String partNumber, String strCurrency, List<String> plants, LocalDate monthYear) {
         return marginAnalystMacroRepository.getManufacturingCost(modelCode, partNumber, strCurrency, plants, monthYear);
     }
 
-    public List<MarginAnalystMacro> getMarginAnalystMacroByPlantAndListPartNumber(String modelCode, List<String> partNumber, String strCurrency, String plant, Calendar monthYear) {
+    public List<MarginAnalystMacro> getMarginAnalystMacroByPlantAndListPartNumber(String modelCode, List<String> partNumber, String strCurrency, String plant, LocalDate monthYear) {
         return marginAnalystMacroRepository.getMarginAnalystMacroByPlantAndListPartNumber(modelCode, partNumber, strCurrency, plant, monthYear);
     }
-    public List<MarginAnalystMacro> getMarginAnalystMacroByHYMPlantAndListPartNumber(String modelCode, List<String> partNumber, String currency, Calendar monthYear) {
+    public List<MarginAnalystMacro> getMarginAnalystMacroByHYMPlantAndListPartNumber(String modelCode, List<String> partNumber, String currency, LocalDate monthYear) {
         return marginAnalystMacroRepository.getMarginAnalystMacroByHYMPlantAndListPartNumber(modelCode, partNumber, currency, monthYear);
     }
 
     /**
      * Get Freight value if existed else return 0
      */
-    public double getFreightValue(String metaSeries, Calendar monthYear) {
+    public double getFreightValue(String metaSeries, LocalDate monthYear) {
         Optional<Freight> optionalFreight = freightRepository.getFreight(metaSeries, monthYear);
         return optionalFreight.map(Freight::getFreight).orElse(0.0);
     }
@@ -429,7 +429,7 @@ public class MarginAnalystMacroService {
     /**
      * Get Warranty value if existed else return 0
      */
-    public double getWarrantyValue(String clazz, Calendar monthYear) {
+    public double getWarrantyValue(String clazz, LocalDate monthYear) {
         Optional<Warranty> optionalWarranty = warrantyRepository.getWarranty(clazz, monthYear);
         return optionalWarranty.map(Warranty::getWarranty).orElse(0.0);
     }
@@ -437,7 +437,7 @@ public class MarginAnalystMacroService {
     /**
      * Get Target Margin % if existed else return 0
      */
-    public double getTargetMarginValue(String region, String metaSeries, Calendar monthYear) {
+    public double getTargetMarginValue(String region, String metaSeries, LocalDate monthYear) {
         Optional<TargetMargin> optionalTargetMargin = targetMarginRepository.getTargetMargin(region, metaSeries, monthYear);
         return optionalTargetMargin.map(TargetMargin::getStdMarginPercentage).orElse(0.0);
     }

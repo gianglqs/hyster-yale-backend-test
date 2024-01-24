@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -37,9 +37,7 @@ public class MarginAnalystData {
     private double listPrice;
     private double margin_aop;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "month_year")
-    private Calendar monthYear; // we only needs to care month and year, so the day is always 1
+    private LocalDate monthYear; // we only needs to care month and year, so the day is always 1
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Currency currency;

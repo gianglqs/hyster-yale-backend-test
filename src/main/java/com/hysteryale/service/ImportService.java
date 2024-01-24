@@ -29,6 +29,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,18 +50,11 @@ public class ImportService extends BasedService {
     ShipmentRepository shipmentRepository;
 
     @Resource
-    ProductDimensionService productDimensionService;
-
-    @Resource
     BookingOrderRepository bookingOrderRepository;
 
     @Resource
-    AOPMarginService aopMarginService;
-    @Resource
     IndicatorService indicatorService;
 
-    @Resource
-    ShipmentService shipmentService;
     @Resource
     CountryService countryService;
 
@@ -244,8 +239,7 @@ public class ImportService extends BasedService {
                             String strRegion = competitorPricing.getRegion();
                             String metaSeries = competitorPricing.getSeries().substring(1); // extract metaSeries from series
 
-                            Calendar time = Calendar.getInstance();
-                            int currentYear = time.get(Calendar.YEAR);
+                            int currentYear = LocalDate.now().getYear();
 
                             ForeCastValue actualForeCast = findForeCastValue(foreCastValues, strRegion, metaSeries, currentYear - 1);
                             ForeCastValue AOPFForeCast = findForeCastValue(foreCastValues, strRegion, metaSeries, currentYear);
@@ -565,9 +559,7 @@ public class ImportService extends BasedService {
         // date
         if (shipmentColumnsName.get("Created On") != null) {
             Date date = row.getCell(shipmentColumnsName.get("Created On")).getDateCellValue();
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            LocalDate calendar = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             shipment.setDate(calendar);
         } else {
             throw new MissingColumnException("Missing column 'Created On'!");
