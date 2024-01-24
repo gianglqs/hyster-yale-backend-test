@@ -52,9 +52,8 @@ public class ProductDimensionController {
             String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
             String targetFolder = EnvironmentUtils.getEnvironmentValue("image-folder.product");
             String saveImageFolder = baseFolder + targetFolder;
-            String imageFileExtension = FileUtils.IMAGE_FILE_EXTENSION;
 
-            String savedImageName = fileUploadService.saveFileUploaded(image, authentication, saveImageFolder, imageFileExtension);
+            String savedImageName = fileUploadService.upLoadImage(image, targetFolder);
             String saveFilePath = saveImageFolder + savedImageName;
 
             if (FileUtils.isImageFile(saveFilePath)) {
