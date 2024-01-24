@@ -35,6 +35,16 @@
 
         <loadUpdateData
                 encoding="UTF-8"
+                file="classpath:db/database/exchange_rate.csv"
+                onlyUpdate="false"
+                primaryKey="id"
+                quotchar="'"
+                separator=","
+                tableName="exchange_rate">
+        </loadUpdateData>
+
+        <loadUpdateData
+                encoding="UTF-8"
                 file="classpath:db/database/productdimension.csv"
                 onlyUpdate="false"
                 primaryKey="modelcode"
