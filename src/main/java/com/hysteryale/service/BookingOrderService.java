@@ -625,11 +625,6 @@ public class BookingOrderService extends BasedService {
         return Integer.parseInt(year) < 2023 | (Integer.parseInt(year) == 2023 && !(month.equals("Sep") | month.equals("Oct") | month.equals("Nov") | month.equals("Dec")));
     }
 
-    public List<BookingOrder> getAllBookingOrders() {
-        return bookingOrderRepository.findAll();
-    }
-
-
     public BookingOrder importDNAndDNAfterSurcharge(BookingOrder booking) {
         Set<Part> newParts = partRepository.getPartByOrderNumber(booking.getOrderNo());
         double dealerNet = 0;
@@ -668,11 +663,6 @@ public class BookingOrderService extends BasedService {
         booking.setTotalCost(totalCost);
         booking.setMarginAfterSurCharge(marginAfterSurcharge);
         return booking;
-    }
-
-
-    public Optional<BookingOrder> getDistinctBookingOrderByModelCode(String modelCode) {
-        return bookingOrderRepository.getDistinctBookingOrderByModelCode(modelCode);
     }
 
     public Optional<BookingOrder> getBookingOrderByOrderNumber(String orderNumber) {
