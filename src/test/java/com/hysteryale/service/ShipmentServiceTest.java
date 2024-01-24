@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.model.BookingOrder;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.utils.CurrencyFormatUtils;
@@ -11,7 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +25,8 @@ import java.util.Map;
 public class ShipmentServiceTest {
     @Resource
     ShipmentService shipmentService;
+    @Resource
+    BookingOrderService bookingOrderService;
     FilterModel filters;
 
     @BeforeEach
@@ -60,8 +64,7 @@ public class ShipmentServiceTest {
 
     private void assertTotalValue(Shipment totalResult, long totalQuantity, double totalDealerNet,
                                   double totalDNAfterSurcharge, double totalCost, double totalNetRevenue,
-                                  double totalMarginAfterSurcharge, double totalMarginPercentageAfterSurcharge,
-                                  double totalBookingPercentage) {
+                                  double totalMarginAfterSurcharge, double totalMarginPercentageAfterSurcharge) {
         Assertions.assertEquals(
                 CurrencyFormatUtils.formatDoubleValue(totalQuantity, CurrencyFormatUtils.decimalFormatFourDigits),
                 CurrencyFormatUtils.formatDoubleValue(totalResult.getQuantity(), CurrencyFormatUtils.decimalFormatFourDigits)
@@ -86,21 +89,37 @@ public class ShipmentServiceTest {
                 CurrencyFormatUtils.formatDoubleValue(totalMarginAfterSurcharge, CurrencyFormatUtils.decimalFormatFourDigits),
                 CurrencyFormatUtils.formatDoubleValue(totalResult.getMarginAfterSurCharge(), CurrencyFormatUtils.decimalFormatFourDigits)
         );
-//        Assertions.assertEquals(
-//                CurrencyFormatUtils.formatDoubleValue(totalMarginPercentageAfterSurcharge, CurrencyFormatUtils.decimalFormatTwoDigits),
-//                CurrencyFormatUtils.formatDoubleValue(totalResult.getMarginPercentageAfterSurCharge(), CurrencyFormatUtils.decimalFormatTwoDigits)
-//        );
-//        Assertions.assertEquals(
-//                CurrencyFormatUtils.formatDoubleValue(totalBookingPercentage, CurrencyFormatUtils.decimalFormatFourDigits),
-//                CurrencyFormatUtils.formatDoubleValue(totalResult.getBookingMarginPercentageAfterSurCharge(), CurrencyFormatUtils.decimalFormatFourDigits)
-//        );
+        Assertions.assertEquals(
+                CurrencyFormatUtils.formatDoubleValue(totalMarginPercentageAfterSurcharge, CurrencyFormatUtils.decimalFormatTwoDigits),
+                CurrencyFormatUtils.formatDoubleValue(totalResult.getMarginPercentageAfterSurCharge(), CurrencyFormatUtils.decimalFormatTwoDigits)
+        );
+    }
+
+    private void assertTotalBookingMarginPercentage(FilterModel filters, double marginResult) throws ParseException {
+        Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
+
+        List<BookingOrder> listResult = (List<BookingOrder>) result.get("listBookingOrder");
+
+        double totalDealerNet = 0.0;
+        double totalCost = 0.0;
+
+        for(BookingOrder bo : listResult) {
+            totalDealerNet += bo.getDealerNet();
+            totalCost += bo.getTotalCost();
+        }
+        double totalMarginPercentage = (totalDealerNet - totalCost) / totalDealerNet;
+        if(!Double.isNaN(totalMarginPercentage))
+            Assertions.assertEquals(
+                    CurrencyFormatUtils.formatDoubleValue(totalMarginPercentage, CurrencyFormatUtils.decimalFormatFourDigits),
+                    CurrencyFormatUtils.formatDoubleValue(marginResult, CurrencyFormatUtils.decimalFormatFourDigits)
+            );
     }
 
     @Test
     public void testGetShipmentByFilter_orderNumber() throws ParseException {
         resetFilters();
 
-        String orderNumber = "H65543";
+        String orderNumber = "F90210";
         filters.setOrderNo(orderNumber);
 
         Map<String, Object> result = shipmentService.getShipmentByFilter(filters);
@@ -119,8 +138,6 @@ public class ShipmentServiceTest {
         double totalCost = 0.0;
         double totalNetRevenue = 0.0;
         double totalMarginAfterSurcharge = 0.0;
-        double totalMarginPercentageAfterSurcharge = 0.0;
-        double totalBookingPercentage = 0.0;
 
         for(Shipment sm : shipmentList) {
             Assertions.assertEquals(orderNumber, sm.getOrderNo());
@@ -131,10 +148,10 @@ public class ShipmentServiceTest {
             totalCost += sm.getTotalCost();
             totalNetRevenue += sm.getNetRevenue();
             totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
-            totalMarginPercentageAfterSurcharge += sm.getMarginPercentageAfterSurCharge();
-            totalBookingPercentage += sm.getBookingMarginPercentageAfterSurCharge();
         }
-        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge, totalBookingPercentage);
+        double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
     @Test
@@ -160,8 +177,6 @@ public class ShipmentServiceTest {
         double totalCost = 0.0;
         double totalNetRevenue = 0.0;
         double totalMarginAfterSurcharge = 0.0;
-        double totalMarginPercentageAfterSurcharge = 0.0;
-        double totalBookingPercentage = 0.0;
 
         for(Shipment sm : shipmentList) {
             Assertions.assertEquals(region, sm.getRegion().getRegion());
@@ -172,14 +187,10 @@ public class ShipmentServiceTest {
             totalCost += sm.getTotalCost();
             totalNetRevenue += sm.getNetRevenue();
             totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
-            totalMarginPercentageAfterSurcharge += sm.getMarginPercentageAfterSurCharge();
-            totalBookingPercentage += sm.getBookingMarginPercentageAfterSurCharge();
         }
-
-        totalMarginPercentageAfterSurcharge = totalMarginPercentageAfterSurcharge / shipmentList.size();
-        totalBookingPercentage = totalBookingPercentage / shipmentList.size();
-
-        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge, totalBookingPercentage);
+        double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
     @Test
@@ -205,8 +216,6 @@ public class ShipmentServiceTest {
         double totalCost = 0.0;
         double totalNetRevenue = 0.0;
         double totalMarginAfterSurcharge = 0.0;
-        double totalMarginPercentageAfterSurcharge = 0.0;
-        double totalBookingPercentage = 0.0;
 
         for(Shipment sm : shipmentList) {
             Assertions.assertEquals(plant, sm.getProductDimension().getPlant());
@@ -217,11 +226,10 @@ public class ShipmentServiceTest {
             totalCost += sm.getTotalCost();
             totalNetRevenue += sm.getNetRevenue();
             totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
-            totalMarginPercentageAfterSurcharge += sm.getMarginPercentageAfterSurCharge();
         }
-
-        totalMarginPercentageAfterSurcharge = totalMarginPercentageAfterSurcharge / shipmentList.size();
-        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge, totalBookingPercentage);
+        double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
     @Test
@@ -247,8 +255,6 @@ public class ShipmentServiceTest {
         double totalCost = 0.0;
         double totalNetRevenue = 0.0;
         double totalMarginAfterSurcharge = 0.0;
-        double totalMarginPercentageAfterSurcharge = 0.0;
-        double totalBookingPercentage = 0.0;
 
         for(Shipment sm : shipmentList) {
             Assertions.assertEquals(metaSeries, sm.getSeries().substring(1));
@@ -259,14 +265,10 @@ public class ShipmentServiceTest {
             totalCost += sm.getTotalCost();
             totalNetRevenue += sm.getNetRevenue();
             totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
-            totalMarginPercentageAfterSurcharge += sm.getMarginPercentageAfterSurCharge();
-            totalBookingPercentage += sm.getBookingMarginPercentageAfterSurCharge();
         }
-
-        totalMarginPercentageAfterSurcharge = totalMarginPercentageAfterSurcharge / shipmentList.size();
-        totalBookingPercentage = totalBookingPercentage / shipmentList.size();
-
-        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge, totalBookingPercentage);
+        double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
     @Test
@@ -292,8 +294,6 @@ public class ShipmentServiceTest {
         double totalCost = 0.0;
         double totalNetRevenue = 0.0;
         double totalMarginAfterSurcharge = 0.0;
-        double totalMarginPercentageAfterSurcharge = 0.0;
-        double totalBookingPercentage = 0.0;
 
         for(Shipment sm : shipmentList) {
             Assertions.assertEquals(clazz, sm.getProductDimension().getClazz());
@@ -304,14 +304,10 @@ public class ShipmentServiceTest {
             totalCost += sm.getTotalCost();
             totalNetRevenue += sm.getNetRevenue();
             totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
-            totalMarginPercentageAfterSurcharge += sm.getMarginPercentageAfterSurCharge();
-            totalBookingPercentage += sm.getBookingMarginPercentageAfterSurCharge();
         }
-
-        totalMarginPercentageAfterSurcharge = totalMarginPercentageAfterSurcharge / shipmentList.size();
-        totalBookingPercentage = totalBookingPercentage / shipmentList.size();
-
-        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge, totalBookingPercentage);
+        double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
     @Test
@@ -337,8 +333,6 @@ public class ShipmentServiceTest {
         double totalCost = 0.0;
         double totalNetRevenue = 0.0;
         double totalMarginAfterSurcharge = 0.0;
-        double totalMarginPercentageAfterSurcharge = 0.0;
-        double totalBookingPercentage = 0.0;
 
         for(Shipment sm : shipmentList) {
             Assertions.assertEquals(dealerName, sm.getDealerName());
@@ -349,14 +343,10 @@ public class ShipmentServiceTest {
             totalCost += sm.getTotalCost();
             totalNetRevenue += sm.getNetRevenue();
             totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
-            totalMarginPercentageAfterSurcharge += sm.getMarginPercentageAfterSurCharge();
-            totalBookingPercentage += sm.getBookingMarginPercentageAfterSurCharge();
         }
-
-        totalMarginPercentageAfterSurcharge = totalMarginPercentageAfterSurcharge / shipmentList.size();
-        totalBookingPercentage = totalBookingPercentage / shipmentList.size();
-
-        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge, totalBookingPercentage);
+        double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
     @Test
@@ -382,8 +372,6 @@ public class ShipmentServiceTest {
         double totalCost = 0.0;
         double totalNetRevenue = 0.0;
         double totalMarginAfterSurcharge = 0.0;
-        double totalMarginPercentageAfterSurcharge = 0.0;
-        double totalBookingPercentage = 0.0;
 
         for(Shipment sm : shipmentList) {
             Assertions.assertEquals(modelCode, sm.getProductDimension().getModelCode());
@@ -394,14 +382,10 @@ public class ShipmentServiceTest {
             totalCost += sm.getTotalCost();
             totalNetRevenue += sm.getNetRevenue();
             totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
-            totalMarginPercentageAfterSurcharge += sm.getMarginPercentageAfterSurCharge();
-            totalBookingPercentage += sm.getBookingMarginPercentageAfterSurCharge();
         }
-
-        totalMarginPercentageAfterSurcharge = totalMarginPercentageAfterSurcharge / shipmentList.size();
-        totalBookingPercentage = totalBookingPercentage / shipmentList.size();
-
-        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge, totalBookingPercentage);
+        double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
     @Test
@@ -427,8 +411,6 @@ public class ShipmentServiceTest {
         double totalCost = 0.0;
         double totalNetRevenue = 0.0;
         double totalMarginAfterSurcharge = 0.0;
-        double totalMarginPercentageAfterSurcharge = 0.0;
-        double totalBookingPercentage = 0.0;
 
         for(Shipment sm : shipmentList) {
             Assertions.assertTrue(sm.getMarginPercentageAfterSurCharge() < 0.1);
@@ -439,24 +421,18 @@ public class ShipmentServiceTest {
             totalCost += sm.getTotalCost();
             totalNetRevenue += sm.getNetRevenue();
             totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
-            totalMarginPercentageAfterSurcharge += sm.getMarginPercentageAfterSurCharge();
-            totalBookingPercentage += sm.getBookingMarginPercentageAfterSurCharge();
         }
-
-        totalMarginPercentageAfterSurcharge = totalMarginPercentageAfterSurcharge / shipmentList.size();
-        totalBookingPercentage = totalBookingPercentage / shipmentList.size();
-
-        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge, totalBookingPercentage);
+        double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
     @Test
     public void testGetShipmentByFilter_date() throws ParseException {
         resetFilters();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-        String fromDate = "2023-05-01 00:00:00";
-        String toDate = "2023-05-31 24:01:00";
+        String fromDate = "2023-05-01";
+        String toDate = "2023-05-31";
         filters.setFromDate(fromDate);
         filters.setToDate(toDate);
 
@@ -476,12 +452,10 @@ public class ShipmentServiceTest {
         double totalCost = 0.0;
         double totalNetRevenue = 0.0;
         double totalMarginAfterSurcharge = 0.0;
-        double totalMarginPercentageAfterSurcharge = 0.0;
-        double totalBookingPercentage = 0.0;
 
         for(Shipment sm : shipmentList) {
-            Assertions.assertTrue(sm.getDate().getTime().after(dateFormat.parse(fromDate)));
-            Assertions.assertTrue(sm.getDate().getTime().before(dateFormat.parse(toDate)));
+            Assertions.assertTrue(sm.getDate().isAfter(LocalDate.of(2023, Month.APRIL, 30)));
+            Assertions.assertTrue(sm.getDate().isBefore(LocalDate.of(2023, Month.JUNE, 1)));
 
             totalQuantity += sm.getQuantity();
             totalDealerNet += sm.getDealerNet();
@@ -489,15 +463,25 @@ public class ShipmentServiceTest {
             totalCost += sm.getTotalCost();
             totalNetRevenue += sm.getNetRevenue();
             totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
-            totalMarginPercentageAfterSurcharge += sm.getMarginPercentageAfterSurCharge();
-            totalBookingPercentage += sm.getBookingMarginPercentageAfterSurCharge();
         }
-
-        totalMarginPercentageAfterSurcharge = totalMarginPercentageAfterSurcharge / shipmentList.size();
-        totalBookingPercentage = totalBookingPercentage / shipmentList.size();
-
-        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge, totalBookingPercentage);
+        double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
+    @Test
+    public void testGetShipmentByOrderNo() {
+        String orderNo = "F90210";
+
+        Shipment shipment = shipmentService.getShipmentByOrderNo(orderNo);
+        Assertions.assertNotNull(shipment);
+        Assertions.assertEquals(orderNo, shipment.getOrderNo());
+    }
+
+    @Test
+    public void testGetShipmentByOrderNo_notFoundOrderNo() {
+        Shipment shipment = shipmentService.getShipmentByOrderNo("123123123");
+        Assertions.assertNull(shipment);
+    }
 
 }
