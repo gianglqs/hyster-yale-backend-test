@@ -55,7 +55,7 @@ public class ProductDimensionController {
             String imageFileExtension = FileUtils.IMAGE_FILE_EXTENSION;
 
             String savedImageName = fileUploadService.saveFileUploaded(image, authentication, saveImageFolder, imageFileExtension);
-            String saveFilePath = saveImageFolder + "/" + savedImageName;
+            String saveFilePath = saveImageFolder + savedImageName;
 
             if (FileUtils.isImageFile(saveFilePath)) {
                 imageName = targetFolder + savedImageName;
