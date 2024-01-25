@@ -63,7 +63,7 @@ public interface PartRepository extends JpaRepository<Part, String> {
 
     @Query(value =  "SELECT p FROM Part p WHERE " +
                     "   p.modelCode = :modelCode " +
-                    "   AND (:orderNumbers IS NULL OR p.orderNumber in (:orderNumbers))"+
+                    "   AND ((:orderNumbers) IS NULL OR p.orderNumber in (:orderNumbers))"+
                     "   ORDER BY p.partNumber"
 
     )
@@ -73,6 +73,6 @@ public interface PartRepository extends JpaRepository<Part, String> {
 
     @Query(value =  "SELECT COUNT(p) FROM Part p WHERE " +
             "   p.modelCode = :modelCode " +
-            "   AND (:orderNumbers IS NULL OR p.orderNumber in (:orderNumbers))")
+            "   AND ((:orderNumbers) IS NULL OR p.orderNumber in (:orderNumbers))")
     long countAllForProductDetail(String modelCode, List<String> orderNumbers);
 }
