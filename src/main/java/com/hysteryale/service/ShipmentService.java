@@ -5,7 +5,7 @@ import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ShipmentRepository;
-import com.hysteryale.repository.bookingorder.BookingOrderRepository;
+import com.hysteryale.repository.BookingOrderRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.TargetCurrency;
 import org.springframework.data.domain.Pageable;
@@ -61,6 +61,20 @@ public class ShipmentService extends BasedService {
                 }
             }
         }
+
+        boolean hasUSDToAUD = false;
+        boolean hasAUDToUSD = false;
+        for(ExchangeRate exchangeRate : exchangeRateList){
+            if(exchangeRate.getFrom().getCurrency().equals("USD") && exchangeRate.getTo().getCurrency().equals("AUD"))
+                hasUSDToAUD = true;
+            if(exchangeRate.getFrom().getCurrency().equals("AUD") && exchangeRate.getTo().getCurrency().equals("USD"))
+                hasAUDToUSD = true;
+        }
+
+        if(!hasUSDToAUD)
+            exchangeRateList.add(exchangeRateService.getNearestExchangeRate("USD", "AUD"));
+        if(!hasAUDToUSD)
+            exchangeRateList.add(exchangeRateService.getNearestExchangeRate("AUD", "USD"));
         result.put("listExchangeRate", exchangeRateList);
 
         //get total Recode
