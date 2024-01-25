@@ -1,7 +1,7 @@
 package com.hysteryale.service;
 
 import com.hysteryale.repository.*;
-import com.hysteryale.repository.bookingorder.BookingOrderRepository;
+import com.hysteryale.repository.BookingOrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -195,7 +195,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllDealerNames() {
         List<Map<String, String>> DealerNameMap = new ArrayList<>();
-        List<String> dealerNames = shipmentRepository.findAllDealerName();
+        List<String> dealerNames = bookingOrderRepository.getAllDealerName();
         dealerNames.sort(String::compareTo);
         for (String m : dealerNames) {
             Map<String, String> mMap = new HashMap<>();

@@ -4,7 +4,7 @@ import com.hysteryale.model.BookingOrder;
 import com.hysteryale.model.filters.CalculatorModel;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.payLoad.AdjustmentPayLoad;
-import com.hysteryale.repository.bookingorder.BookingOrderRepository;
+import com.hysteryale.repository.BookingOrderRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

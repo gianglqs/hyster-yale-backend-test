@@ -6,7 +6,7 @@ import com.hysteryale.model.*;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.repository.PartRepository;
-import com.hysteryale.repository.bookingorder.BookingOrderRepository;
+import com.hysteryale.repository.BookingOrderRepository;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;

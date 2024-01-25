@@ -7,7 +7,7 @@ import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.competitor.ForeCastValue;
 import com.hysteryale.repository.CompetitorPricingRepository;
 import com.hysteryale.repository.ShipmentRepository;
-import com.hysteryale.repository.bookingorder.BookingOrderRepository;
+import com.hysteryale.repository.BookingOrderRepository;
 import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -533,15 +533,6 @@ public class ImportService extends BasedService {
         double netRevenue = revenue - discount;
         shipment.setNetRevenue(netRevenue);
 
-
-        // dealerName
-        if (shipmentColumnsName.get("End Customer Name") != null) {
-            String dealerName = row.getCell(shipmentColumnsName.get("End Customer Name")).getStringCellValue();
-            shipment.setDealerName(dealerName);
-        } else {
-            throw new MissingColumnException("Missing column 'End Customer Name'!");
-        }
-
         // country
         if (shipmentColumnsName.get("Ship-to Country Code") != null) {
             String country = row.getCell(shipmentColumnsName.get("Ship-to Country Code")).getStringCellValue();
@@ -606,6 +597,9 @@ public class ImportService extends BasedService {
 
             // DN
             shipment.setDealerNet(booking.getDealerNet());
+
+            // DealerName
+            shipment.setDealerName(booking.getDealerName());
 
             //DN AfterSurcharge
             double dealerNetAfterSurcharge = booking.getDealerNetAfterSurCharge();

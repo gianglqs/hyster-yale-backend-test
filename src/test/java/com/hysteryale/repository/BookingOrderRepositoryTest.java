@@ -1,7 +1,6 @@
 package com.hysteryale.repository;
 
 import com.hysteryale.model.BookingOrder;
-import com.hysteryale.repository.bookingorder.BookingOrderRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
