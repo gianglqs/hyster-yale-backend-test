@@ -238,7 +238,7 @@ public class IndicatorService extends BasedService {
                 for (CompetitorPricing competitorPricing : competitorPricings) {
                     // if it has series -> assign ForeCastValue
                     if (!competitorPricing.getSeries().isEmpty()) {
-                        String strRegion = competitorPricing.getRegion();
+                        String strRegion = competitorPricing.getCountry().getRegion().getRegionName();
                         String metaSeries = competitorPricing.getSeries().substring(1); // extract metaSeries from series
 
                         int currentYear = LocalDate.now().getYear();

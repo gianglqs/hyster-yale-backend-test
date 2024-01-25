@@ -135,7 +135,7 @@ public class AdjustmentService extends BasedService {
     private AdjustmentPayLoad convertToAdjustment(BookingOrder booking, CalculatorModel calculatorModel) {
         AdjustmentPayLoad adjustmentPayLoad = new AdjustmentPayLoad();
         if (booking.getRegion() != null) {
-            adjustmentPayLoad.setRegion(booking.getRegion().getRegion());
+            adjustmentPayLoad.setRegion(booking.getRegion().getRegionName());
         }
         if (booking.getProductDimension() != null) {
             adjustmentPayLoad.setPlant(booking.getProductDimension().getPlant());

@@ -420,7 +420,7 @@ public class BookingOrderService extends BasedService {
 
     private BookingOrder importAOPMargin(BookingOrder booking) {
         if (booking.getProductDimension() != null) {
-            Double aopMargin = aopMarginService.getAOPMargin(booking.getSeries(), booking.getRegion().getRegion(), booking.getProductDimension().getPlant());
+            Double aopMargin = aopMarginService.getAOPMargin(booking.getSeries(), booking.getRegion().getRegionName(), booking.getProductDimension().getPlant());
             if (aopMargin != null)
                 booking.setAOPMarginPercentage(aopMargin);
         }

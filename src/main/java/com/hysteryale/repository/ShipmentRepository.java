@@ -15,7 +15,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
 
     @Query("SELECT c FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
-            " AND ((:regions) IS Null OR c.region IS NULL OR COALESCE(c.region.region, NULL) IN (:regions) )" +
+            " AND ((:regions) IS Null OR c.region IS NULL OR COALESCE(c.region.regionName, NULL) IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
@@ -53,7 +53,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
 
     @Query("SELECT COUNT(c) FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
-            " AND ((:regions) IS Null OR c.region.region IN (:regions) )" +
+            " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
@@ -98,7 +98,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             "AVG(b.marginPercentageAfterSurCharge) as marginPercentage, " +
             "AVG(b.totalCost) as costOrDealerNet ) " +
             "FROM Shipment b WHERE " +
-            " ((:regions) IS NULL OR b.region.region IN (:regions) )" +
+            " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR b.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR b.productDimension.clazz IN (:classes))" +
@@ -124,7 +124,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             "AVG(b.marginPercentageAfterSurCharge) as marginPercentage, " +
             "AVG(b.dealerNet) as costOrDealerNet ) " +
             "FROM Shipment b WHERE " +
-            " ((:regions) IS NULL OR b.region.region IN (:regions) )" +
+            " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR b.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR b.productDimension.clazz IN (:classes))" +
@@ -149,7 +149,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
 
     @Query("SELECT new Shipment('Total', COALESCE(sum(c.quantity),0), COALESCE(sum(c.dealerNet),0), COALESCE(sum(c.dealerNetAfterSurCharge),0), COALESCE(sum(c.totalCost),0), COALESCE(sum(c.netRevenue),0), COALESCE(sum(c.marginAfterSurCharge),0), COALESCE((sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)),0) ) FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
-            " AND ((:regions) IS Null OR c.region.region IN (:regions) )" +
+            " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
@@ -271,7 +271,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                     "       bo.region = r.id " +
                     "   where " +
                     "      (:orderNo is null or lower(bo.order_no) = lower( :orderNo))  " +
-                    "       and ((:regions) is null or r.region in (:regions)) " +
+                    "       and ((:regions) is null or r.region_name in (:regions)) " +
                     "       and ((:dealerNames) is null or bo.dealer_name in (:dealerNames)) " +
                     "       and ((:classes) is null or pd.clazz in (:classes)) " +
                     "       and ((:plants) is null or pd.plant in (:plants)) " +
