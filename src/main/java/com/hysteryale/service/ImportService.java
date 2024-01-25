@@ -539,15 +539,6 @@ public class ImportService extends BasedService {
         double netRevenue = revenue - discount;
         shipment.setNetRevenue(netRevenue);
 
-
-        // dealerName
-        if (shipmentColumnsName.get("End Customer Name") != null) {
-            String dealerName = row.getCell(shipmentColumnsName.get("End Customer Name")).getStringCellValue();
-            shipment.setDealerName(dealerName);
-        } else {
-            throw new MissingColumnException("Missing column 'End Customer Name'!");
-        }
-
         // country
         if (shipmentColumnsName.get("Ship-to Country Code") != null) {
             String country = row.getCell(shipmentColumnsName.get("Ship-to Country Code")).getStringCellValue();
@@ -612,6 +603,9 @@ public class ImportService extends BasedService {
 
             // DN
             shipment.setDealerNet(booking.getDealerNet());
+
+            // DealerName
+            shipment.setDealerName(booking.getDealerName());
 
             //DN AfterSurcharge
             double dealerNetAfterSurcharge = booking.getDealerNetAfterSurCharge();
