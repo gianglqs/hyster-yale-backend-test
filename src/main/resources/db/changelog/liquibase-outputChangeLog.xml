@@ -71,4 +71,14 @@
         <dropTable tableName="margin_analyst_data"/>
         <dropTable tableName="margin_analyst_summary"/>
     </changeSet>
+
+    <changeSet id="drop-unused-columns-in-part" author="hoangnhan">
+        <dropColumn tableName="part" columnName="default_locale"/>
+        <dropColumn tableName="part" columnName="email"/>
+        <dropColumn tableName="part" columnName="is_active"/>
+        <dropColumn tableName="part" columnName="last_login"/>
+        <dropColumn tableName="part" columnName="password"/>
+        <dropColumn tableName="part" columnName="user_name"/>
+        <dropColumn tableName="part" columnName="role_id"/>
+    </changeSet>
 </databaseChangeLog>
