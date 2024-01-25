@@ -16,6 +16,8 @@ public class Country {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
+    @Column(name = "country_name")
     private String countryName;
     @ManyToOne
     private Region region;
