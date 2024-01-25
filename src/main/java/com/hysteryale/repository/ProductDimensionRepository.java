@@ -34,8 +34,8 @@ public interface ProductDimensionRepository extends JpaRepository<ProductDimensi
     @Query("SELECT p.modelCode FROM ProductDimension p WHERE p.metaSeries = :metaSeries")
     Optional<String> getModelByMetaSeries(String metaSeries);
 
-    @Query("SELECT p.plant FROM ProductDimension p WHERE p.metaSeries = ?1")
-    String getPlantByMetaSeries(String metaSeries);
+    @Query(value = "SELECT p.plant FROM ProductDimension p WHERE p.metaSeries = :metaSeries LIMIT 1", nativeQuery = true)
+    String getPlantByMetaSeries(@Param("metaSeries") String metaSeries);
 
 
     @Query("SELECT p FROM ProductDimension p WHERE " +
