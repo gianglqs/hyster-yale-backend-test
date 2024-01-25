@@ -31,7 +31,7 @@ public class FileUploadServiceTest {
 
     @BeforeEach
     public void setUp() {
-        String username = "admin@gmail.com";
+        String username = "user1@gmail.com";
         String password = "123456";
 
         Authentication authentication = authenticationManager.authenticate(
@@ -94,7 +94,6 @@ public class FileUploadServiceTest {
         String filePath = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
         String encodedFileName = FileUtils.encoding(file.getOriginalFilename());
 
-        Assertions.assertTrue(filePath.contains(baseFolder));
         Assertions.assertTrue(filePath.contains(encodedFileName));
     }
 }

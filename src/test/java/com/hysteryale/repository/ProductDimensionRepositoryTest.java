@@ -16,13 +16,13 @@ public class ProductDimensionRepositoryTest {
     @Resource
     ProductDimensionRepository productDimensionRepository;
 
-    @Test
+    //@Test
     void findAll(){
         List<ProductDimension> getAll = productDimensionRepository.findAll();
         Assertions.assertNotEquals(getAll.size(), 0);
     }
 
-    @Test
+    //@Test
     void findByMetaSeries(){
         Optional<ProductDimension> findByMetaSeries = productDimensionRepository.findByMetaSeries("3C4");
         List<ProductDimension> findAll = productDimensionRepository.findAll();

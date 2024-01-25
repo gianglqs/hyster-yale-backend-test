@@ -61,6 +61,7 @@ public class TrendsServiceTest {
                 null,
                 new ArrayList<>(),
                 new ArrayList<>(),
+                new ArrayList<>(),
                 new ArrayList<>());
     }
 

@@ -53,6 +53,7 @@ public class OutlierServiceTest {
                 null,
                 new ArrayList<>(),
                 new ArrayList<>(),
+                new ArrayList<>(),
                 new ArrayList<>());
     }
 

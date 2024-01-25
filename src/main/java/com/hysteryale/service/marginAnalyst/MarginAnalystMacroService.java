@@ -125,9 +125,13 @@ public class MarginAnalystMacroService {
             String currency = macroSheet.contains("USD") ? "USD" : "AUD";
             String plant  = macroSheet.contains("SN") ? "SN" : "HYM";
             int columnNameRow = plant.equals("SN") ? 8 : 0;
+            String strRegion = "";
 
-            if(plant.equals("SN"))
-                listMarginData = marginAnalystMacroRepository.loadListMacroData(plant, currency, monthYear);
+            if(plant.equals("SN")) {
+                if(macroSheet.contains("USD"))
+                    strRegion = macroSheet.contains("Asia") ? "Asia" : "Pacific";
+                listMarginData = marginAnalystMacroRepository.loadListMacroData(plant, currency, monthYear, strRegion);
+            }
             else
                 listMarginData = marginAnalystMacroRepository.loadListHYMMacroData(currency, monthYear);
 
@@ -151,7 +155,8 @@ public class MarginAnalystMacroService {
                     }
                     else if(row.getRowNum() > columnNameRow) {
                         MarginAnalystMacro marginAnalystMacro = mapExcelDataToMarginAnalystMacro(row, currency, monthYear, plant);
-                        MarginAnalystMacro existedMacro = isMacroExisted(row, plant, currency, monthYear);
+                        marginAnalystMacro.setRegion(strRegion);
+                        MarginAnalystMacro existedMacro = isMacroExisted(row, plant, currency, monthYear, strRegion);
 
                         if(existedMacro == null) {
                             marginAnalystMacroList.add(marginAnalystMacro);
@@ -298,27 +303,17 @@ public class MarginAnalystMacroService {
         }
     }
 
-    private Optional<MarginAnalystMacro> getMarginAnalystMacro(Row row, String plant, String currency, LocalDate monthYear) {
+    private MarginAnalystMacro isMacroExisted(Row row, String plant, String currency, LocalDate monthYear, String strRegion) {
         String modelCode;
         String partNumber = row.getCell(MACRO_COLUMNS.get("Option Code")).getValue();
+        String description;
 
-        if(plant.equals("HYM"))
+        if(plant.equals("HYM")) {
             modelCode = row.getCell(MACRO_COLUMNS.get("Model Code")).getValue();
-        else {
-            modelCode = row.getCell(MACRO_COLUMNS.get("MODEL CD    (inc \"-\")")).getValue();
-            if(modelCode.isEmpty())
-                modelCode = row.getCell(MACRO_COLUMNS.get("MODEL CD (incl \"-\")")).getValue();
+            description = row.getCell(MACRO_COLUMNS.get("Description")).getValue();
         }
-        return marginAnalystMacroRepository.getMarginAnalystMacroByMonthYear(modelCode, partNumber, currency, monthYear);
-    }
-
-    private MarginAnalystMacro isMacroExisted(Row row, String plant, String currency, LocalDate monthYear) {
-        String modelCode;
-        String partNumber = row.getCell(MACRO_COLUMNS.get("Option Code")).getValue();
-
-        if(plant.equals("HYM"))
-            modelCode = row.getCell(MACRO_COLUMNS.get("Model Code")).getValue();
         else {
+            description = row.getCell(MACRO_COLUMNS.get("DESCRIPTION")).getValue();
             modelCode = row.getCell(MACRO_COLUMNS.get("MODEL CD    (inc \"-\")")).getValue();
             if(modelCode.isEmpty())
                 modelCode = row.getCell(MACRO_COLUMNS.get("MODEL CD (incl \"-\")")).getValue();
@@ -331,6 +326,8 @@ public class MarginAnalystMacroService {
                     && macro.getCurrency().getCurrency().equals(currency)
                     && dbMonthYear.getYear() == monthYear.getYear()
                     && dbMonthYear.getMonthValue() == monthYear.getMonthValue()
+                    && macro.getRegion().equals(strRegion)
+                    && macro.getDescription().equals(description)
             )
                 return macro;
         }

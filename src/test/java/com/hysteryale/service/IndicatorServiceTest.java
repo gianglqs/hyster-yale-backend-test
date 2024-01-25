@@ -95,6 +95,7 @@ public class IndicatorServiceTest {
                null,
                new ArrayList<>(),
                new ArrayList<>(),
+               new ArrayList<>(),
                new ArrayList<>());
    }
 
@@ -647,7 +648,7 @@ public class IndicatorServiceTest {
     @Test
     public void testUploadForecastFile() throws IOException {
         // Set up Authentication
-        String username = "admin@gmail.com";
+        String username = "user1@gmail.com";
         String password = "123456";
 
         Authentication authentication = authenticationManager.authenticate(
