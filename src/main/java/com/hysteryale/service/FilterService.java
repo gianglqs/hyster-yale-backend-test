@@ -195,7 +195,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllDealerNames() {
         List<Map<String, String>> DealerNameMap = new ArrayList<>();
-        List<String> dealerNames = shipmentRepository.findAllDealerName();
+        List<String> dealerNames = bookingOrderRepository.getAllDealerName();
         dealerNames.sort(String::compareTo);
         for (String m : dealerNames) {
             Map<String, String> mMap = new HashMap<>();
