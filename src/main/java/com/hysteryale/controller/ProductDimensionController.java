@@ -2,12 +2,15 @@ package com.hysteryale.controller;
 
 import com.hysteryale.model.ProductDimension;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ProductDimensionService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import javassist.NotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -66,5 +69,18 @@ public class ProductDimensionController {
     @GetMapping("/getProductDetail")
     public ProductDimension getDataForProductDetail(@RequestParam String modelCode) throws NotFoundException, IOException {
         return productDimensionService.getProductDimensionDetail(modelCode);
+    }
+
+    @PostMapping(path="/importData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<ResponseObject> importProduct(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        if (!FileUtils.isExcelFile(file.getInputStream()))
+            throw new InvalidPropertiesFormatException("Importing file is not Excel file");
+
+        String pathFileUploaded = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
+        productDimensionService.importProduct(pathFileUploaded);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));
     }
 }
