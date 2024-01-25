@@ -3,7 +3,7 @@ package com.hysteryale.service;
 import com.hysteryale.model.TrendData;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ShipmentRepository;
-import com.hysteryale.repository.bookingorder.BookingOrderRepository;
+import com.hysteryale.repository.BookingOrderRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
