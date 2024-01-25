@@ -22,7 +22,7 @@ COPY --from=build /app/target/ target/
 EXPOSE 8080
 
 # create folder to save file when import file excel
-RUN mkdir -p /opt/uploadFiles/forecast_pricing
+RUN mkdir -p /opt/hysteryale/uploadFiles/forecast_pricing
 RUN mkdir -p /opt/hysteryale/images/product/
 RUN mkdir -p /opt/hysteryale/images/part/
 # run
