@@ -1,7 +1,13 @@
 package com.hysteryale.service.marginAnalyst;
 
+import com.hysteryale.model.marginAnalyst.Freight;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
+import com.hysteryale.model.marginAnalyst.TargetMargin;
+import com.hysteryale.model.marginAnalyst.Warranty;
+import com.hysteryale.repository.marginAnalyst.FreightRepository;
 import com.hysteryale.repository.marginAnalyst.MarginAnalystMacroRepository;
+import com.hysteryale.repository.marginAnalyst.TargetMarginRepository;
+import com.hysteryale.repository.marginAnalyst.WarrantyRepository;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import com.hysteryale.utils.DateUtils;
 import com.hysteryale.utils.XLSB.Cell;
@@ -19,6 +25,7 @@ import org.xml.sax.SAXException;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
@@ -30,6 +37,12 @@ import java.util.regex.Pattern;
 public class MarginAnalystMacroServiceTest {
     @Resource
     MarginAnalystMacroService marginAnalystMacroService;
+    @Resource
+    FreightRepository freightRepository;
+    @Resource
+    WarrantyRepository warrantyRepository;
+    @Resource
+    TargetMarginRepository targetMarginRepository;
     @Resource
     MarginAnalystMacroRepository marginAnalystMacroRepository;
     HashMap<String, String> MACRO_COLUMNS = new HashMap<>();
@@ -130,5 +143,68 @@ public class MarginAnalystMacroServiceTest {
         Assertions.assertEquals(seriesCode, macro.getSeriesCode());
         Assertions.assertEquals(clazz, macro.getClazz());
         Assertions.assertEquals((int) costRMB, (int) macro.getCostRMB());
+    }
+
+    @Test
+    public void testGetFreightValue() {
+        String metaSeries = "abc";
+        double expectedFreight = 123;
+        LocalDate monthYear = LocalDate.of(2024, Month.JANUARY, 1);
+
+        // Test case Freight is existed
+        freightRepository.save(new Freight(metaSeries, expectedFreight, monthYear));
+        double result = marginAnalystMacroService.getFreightValue(metaSeries, monthYear);
+        Assertions.assertEquals(expectedFreight, result);
+
+        // Test case Freight is not existed
+        double notFoundResult = marginAnalystMacroService.getFreightValue("not found freight", monthYear);
+        Assertions.assertEquals(0, notFoundResult);
+    }
+
+    @Test
+    public void testGetWarranty() {
+        String clazz = "Class Test";
+        LocalDate monthYear = LocalDate.of(2024, Month.JANUARY, 1);
+        double expectedWarranty = 123;
+
+        // Test case Warranty is existed
+        warrantyRepository.save(new Warranty(clazz, monthYear, expectedWarranty));
+        double result = marginAnalystMacroService.getWarrantyValue(clazz, monthYear);
+        Assertions.assertEquals(expectedWarranty, result);
+
+        // Test case Warranty is not existed
+        double notFoundResult = marginAnalystMacroService.getWarrantyValue("Not Found Class", monthYear);
+        Assertions.assertEquals(0, notFoundResult);
+    }
+
+    @Test
+    public void testGetTargetMargin() {
+        String region = "Region Test";
+        String metaSeries = "MetaSeries Test";
+        LocalDate monthYear = LocalDate.of(2024, Month.JANUARY, 1);
+        double expectedTargetMargin = 100;
+
+        // Test case TargetMargin is existed
+        targetMarginRepository.save(new TargetMargin(region, metaSeries, monthYear, expectedTargetMargin));
+        double result = marginAnalystMacroService.getTargetMarginValue(region, metaSeries, monthYear);
+        Assertions.assertEquals(expectedTargetMargin, result);
+
+        // Test case TargetMargin is not existed
+        double notFoundResult = marginAnalystMacroService.getTargetMarginValue("Not Found Region", "Not Found Meta Series", monthYear);
+        Assertions.assertEquals(0, notFoundResult);
+    }
+
+    @Test
+    public void testGetClassByModelCode() {
+        String clazz = "Class Test";
+        String modelCode = "Model Code Test";
+
+        MarginAnalystMacro macro = new MarginAnalystMacro();
+        macro.setModelCode(modelCode);
+        macro.setClazz(clazz);
+        marginAnalystMacroRepository.save(macro);
+
+        String result = marginAnalystMacroService.getClassByModelCode(modelCode);
+        Assertions.assertEquals(clazz, result);
     }
 }
