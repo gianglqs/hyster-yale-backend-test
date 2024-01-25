@@ -702,6 +702,19 @@ public class BookingOrderService extends BasedService {
                 }
             }
         }
+        boolean hasUSDToAUD = false;
+        boolean hasAUDToUSD = false;
+        for(ExchangeRate exchangeRate : exchangeRateList){
+            if(exchangeRate.getFrom().getCurrency().equals("USD") && exchangeRate.getTo().getCurrency().equals("AUD"))
+                hasUSDToAUD = true;
+            if(exchangeRate.getFrom().getCurrency().equals("AUD") && exchangeRate.getTo().getCurrency().equals("USD"))
+                hasAUDToUSD = true;
+        }
+
+        if(!hasUSDToAUD)
+            exchangeRateList.add(exchangeRateService.getNearestExchangeRate("USD", "AUD"));
+        if(!hasAUDToUSD)
+            exchangeRateList.add(exchangeRateService.getNearestExchangeRate("AUD", "USD"));
 
         result.put("listExchangeRate", exchangeRateList);
         result.put("listBookingOrder", bookingOrderList);
