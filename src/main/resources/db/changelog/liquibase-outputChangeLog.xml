@@ -7,4 +7,68 @@
     <changeSet id="rename-upload-by-id-column" author="hoangnhan">
         <renameColumn tableName="file_upload" oldColumnName="uploadedBy_id" newColumnName="uploadedby_id"/>
     </changeSet>
+
+    <changeSet id="rename-competitor-color" author="hoangnhan">
+       <renameTable oldTableName="competitorcolor" newTableName="competitor_color"/>
+    </changeSet>
+
+    <changeSet id="rename-competitor-color-fields" author="hoangnhan">
+        <renameColumn tableName="competitor_color" oldColumnName="colorcode" newColumnName="color_code"/>
+        <renameColumn tableName="competitor_color" oldColumnName="groupname" newColumnName="group_name"/>
+    </changeSet>
+
+    <changeSet id="rename-competitor-pricing" author="hoangnhan">
+        <renameTable oldTableName="competitorpricing" newTableName="competitor_pricing"/>
+    </changeSet>
+
+    <changeSet id="rename-competitor-pricing-fields" author="hoangnhan">
+        <dropColumn tableName="competitor_pricing" columnName="ischinesebrand"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="competitorname" newColumnName="competitor_name"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="averagedn" newColumnName="average_dn"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="chinesebrand" newColumnName="chinese_brand"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="hygleadtime" newColumnName="hyg_lead_time"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="competitorleadtime" newColumnName="competitor_lead_time"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="competitorpricing" newColumnName="competitor_pricing"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="dealerpremiumpercentage" newColumnName="dealer_premium_percentage"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="dealerstreetpricing" newColumnName="dealer_street_pricing"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="dealerhandlingcost" newColumnName="dealer_handling_cost"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="dealerpricingpremiumpercentage" newColumnName="dealer_pricing_premium_percentage"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="dealerpricingpremium" newColumnName="dealer_pricing_premium"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="variancepercentage" newColumnName="variance_percentage"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="dealernet" newColumnName="dealer_net"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="marketshare" newColumnName="market_share"/>
+    </changeSet>
+
+    <changeSet id="drop-competitor-pricing-fields" author="hoangnhan">
+        <dropColumn tableName="competitor_pricing" columnName="region"/>
+    </changeSet>
+
+    <changeSet id="rename-region" author="hoangnhan">
+        <renameColumn tableName="region" oldColumnName="region" newColumnName="region_name"/>
+    </changeSet>
+
+    <changeSet id="rename-freight" author="hoangnhan">
+        <renameColumn tableName="freight" oldColumnName="metaseries" newColumnName="meta_series"/>
+        <renameColumn tableName="freight" oldColumnName="monthyear" newColumnName="month_year"/>
+    </changeSet>
+
+    <changeSet id="rename-target_margin" author="hoangnhan">
+        <renameColumn tableName="target_margin" oldColumnName="metaseries" newColumnName="meta_series"/>
+        <renameColumn tableName="target_margin" oldColumnName="monthyear" newColumnName="month_year"/>
+        <renameColumn tableName="target_margin" oldColumnName="stdmarginpercentage" newColumnName="std_margin_percentage"/>
+    </changeSet>
+
+    <changeSet id="rename-warranty" author="hoangnhan">
+        <renameColumn tableName="warranty" oldColumnName="monthyear" newColumnName="month_year"/>
+    </changeSet>
+
+    <changeSet id="rename-country" author="hoangnhan">
+        <renameColumn tableName="country" oldColumnName="countryname" newColumnName="country_name"/>
+    </changeSet>
+
+    <changeSet id="drop-unused-tables" author="hoangnhan">
+        <dropTable tableName="refreshtoken"/>
+        <dropTable tableName="margin_analyst_data"/>
+        <dropTable tableName="margin_analyst_summary"/>
+    </changeSet>
 </databaseChangeLog>
