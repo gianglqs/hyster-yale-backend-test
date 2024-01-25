@@ -12,11 +12,16 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "competitor_color")
 public class CompetitorColor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
+    @Column(name = "group_name")
     private String groupName;
+
+    @Column(name = "color_code")
     private String colorCode;
 
     public CompetitorColor(String groupName, String colorCode) {
