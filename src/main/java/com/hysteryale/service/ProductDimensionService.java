@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.swing.text.html.Option;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.*;
@@ -97,8 +94,22 @@ public class ProductDimensionService extends BasedService {
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
-        Sheet orderSheet = workbook.getSheet("Data");
-        for (Row row : orderSheet) {
+        Sheet sheet = workbook.getSheet("Data");
+        importProduct(sheet);
+        updateStateImportFile(pathFile);
+
+    }
+
+    public void importProduct(String path) throws IOException, IllegalAccessException {
+        InputStream is = new FileInputStream(path);
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+
+        Sheet sheet = workbook.getSheet("Data");
+        importProduct(sheet);
+    }
+
+    private void importProduct(Sheet sheet) throws IllegalAccessException {
+        for (Row row : sheet) {
             if (row.getRowNum() == 1)
                 assignColumnNames(row);
             else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
@@ -109,8 +120,6 @@ public class ProductDimensionService extends BasedService {
                     productDimensionRepository.save(newProductDimension);
             }
         }
-        updateStateImportFile(pathFile);
-
     }
 
     public boolean checkExist(ProductDimension productDimension) {

@@ -80,7 +80,7 @@ public class Part {
     private boolean isSPED;
 
 
-    public Part(String quoteId, int quantity,String orderNumber, String modelCode, String series, String partNumber, double listPrice, double discount, double discountPercentage, String billTo, double netPriceEach, double customerPrice, double extendedCustomerPrice, Currency currency, String clazz, String region, boolean isSPED) {
+    public Part(String quoteId, int quantity, String orderNumber, String modelCode, String series, String partNumber, double listPrice, double discount, double discountPercentage, String billTo, double netPriceEach, double customerPrice, double extendedCustomerPrice, Currency currency, String clazz, String region, boolean isSPED) {
         this.quoteId = quoteId;
         this.quantity = quantity;
         this.modelCode = modelCode;
@@ -98,5 +98,13 @@ public class Part {
         this.clazz = clazz;
         this.region = region;
         this.isSPED = isSPED;
+    }
+
+    public Part(String partNumber, String image, Currency currency, double listPrice, String description) {
+        this.description = description;
+        this.image = image;
+        this.partNumber = partNumber;
+        this.currency = currency;
+        this.listPrice = listPrice;
     }
 }

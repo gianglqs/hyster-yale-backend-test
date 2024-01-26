@@ -61,9 +61,9 @@ public interface PartRepository extends JpaRepository<Part, String> {
     Optional<Part> getPart(@Param("modelCode") String modelCode, @Param("partNumber") String partNumber,
                            @Param("orderNumber") String orderNumber, @Param("recordedTime") LocalDate recordedTime, @Param("currency") String currency);
 
-    @Query(value =  "SELECT p FROM Part p WHERE " +
+    @Query(value =  "SELECT distinct new Part(p.partNumber, p.image, p.currency, p.listPrice, p.description) FROM Part p WHERE " +
                     "   p.modelCode = :modelCode " +
-                    "   AND (:orderNumbers IS NULL OR p.orderNumber in (:orderNumbers))"+
+                    "   AND ((:orderNumbers) IS NULL OR p.orderNumber in (:orderNumbers))"+
                     "   ORDER BY p.partNumber"
 
     )
@@ -71,8 +71,8 @@ public interface PartRepository extends JpaRepository<Part, String> {
                                                 List<String> orderNumbers,
                                                 Pageable pageable);
 
-    @Query(value =  "SELECT COUNT(p) FROM Part p WHERE " +
-            "   p.modelCode = :modelCode " +
-            "   AND (:orderNumbers IS NULL OR p.orderNumber in (:orderNumbers))")
+    @Query(value =  "SELECT COUNT(distinct (p.part_number, p.image, p.currency_currency, p.list_price, p.description)) FROM Part p WHERE " +
+            "   p.model_code = :modelCode " +
+            "   AND ((:orderNumbers) IS NULL OR p.order_number in (:orderNumbers))", nativeQuery = true)
     long countAllForProductDetail(String modelCode, List<String> orderNumbers);
 }
