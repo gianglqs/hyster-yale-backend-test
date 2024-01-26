@@ -220,8 +220,8 @@ public class PartService extends BasedService {
         result.put("listPart", partList);
 
         // count
-        long countAll = partRepository.countAllForProductDetail( (String) filtersMap.get("modelCodeFilter"),
-                (List<String>) filtersMap.get("orderNumberListFilter"));
+        long countAll = partRepository.countAllForProductDetail((String) filtersMap.get("modelCodeFilter"),
+                filtersMap.get("orderNumberListFilter") == null ? Collections.emptyList() : (List<String>) filtersMap.get("orderNumberListFilter"));
         result.put("totalItems", countAll);
 
         return result;
