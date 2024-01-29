@@ -91,7 +91,7 @@ public class OutlierService extends BasedService {
                     order.getRegion().getRegionName(),
                     order.getDealerNet(),
                     order.getDealerNetAfterSurcharge() == 0 ? 0 : order.getMarginAfterSurcharge() / order.getDealerNetAfterSurcharge(),
-                    order.getProductDimension().getModelCode()
+                    order.getProduct().getModelCode()
             );
             switch (order.getRegion().getRegionName()) {
                 case "Asia":

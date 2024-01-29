@@ -175,7 +175,7 @@ public class BookingServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Booking bo : listResult) {
-            Assertions.assertEquals(plant, bo.getProductDimension().getPlant());
+            Assertions.assertEquals(plant, bo.getProduct().getPlant());
 
             quantity += bo.getQuantity();
             if(bo.getCurrency().getCurrency().equals("AUD")) {
@@ -218,7 +218,7 @@ public class BookingServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Booking bo : listResult) {
-            Assertions.assertEquals(metaSeries, bo.getProductDimension().getMetaSeries());
+            Assertions.assertEquals(metaSeries, bo.getProduct().getMetaSeries());
 
             quantity += bo.getQuantity();
             if(bo.getCurrency().getCurrency().equals("AUD")) {
@@ -304,7 +304,7 @@ public class BookingServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Booking bo : listResult) {
-            Assertions.assertEquals(clazz, bo.getProductDimension().getClazz());
+            Assertions.assertEquals(clazz, bo.getProduct().getClazz());
 
             quantity += bo.getQuantity();
             if(bo.getCurrency().getCurrency().equals("AUD")) {
@@ -347,7 +347,7 @@ public class BookingServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Booking bo : listResult) {
-            Assertions.assertEquals(modelCode, bo.getProductDimension().getModelCode());
+            Assertions.assertEquals(modelCode, bo.getProduct().getModelCode());
 
             quantity += bo.getQuantity();
             if(bo.getCurrency().getCurrency().equals("AUD")) {
@@ -390,7 +390,7 @@ public class BookingServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Booking bo : listResult) {
-            Assertions.assertEquals(segment, bo.getProductDimension().getSegment());
+            Assertions.assertEquals(segment, bo.getProduct().getSegment());
 
             quantity += bo.getQuantity();
             if(bo.getCurrency().getCurrency().equals("AUD")) {

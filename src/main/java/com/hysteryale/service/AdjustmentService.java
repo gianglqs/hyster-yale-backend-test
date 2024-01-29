@@ -137,10 +137,10 @@ public class AdjustmentService extends BasedService {
         if (booking.getRegion() != null) {
             adjustmentPayLoad.setRegion(booking.getRegion().getRegionName());
         }
-        if (booking.getProductDimension() != null) {
-            adjustmentPayLoad.setPlant(booking.getProductDimension().getPlant());
-            adjustmentPayLoad.setClazz(booking.getProductDimension().getClazz());
-            adjustmentPayLoad.setModel(booking.getProductDimension().getModelCode());
+        if (booking.getProduct() != null) {
+            adjustmentPayLoad.setPlant(booking.getProduct().getPlant());
+            adjustmentPayLoad.setClazz(booking.getProduct().getClazz());
+            adjustmentPayLoad.setModel(booking.getProduct().getModelCode());
             if (booking.getSeries() != null)
                 adjustmentPayLoad.setMetaSeries(booking.getSeries().substring(1));
         }

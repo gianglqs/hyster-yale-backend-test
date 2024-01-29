@@ -16,11 +16,11 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
     @Query("SELECT c FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region IS NULL OR COALESCE(c.region.regionName, NULL) IN (:regions) )" +
-            " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
+            " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
-            " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
+            " AND ((:classes) IS NULL OR c.product.clazz IN (:classes))" +
+            " AND ((:models) IS NULL OR c.product.modelCode IN (:models))" +
+            " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
             "   (:AOPMarginPercentage = 'Above AOP Margin %' AND c.AOPMarginPercentage < c.marginPercentageAfterSurCharge) OR" +
@@ -54,11 +54,11 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
     @Query("SELECT COUNT(c) FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
-            " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
+            " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
-            " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
+            " AND ((:classes) IS NULL OR c.product.clazz IN (:classes))" +
+            " AND ((:models) IS NULL OR c.product.modelCode IN (:models))" +
+            " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
             "   (:AOPMarginPercentage = 'Above AOP Margin %' AND c.AOPMarginPercentage < c.marginPercentageAfterSurCharge) OR" +
@@ -99,11 +99,11 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             "AVG(b.totalCost) as costOrDealerNet ) " +
             "FROM Shipment b WHERE " +
             " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
-            " AND ((:plants) IS NULL OR b.productDimension.plant IN (:plants))" +
+            " AND ((:plants) IS NULL OR b.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR b.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR b.productDimension.modelCode IN (:models))" +
-            " AND ((:segments) IS NULL OR b.productDimension.segment IN (:segments))" +
+            " AND ((:classes) IS NULL OR b.product.clazz IN (:classes))" +
+            " AND ((:models) IS NULL OR b.product.modelCode IN (:models))" +
+            " AND ((:segments) IS NULL OR b.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR b.dealerName IN (:dealerName)) " +
             " AND EXTRACT(year FROM b.date) = :year" +
             " AND b.marginPercentageAfterSurCharge != 'NaN'" +
@@ -125,11 +125,11 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             "AVG(b.dealerNet) as costOrDealerNet ) " +
             "FROM Shipment b WHERE " +
             " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
-            " AND ((:plants) IS NULL OR b.productDimension.plant IN (:plants))" +
+            " AND ((:plants) IS NULL OR b.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR b.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR b.productDimension.modelCode IN (:models))" +
-            " AND ((:segments) IS NULL OR b.productDimension.segment IN (:segments))" +
+            " AND ((:classes) IS NULL OR b.product.clazz IN (:classes))" +
+            " AND ((:models) IS NULL OR b.product.modelCode IN (:models))" +
+            " AND ((:segments) IS NULL OR b.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR b.dealerName IN (:dealerName)) " +
             " AND EXTRACT(year FROM b.date) = :year" +
             " AND b.marginPercentageAfterSurCharge != 'NaN'" +
@@ -150,11 +150,11 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
     @Query("SELECT new Shipment('Total', COALESCE(sum(c.quantity),0), COALESCE(sum(c.dealerNet),0), COALESCE(sum(c.dealerNetAfterSurCharge),0), COALESCE(sum(c.totalCost),0), COALESCE(sum(c.netRevenue),0), COALESCE(sum(c.marginAfterSurCharge),0), COALESCE((sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)),0) ) FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
-            " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
+            " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
-            " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
+            " AND ((:classes) IS NULL OR c.product.clazz IN (:classes))" +
+            " AND ((:models) IS NULL OR c.product.modelCode IN (:models))" +
+            " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
             "   (:AOPMarginPercentage = 'Above AOP Margin %' AND c.AOPMarginPercentage < c.marginPercentageAfterSurCharge) OR" +

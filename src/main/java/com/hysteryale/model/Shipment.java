@@ -41,8 +41,8 @@ public class Shipment {
     private String ctryCode;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_dimension")
-    private ProductDimension productDimension;
+    @JoinColumn(name = "product")
+    private Product product;
 
     private String series;
 

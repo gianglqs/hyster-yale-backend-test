@@ -238,7 +238,7 @@ public class ShipmentServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Shipment sm : shipmentList) {
-            Assertions.assertEquals(plant, sm.getProductDimension().getPlant());
+            Assertions.assertEquals(plant, sm.getProduct().getPlant());
 
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
@@ -334,7 +334,7 @@ public class ShipmentServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Shipment sm : shipmentList) {
-            Assertions.assertEquals(clazz, sm.getProductDimension().getClazz());
+            Assertions.assertEquals(clazz, sm.getProduct().getClazz());
 
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
@@ -430,7 +430,7 @@ public class ShipmentServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Shipment sm : shipmentList) {
-            Assertions.assertEquals(modelCode, sm.getProductDimension().getModelCode());
+            Assertions.assertEquals(modelCode, sm.getProduct().getModelCode());
 
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {

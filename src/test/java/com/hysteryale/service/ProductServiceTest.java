@@ -1,6 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.ProductDimension;
+import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ProductDimensionRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
-public class ProductDimensionServiceTest {
+public class ProductServiceTest {
     @Resource
     ProductDimensionService productDimensionService;
     @Resource
@@ -61,14 +61,14 @@ public class ProductDimensionServiceTest {
     public void testGetProductDimensionByModelCode() {
         String modelCode = "J40XN";
 
-        ProductDimension result = productDimensionService.getProductDimensionByModelCode(modelCode);
+        Product result = productDimensionService.getProductDimensionByModelCode(modelCode);
         Assertions.assertNotNull(result);
         Assertions.assertEquals(modelCode, result.getModelCode());
     }
 
     @Test
     public void testGetProductDimensionByModelCode_notFound() {
-        ProductDimension result = productDimensionService.getProductDimensionByModelCode("asdbasjhdb");
+        Product result = productDimensionService.getProductDimensionByModelCode("asdbasjhdb");
         Assertions.assertNull(result);
     }
 
@@ -92,7 +92,7 @@ public class ProductDimensionServiceTest {
         FilterModel filters = new FilterModel();
 
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
-        List<ProductDimension> getData = productDimensionRepository.getDataByFilter(
+        List<Product> getData = productDimensionRepository.getDataByFilter(
                 (String) filterMap.get("modelCodeFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),

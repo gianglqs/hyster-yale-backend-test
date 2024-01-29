@@ -136,9 +136,9 @@ public class BookingOrderService extends BasedService {
         if (ORDER_COLUMNS_NAME.get("MODEL") != null) {
             Cell modelCell = row.getCell(ORDER_COLUMNS_NAME.get("MODEL"));
             //set ProductDimension
-            ProductDimension productDimension = productDimensionService.getProductDimensionByModelCode(modelCell.getStringCellValue());
-            if (productDimension != null) {
-                booking.setProductDimension(productDimension);
+            Product product = productDimensionService.getProductDimensionByModelCode(modelCell.getStringCellValue());
+            if (product != null) {
+                booking.setProduct(product);
             } else {
                 logWarning("Not found ProductDimension with OrderNo: " + booking.getOrderNo());
             }
@@ -286,8 +286,8 @@ public class BookingOrderService extends BasedService {
                 // import DN, DNAfterSurcharge
                 newBooking = importDNAndDNAfterSurcharge(newBooking);
 
-                if (newBooking.getProductDimension() != null) { // check productDimension
-                    if (USPlant.contains(newBooking.getProductDimension().getPlant())) {
+                if (newBooking.getProduct() != null) { // check productDimension
+                    if (USPlant.contains(newBooking.getProduct().getPlant())) {
                         newBooking = setTotalCostAndCurrency(newBooking, listCostDataByMonthAndYear);
                         logInfo("US Plant");
                     } else {
@@ -322,11 +322,11 @@ public class BookingOrderService extends BasedService {
             else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
                 Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
 
-                if (newBooking.getProductDimension() != null) {
+                if (newBooking.getProduct() != null) {
                     // import DN, DNAfterSurcharge
                     newBooking = importDNAndDNAfterSurcharge(newBooking);
 
-                    if (USPlant.contains(newBooking.getProductDimension().getPlant())) {
+                    if (USPlant.contains(newBooking.getProduct().getPlant())) {
                         logInfo("US Plant");
                         // import totalCost when import file totalCost
 
@@ -381,7 +381,7 @@ public class BookingOrderService extends BasedService {
                 // map data from excel file
                 Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
 
-                if (newBooking.getProductDimension() != null) {
+                if (newBooking.getProduct() != null) {
                     newBooking = importDNAndDNAfterSurcharge(newBooking);
                     newBooking = importOldMarginPercentageAndCurrency(newBooking, marginDataFileList);
                     newBooking = calculateTotalCostAndMarginAfterSurcharge(newBooking);
@@ -419,8 +419,8 @@ public class BookingOrderService extends BasedService {
     }
 
     private Booking importAOPMargin(Booking booking) {
-        if (booking.getProductDimension() != null) {
-            Double aopMargin = aopMarginService.getAOPMargin(booking.getSeries(), booking.getRegion().getRegionName(), booking.getProductDimension().getPlant());
+        if (booking.getProduct() != null) {
+            Double aopMargin = aopMarginService.getAOPMargin(booking.getSeries(), booking.getRegion().getRegionName(), booking.getProduct().getPlant());
             if (aopMargin != null)
                 booking.setAOPMarginPercentage(aopMargin);
         }
@@ -438,9 +438,9 @@ public class BookingOrderService extends BasedService {
         booking.setCurrency(currency);
         logInfo(booking.getOrderNo() + "   " + currency.getCurrency());
         double totalCost = 0;
-        if (!booking.getProductDimension().getPlant().equals("SN")) { // plant is Hysteryale, Maximal, Ruyi, Staxx
+        if (!booking.getProduct().getPlant().equals("SN")) { // plant is Hysteryale, Maximal, Ruyi, Staxx
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByHYMPlantAndListPartNumber(
-                    booking.getProductDimension().getModelCode(), listPartNumber, booking.getCurrency().getCurrency(), date);
+                    booking.getProduct().getModelCode(), listPartNumber, booking.getCurrency().getCurrency(), date);
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
                 totalCost += marginAnalystMacro.getCostRMB();
             }
@@ -448,12 +448,12 @@ public class BookingOrderService extends BasedService {
             ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("CNY", booking.getCurrency().getCurrency());
             if (exchangeRate != null) {
                 totalCost *= exchangeRate.getRate();
-                logInfo("None SN list " + marginAnalystMacroList.size() + "  " + booking.getOrderNo() + "  " + booking.getProductDimension().getModelCode() + "  " + exchangeRate.getRate());
+                logInfo("None SN list " + marginAnalystMacroList.size() + "  " + booking.getOrderNo() + "  " + booking.getProduct().getModelCode() + "  " + exchangeRate.getRate());
             }
         } else { // plant is SN
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByPlantAndListPartNumber(
-                    booking.getProductDimension().getModelCode(), listPartNumber, booking.getCurrency().getCurrency(),
-                    booking.getProductDimension().getPlant(), date);
+                    booking.getProduct().getModelCode(), listPartNumber, booking.getCurrency().getCurrency(),
+                    booking.getProduct().getPlant(), date);
 
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
                 totalCost += marginAnalystMacro.getCostRMB();
@@ -461,7 +461,7 @@ public class BookingOrderService extends BasedService {
             ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("USD", booking.getCurrency().getCurrency());
             if (exchangeRate != null) {
                 totalCost *= exchangeRate.getRate();
-                logInfo(" SN list " + marginAnalystMacroList.size() + "  " + booking.getOrderNo() + "  " + booking.getProductDimension().getModelCode() + "  " + exchangeRate.getRate());
+                logInfo(" SN list " + marginAnalystMacroList.size() + "  " + booking.getOrderNo() + "  " + booking.getProduct().getModelCode() + "  " + exchangeRate.getRate());
             }
         }
 

@@ -423,7 +423,7 @@ public class ImportService extends BasedService {
                 Shipment newShipment = mapExcelDataIntoShipmentObject(row, SHIPMENT_COLUMNS_NAME);
 
                 // check it has BookingOrder
-                if (newShipment.getProductDimension() != null) {
+                if (newShipment.getProduct() != null) {
                     shipmentList.add(newShipment);
                 }
             }
@@ -584,7 +584,7 @@ public class ImportService extends BasedService {
             Booking booking = bookingOrderOptional.get();
 
             // productDimension
-            shipment.setProductDimension(booking.getProductDimension());
+            shipment.setProduct(booking.getProduct());
 
             // set Region
             shipment.setRegion(booking.getRegion());

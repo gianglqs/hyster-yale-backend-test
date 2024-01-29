@@ -12,8 +12,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "productdimension")
-public class ProductDimension {
+@Table(name = "product")
+public class Product {
     @Id
     @Column(name = "modelcode")
     private String modelCode;
@@ -27,7 +27,7 @@ public class ProductDimension {
     private String image;
     private String description;
 
-    public ProductDimension(String plant, String clazz, String modelCode) {
+    public Product(String plant, String clazz, String modelCode) {
         this.plant = plant;
         this.clazz = clazz;
         this.modelCode = modelCode;

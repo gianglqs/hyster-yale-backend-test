@@ -391,7 +391,7 @@ public class IMMarginAnalystDataService {
                 if(optionalBookingOrder.isEmpty())
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Booking Order: " + orderNumber);
 
-                String plant = optionalBookingOrder.get().getProductDimension().getPlant();
+                String plant = optionalBookingOrder.get().getProduct().getPlant();
                 LocalDate monthYear = optionalBookingOrder.get().getDate();
                 monthYear = LocalDate.of(monthYear.getYear(), monthYear.getMonth(), 1);
 

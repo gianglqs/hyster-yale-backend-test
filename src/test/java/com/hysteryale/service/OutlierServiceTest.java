@@ -136,7 +136,7 @@ public class OutlierServiceTest {
         double totalMargin = 0.0;
 
         for(Booking outlier : outliersList) {
-            Assertions.assertEquals(plant, outlier.getProductDimension().getPlant());
+            Assertions.assertEquals(plant, outlier.getProduct().getPlant());
 
             quantity += outlier.getQuantity();
             totalCost += outlier.getTotalCost();
@@ -204,7 +204,7 @@ public class OutlierServiceTest {
         double totalMargin = 0.0;
 
         for(Booking outlier : outliersList) {
-            Assertions.assertEquals(clazz, outlier.getProductDimension().getClazz());
+            Assertions.assertEquals(clazz, outlier.getProduct().getClazz());
 
             quantity += outlier.getQuantity();
             totalCost += outlier.getTotalCost();
@@ -243,8 +243,8 @@ public class OutlierServiceTest {
 
         for(Booking outlier : outliersList) {
             Assertions.assertEquals(region, outlier.getRegion().getRegionName());
-            Assertions.assertEquals(plant, outlier.getProductDimension().getPlant());
-            Assertions.assertEquals(clazz, outlier.getProductDimension().getClazz());
+            Assertions.assertEquals(plant, outlier.getProduct().getPlant());
+            Assertions.assertEquals(clazz, outlier.getProduct().getClazz());
 
             quantity += outlier.getQuantity();
             totalCost += outlier.getTotalCost();
