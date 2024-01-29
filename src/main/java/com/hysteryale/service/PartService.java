@@ -201,7 +201,7 @@ public class PartService extends BasedService {
         return partRepository.getPartNumberByOrderNo(orderNo);
     }
 
-    public Currency getCurrencyByOrderNo(String orderNo){
+    public Currency getCurrencyByOrderNo(String orderNo) {
         return partRepository.getCurrencyByOrderNo(orderNo);
     }
 
@@ -217,13 +217,23 @@ public class PartService extends BasedService {
                 (List<String>) filtersMap.get("orderNumberListFilter"),
                 (Pageable) filtersMap.get("pageable")
         );
+        setIdForListPart(partList);
         result.put("listPart", partList);
 
         // count
-        long countAll = partRepository.countAllForProductDetail( (String) filtersMap.get("modelCodeFilter"),
-                (List<String>) filtersMap.get("orderNumberListFilter"));
+        long countAll = partRepository.countAllForProductDetail((String) filtersMap.get("modelCodeFilter"),
+                filtersMap.get("orderNumberListFilter") == null ? Collections.emptyList() : (List<String>) filtersMap.get("orderNumberListFilter"));
         result.put("totalItems", countAll);
 
         return result;
+    }
+
+    private List<Part> setIdForListPart(List<Part> parts) {
+        int id = 0;
+        for (Part part : parts) {
+            part.setId(id);
+            id++;
+        }
+        return parts;
     }
 }
