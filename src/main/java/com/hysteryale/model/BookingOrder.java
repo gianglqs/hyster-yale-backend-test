@@ -62,19 +62,19 @@ public class BookingOrder {
     @Column(name = "dealer_net")
     private double dealerNet;
 
-    @Column(name = "dealer_net_after_sur_charge")
-    private double dealerNetAfterSurCharge;
+    @Column(name = "dealer_net_after_surcharge")
+    private double dealerNetAfterSurcharge;
 
-    @Column(name = "margin_after_sur_charge")
-    private double marginAfterSurCharge;
+    @Column(name = "margin_after_surcharge")
+    private double marginAfterSurcharge;
 
-    @Column(name = "margin_percentage_after_sur_charge")
-    private double marginPercentageAfterSurCharge;
+    @Column(name = "margin_percentage_after_surcharge")
+    private double marginPercentageAfterSurcharge;
 
     @Column(name = "aopmargin_percentage")
     private double AOPMarginPercentage;
 
-    public BookingOrder(String region, String plant, String clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurCharge, double marginAfterSurCharge) {
+    public BookingOrder(String region, String plant, String clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge) {
 
         ProductDimension p = new ProductDimension(plant, clazz, model);
         this.region = new Region(region);
@@ -83,11 +83,11 @@ public class BookingOrder {
         this.quantity = quantity;
         this.totalCost = totalCost;
         this.dealerNet = dealerNet;
-        this.dealerNetAfterSurCharge = dealerNetAfterSurCharge;
-        this.marginAfterSurCharge = marginAfterSurCharge;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
+        this.marginAfterSurcharge = marginAfterSurcharge;
     }
 
-    public BookingOrder(String region, ProductDimension productDimension, String series, double totalCost, double dealerNetAfterSurCharge, double marginAfterSurCharge, long quantity) {
+    public BookingOrder(String region, ProductDimension productDimension, String series, double totalCost, double dealerNetAfterSurcharge, double marginAfterSurcharge, long quantity) {
 
 
         this.region = new Region(region);
@@ -95,44 +95,44 @@ public class BookingOrder {
         this.series = series;
         this.quantity = quantity;
         this.totalCost = totalCost;
-        this.dealerNetAfterSurCharge = dealerNetAfterSurCharge;
-        this.marginAfterSurCharge = marginAfterSurCharge;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
+        this.marginAfterSurcharge = marginAfterSurcharge;
     }
 
-    public BookingOrder(String id, long quantity, double dealerNet, double dealerNetAfterSurCharge, double totalCost, double marginAfterSurCharge, double marginPercentageAfterSurCharge) {
+    public BookingOrder(String id, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double marginAfterSurcharge, double marginPercentageAfterSurcharge) {
         this.orderNo = id;
         this.dealerNet = dealerNet;
         this.quantity = quantity;
-        this.dealerNetAfterSurCharge = dealerNetAfterSurCharge;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
         this.totalCost = totalCost;
-        this.marginAfterSurCharge = marginAfterSurCharge;
-        this.marginPercentageAfterSurCharge = marginPercentageAfterSurCharge;
+        this.marginAfterSurcharge = marginAfterSurcharge;
+        this.marginPercentageAfterSurcharge = marginPercentageAfterSurcharge;
 
     }
 
-    public BookingOrder(double dealerNetAfterSurCharge, double totalCost, double marginAfterSurCharge, long quantity) {
-        this.dealerNetAfterSurCharge = dealerNetAfterSurCharge;
+    public BookingOrder(double dealerNetAfterSurcharge, double totalCost, double marginAfterSurcharge, long quantity) {
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
         this.totalCost = totalCost;
-        this.marginAfterSurCharge = marginAfterSurCharge;
+        this.marginAfterSurcharge = marginAfterSurcharge;
         this.quantity = quantity;
     }
 
-    public BookingOrder(long quantity, double totalCost, double dealerNet, double dealerNetAfterSurCharge, double marginAfterSurCharge, double marginPercentageAfterSurCharge){
+    public BookingOrder(long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge, double marginPercentageAfterSurcharge){
         this.quantity = quantity;
         this.totalCost = totalCost;
         this.dealerNet = dealerNet;
-        this.dealerNetAfterSurCharge = dealerNetAfterSurCharge;
-        this.marginAfterSurCharge = marginAfterSurCharge;
-        this.marginPercentageAfterSurCharge = marginPercentageAfterSurCharge;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
+        this.marginAfterSurcharge = marginAfterSurcharge;
+        this.marginPercentageAfterSurcharge = marginPercentageAfterSurcharge;
     }
 
     public BookingOrder(String order_no, double sum_total_cost, double sum_dealer_net, double sum_dealer_net_after_sur_charge, double sum_margin_after_sur_charge, double sum_margin_percentage_after_surcharge, long sum_quantity){
         this.orderNo = order_no;
         this.totalCost = sum_total_cost;
         this.dealerNet = sum_dealer_net;
-        this.dealerNetAfterSurCharge = sum_dealer_net_after_sur_charge;
-        this.marginAfterSurCharge = sum_margin_after_sur_charge;
-        this.marginPercentageAfterSurCharge = sum_margin_percentage_after_surcharge;
+        this.dealerNetAfterSurcharge = sum_dealer_net_after_sur_charge;
+        this.marginAfterSurcharge = sum_margin_after_sur_charge;
+        this.marginPercentageAfterSurcharge = sum_margin_percentage_after_surcharge;
         this.quantity = sum_quantity;
     }
     /**

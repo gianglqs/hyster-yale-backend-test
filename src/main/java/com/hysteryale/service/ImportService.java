@@ -599,7 +599,7 @@ public class ImportService extends BasedService {
             shipment.setDealerName(booking.getDealerName());
 
             //DN AfterSurcharge
-            double dealerNetAfterSurcharge = booking.getDealerNetAfterSurCharge();
+            double dealerNetAfterSurcharge = booking.getDealerNetAfterSurcharge();
             shipment.setDealerNetAfterSurCharge(dealerNetAfterSurcharge);
 
             double marginAfterSurcharge = dealerNetAfterSurcharge - totalCost;
@@ -612,7 +612,7 @@ public class ImportService extends BasedService {
             shipment.setMarginAfterSurCharge(marginAfterSurcharge);
 
             // set Booking margin percentage
-            shipment.setBookingMarginPercentageAfterSurCharge(booking.getMarginPercentageAfterSurCharge());
+            shipment.setBookingMarginPercentageAfterSurCharge(booking.getMarginPercentageAfterSurcharge());
 
             // AOP Margin %
             shipment.setAOPMarginPercentage(booking.getAOPMarginPercentage());

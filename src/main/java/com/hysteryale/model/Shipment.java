@@ -19,6 +19,11 @@ public class Shipment {
     @Column(name = "order_no")
     private String orderNo;
 
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "order_no")
+    private BookingOrder booking;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "region")
     private Region region;

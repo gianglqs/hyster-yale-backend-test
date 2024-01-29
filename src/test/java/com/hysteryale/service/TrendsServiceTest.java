@@ -76,7 +76,7 @@ public class TrendsServiceTest {
 
             for(BookingOrder bo : bookingOrdersList) {
                 totalCost += bo.getTotalCost();
-                marginPercentage += bo.getMarginPercentageAfterSurCharge();
+                marginPercentage += bo.getMarginPercentageAfterSurcharge();
             }
             totalCost = totalCost / bookingOrdersList.size();
             marginPercentage = marginPercentage / bookingOrdersList.size();
@@ -124,7 +124,7 @@ public class TrendsServiceTest {
 
             for(BookingOrder bo : bookingOrdersList) {
                 dealerNet += bo.getDealerNet();
-                marginPercentage += bo.getMarginPercentageAfterSurCharge();
+                marginPercentage += bo.getMarginPercentageAfterSurcharge();
             }
             dealerNet = dealerNet / bookingOrdersList.size();
             marginPercentage = marginPercentage / bookingOrdersList.size();

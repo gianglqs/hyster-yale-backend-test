@@ -335,8 +335,8 @@ public class BookingOrderService extends BasedService {
                             BookingOrder oldBooking = orderExisted.get();
                             newBookingOrder.setCurrency(oldBooking.getCurrency());
                             newBookingOrder.setAOPMarginPercentage(oldBooking.getAOPMarginPercentage());
-                            newBookingOrder.setMarginPercentageAfterSurCharge(oldBooking.getMarginPercentageAfterSurCharge());
-                            newBookingOrder.setMarginAfterSurCharge(oldBooking.getMarginAfterSurCharge());
+                            newBookingOrder.setMarginPercentageAfterSurcharge(oldBooking.getMarginPercentageAfterSurcharge());
+                            newBookingOrder.setMarginAfterSurcharge(oldBooking.getMarginAfterSurcharge());
                             newBookingOrder.setTotalCost(oldBooking.getTotalCost());
                         }
                     } else {
@@ -397,7 +397,7 @@ public class BookingOrderService extends BasedService {
     public BookingOrder importOldMarginPercentageAndCurrency(BookingOrder booking, List<MarginDataFile> marginDataFileList) {
         for (MarginDataFile marginDataFile : marginDataFileList) {
             if (marginDataFile.orderNo.equals(booking.getOrderNo())) {
-                booking.setMarginPercentageAfterSurCharge(marginDataFile.marginPercentage);
+                booking.setMarginPercentageAfterSurcharge(marginDataFile.marginPercentage);
                 Currency currency = currencyService.getCurrenciesByName(marginDataFile.currency);
                 booking.setCurrency(currency);
                 break;
@@ -633,7 +633,7 @@ public class BookingOrderService extends BasedService {
         }
         double surcharge = 0;
         booking.setDealerNet(dealerNet);
-        booking.setDealerNetAfterSurCharge(dealerNet - surcharge);
+        booking.setDealerNetAfterSurcharge(dealerNet - surcharge);
         return booking;
     }
 
@@ -642,12 +642,12 @@ public class BookingOrderService extends BasedService {
      */
     private BookingOrder calculateMargin(BookingOrder booking) {
         //need : DNAfterSurcharge, totalCost
-        double dealerNetAfterSurcharge = booking.getDealerNetAfterSurCharge();
+        double dealerNetAfterSurcharge = booking.getDealerNetAfterSurcharge();
         double totalCost = booking.getTotalCost();
         double marginAfterSurcharge = dealerNetAfterSurcharge - totalCost;
         double marginPercentageAfterSurcharge = marginAfterSurcharge / dealerNetAfterSurcharge;
-        booking.setMarginAfterSurCharge(marginAfterSurcharge);
-        booking.setMarginPercentageAfterSurCharge(marginPercentageAfterSurcharge);
+        booking.setMarginAfterSurcharge(marginAfterSurcharge);
+        booking.setMarginPercentageAfterSurcharge(marginPercentageAfterSurcharge);
         return booking;
     }
 
@@ -656,12 +656,12 @@ public class BookingOrderService extends BasedService {
      */
     private BookingOrder calculateTotalCostAndMarginAfterSurcharge(BookingOrder booking) {
         // need : Margin% , DNAfterSurcharge
-        double dealerNetAfterSurcharge = booking.getDealerNetAfterSurCharge();
-        double marginPercentageAfterSurcharge = booking.getMarginPercentageAfterSurCharge();
+        double dealerNetAfterSurcharge = booking.getDealerNetAfterSurcharge();
+        double marginPercentageAfterSurcharge = booking.getMarginPercentageAfterSurcharge();
         double marginAfterSurcharge = dealerNetAfterSurcharge * marginPercentageAfterSurcharge;
         double totalCost = dealerNetAfterSurcharge - marginAfterSurcharge;
         booking.setTotalCost(totalCost);
-        booking.setMarginAfterSurCharge(marginAfterSurcharge);
+        booking.setMarginAfterSurcharge(marginAfterSurcharge);
         return booking;
     }
 

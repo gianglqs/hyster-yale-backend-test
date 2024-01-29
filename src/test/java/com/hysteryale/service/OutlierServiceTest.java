@@ -12,7 +12,6 @@ import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -72,11 +71,11 @@ public class OutlierServiceTest {
         );
         Assertions.assertEquals(
                 CurrencyFormatUtils.formatDoubleValue(totalDNAfterSurcharge, CurrencyFormatUtils.decimalFormatFourDigits),
-                CurrencyFormatUtils.formatDoubleValue(totalResult.getDealerNetAfterSurCharge(), CurrencyFormatUtils.decimalFormatFourDigits)
+                CurrencyFormatUtils.formatDoubleValue(totalResult.getDealerNetAfterSurcharge(), CurrencyFormatUtils.decimalFormatFourDigits)
         );
         Assertions.assertEquals(
                 CurrencyFormatUtils.formatDoubleValue(totalMargin, CurrencyFormatUtils.decimalFormatFourDigits),
-                CurrencyFormatUtils.formatDoubleValue(totalResult.getMarginAfterSurCharge(), CurrencyFormatUtils.decimalFormatFourDigits)
+                CurrencyFormatUtils.formatDoubleValue(totalResult.getMarginAfterSurcharge(), CurrencyFormatUtils.decimalFormatFourDigits)
         );
     }
 
@@ -108,8 +107,8 @@ public class OutlierServiceTest {
             quantity += outlier.getQuantity();
             totalCost += outlier.getTotalCost();
             totalDealerNet += outlier.getDealerNet();
-            totalDNAfterSurcharge += outlier.getDealerNetAfterSurCharge();
-            totalMargin += outlier.getMarginAfterSurCharge();
+            totalDNAfterSurcharge += outlier.getDealerNetAfterSurcharge();
+            totalMargin += outlier.getMarginAfterSurcharge();
         }
         assertResultValue(totalResult, quantity, totalCost, totalDealerNet, totalDNAfterSurcharge, totalMargin);
     }
@@ -142,8 +141,8 @@ public class OutlierServiceTest {
             quantity += outlier.getQuantity();
             totalCost += outlier.getTotalCost();
             totalDealerNet += outlier.getDealerNet();
-            totalDNAfterSurcharge += outlier.getDealerNetAfterSurCharge();
-            totalMargin += outlier.getMarginAfterSurCharge();
+            totalDNAfterSurcharge += outlier.getDealerNetAfterSurcharge();
+            totalMargin += outlier.getMarginAfterSurcharge();
         }
         assertResultValue(totalResult, quantity, totalCost, totalDealerNet, totalDNAfterSurcharge, totalMargin);
     }
@@ -176,8 +175,8 @@ public class OutlierServiceTest {
             quantity += outlier.getQuantity();
             totalCost += outlier.getTotalCost();
             totalDealerNet += outlier.getDealerNet();
-            totalDNAfterSurcharge += outlier.getDealerNetAfterSurCharge();
-            totalMargin += outlier.getMarginAfterSurCharge();
+            totalDNAfterSurcharge += outlier.getDealerNetAfterSurcharge();
+            totalMargin += outlier.getMarginAfterSurcharge();
         }
         assertResultValue(totalResult, quantity, totalCost, totalDealerNet, totalDNAfterSurcharge, totalMargin);
     }
@@ -210,8 +209,8 @@ public class OutlierServiceTest {
             quantity += outlier.getQuantity();
             totalCost += outlier.getTotalCost();
             totalDealerNet += outlier.getDealerNet();
-            totalDNAfterSurcharge += outlier.getDealerNetAfterSurCharge();
-            totalMargin += outlier.getMarginAfterSurCharge();
+            totalDNAfterSurcharge += outlier.getDealerNetAfterSurcharge();
+            totalMargin += outlier.getMarginAfterSurcharge();
         }
         assertResultValue(totalResult, quantity, totalCost, totalDealerNet, totalDNAfterSurcharge, totalMargin);
     }
@@ -250,8 +249,8 @@ public class OutlierServiceTest {
             quantity += outlier.getQuantity();
             totalCost += outlier.getTotalCost();
             totalDealerNet += outlier.getDealerNet();
-            totalDNAfterSurcharge += outlier.getDealerNetAfterSurCharge();
-            totalMargin += outlier.getMarginAfterSurCharge();
+            totalDNAfterSurcharge += outlier.getDealerNetAfterSurcharge();
+            totalMargin += outlier.getMarginAfterSurcharge();
         }
         assertResultValue(totalResult, quantity, totalCost, totalDealerNet, totalDNAfterSurcharge, totalMargin);
     }

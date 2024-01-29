@@ -57,7 +57,7 @@ public class OutlierService extends BasedService {
         long i = 0;
         for (BookingOrder booking : bookings) {
             booking.setOrderNo(String.valueOf(i));
-            booking.setMarginPercentageAfterSurCharge(booking.getMarginAfterSurCharge() / booking.getDealerNetAfterSurCharge());
+            booking.setMarginPercentageAfterSurcharge(booking.getMarginAfterSurcharge() / booking.getDealerNetAfterSurcharge());
             i++;
         }
         return bookings;
@@ -90,7 +90,7 @@ public class OutlierService extends BasedService {
             ChartOutlier chartOutlier = new ChartOutlier(
                     order.getRegion().getRegionName(),
                     order.getDealerNet(),
-                    order.getDealerNetAfterSurCharge() == 0 ? 0 : order.getMarginAfterSurCharge() / order.getDealerNetAfterSurCharge(),
+                    order.getDealerNetAfterSurcharge() == 0 ? 0 : order.getMarginAfterSurcharge() / order.getDealerNetAfterSurcharge(),
                     order.getProductDimension().getModelCode()
             );
             switch (order.getRegion().getRegionName()) {
