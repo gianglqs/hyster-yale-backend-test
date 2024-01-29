@@ -59,7 +59,7 @@ public class MarginAnalystController {
         if(orderNumber.isEmpty())
             orderNumber = null;
 
-        if(!IMMarginAnalystDataService.isFileCalculated(fileUUID)) {
+        if(!IMMarginAnalystDataService.isFileCalculated(fileUUID, currency)) {
             IMMarginAnalystDataService.calculateMarginAnalysisData(fileUUID, currency);
         }
 
