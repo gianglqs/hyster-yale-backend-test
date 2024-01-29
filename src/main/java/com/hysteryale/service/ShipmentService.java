@@ -121,7 +121,7 @@ public class ShipmentService extends BasedService {
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
                 filterMap.get("fromDateFilter") == null ? LocalDate.of(1996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("fromDateFilter"),
                 filterMap.get("toDateFilter") == null ? LocalDate.of(2996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("toDateFilter"));
-        getTotal.get(0).setBookingMarginPercentageAfterSurCharge(getTotalRowBooking.get(0).getMarginPercentageAfterSurcharge());
+        getTotal.get(0).setBookingMarginPercentageAfterSurcharge(getTotalRowBooking.get(0).getMarginPercentageAfterSurcharge());
 
         return result;
     }

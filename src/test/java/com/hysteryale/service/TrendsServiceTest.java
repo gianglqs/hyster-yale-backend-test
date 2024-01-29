@@ -99,7 +99,7 @@ public class TrendsServiceTest {
 
             for(Shipment sm : shipmentList) {
                 totalCost += sm.getTotalCost();
-                marginPercentage += sm.getMarginPercentageAfterSurCharge();
+                marginPercentage += sm.getMarginPercentageAfterSurcharge();
             }
             totalCost = totalCost / shipmentList.size();
             marginPercentage = marginPercentage / shipmentList.size();
@@ -147,7 +147,7 @@ public class TrendsServiceTest {
 
             for(Shipment sm : shipmentList) {
                 dealerNet += sm.getDealerNet();
-                marginPercentage += sm.getMarginPercentageAfterSurCharge();
+                marginPercentage += sm.getMarginPercentageAfterSurcharge();
             }
             dealerNet = dealerNet / shipmentList.size();
             marginPercentage = marginPercentage / shipmentList.size();

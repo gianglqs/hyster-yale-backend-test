@@ -484,10 +484,10 @@ public class ImportService extends BasedService {
     private Shipment updateShipment(Shipment s1, Shipment s2) {
         s1.setNetRevenue(s1.getNetRevenue() + s2.getNetRevenue());
         s1.setTotalCost(s1.getTotalCost() + s2.getTotalCost());
-        Double margin = s1.getDealerNetAfterSurCharge() - s1.getTotalCost();
-        Double marginPercentage = margin / s1.getDealerNetAfterSurCharge();
-        s1.setMarginAfterSurCharge(margin);
-        s1.setMarginPercentageAfterSurCharge(marginPercentage);
+        Double margin = s1.getDealerNetAfterSurcharge() - s1.getTotalCost();
+        Double marginPercentage = margin / s1.getDealerNetAfterSurcharge();
+        s1.setMarginAfterSurcharge(margin);
+        s1.setMarginPercentageAfterSurcharge(marginPercentage);
         s1.setQuantity(s1.getQuantity()+s2.getQuantity());
         return s1;
     }
@@ -600,19 +600,19 @@ public class ImportService extends BasedService {
 
             //DN AfterSurcharge
             double dealerNetAfterSurcharge = booking.getDealerNetAfterSurcharge();
-            shipment.setDealerNetAfterSurCharge(dealerNetAfterSurcharge);
+            shipment.setDealerNetAfterSurcharge(dealerNetAfterSurcharge);
 
             double marginAfterSurcharge = dealerNetAfterSurcharge - totalCost;
             double marginPercentageAfterSurcharge = marginAfterSurcharge / dealerNetAfterSurcharge;
 
             // set Margin Percentage After surcharge
-            shipment.setMarginPercentageAfterSurCharge(marginPercentageAfterSurcharge);
+            shipment.setMarginPercentageAfterSurcharge(marginPercentageAfterSurcharge);
 
             // Set Margin after surcharge
-            shipment.setMarginAfterSurCharge(marginAfterSurcharge);
+            shipment.setMarginAfterSurcharge(marginAfterSurcharge);
 
             // set Booking margin percentage
-            shipment.setBookingMarginPercentageAfterSurCharge(booking.getMarginPercentageAfterSurcharge());
+            shipment.setBookingMarginPercentageAfterSurcharge(booking.getMarginPercentageAfterSurcharge());
 
             // AOP Margin %
             shipment.setAOPMarginPercentage(booking.getAOPMarginPercentage());
