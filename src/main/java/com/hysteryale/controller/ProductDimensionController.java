@@ -1,6 +1,6 @@
 package com.hysteryale.controller;
 
-import com.hysteryale.model.ProductDimension;
+import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
@@ -67,7 +67,7 @@ public class ProductDimensionController {
     }
 
     @GetMapping("/getProductDetail")
-    public ProductDimension getDataForProductDetail(@RequestParam String modelCode) throws NotFoundException, IOException {
+    public Product getDataForProductDetail(@RequestParam String modelCode) throws NotFoundException, IOException {
         return productDimensionService.getProductDimensionDetail(modelCode);
     }
 

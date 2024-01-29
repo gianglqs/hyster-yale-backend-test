@@ -19,6 +19,11 @@ public class Shipment {
     @Column(name = "order_no")
     private String orderNo;
 
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "order_no")
+    private Booking booking;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "region")
     private Region region;
@@ -36,8 +41,8 @@ public class Shipment {
     private String ctryCode;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_dimension")
-    private ProductDimension productDimension;
+    @JoinColumn(name = "product")
+    private Product product;
 
     private String series;
 
@@ -54,29 +59,29 @@ public class Shipment {
     @Column(name = "dealer_net")
     private double dealerNet;
 
-    @Column(name = "dealer_net_after_sur_charge")
-    private double dealerNetAfterSurCharge;
+    @Column(name = "dealer_net_after_surcharge")
+    private double dealerNetAfterSurcharge;
 
-    @Column(name = "margin_after_sur_charge")
-    private double marginAfterSurCharge;
+    @Column(name = "margin_after_surcharge")
+    private double marginAfterSurcharge;
 
-    @Column(name = "margin_percentage_after_sur_charge")
-    private double marginPercentageAfterSurCharge;
+    @Column(name = "margin_percentage_after_surcharge")
+    private double marginPercentageAfterSurcharge;
 
-    @Column(name = "booking_margin_percentage_after_sur_charge")
-    private double bookingMarginPercentageAfterSurCharge;
+    @Column(name = "booking_margin_percentage_after_surcharge")
+    private double bookingMarginPercentageAfterSurcharge;
 
     @Column(name = "aopmargin_percentage")
     private double AOPMarginPercentage;
 
-    public Shipment(String id, long quantity, double dealerNet, double dealerNetAfterSurCharge, double totalCost, double netRevenue, double marginAfterSurCharge, double marginPercentageAfterSurCharge) {
+    public Shipment(String id, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue, double marginAfterSurcharge, double marginPercentageAfterSurcharge) {
         this.orderNo = id;
         this.dealerNet = dealerNet;
         this.quantity = quantity;
-        this.dealerNetAfterSurCharge = dealerNetAfterSurCharge;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
         this.totalCost = totalCost;
-        this.marginAfterSurCharge = marginAfterSurCharge;
-        this.marginPercentageAfterSurCharge = marginPercentageAfterSurCharge;
+        this.marginAfterSurcharge = marginAfterSurcharge;
+        this.marginPercentageAfterSurcharge = marginPercentageAfterSurcharge;
         this.netRevenue = netRevenue;
     }
 

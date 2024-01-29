@@ -3,10 +3,7 @@
     <changeSet id="delete-duplicate-field-competitorcolor" author="hoangnhan">
         <dropColumn tableName="competitorcolor" columnName="groupName"/>
     </changeSet>
-    
-    <changeSet id="rename-upload-by-id-column" author="hoangnhan">
-        <renameColumn tableName="file_upload" oldColumnName="uploadedBy_id" newColumnName="uploadedby_id"/>
-    </changeSet>
+
 
     <changeSet id="rename-competitor-color" author="hoangnhan">
        <renameTable oldTableName="competitorcolor" newTableName="competitor_color"/>
@@ -81,4 +78,36 @@
         <dropColumn tableName="part" columnName="user_name"/>
         <dropColumn tableName="part" columnName="role_id"/>
     </changeSet>
+
+    <changeSet id="rename-booking-fields" author="songiang">
+        <renameColumn tableName="booking_order" oldColumnName="dealer_net_after_sur_charge" newColumnName="dealer_net_after_surcharge"/>
+        <renameColumn tableName="booking_order" oldColumnName="margin_after_sur_charge" newColumnName="margin_after_surcharge"/>
+        <renameColumn tableName="booking_order" oldColumnName="margin_percentage_after_sur_charge" newColumnName="margin_percentage_after_surcharge"/>
+        <renameColumn tableName="booking_order" oldColumnName="product_dimension" newColumnName="product"/>
+    </changeSet>
+
+    <changeSet id="rename-shipment-fields" author="songiang">
+        <renameColumn tableName="shipment" oldColumnName="product_dimension" newColumnName="product"/>
+        <renameColumn tableName="shipment" oldColumnName="dealer_net_after_sur_charge" newColumnName="dealer_net_after_surcharge"/>
+        <renameColumn tableName="shipment" oldColumnName="margin_after_sur_charge" newColumnName="margin_after_surcharge"/>
+        <renameColumn tableName="shipment" oldColumnName="margin_percentage_after_sur_charge" newColumnName="margin_percentage_after_surcharge"/>
+        <renameColumn tableName="shipment" oldColumnName="booking_margin_percentage_after_sur_charge" newColumnName="booking_margin_percentage_after_surcharge"/>
+    </changeSet>
+
+    <changeSet id="rename-table-booking" author="songiang">
+        <renameTable oldTableName="booking_order" newTableName="booking"/>
+    </changeSet>
+    
+    <changeSet id="create-foreign-key-shipment-to-booking" author="songiang">
+        <addForeignKeyConstraint baseColumnNames="order_no" baseTableName="shipment" constraintName="constraint_booking_and_shipment" referencedTableName="booking" referencedColumnNames="order_no"/>
+    </changeSet>
+
+    <changeSet id="rename-table-productdimension" author="songiang">
+        <renameTable oldTableName="productdimension" newTableName="product"/>
+    </changeSet>
+
+    <changeSet id="drop-column-in-aopmargin" author="songiang">
+        <dropColumn tableName="aopmargin" columnName="region_series_plant"/>
+    </changeSet>
+
 </databaseChangeLog>

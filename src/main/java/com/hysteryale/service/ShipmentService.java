@@ -1,6 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.filters.FilterModel;
@@ -107,7 +107,7 @@ public class ShipmentService extends BasedService {
 
         // get totalMarginPercentage of bookingOrder
 
-        List<BookingOrder> getTotalRowBooking = bookingOrderRepository.getTotalRowForBookingPage(
+        List<Booking> getTotalRowBooking = bookingOrderRepository.getTotalRowForBookingPage(
                 (String) filterMap.get("orderNoFilter"),
                 filterMap.get("regionFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("regionFilter"),
                 filterMap.get("plantFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("plantFilter"),
@@ -121,7 +121,7 @@ public class ShipmentService extends BasedService {
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
                 filterMap.get("fromDateFilter") == null ? LocalDate.of(1996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("fromDateFilter"),
                 filterMap.get("toDateFilter") == null ? LocalDate.of(2996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("toDateFilter"));
-        getTotal.get(0).setBookingMarginPercentageAfterSurCharge(getTotalRowBooking.get(0).getMarginPercentageAfterSurCharge());
+        getTotal.get(0).setBookingMarginPercentageAfterSurcharge(getTotalRowBooking.get(0).getMarginPercentageAfterSurcharge());
 
         return result;
     }

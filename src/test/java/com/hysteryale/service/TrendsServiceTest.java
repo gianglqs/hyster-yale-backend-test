@@ -1,6 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.TrendData;
 import com.hysteryale.model.filters.FilterModel;
@@ -70,13 +70,13 @@ public class TrendsServiceTest {
             filters.setFromDate("2023-0" + data.getMonth() + "-01");
             filters.setToDate("2023-0" + data.getMonth() + "-" + DateUtils.getMonth(data.getMonth()).maxLength());
 
-            List<BookingOrder> bookingOrdersList = (List<BookingOrder>) bookingOrderService.getBookingByFilter(filters).get("listBookingOrder");
+            List<Booking> bookingOrdersList = (List<Booking>) bookingOrderService.getBookingByFilter(filters).get("listBookingOrder");
             double totalCost = 0.0;
             double marginPercentage = 0.0;
 
-            for(BookingOrder bo : bookingOrdersList) {
+            for(Booking bo : bookingOrdersList) {
                 totalCost += bo.getTotalCost();
-                marginPercentage += bo.getMarginPercentageAfterSurCharge();
+                marginPercentage += bo.getMarginPercentageAfterSurcharge();
             }
             totalCost = totalCost / bookingOrdersList.size();
             marginPercentage = marginPercentage / bookingOrdersList.size();
@@ -99,7 +99,7 @@ public class TrendsServiceTest {
 
             for(Shipment sm : shipmentList) {
                 totalCost += sm.getTotalCost();
-                marginPercentage += sm.getMarginPercentageAfterSurCharge();
+                marginPercentage += sm.getMarginPercentageAfterSurcharge();
             }
             totalCost = totalCost / shipmentList.size();
             marginPercentage = marginPercentage / shipmentList.size();
@@ -118,13 +118,13 @@ public class TrendsServiceTest {
             filters.setFromDate("2023-0" + data.getMonth() + "-01");
             filters.setToDate("2023-0" + data.getMonth() + "-" + DateUtils.getMonth(data.getMonth()).maxLength());
 
-            List<BookingOrder> bookingOrdersList = (List<BookingOrder>) bookingOrderService.getBookingByFilter(filters).get("listBookingOrder");
+            List<Booking> bookingOrdersList = (List<Booking>) bookingOrderService.getBookingByFilter(filters).get("listBookingOrder");
             double dealerNet = 0.0;
             double marginPercentage = 0.0;
 
-            for(BookingOrder bo : bookingOrdersList) {
+            for(Booking bo : bookingOrdersList) {
                 dealerNet += bo.getDealerNet();
-                marginPercentage += bo.getMarginPercentageAfterSurCharge();
+                marginPercentage += bo.getMarginPercentageAfterSurcharge();
             }
             dealerNet = dealerNet / bookingOrdersList.size();
             marginPercentage = marginPercentage / bookingOrdersList.size();
@@ -147,7 +147,7 @@ public class TrendsServiceTest {
 
             for(Shipment sm : shipmentList) {
                 dealerNet += sm.getDealerNet();
-                marginPercentage += sm.getMarginPercentageAfterSurCharge();
+                marginPercentage += sm.getMarginPercentageAfterSurcharge();
             }
             dealerNet = dealerNet / shipmentList.size();
             marginPercentage = marginPercentage / shipmentList.size();
