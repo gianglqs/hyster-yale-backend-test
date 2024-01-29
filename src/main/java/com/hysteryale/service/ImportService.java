@@ -150,8 +150,6 @@ public class ImportService extends BasedService {
         cp.setCategory(category);
 
         cp.setCountry(country);
-        cp.setRegion(strRegion);
-
         cp.setClazz(clazz);
         cp.setCompetitorLeadTime(leadTime);
         cp.setDealerNet(dealerNet);
@@ -176,7 +174,6 @@ public class ImportService extends BasedService {
                 cp1.setCompetitorName(competitorName);
                 cp1.setCategory(category);
                 cp1.setCountry(country);
-                cp1.setRegion(strRegion);
                 cp1.setClazz(clazz);
                 cp1.setCompetitorLeadTime(leadTime);
                 cp1.setDealerNet(partService.getAverageDealerNet(strRegion, clazz, series));
@@ -236,7 +233,7 @@ public class ImportService extends BasedService {
                     for (CompetitorPricing competitorPricing : competitorPricings) {
                         // if it has series -> assign ForeCastValue
                         if (!competitorPricing.getSeries().isEmpty()) {
-                            String strRegion = competitorPricing.getRegion();
+                            String strRegion = competitorPricing.getCountry().getRegion().getRegionName();
                             String metaSeries = competitorPricing.getSeries().substring(1); // extract metaSeries from series
 
                             int currentYear = LocalDate.now().getYear();
@@ -265,7 +262,7 @@ public class ImportService extends BasedService {
      */
     public ForeCastValue findForeCastValue(List<ForeCastValue> foreCastValues, String strRegion, String metaSeries, int year) {
         for (ForeCastValue foreCastValue : foreCastValues) {
-            if (foreCastValue.getRegion().getRegion().equals(strRegion) && foreCastValue.getMetaSeries().equals(metaSeries) && foreCastValue.getYear() == year)
+            if (foreCastValue.getRegion().getRegionName().equals(strRegion) && foreCastValue.getMetaSeries().equals(metaSeries) && foreCastValue.getYear() == year)
                 return foreCastValue;
         }
         return null;

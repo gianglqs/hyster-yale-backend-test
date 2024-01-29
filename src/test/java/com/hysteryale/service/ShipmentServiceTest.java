@@ -190,7 +190,7 @@ public class ShipmentServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Shipment sm : shipmentList) {
-            Assertions.assertEquals(region, sm.getRegion().getRegion());
+            Assertions.assertEquals(region, sm.getRegion().getRegionName());
 
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {

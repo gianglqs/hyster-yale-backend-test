@@ -3,7 +3,6 @@ package com.hysteryale.controller;
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.service.*;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
-import com.hysteryale.service.marginAnalyst.MarginAnalystService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,9 +26,6 @@ public class ImportController {
     CostUpliftService costUpliftService;
 
     @Resource
-    MarginAnalystService marginAnalystService;
-
-    @Resource
     ProductDimensionService productDimensionService;
 
     @Resource
@@ -50,7 +46,6 @@ public class ImportController {
         importOrder();
         importExchangeRate();
         importMarginAnalystMacro();
-        importMarginAnalystData();
         importCompetitorPricing();
         importShipment();
     }
@@ -100,10 +95,6 @@ public class ImportController {
         marginAnalystMacroService.importMarginAnalystMacro();
     }
 
-    @PostMapping(path = "/importMarginAnalystData")
-    void importMarginAnalystData() throws IOException {
-        marginAnalystService.importMarginAnalystData();
-    }
 
     @PostMapping(path = "/importCompetitorPricing")
     void importCompetitorPricing() throws IOException {

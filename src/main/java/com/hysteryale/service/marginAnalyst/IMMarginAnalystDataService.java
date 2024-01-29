@@ -528,7 +528,7 @@ public class IMMarginAnalystDataService {
     /**
      * Check a file which has fileUUID has already been calculated Margin Data or not
      */
-    public boolean isFileCalculated(String fileUUID) {
-        return imMarginAnalystDataRepository.isFileCalculated(fileUUID);
+    public boolean isFileCalculated(String fileUUID, String currency) {
+        return imMarginAnalystDataRepository.isFileCalculated(fileUUID, currency);
     }
 }

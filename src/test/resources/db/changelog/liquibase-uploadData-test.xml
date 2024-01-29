@@ -85,22 +85,22 @@
 
         <loadUpdateData
                 encoding="UTF-8"
-                file="classpath:db/database/competitorcolor.csv"
+                file="classpath:db/database/competitor_color.csv"
                 onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
                 separator=","
-                tableName="competitorcolor">
+                tableName="competitor_color">
         </loadUpdateData>
 
         <loadUpdateData
                 encoding="UTF-8"
-                file="classpath:db/database/competitorpricing.csv"
+                file="classpath:db/database/competitor_pricing.csv"
                 onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
                 separator=","
-                tableName="competitorpricing">
+                tableName="competitor_pricing">
         </loadUpdateData>
 
         <loadUpdateData

@@ -11,7 +11,7 @@ public interface CountryRepository extends JpaRepository<Country, Integer> {
     @Query("SELECT c FROM Country c WHERE c.countryName = ?1")
     Optional<Country> getCountryByName(String countryName);
 
-    @Query("SELECT c.countryName FROM Country c WHERE c.region.region = ?1")
+    @Query("SELECT c.countryName FROM Country c WHERE c.region.regionName = ?1")
     List<String> getCountryNameByRegion(String region);
 
     @Query("SELECT c.countryName FROM Country c")

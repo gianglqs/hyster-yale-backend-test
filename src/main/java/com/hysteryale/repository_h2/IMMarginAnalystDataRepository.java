@@ -23,6 +23,6 @@ public interface IMMarginAnalystDataRepository extends JpaRepository<IMMarginAna
     List<String> getModelCodesBySeries(String fileUUID, String series);
 
     @Query("SELECT CASE WHEN (COUNT(m) > 0) THEN true ELSE false END " +
-            "FROM IMMarginAnalystData m WHERE m.fileUUID = ?1")
-    boolean isFileCalculated(String fileUIID);
+            "FROM IMMarginAnalystData m WHERE m.fileUUID = ?1 AND currency = ?2")
+    boolean isFileCalculated(String fileUIID, String currency);
 }

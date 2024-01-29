@@ -9,10 +9,10 @@ import java.util.Optional;
 
 public interface RegionRepository extends JpaRepository<Region, String> {
 
-    @Query("SELECT r.region FROM Region r ")
+    @Query("SELECT r.regionName FROM Region r ")
     List<String> findAllRegion();
 
-    @Query("SELECT r FROM Region r WHERE r.region = ?1")
+    @Query("SELECT r FROM Region r WHERE r.regionName = ?1")
     Region getRegionByName(String strRegion);
 
     @Query("SELECT r FROM Region r WHERE r.regionShortName = ?1")

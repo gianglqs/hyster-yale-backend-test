@@ -17,10 +17,10 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
     @Query("SELECT c FROM CompetitorPricing c WHERE c.country.countryName = ?1 AND c.clazz = ?2 AND c.category = ?3 AND c.series = ?4")
     List<CompetitorPricing> getListOfCompetitorInGroup(String country, String clazz, String category, String series);
 
-    @Query("SELECT new com.hysteryale.model.competitor.CompetitorPricing(c.region, SUM(c.actual), SUM(c.AOPF), SUM(c.LRFF))" +
+    @Query("SELECT new com.hysteryale.model.competitor.CompetitorPricing(c.country.region.regionName, SUM(c.actual), SUM(c.AOPF), SUM(c.LRFF))" +
             " FROM CompetitorPricing c WHERE " +
-            " c.region IS NOT NULL " +
-            " AND ((:regions) IS Null OR c.region IN (:regions))" +
+            " c.country.region.regionName IS NOT NULL " +
+            " AND ((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.clazz IN (:classes))" +
@@ -31,7 +31,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
             "   (:comparator = '<' AND c.dealerPricingPremiumPercentage < :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '>' AND c.dealerPricingPremiumPercentage > :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '=' AND c.dealerPricingPremiumPercentage = :marginPercentageAfterSurCharge))" +
-            " AND ((:chineseBrand) IS NULL OR c.chineseBrand = (:chineseBrand)) GROUP BY c.region")
+            " AND ((:chineseBrand) IS NULL OR c.chineseBrand = (:chineseBrand)) GROUP BY c.country.region.regionName")
     List<CompetitorPricing> findCompetitorByFilterForLineChartRegion(
             @Param("regions") List<String> regions,
             @Param("plants") List<String> plants,
@@ -45,7 +45,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
     @Query("SELECT new com.hysteryale.model.competitor.CompetitorPricing( SUM(c.actual), SUM(c.AOPF), SUM(c.LRFF),c.plant)" +
             " FROM CompetitorPricing c WHERE " +
             " c.plant IS NOT NULL " +
-            " AND ((:regions) IS Null OR c.region IN (:regions))" +
+            " AND ((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.clazz IN (:classes))" +
@@ -68,7 +68,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge);
 
     @Query("SELECT c FROM CompetitorPricing c WHERE " +
-            "((:regions) IS Null OR c.region IN (:regions))" +
+            "((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.clazz IN (:classes))" +
@@ -95,7 +95,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
             " COALESCE(sum(c.dealerStreetPricing),0),  COALESCE(sum(c.averageDN),0) , " +
             " COALESCE((sum(c.competitorPricing) - (sum(c.dealerStreetPricing) + sum(c.dealerPricingPremium))) / sum(c.competitorPricing),0) )" +
             " FROM CompetitorPricing c WHERE " +
-            "((:regions) IS Null OR c.region IN (:regions))" +
+            "((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.clazz IN (:classes))" +
@@ -117,7 +117,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
                                      @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge);
 
     @Query("SELECT COUNT(c) from CompetitorPricing c WHERE " +
-            "((:regions) IS Null OR c.region IN (:regions))" +
+            "((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.clazz IN (:classes))" +
@@ -146,7 +146,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
     List<String> getDistinctCategory();
 
     @Query("SELECT new CompetitorPricing (AVG(c.competitorLeadTime), AVG(c.competitorPricing), AVG(c.marketShare), c.color) FROM CompetitorPricing c " +
-            "WHERE ((:regions) IS NULL OR c.region IN (:regions)) " +
+            "WHERE ((:regions) IS NULL OR c.country.region.regionName IN (:regions)) " +
             "AND ((:countries) IS NULL OR c.country.countryName IN (:countries)) " +
             "AND ((:classes) IS NULL OR c.clazz IN (:classes)) " +
             "AND ((:category) IS NULL OR c.category IN (:category)) " +
