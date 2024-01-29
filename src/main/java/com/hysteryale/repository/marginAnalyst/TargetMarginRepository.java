@@ -10,11 +10,11 @@ import java.util.Optional;
 
 public interface TargetMarginRepository extends JpaRepository<TargetMargin, Integer> {
 
-    @Query(value = "SELECT t.id, t.metaseries, t.monthyear, t.region, t.stdmarginpercentage " +
+    @Query(value = "SELECT t.id, t.meta_series, t.month_year, t.region, t.std_margin_percentage " +
             "FROM target_margin t " +
             "WHERE t.region = :region " +
-            "AND t.metaseries = :meta_series " +
-            "AND t.monthyear = :month_year " +
+            "AND t.meta_series = :meta_series " +
+            "AND t.month_year = :month_year " +
             "LIMIT 1", nativeQuery = true)
     Optional<TargetMargin> getTargetMargin(@Param("region") String region, @Param("meta_series") String metaSeries, @Param("month_year") LocalDate monthYear);
 
