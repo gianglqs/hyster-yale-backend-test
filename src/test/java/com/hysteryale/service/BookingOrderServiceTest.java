@@ -133,7 +133,7 @@ public class BookingOrderServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(BookingOrder bo : listResult) {
-            Assertions.assertEquals(region, bo.getRegion().getRegion());
+            Assertions.assertEquals(region, bo.getRegion().getRegionName());
 
             quantity += bo.getQuantity();
             if(bo.getCurrency().getCurrency().equals("AUD")) {
