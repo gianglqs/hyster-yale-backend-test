@@ -1,6 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.utils.CurrencyFormatUtils;
@@ -103,12 +103,12 @@ public class ShipmentServiceTest {
     private void assertTotalBookingMarginPercentage(FilterModel filters, double marginResult) throws ParseException {
         Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
 
-        List<BookingOrder> listResult = (List<BookingOrder>) result.get("listBookingOrder");
+        List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
 
         double totalDealerNet = 0.0;
         double totalCost = 0.0;
 
-        for(BookingOrder bo : listResult) {
+        for(Booking bo : listResult) {
             if(bo.getCurrency().getCurrency().equals("AUD")) {
                 totalDealerNet += bo.getDealerNet() * rate;
                 totalCost += bo.getTotalCost() * rate;

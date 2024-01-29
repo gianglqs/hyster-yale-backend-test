@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "booking_order")
-public class BookingOrder {
+@Table(name = "booking")
+public class Booking {
     @Id
     @Column(name = "order_no")
     private String orderNo;
@@ -74,7 +74,7 @@ public class BookingOrder {
     @Column(name = "aopmargin_percentage")
     private double AOPMarginPercentage;
 
-    public BookingOrder(String region, String plant, String clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge) {
+    public Booking(String region, String plant, String clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge) {
 
         ProductDimension p = new ProductDimension(plant, clazz, model);
         this.region = new Region(region);
@@ -87,7 +87,7 @@ public class BookingOrder {
         this.marginAfterSurcharge = marginAfterSurcharge;
     }
 
-    public BookingOrder(String region, ProductDimension productDimension, String series, double totalCost, double dealerNetAfterSurcharge, double marginAfterSurcharge, long quantity) {
+    public Booking(String region, ProductDimension productDimension, String series, double totalCost, double dealerNetAfterSurcharge, double marginAfterSurcharge, long quantity) {
 
 
         this.region = new Region(region);
@@ -99,7 +99,7 @@ public class BookingOrder {
         this.marginAfterSurcharge = marginAfterSurcharge;
     }
 
-    public BookingOrder(String id, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double marginAfterSurcharge, double marginPercentageAfterSurcharge) {
+    public Booking(String id, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double marginAfterSurcharge, double marginPercentageAfterSurcharge) {
         this.orderNo = id;
         this.dealerNet = dealerNet;
         this.quantity = quantity;
@@ -110,14 +110,14 @@ public class BookingOrder {
 
     }
 
-    public BookingOrder(double dealerNetAfterSurcharge, double totalCost, double marginAfterSurcharge, long quantity) {
+    public Booking(double dealerNetAfterSurcharge, double totalCost, double marginAfterSurcharge, long quantity) {
         this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
         this.totalCost = totalCost;
         this.marginAfterSurcharge = marginAfterSurcharge;
         this.quantity = quantity;
     }
 
-    public BookingOrder(long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge, double marginPercentageAfterSurcharge){
+    public Booking(long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge, double marginPercentageAfterSurcharge){
         this.quantity = quantity;
         this.totalCost = totalCost;
         this.dealerNet = dealerNet;
@@ -126,7 +126,7 @@ public class BookingOrder {
         this.marginPercentageAfterSurcharge = marginPercentageAfterSurcharge;
     }
 
-    public BookingOrder(String order_no, double sum_total_cost, double sum_dealer_net, double sum_dealer_net_after_sur_charge, double sum_margin_after_sur_charge, double sum_margin_percentage_after_surcharge, long sum_quantity){
+    public Booking(String order_no, double sum_total_cost, double sum_dealer_net, double sum_dealer_net_after_sur_charge, double sum_margin_after_sur_charge, double sum_margin_percentage_after_surcharge, long sum_quantity){
         this.orderNo = order_no;
         this.totalCost = sum_total_cost;
         this.dealerNet = sum_dealer_net;
@@ -138,7 +138,7 @@ public class BookingOrder {
     /**
      * for test Repository in Junit Test
      */
-    public BookingOrder(String orderNo, String dealerName, String series){
+    public Booking(String orderNo, String dealerName, String series){
         this.orderNo = orderNo;
         this.dealerName = dealerName;
         this.series = series;

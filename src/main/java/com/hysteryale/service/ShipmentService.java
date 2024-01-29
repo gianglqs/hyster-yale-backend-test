@@ -1,6 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.filters.FilterModel;
@@ -107,7 +107,7 @@ public class ShipmentService extends BasedService {
 
         // get totalMarginPercentage of bookingOrder
 
-        List<BookingOrder> getTotalRowBooking = bookingOrderRepository.getTotalRowForBookingPage(
+        List<Booking> getTotalRowBooking = bookingOrderRepository.getTotalRowForBookingPage(
                 (String) filterMap.get("orderNoFilter"),
                 filterMap.get("regionFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("regionFilter"),
                 filterMap.get("plantFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("plantFilter"),

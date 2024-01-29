@@ -1,6 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import org.junit.jupiter.api.Assertions;
@@ -56,7 +56,7 @@ public class OutlierServiceTest {
                 new ArrayList<>());
     }
 
-    private void assertResultValue(BookingOrder totalResult, long quantity, double totalCost, double totalDealerNet, double totalDNAfterSurcharge, double totalMargin) {
+    private void assertResultValue(Booking totalResult, long quantity, double totalCost, double totalDealerNet, double totalDNAfterSurcharge, double totalMargin) {
         Assertions.assertEquals(
                 CurrencyFormatUtils.formatDoubleValue(quantity, CurrencyFormatUtils.decimalFormatFourDigits),
                 CurrencyFormatUtils.formatDoubleValue(totalResult.getQuantity(), CurrencyFormatUtils.decimalFormatFourDigits)
@@ -91,8 +91,8 @@ public class OutlierServiceTest {
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("listOutlier"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> outliersList = (List<BookingOrder>) result.get("listOutlier");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> outliersList = (List<Booking>) result.get("listOutlier");
         Assertions.assertFalse(outliersList.isEmpty());
 
         long quantity = 0;
@@ -101,7 +101,7 @@ public class OutlierServiceTest {
         double totalDNAfterSurcharge = 0.0;
         double totalMargin = 0.0;
 
-        for(BookingOrder outlier : outliersList) {
+        for(Booking outlier : outliersList) {
             Assertions.assertEquals(region, outlier.getRegion().getRegionName());
 
             quantity += outlier.getQuantity();
@@ -125,8 +125,8 @@ public class OutlierServiceTest {
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("listOutlier"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> outliersList = (List<BookingOrder>) result.get("listOutlier");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> outliersList = (List<Booking>) result.get("listOutlier");
         Assertions.assertFalse(outliersList.isEmpty());
 
         long quantity = 0;
@@ -135,7 +135,7 @@ public class OutlierServiceTest {
         double totalDNAfterSurcharge = 0.0;
         double totalMargin = 0.0;
 
-        for(BookingOrder outlier : outliersList) {
+        for(Booking outlier : outliersList) {
             Assertions.assertEquals(plant, outlier.getProductDimension().getPlant());
 
             quantity += outlier.getQuantity();
@@ -159,8 +159,8 @@ public class OutlierServiceTest {
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("listOutlier"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> outliersList = (List<BookingOrder>) result.get("listOutlier");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> outliersList = (List<Booking>) result.get("listOutlier");
         Assertions.assertFalse(outliersList.isEmpty());
 
         long quantity = 0;
@@ -169,7 +169,7 @@ public class OutlierServiceTest {
         double totalDNAfterSurcharge = 0.0;
         double totalMargin = 0.0;
 
-        for(BookingOrder outlier : outliersList) {
+        for(Booking outlier : outliersList) {
             Assertions.assertEquals(metaSeries, outlier.getSeries().substring(1));
 
             quantity += outlier.getQuantity();
@@ -193,8 +193,8 @@ public class OutlierServiceTest {
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("listOutlier"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> outliersList = (List<BookingOrder>) result.get("listOutlier");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> outliersList = (List<Booking>) result.get("listOutlier");
         Assertions.assertFalse(outliersList.isEmpty());
 
         long quantity = 0;
@@ -203,7 +203,7 @@ public class OutlierServiceTest {
         double totalDNAfterSurcharge = 0.0;
         double totalMargin = 0.0;
 
-        for(BookingOrder outlier : outliersList) {
+        for(Booking outlier : outliersList) {
             Assertions.assertEquals(clazz, outlier.getProductDimension().getClazz());
 
             quantity += outlier.getQuantity();
@@ -231,8 +231,8 @@ public class OutlierServiceTest {
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("listOutlier"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> outliersList = (List<BookingOrder>) result.get("listOutlier");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> outliersList = (List<Booking>) result.get("listOutlier");
         Assertions.assertFalse(outliersList.isEmpty());
 
         long quantity = 0;
@@ -241,7 +241,7 @@ public class OutlierServiceTest {
         double totalDNAfterSurcharge = 0.0;
         double totalMargin = 0.0;
 
-        for(BookingOrder outlier : outliersList) {
+        for(Booking outlier : outliersList) {
             Assertions.assertEquals(region, outlier.getRegion().getRegionName());
             Assertions.assertEquals(plant, outlier.getProductDimension().getPlant());
             Assertions.assertEquals(clazz, outlier.getProductDimension().getClazz());

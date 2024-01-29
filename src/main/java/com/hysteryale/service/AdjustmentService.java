@@ -1,6 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.filters.CalculatorModel;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.payLoad.AdjustmentPayLoad;
@@ -34,7 +34,7 @@ public class AdjustmentService extends BasedService {
         //TODO : set Margin after Adj for filter
         logInfo("marginPercentageAfterAdjFilter" + filterMap.get("marginPercentageAfterAdjFilter"));
 
-        List<BookingOrder> bookingOrderList = bookingOrderRepository.selectForAdjustmentByFilter(
+        List<Booking> bookingList = bookingOrderRepository.selectForAdjustmentByFilter(
                 (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
                 (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
                 (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
@@ -47,11 +47,11 @@ public class AdjustmentService extends BasedService {
                 (Pageable) filterMap.get("pageable"));
 
         //convert booking to adjustment
-        List<AdjustmentPayLoad> listAdj = convertToListAdjustment(bookingOrderList, calculatorModel);
+        List<AdjustmentPayLoad> listAdj = convertToListAdjustment(bookingList, calculatorModel);
         setIdForList(listAdj);
         result.put("listAdjustment", listAdj);
         // get total
-        List<BookingOrder> getSumAllRow = bookingOrderRepository.selectTotalForAdjustment(
+        List<Booking> getSumAllRow = bookingOrderRepository.selectTotalForAdjustment(
                 (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
                 (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
                 (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
@@ -103,9 +103,9 @@ public class AdjustmentService extends BasedService {
         return list;
     }
 
-    private List<AdjustmentPayLoad> convertToListAdjustment(List<BookingOrder> bookingOrders, CalculatorModel calculatorModel) {
+    private List<AdjustmentPayLoad> convertToListAdjustment(List<Booking> bookings, CalculatorModel calculatorModel) {
         List<AdjustmentPayLoad> result = new ArrayList<>();
-        bookingOrders.forEach(b -> result.add(convertToAdjustment(b, calculatorModel)));
+        bookings.forEach(b -> result.add(convertToAdjustment(b, calculatorModel)));
         return result;
     }
 
@@ -132,7 +132,7 @@ public class AdjustmentService extends BasedService {
         return result;
     }
 
-    private AdjustmentPayLoad convertToAdjustment(BookingOrder booking, CalculatorModel calculatorModel) {
+    private AdjustmentPayLoad convertToAdjustment(Booking booking, CalculatorModel calculatorModel) {
         AdjustmentPayLoad adjustmentPayLoad = new AdjustmentPayLoad();
         if (booking.getRegion() != null) {
             adjustmentPayLoad.setRegion(booking.getRegion().getRegionName());

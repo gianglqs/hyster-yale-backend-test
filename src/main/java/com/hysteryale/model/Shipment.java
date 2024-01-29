@@ -22,7 +22,7 @@ public class Shipment {
     @OneToOne
     @MapsId
     @JoinColumn(name = "order_no")
-    private BookingOrder booking;
+    private Booking booking;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "region")

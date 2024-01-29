@@ -579,9 +579,9 @@ public class ImportService extends BasedService {
         }
 
         // get data from BookingOrder
-        Optional<BookingOrder> bookingOrderOptional = bookingOrderRepository.getBookingOrderByOrderNo(orderNo);
+        Optional<Booking> bookingOrderOptional = bookingOrderRepository.getBookingOrderByOrderNo(orderNo);
         if (bookingOrderOptional.isPresent()) {
-            BookingOrder booking = bookingOrderOptional.get();
+            Booking booking = bookingOrderOptional.get();
 
             // productDimension
             shipment.setProductDimension(booking.getProductDimension());

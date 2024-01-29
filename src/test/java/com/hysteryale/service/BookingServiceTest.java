@@ -1,6 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @SuppressWarnings("unchecked")
 @Slf4j
-public class BookingOrderServiceTest {
+public class BookingServiceTest {
     @Resource
     BookingOrderService bookingOrderService;
     @Resource
@@ -82,7 +82,7 @@ public class BookingOrderServiceTest {
         assertFalse(bookingOrderService.checkOldData("Nov", "2023"));
     }
 
-    private void assertTotalResultValue(BookingOrder totalResult, long quantity, double totalDealerNet, double totalDNAfterSurcharge,
+    private void assertTotalResultValue(Booking totalResult, long quantity, double totalDealerNet, double totalDNAfterSurcharge,
                                         double totalCost, double totalMarginAfterSurcharge, double totalMarginPercentage) {
 
         Assertions.assertEquals(quantity, totalResult.getQuantity());
@@ -121,8 +121,8 @@ public class BookingOrderServiceTest {
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> listResult = (List<BookingOrder>) result.get("listBookingOrder");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
         Assertions.assertFalse(listResult.isEmpty());
 
         long quantity = 0;
@@ -131,7 +131,7 @@ public class BookingOrderServiceTest {
         double totalCost = 0.0;
         double totalMarginAfterSurcharge = 0.0;
 
-        for(BookingOrder bo : listResult) {
+        for(Booking bo : listResult) {
             Assertions.assertEquals(region, bo.getRegion().getRegionName());
 
             quantity += bo.getQuantity();
@@ -164,8 +164,8 @@ public class BookingOrderServiceTest {
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> listResult = (List<BookingOrder>) result.get("listBookingOrder");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
         Assertions.assertFalse(listResult.isEmpty());
 
         long quantity = 0;
@@ -174,7 +174,7 @@ public class BookingOrderServiceTest {
         double totalCost = 0.0;
         double totalMarginAfterSurcharge = 0.0;
 
-        for(BookingOrder bo : listResult) {
+        for(Booking bo : listResult) {
             Assertions.assertEquals(plant, bo.getProductDimension().getPlant());
 
             quantity += bo.getQuantity();
@@ -207,8 +207,8 @@ public class BookingOrderServiceTest {
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> listResult = (List<BookingOrder>) result.get("listBookingOrder");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
         Assertions.assertFalse(listResult.isEmpty());
 
         long quantity = 0;
@@ -217,7 +217,7 @@ public class BookingOrderServiceTest {
         double totalCost = 0.0;
         double totalMarginAfterSurcharge = 0.0;
 
-        for(BookingOrder bo : listResult) {
+        for(Booking bo : listResult) {
             Assertions.assertEquals(metaSeries, bo.getProductDimension().getMetaSeries());
 
             quantity += bo.getQuantity();
@@ -250,8 +250,8 @@ public class BookingOrderServiceTest {
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> listResult = (List<BookingOrder>) result.get("listBookingOrder");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
         Assertions.assertFalse(listResult.isEmpty());
 
         long quantity = 0;
@@ -260,7 +260,7 @@ public class BookingOrderServiceTest {
         double totalCost = 0.0;
         double totalMarginAfterSurcharge = 0.0;
 
-        for(BookingOrder bo : listResult) {
+        for(Booking bo : listResult) {
             Assertions.assertEquals(dealer, bo.getDealerName());
 
             quantity += bo.getQuantity();
@@ -293,8 +293,8 @@ public class BookingOrderServiceTest {
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> listResult = (List<BookingOrder>) result.get("listBookingOrder");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
         Assertions.assertFalse(listResult.isEmpty());
 
         long quantity = 0;
@@ -303,7 +303,7 @@ public class BookingOrderServiceTest {
         double totalCost = 0.0;
         double totalMarginAfterSurcharge = 0.0;
 
-        for(BookingOrder bo : listResult) {
+        for(Booking bo : listResult) {
             Assertions.assertEquals(clazz, bo.getProductDimension().getClazz());
 
             quantity += bo.getQuantity();
@@ -336,8 +336,8 @@ public class BookingOrderServiceTest {
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> listResult = (List<BookingOrder>) result.get("listBookingOrder");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
         Assertions.assertFalse(listResult.isEmpty());
 
         long quantity = 0;
@@ -346,7 +346,7 @@ public class BookingOrderServiceTest {
         double totalCost = 0.0;
         double totalMarginAfterSurcharge = 0.0;
 
-        for(BookingOrder bo : listResult) {
+        for(Booking bo : listResult) {
             Assertions.assertEquals(modelCode, bo.getProductDimension().getModelCode());
 
             quantity += bo.getQuantity();
@@ -379,8 +379,8 @@ public class BookingOrderServiceTest {
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> listResult = (List<BookingOrder>) result.get("listBookingOrder");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
         Assertions.assertFalse(listResult.isEmpty());
 
         long quantity = 0;
@@ -389,7 +389,7 @@ public class BookingOrderServiceTest {
         double totalCost = 0.0;
         double totalMarginAfterSurcharge = 0.0;
 
-        for(BookingOrder bo : listResult) {
+        for(Booking bo : listResult) {
             Assertions.assertEquals(segment, bo.getProductDimension().getSegment());
 
             quantity += bo.getQuantity();
@@ -422,8 +422,8 @@ public class BookingOrderServiceTest {
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
 
-        BookingOrder totalResult = ((List<BookingOrder>) result.get("total")).get(0);
-        List<BookingOrder> listResult = (List<BookingOrder>) result.get("listBookingOrder");
+        Booking totalResult = ((List<Booking>) result.get("total")).get(0);
+        List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
         Assertions.assertFalse(listResult.isEmpty());
 
         long quantity = 0;
@@ -432,7 +432,7 @@ public class BookingOrderServiceTest {
         double totalCost = 0.0;
         double totalMarginAfterSurcharge = 0.0;
 
-        for(BookingOrder bo : listResult) {
+        for(Booking bo : listResult) {
             Assertions.assertTrue(bo.getMarginPercentageAfterSurcharge() < 0.2);
 
             quantity += bo.getQuantity();

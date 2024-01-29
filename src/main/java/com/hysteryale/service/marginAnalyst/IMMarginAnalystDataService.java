@@ -1,6 +1,6 @@
 package com.hysteryale.service.marginAnalyst;
 
-import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.marginAnalyst.MarginAnalysisAOPRate;
 import com.hysteryale.model_h2.IMMarginAnalystData;
 import com.hysteryale.model_h2.IMMarginAnalystSummary;
@@ -265,7 +265,7 @@ public class IMMarginAnalystDataService {
     public IMMarginAnalystSummary calculateUSPlantMarginSummary(String modelCode, String series, String strCurrency, String durationUnit, String orderNumber, Integer type, String fileUUID) {
         double defMFGCost = 0;
         LocalDate monthYear = LocalDate.now();
-        Optional<BookingOrder> optionalBookingOrder = bookingOrderService.getBookingOrderByOrderNumber(orderNumber);
+        Optional<Booking> optionalBookingOrder = bookingOrderService.getBookingOrderByOrderNumber(orderNumber);
         if(optionalBookingOrder.isPresent())
         {
             defMFGCost = optionalBookingOrder.get().getTotalCost();
@@ -387,7 +387,7 @@ public class IMMarginAnalystDataService {
                 if(!orderIDCellValue.isEmpty()) orderNumber = orderIDCellValue;
 
                 // Find Booking Order for checking plant and monthYear
-                Optional<BookingOrder> optionalBookingOrder = bookingOrderService.getBookingOrderByOrderNumber(orderNumber);
+                Optional<Booking> optionalBookingOrder = bookingOrderService.getBookingOrderByOrderNumber(orderNumber);
                 if(optionalBookingOrder.isEmpty())
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Booking Order: " + orderNumber);
 
