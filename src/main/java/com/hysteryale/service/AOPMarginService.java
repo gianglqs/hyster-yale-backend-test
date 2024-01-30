@@ -82,40 +82,40 @@ public class AOPMarginService extends BasedService {
         return aopMargin;
     }
 
-    public void importAOPMargin() throws IOException, IllegalAccessException {
-        // Initialize folderPath and fileName
-        String fileName = "2023 AOP DN and Margin%.xlsx";
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
-        String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.aopmargin");
-        String pathFile = folderPath + "/" + fileName;
-        //check file has been imported ?
-        if (isImported(pathFile)) {
-            logWarning("file '" + fileName + "' has been imported");
-            return;
-        }
-
-        InputStream is = new FileInputStream(pathFile);
-
-        XSSFWorkbook workbook = new XSSFWorkbook(is);
-
-
-        Sheet aopMarginSheet = workbook.getSheetAt(0);
-
-        for (Row row : aopMarginSheet) {
-            if (row.getRowNum() == 2)
-                getAOPMarginColumns(row);
-            else if (row.getRowNum() > 2 && !row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
-                AOPMargin aopMargin = mapExcelToAOPMargin(row);
-                //TODO need to get year from file name, not hardcode as I did below
-                aopMargin.setYear(2023);
-                Optional<AOPMargin> optionalAOPMargin = aopMarginRepository.findByRegionSeriesPlant(aopMargin.getRegionSeriesPlant());
-                if (!optionalAOPMargin.isPresent()) {
-                    aopMarginRepository.save(aopMargin);
-                }
-            }
-        }
-        updateStateImportFile(pathFile);
-    }
+//    public void importAOPMargin() throws IOException, IllegalAccessException {
+//        // Initialize folderPath and fileName
+//        String fileName = "2023 AOP DN and Margin%.xlsx";
+//        String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
+//        String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.aopmargin");
+//        String pathFile = folderPath + "/" + fileName;
+//        //check file has been imported ?
+//        if (isImported(pathFile)) {
+//            logWarning("file '" + fileName + "' has been imported");
+//            return;
+//        }
+//
+//        InputStream is = new FileInputStream(pathFile);
+//
+//        XSSFWorkbook workbook = new XSSFWorkbook(is);
+//
+//
+//        Sheet aopMarginSheet = workbook.getSheetAt(0);
+//
+//        for (Row row : aopMarginSheet) {
+//            if (row.getRowNum() == 2)
+//                getAOPMarginColumns(row);
+//            else if (row.getRowNum() > 2 && !row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
+//                AOPMargin aopMargin = mapExcelToAOPMargin(row);
+//                //TODO need to get year from file name, not hardcode as I did below
+//                aopMargin.setYear(2023);
+//                Optional<AOPMargin> optionalAOPMargin = aopMarginRepository.findByRegionSeriesPlant(aopMargin.getRegionSeriesPlant());
+//                if (!optionalAOPMargin.isPresent()) {
+//                    aopMarginRepository.save(aopMargin);
+//                }
+//            }
+//        }
+//        updateStateImportFile(pathFile);
+//    }
 
     public Double getAOPMargin(String series, String region, String plant) {
         List<AOPMargin> aopMarginList = aopMarginRepository.findByRegionPlantSeries(series.substring(1),region, plant);
