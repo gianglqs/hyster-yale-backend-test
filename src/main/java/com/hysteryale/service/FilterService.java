@@ -1,5 +1,7 @@
 package com.hysteryale.service;
 
+import com.hysteryale.model.Currency;
+import com.hysteryale.model.filters.FilterRow;
 import com.hysteryale.repository.*;
 import com.hysteryale.repository.BookingOrderRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,8 @@ public class FilterService {
     BookingOrderRepository bookingOrderRepository;
     @Resource
     CountryRepository countryRepository;
+    @Resource
+    CurrencyRepository currencyRepository;
 
     public Map<String, Object> getCompetitorPricingFilter() {
 
@@ -380,5 +384,14 @@ public class FilterService {
             listResult.add(Map.of("value", orderNo));
         }
         return listResult;
+    }
+
+    public List<FilterRow> getCurrencyFilter() {
+        List<Currency> currencyList = currencyRepository.findAll();
+        List<FilterRow> filters = new ArrayList<>();
+        for(Currency c : currencyList)
+            filters.add(new FilterRow(c.getCurrency()));
+
+        return filters;
     }
 }
