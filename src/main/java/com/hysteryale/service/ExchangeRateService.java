@@ -184,8 +184,12 @@ public class ExchangeRateService extends BasedService {
 
             String state = "stable";
             if(Math.abs(differentRatePercentage) > 5) {
-                if(differentRatePercentage < 0) weakerCurrencies.add(currency + " by " + differentRate + " (" + differentRatePercentage + "%)");
-                else strongerCurrencies.add(currency + " by " + differentRate + " (+" + differentRatePercentage + "%)");
+                StringBuilder sb = new StringBuilder();
+                Formatter formatter = new Formatter(sb);
+                formatter.format("%(,.2f", differentRate);
+
+                if(differentRatePercentage < 0) weakerCurrencies.add(currency + " by " + sb + " (" + differentRatePercentage + "%)");
+                else strongerCurrencies.add(currency + " by +" + sb + " (+" + differentRatePercentage + "%)");
             }
             else stableCurrencies.add(currency);
             data.put(currency, new CompareCurrencyResponse(exchangeRateList, differentRate, differentRatePercentage, state));
