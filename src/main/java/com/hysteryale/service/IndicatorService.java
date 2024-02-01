@@ -183,12 +183,12 @@ public class IndicatorService extends BasedService {
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
         String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + ".xlsx";
 
-        File file = new File(baseFolder + "/" + forecastFolder + "/" + encodedFileName);
+        File file = new File(baseFolder + forecastFolder + "/" + encodedFileName);
         if (file.createNewFile()) {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
 
-            fileUploadService.saveFileUpload(baseFolder + "/" + forecastFolder + "/" + encodedFileName, authentication);
+            fileUploadService.saveFileUpload(baseFolder + forecastFolder + "/" + encodedFileName, authentication);
         } else {
             log.info("Can not create new file: " + encodedFileName);
             throw new Exception("Can not create new file: " + encodedFileName);
