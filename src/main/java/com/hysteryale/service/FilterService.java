@@ -387,10 +387,10 @@ public class FilterService {
     }
 
     public List<FilterRow> getCurrencyFilter() {
-        List<Currency> currencyList = currencyRepository.findAll();
+        List<String> currencyList = currencyRepository.getExistingCurrencies();
         List<FilterRow> filters = new ArrayList<>();
-        for(Currency c : currencyList)
-            filters.add(new FilterRow(c.getCurrency()));
+        for(String c : currencyList)
+            filters.add(new FilterRow(c));
 
         return filters;
     }
