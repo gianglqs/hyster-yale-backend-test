@@ -3,8 +3,10 @@ package com.hysteryale.repository;
 import com.hysteryale.model.ExchangeRate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Integer> {
@@ -13,4 +15,11 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Inte
 
     @Query(value = "SELECT * FROM Exchange_Rate WHERE from_currency = ?1 AND to_currency = ?2 ORDER BY date DESC LIMIT 1", nativeQuery = true)
     Optional<ExchangeRate> getNearestExchangeRateByFromToCurrency(String fromId, String toId);
+
+    @Query(value = "SELECT * from exchange_rate e " +
+            "WHERE e.from_currency = :from_currency " +
+            "AND e.to_currency = :to_currency " +
+            "ORDER BY e.date DESC " +
+            "LIMIT 12 ", nativeQuery = true)
+    List<ExchangeRate> getCurrentExchangeRate(@Param("from_currency") String fromCurrency, @Param("to_currency") String toCurrency);
 }
