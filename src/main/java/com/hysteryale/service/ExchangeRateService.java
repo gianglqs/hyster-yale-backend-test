@@ -183,7 +183,7 @@ public class ExchangeRateService extends BasedService {
             if(Math.abs(differentRatePercentage) > 5) {
                 StringBuilder sb = new StringBuilder();
                 Formatter formatter = new Formatter(sb);
-                formatter.format("%(,.2f", differentRate);
+                formatter.format("%,.2f", differentRate);
 
                 if(differentRatePercentage < 0) weakerCurrencies.add(currency + " by " + sb + " (" + differentRatePercentage + "%)");
                 else strongerCurrencies.add(currency + " by +" + sb + " (+" + differentRatePercentage + "%)");
