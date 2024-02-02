@@ -232,7 +232,7 @@ public class ExchangeRateService extends BasedService {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
-        Sheet sheet = workbook.getSheet("Summary AOP");
+        Sheet sheet = workbook.getSheet("Summary Current Interlocking");
         List<ExchangeRate> exchangeRatesList = new ArrayList<>();
 
         for(int i = 3; i <=34; i++) {
