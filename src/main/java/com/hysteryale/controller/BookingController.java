@@ -2,7 +2,7 @@ package com.hysteryale.controller;
 
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.response.ResponseObject;
-import com.hysteryale.service.BookingOrderService;
+import com.hysteryale.service.BookingService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,14 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @Slf4j
-public class BookingOrderController {
+public class BookingController {
 
     @Resource
-    BookingOrderService bookingOrderService;
+    BookingService bookingService;
 
     @Resource
     FileUploadService fileUploadService;
@@ -52,7 +50,7 @@ public class BookingOrderController {
         filters.setPageNo(pageNo);
         filters.setPerPage(perPage);
         this.filters = filters;
-        return bookingOrderService.getBookingByFilter(filters);
+        return bookingService.getBookingByFilter(filters);
 
     }
 
@@ -80,11 +78,11 @@ public class BookingOrderController {
             }
             // import
             if (!pathFileBooking.isEmpty()) {
-                bookingOrderService.importNewBookingFileByFile(pathFileBooking);
+                bookingService.importNewBookingFileByFile(pathFileBooking);
                 invalid = true;
             }
             if (!pathFileCostData.isEmpty()) {
-                bookingOrderService.importCostData(pathFileCostData);
+                bookingService.importCostData(pathFileCostData);
                 invalid = true;
             }
             if (!invalid)

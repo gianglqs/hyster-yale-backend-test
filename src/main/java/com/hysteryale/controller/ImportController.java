@@ -15,7 +15,7 @@ public class ImportController {
     @Resource
     APICDealerService apicDealerService;
     @Resource
-    BookingOrderService bookingOrderService;
+    BookingService bookingService;
     @Resource
     AOPMarginService aopMarginService;
     @Resource
@@ -66,7 +66,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importAOPMargin")
-    void importAOPMargin() throws IOException, IllegalAccessException {
+    void importAOPMargin() throws IOException, IllegalAccessException, MissingColumnException {
         aopMarginService.importAOPMargin();
     }
 
@@ -77,7 +77,7 @@ public class ImportController {
 
     @PostMapping(path = "/importOrder")
     void importOrder() throws IOException, IllegalAccessException, MissingColumnException {
-        bookingOrderService.importOrder();
+        bookingService.importOrder();
     }
 
     @PostMapping(path = "/importExchangeRate")
@@ -104,6 +104,14 @@ public class ImportController {
     @PostMapping(path = "/importShipment")
     void importShipment() throws IOException, MissingColumnException {
         importService.importShipment();
+    }
+
+    /**
+     * Extract Product (Model Code) from Part (in power bi files)
+     */
+    @PostMapping(path = "/importProductFromPart")
+    void importProductFromPart() throws IOException {
+        productDimensionService.extractProductFromPart();
     }
 
 

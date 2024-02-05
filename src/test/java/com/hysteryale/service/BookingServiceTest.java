@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 public class BookingServiceTest {
     @Resource
-    BookingOrderService bookingOrderService;
+    BookingService bookingService;
     @Resource
     ExchangeRateService exchangeRateService;
     FilterModel filters;
@@ -71,15 +71,15 @@ public class BookingServiceTest {
         String folderPath = "import_files/booking";
         int expectedListSize = 16;
 
-        List<String> fileList = bookingOrderService.getAllFilesInFolder(folderPath);
+        List<String> fileList = bookingService.getAllFilesInFolder(folderPath);
         Assertions.assertEquals(expectedListSize, fileList.size());
     }
 
     @Test
     void checkOldDate() {
-        assertTrue(bookingOrderService.checkOldData("Apr", "2023"));
-        assertFalse(bookingOrderService.checkOldData("Sep", "2023"));
-        assertFalse(bookingOrderService.checkOldData("Nov", "2023"));
+        assertTrue(bookingService.checkOldData("Apr", "2023"));
+        assertFalse(bookingService.checkOldData("Sep", "2023"));
+        assertFalse(bookingService.checkOldData("Nov", "2023"));
     }
 
     private void assertTotalResultValue(Booking totalResult, long quantity, double totalDealerNet, double totalDNAfterSurcharge,
@@ -116,7 +116,7 @@ public class BookingServiceTest {
         String region = "Asia";
         filters.setRegions(Collections.singletonList(region));
 
-        Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
+        Map<String, Object> result = bookingService.getBookingByFilter(filters);
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
@@ -159,7 +159,7 @@ public class BookingServiceTest {
         String plant = "Ruyi";
         filters.setPlants(Collections.singletonList(plant));
 
-        Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
+        Map<String, Object> result = bookingService.getBookingByFilter(filters);
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
@@ -202,7 +202,7 @@ public class BookingServiceTest {
         String metaSeries = "3C7";
         filters.setMetaSeries(Collections.singletonList(metaSeries));
 
-        Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
+        Map<String, Object> result = bookingService.getBookingByFilter(filters);
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
@@ -245,7 +245,7 @@ public class BookingServiceTest {
         String dealer = "DILOK AND SONS CO.,LTD.";
         filters.setDealers(Collections.singletonList(dealer));
 
-        Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
+        Map<String, Object> result = bookingService.getBookingByFilter(filters);
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
@@ -288,7 +288,7 @@ public class BookingServiceTest {
         String clazz = "Class 3";
         filters.setClasses(Collections.singletonList(clazz));
 
-        Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
+        Map<String, Object> result = bookingService.getBookingByFilter(filters);
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
@@ -331,7 +331,7 @@ public class BookingServiceTest {
         String modelCode = "T6.0UT";
         filters.setModels(Collections.singletonList(modelCode));
 
-        Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
+        Map<String, Object> result = bookingService.getBookingByFilter(filters);
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
@@ -374,7 +374,7 @@ public class BookingServiceTest {
         String segment = "C3 - Low Intensity";
         filters.setSegments(Collections.singletonList(segment));
 
-        Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
+        Map<String, Object> result = bookingService.getBookingByFilter(filters);
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));
@@ -417,7 +417,7 @@ public class BookingServiceTest {
         String marginPercentage = "<20% Margin";
         filters.setMarginPercentage(marginPercentage);
 
-        Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
+        Map<String, Object> result = bookingService.getBookingByFilter(filters);
         Assertions.assertNotNull(result.get("totalItems"));
         Assertions.assertNotNull(result.get("total"));
         Assertions.assertNotNull(result.get("listBookingOrder"));

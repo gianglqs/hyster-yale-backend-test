@@ -26,7 +26,7 @@ public class ShipmentServiceTest {
     @Resource
     ShipmentService shipmentService;
     @Resource
-    BookingOrderService bookingOrderService;
+    BookingService bookingService;
     FilterModel filters;
     @Resource
     ExchangeRateService exchangeRateService;
@@ -101,7 +101,7 @@ public class ShipmentServiceTest {
     }
 
     private void assertTotalBookingMarginPercentage(FilterModel filters, double marginResult) throws ParseException {
-        Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
+        Map<String, Object> result = bookingService.getBookingByFilter(filters);
 
         List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
 

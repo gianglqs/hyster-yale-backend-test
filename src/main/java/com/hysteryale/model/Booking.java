@@ -37,8 +37,9 @@ public class Booking {
     @Column(name = "dealerpo")
     private String dealerPO;
 
-    @Column(name = "dealer_name")
-    private String dealerName;
+    @JoinColumn(name = "dealer")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Dealer dealer;
 
     private String comment;
     private String series;
@@ -71,8 +72,9 @@ public class Booking {
     @Column(name = "margin_percentage_after_surcharge")
     private double marginPercentageAfterSurcharge;
 
-    @Column(name = "aopmargin_percentage")
-    private double AOPMarginPercentage;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "aopmargin")
+    private AOPMargin AOPMargin;
 
     public Booking(String region, String plant, String clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge) {
 
@@ -87,20 +89,19 @@ public class Booking {
         this.marginAfterSurcharge = marginAfterSurcharge;
     }
 
-    public Booking(String region, Product product, String series, double totalCost, double dealerNetAfterSurcharge, double marginAfterSurcharge, long quantity) {
-
-
+    public Booking(String region, Product product, Currency currency, double totalCost, double dealerNetAfterSurcharge, double marginAfterSurcharge, long quantity) {
+        this.currency = currency;
         this.region = new Region(region);
         this.product = product;
-        this.series = series;
         this.quantity = quantity;
         this.totalCost = totalCost;
         this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
         this.marginAfterSurcharge = marginAfterSurcharge;
     }
 
-    public Booking(String id, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double marginAfterSurcharge, double marginPercentageAfterSurcharge) {
+    public Booking(String id, Currency currency, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double marginAfterSurcharge, double marginPercentageAfterSurcharge) {
         this.orderNo = id;
+        this.currency = currency;
         this.dealerNet = dealerNet;
         this.quantity = quantity;
         this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
@@ -117,7 +118,7 @@ public class Booking {
         this.quantity = quantity;
     }
 
-    public Booking(long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge, double marginPercentageAfterSurcharge){
+    public Booking(long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge, double marginPercentageAfterSurcharge) {
         this.quantity = quantity;
         this.totalCost = totalCost;
         this.dealerNet = dealerNet;
@@ -126,7 +127,7 @@ public class Booking {
         this.marginPercentageAfterSurcharge = marginPercentageAfterSurcharge;
     }
 
-    public Booking(String order_no, double sum_total_cost, double sum_dealer_net, double sum_dealer_net_after_sur_charge, double sum_margin_after_sur_charge, double sum_margin_percentage_after_surcharge, long sum_quantity){
+    public Booking(String order_no, double sum_total_cost, double sum_dealer_net, double sum_dealer_net_after_sur_charge, double sum_margin_after_sur_charge, double sum_margin_percentage_after_surcharge, long sum_quantity) {
         this.orderNo = order_no;
         this.totalCost = sum_total_cost;
         this.dealerNet = sum_dealer_net;
@@ -135,14 +136,13 @@ public class Booking {
         this.marginPercentageAfterSurcharge = sum_margin_percentage_after_surcharge;
         this.quantity = sum_quantity;
     }
-    /**
-     * for test Repository in Junit Test
-     */
-    public Booking(String orderNo, String dealerName, String series){
-        this.orderNo = orderNo;
-        this.dealerName = dealerName;
-        this.series = series;
-    }
 
+    public Booking(String orderNo, Currency currency, double dealerNet, double dealerNetAfterSurcharge, double totalCost) {
+        this.orderNo = orderNo;
+        this.currency = currency;
+        this.dealerNet = dealerNet;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
+        this.totalCost = totalCost;
+    }
 
 }

@@ -17,7 +17,7 @@ public abstract class BasedControllerTest {
     @Resource @Mock
     protected APICDealerService apicDealerService;
     @Resource @Mock
-    protected BookingOrderService bookingOrderService;
+    protected BookingService bookingService;
     @Resource @Mock
     protected AOPMarginService aopMarginService;
     @Resource @Mock

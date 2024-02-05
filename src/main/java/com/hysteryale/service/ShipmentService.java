@@ -1,11 +1,11 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.Booking;
+import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ShipmentRepository;
-import com.hysteryale.repository.BookingOrderRepository;
+import com.hysteryale.repository.BookingRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.TargetCurrency;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.*;
 
 @Service
@@ -27,7 +26,7 @@ public class ShipmentService extends BasedService {
     ExchangeRateService exchangeRateService;
 
     @Resource
-    BookingOrderRepository bookingOrderRepository;
+    BookingRepository bookingRepository;
 
     public Map<String, Object> getShipmentByFilter(FilterModel filterModel) throws ParseException {
         Map<String, Object> result = new HashMap<>();
@@ -48,6 +47,13 @@ public class ShipmentService extends BasedService {
         List<ExchangeRate> exchangeRateList = new ArrayList<>();
         List<String> listTargetCurrency = TargetCurrency.getListTargetCurrency;
 
+        listCurrency.add("USD");
+        listCurrency.add("AUD");
+
+        exchangeRateList.add(exchangeRateService.getNearestExchangeRate("USD", "AUD"));
+        exchangeRateList.add(exchangeRateService.getNearestExchangeRate("AUD", "USD"));
+
+
         for (Shipment shipment : shipmentList) {
             if (shipment.getCurrency() != null) {
                 String currency = shipment.getCurrency().getCurrency();
@@ -62,19 +68,6 @@ public class ShipmentService extends BasedService {
             }
         }
 
-        boolean hasUSDToAUD = false;
-        boolean hasAUDToUSD = false;
-        for(ExchangeRate exchangeRate : exchangeRateList){
-            if(exchangeRate.getFrom().getCurrency().equals("USD") && exchangeRate.getTo().getCurrency().equals("AUD"))
-                hasUSDToAUD = true;
-            if(exchangeRate.getFrom().getCurrency().equals("AUD") && exchangeRate.getTo().getCurrency().equals("USD"))
-                hasAUDToUSD = true;
-        }
-
-        if(!hasUSDToAUD)
-            exchangeRateList.add(exchangeRateService.getNearestExchangeRate("USD", "AUD"));
-        if(!hasAUDToUSD)
-            exchangeRateList.add(exchangeRateService.getNearestExchangeRate("AUD", "USD"));
         result.put("listExchangeRate", exchangeRateList);
 
         //get total Recode
@@ -88,40 +81,39 @@ public class ShipmentService extends BasedService {
         result.put("totalItems", countAll);
 
         // get total
-        List<Shipment> getTotal = shipmentRepository.getTotalRowForShipmentPage(
-                (String) filterMap.get("orderNoFilter"),
-                filterMap.get("regionFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("regionFilter"),
-                filterMap.get("plantFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("plantFilter"),
-                filterMap.get("metaSeriesFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("metaSeriesFilter"),
-                filterMap.get("classFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("classFilter"),
-                filterMap.get("modelFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("modelFilter"),
-                filterMap.get("segmentFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("segmentFilter"),
-                filterMap.get("dealerNameFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("dealerNameFilter"),
-                (String) filterMap.get("aopMarginPercentageFilter"),
+        List<Shipment> totalShipment = shipmentRepository.getTotal(
+                (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
+                (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
+                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                filterMap.get("fromDateFilter") == null ? LocalDate.of(1996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("fromDateFilter"),
-                filterMap.get("toDateFilter") == null ? LocalDate.of(2996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("toDateFilter")
-        );
-        result.put("total", getTotal);
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"));
 
-        // get totalMarginPercentage of bookingOrder
 
-        List<Booking> getTotalRowBooking = bookingOrderRepository.getTotalRowForBookingPage(
-                (String) filterMap.get("orderNoFilter"),
-                filterMap.get("regionFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("regionFilter"),
-                filterMap.get("plantFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("plantFilter"),
-                filterMap.get("metaSeriesFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("metaSeriesFilter"),
-                filterMap.get("classFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("classFilter"),
-                filterMap.get("modelFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("modelFilter"),
-                filterMap.get("segmentFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("segmentFilter"),
-                filterMap.get("dealerNameFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("dealerNameFilter"),
-                (String) filterMap.get("aopMarginPercentageFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                filterMap.get("fromDateFilter") == null ? LocalDate.of(1996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("fromDateFilter"),
-                filterMap.get("toDateFilter") == null ? LocalDate.of(2996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("toDateFilter"));
-        getTotal.get(0).setBookingMarginPercentageAfterSurcharge(getTotalRowBooking.get(0).getMarginPercentageAfterSurcharge());
+        int quantity = 0;
+        double dealerNet = 0;
+        double dealerNetAfterSurcharge = 0;
+        double totalCost = 0;
+        double marginAfterSurcharge = 0;
+        double marginPercentageAfterSurcharge = 0;
+        double netRevenue = 0;
+        List<String> listOrderNo = new ArrayList<>();
+
+        for (Shipment shipment : totalShipment) {
+            quantity++;
+            dealerNet += shipment.getDealerNet();
+            dealerNetAfterSurcharge += shipment.getDealerNetAfterSurcharge();
+            totalCost += shipment.getTotalCost();
+            netRevenue += shipment.getNetRevenue();
+            listOrderNo.add(shipment.getOrderNo());
+        }
+        marginAfterSurcharge = dealerNetAfterSurcharge - totalCost;
+        marginPercentageAfterSurcharge = marginAfterSurcharge / dealerNetAfterSurcharge;
+
+        double bookingMargin = bookingRepository.getTotalMarginPercentage(listOrderNo);
+
+        Shipment shipment = new Shipment("Total", new Currency("USD"), quantity, dealerNet, dealerNetAfterSurcharge, totalCost, netRevenue, marginAfterSurcharge, marginPercentageAfterSurcharge, bookingMargin);
+        result.put("total", List.of(shipment));
 
         return result;
     }

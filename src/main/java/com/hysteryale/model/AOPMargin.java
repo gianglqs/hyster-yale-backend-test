@@ -21,7 +21,10 @@ public class AOPMargin {
     private double marginSTD;
     private int year;
     private String plant;
-    private String series;
-    private String region;
+    @Column(name = "meta_series")
+    private String metaSeries;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "region")
+    private Region region;
 
 }

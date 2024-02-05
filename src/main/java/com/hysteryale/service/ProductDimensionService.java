@@ -5,11 +5,10 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ProductDimensionRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.FileUtils;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -236,6 +235,80 @@ public class ProductDimensionService extends BasedService {
             throw new NotFoundException("Not found Product with ModelCode " + modelCode);
 
         return productOptional.get();
+    }
+
+    /**
+     * Extract Product (Model Code) from Part (in power bi files) --- will be removed later
+     */
+    public void extractProductFromPart() throws IOException {
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
+        String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.bi-download");
+        List<String> files = FileUtils.getAllFilesInFolder(folderPath);
+
+        logInfo("Files: " + files);
+
+        for (String fileName : files) {
+            String filePath = folderPath + "/" + fileName;
+            //check file has been imported ?
+            if (isImported(filePath)) {
+                logWarning("file '" + fileName + "' has been imported");
+                continue;
+            }
+            log.info("Importing " + fileName);
+            importProductFromPowerBi(filePath);
+        }
+    }
+
+    private HashMap<String, Integer> getPowerBiColumnsName(Row row) {
+        HashMap<String, Integer> columns = new HashMap<>();
+        for (Cell cell : row) {
+            String columnsName = cell.getStringCellValue();
+            columns.put(columnsName, cell.getColumnIndex());
+        }
+        return columns;
+    }
+
+    private boolean checkDuplicateModelCode(String modelCode, List<Product> productList) {
+        for(Product p : productList) {
+            if(Objects.equals(p.getModelCode(), modelCode))
+                return true;
+        }
+        return false;
+    }
+
+    private void importProductFromPowerBi(String filePath) throws IOException {
+        InputStream is = new FileInputStream(filePath);
+        Workbook workbook = new XSSFWorkbook(is);
+        Sheet sheet = workbook.getSheet("Export");
+
+        List<Product> productForSaving = new ArrayList<>();
+
+        HashMap<String, Integer> columns = getPowerBiColumnsName(sheet.getRow(0));
+        for(Row row : sheet) {
+            if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
+                String modelCode = row.getCell(columns.get("Model")).getStringCellValue();
+                Optional<Product> optionalProduct = productDimensionRepository.findByModelCode(modelCode);
+                if(optionalProduct.isEmpty() && checkDuplicateModelCode(modelCode, productForSaving)) {
+                    String series = row.getCell(columns.get("Series")).getStringCellValue();
+                    Product seriesInformation = productDimensionRepository.getProductByMetaSeries(series.substring(1));
+                    if(seriesInformation != null) {
+                        productForSaving.add(new Product(
+                                modelCode,
+                                seriesInformation.getMetaSeries(),
+                                seriesInformation.getBrand(),
+                                seriesInformation.getPlant(),
+                                seriesInformation.getClazz(),
+                                seriesInformation.getSegment(),
+                                seriesInformation.getFamily(),
+                                seriesInformation.getTruckType(),
+                                seriesInformation.getImage(),
+                                seriesInformation.getDescription())
+                        );
+                    }
+                }
+            }
+        }
+        productDimensionRepository.saveAll(productForSaving);
     }
 
 }

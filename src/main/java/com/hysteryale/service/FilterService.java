@@ -1,15 +1,16 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.Currency;
 import com.hysteryale.model.filters.FilterRow;
 import com.hysteryale.repository.*;
-import com.hysteryale.repository.BookingOrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -28,11 +29,14 @@ public class FilterService {
     ShipmentRepository shipmentRepository;
 
     @Resource
-    BookingOrderRepository bookingOrderRepository;
+    BookingRepository bookingRepository;
     @Resource
     CountryRepository countryRepository;
     @Resource
     CurrencyRepository currencyRepository;
+
+    @Resource
+    DealerRepository dealerRepository;
 
     public Map<String, Object> getCompetitorPricingFilter() {
 
@@ -199,7 +203,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllDealerNames() {
         List<Map<String, String>> DealerNameMap = new ArrayList<>();
-        List<String> dealerNames = bookingOrderRepository.getAllDealerName();
+        List<String> dealerNames = dealerRepository.getAllDealerName();
         dealerNames.sort(String::compareTo);
         for (String m : dealerNames) {
             Map<String, String> mMap = new HashMap<>();
@@ -236,7 +240,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllModels() {
         List<Map<String, String>> result = new ArrayList<>();
-        List<String> modelList = bookingOrderRepository.getAllModel();
+        List<String> modelList = bookingRepository.getAllModel();
         modelList.sort(String::compareTo);
         for (String model : modelList) {
             Map<String, String> map = new HashMap<>();
@@ -376,7 +380,7 @@ public class FilterService {
     }
 
     private List<Map<String, String>> getListOrderNoByModelCode(String modelCode) {
-        List<String> orderNos = bookingOrderRepository.getOrderNosByModelCode(modelCode);
+        List<String> orderNos = bookingRepository.getOrderNosByModelCode(modelCode);
         log.info(orderNos.toString());
         List<Map<String, String>> listResult = new ArrayList<>();
         orderNos.sort(String::compareToIgnoreCase);

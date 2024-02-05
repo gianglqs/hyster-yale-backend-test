@@ -19,17 +19,13 @@ public class Shipment {
     @Column(name = "order_no")
     private String orderNo;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "order_no")
-    private Booking booking;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "region")
     private Region region;
 
-    @Column(name = "dealer_name")
-    private String dealerName;
+    @JoinColumn(name = "dealer")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Dealer dealer;
 
     private LocalDate date;
 
@@ -71,11 +67,13 @@ public class Shipment {
     @Column(name = "booking_margin_percentage_after_surcharge")
     private double bookingMarginPercentageAfterSurcharge;
 
-    @Column(name = "aopmargin_percentage")
-    private double AOPMarginPercentage;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "aopmargin")
+    private AOPMargin AOPMargin;
 
-    public Shipment(String id, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue, double marginAfterSurcharge, double marginPercentageAfterSurcharge) {
+    public Shipment(String id, Currency currency, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue, double marginAfterSurcharge, double marginPercentageAfterSurcharge, double bookingMargin) {
         this.orderNo = id;
+        this.currency = currency;
         this.dealerNet = dealerNet;
         this.quantity = quantity;
         this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
@@ -83,6 +81,15 @@ public class Shipment {
         this.marginAfterSurcharge = marginAfterSurcharge;
         this.marginPercentageAfterSurcharge = marginPercentageAfterSurcharge;
         this.netRevenue = netRevenue;
+        this.bookingMarginPercentageAfterSurcharge = bookingMargin;
     }
 
+    public Shipment(String orderNo, Currency currency, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue) {
+        this.orderNo = orderNo;
+        this.currency = currency;
+        this.netRevenue = netRevenue;
+        this.totalCost = totalCost;
+        this.dealerNet = dealerNet;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
+    }
 }
