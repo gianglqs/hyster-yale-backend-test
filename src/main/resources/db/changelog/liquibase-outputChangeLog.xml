@@ -375,4 +375,18 @@
 
     </changeSet>
 
+    <changeSet id="addSequence-product" author="songiang">
+        <createSequence sequenceName="product_seq" startValue="1" incrementBy="1"/>
+        <sql>
+            SELECT SETVAL('product_seq', (SELECT MAX(id) FROM product))
+        </sql>
+    </changeSet>
+
+    <changeSet id="addSequence-aopmargin" author="songiang">
+        <createSequence sequenceName="aopmargin_seq" startValue="1" incrementBy="1"/>
+        <sql>
+            SELECT SETVAL('aopmargin_seq', (SELECT MAX(id) FROM aopmargin))
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

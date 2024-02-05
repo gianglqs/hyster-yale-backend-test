@@ -529,7 +529,6 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             @Param("toDate") LocalDate toDate
     );
 
-
-    @Query(value = "SELECT b.order_no FROM booking b WHERE b.product = :modelCode", nativeQuery = true)
-    List<String> getOrderNosByModelCode(String modelCode);
+    @Query(value = "SELECT b.orderNo FROM Booking b WHERE b.product.modelCode = :modelCode AND b.product.metaSeries = :metaSeries ")
+    List<String> getOrderNosByModelCodeAndMetaSeries(String modelCode, String metaSeries);
 }

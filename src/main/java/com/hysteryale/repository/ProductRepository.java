@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Transactional
-public interface ProductDimensionRepository extends JpaRepository<Product, String> {
+public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT DISTINCT a.plant FROM Product a")
     List<String> getPlants();
 
@@ -89,6 +89,11 @@ public interface ProductDimensionRepository extends JpaRepository<Product, Strin
     @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode")
     Optional<Product> getProductByModelCode(String modelCode);
 
+    @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode AND p.metaSeries = :metaSeries")
+    Optional<Product> findByModelCodeAndMetaSeries(String modelCode, String metaSeries);
+
+
     @Query(value = "SELECT * FROM product p WHERE p.meta_series = :metaSeries LIMIT 1", nativeQuery = true)
     Product getProductByMetaSeries(@Param("metaSeries") String metaSeries);
+
 }
