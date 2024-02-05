@@ -7,7 +7,7 @@ import com.hysteryale.model_h2.IMMarginAnalystSummary;
 import com.hysteryale.repository.ProductDimensionRepository;
 import com.hysteryale.repository.marginAnalyst.MarginAnalysisAOPRateRepository;
 import com.hysteryale.repository_h2.IMMarginAnalystDataRepository;
-import com.hysteryale.service.BookingOrderService;
+import com.hysteryale.service.BookingService;
 import com.hysteryale.service.ExchangeRateService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.CurrencyFormatUtils;
@@ -37,7 +37,7 @@ public class IMMarginAnalystDataService {
     @Resource
     MarginAnalysisAOPRateRepository marginAnalysisAOPRateRepository;
     @Resource
-    BookingOrderService bookingOrderService;
+    BookingService bookingService;
     @Resource
     ExchangeRateService exchangeRateService;
     @Resource
@@ -263,7 +263,7 @@ public class IMMarginAnalystDataService {
     public IMMarginAnalystSummary calculateUSPlantMarginSummary(String modelCode, String series, String strCurrency, String durationUnit, String orderNumber, Integer type, String fileUUID) {
         double defMFGCost = 0;
         LocalDate monthYear = LocalDate.now();
-        Optional<Booking> optionalBookingOrder = bookingOrderService.getBookingOrderByOrderNumber(orderNumber);
+        Optional<Booking> optionalBookingOrder = bookingService.getBookingOrderByOrderNumber(orderNumber);
         if(optionalBookingOrder.isPresent())
         {
             defMFGCost = optionalBookingOrder.get().getTotalCost();
@@ -385,7 +385,7 @@ public class IMMarginAnalystDataService {
                 if(!orderIDCellValue.isEmpty()) orderNumber = orderIDCellValue;
 
                 // Find Booking Order for checking plant and monthYear
-                Optional<Booking> optionalBookingOrder = bookingOrderService.getBookingOrderByOrderNumber(orderNumber);
+                Optional<Booking> optionalBookingOrder = bookingService.getBookingOrderByOrderNumber(orderNumber);
                 if(optionalBookingOrder.isEmpty())
                     continue;
 

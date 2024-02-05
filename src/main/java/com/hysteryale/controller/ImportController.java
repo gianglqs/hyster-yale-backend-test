@@ -15,7 +15,7 @@ public class ImportController {
     @Resource
     APICDealerService apicDealerService;
     @Resource
-    BookingOrderService bookingOrderService;
+    BookingService bookingService;
     @Resource
     AOPMarginService aopMarginService;
     @Resource
@@ -66,8 +66,8 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importAOPMargin")
-    void importAOPMargin() throws IOException, IllegalAccessException {
-//        aopMarginService.importAOPMargin();
+    void importAOPMargin() throws IOException, IllegalAccessException, MissingColumnException {
+        aopMarginService.importAOPMargin();
     }
 
     @PostMapping(path = "/importProductDimension")
@@ -77,7 +77,7 @@ public class ImportController {
 
     @PostMapping(path = "/importOrder")
     void importOrder() throws IOException, IllegalAccessException, MissingColumnException {
-        bookingOrderService.importOrder();
+        bookingService.importOrder();
     }
 
     @PostMapping(path = "/importExchangeRate")
