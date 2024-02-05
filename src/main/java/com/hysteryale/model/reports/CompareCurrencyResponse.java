@@ -16,5 +16,4 @@ public class CompareCurrencyResponse {
     private List<ExchangeRate> exchangeRateList;
     private double differentRate;
     private double differentRatePercentage;
-    private String state;
 }

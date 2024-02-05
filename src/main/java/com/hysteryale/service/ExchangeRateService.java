@@ -93,7 +93,7 @@ public class ExchangeRateService extends BasedService {
             exchangeRate.setRate(rate);
             exchangeRate.setDate(date);
 
-            log.info("from: " + fromCurrency.getCurrency() + " to: " + toCurrency.getCurrency());
+//            log.info("from: " + fromCurrency.getCurrency() + " to: " + toCurrency.getCurrency());
 
             Optional<ExchangeRate> dbExchangeRate = exchangeRateRepository.getExchangeRateByFromToCurrencyAndDate(fromCurrency.getCurrency(), toCurrency.getCurrency(), date);
             dbExchangeRate.ifPresent(value -> exchangeRate.setId(value.getId()));
@@ -180,19 +180,16 @@ public class ExchangeRateService extends BasedService {
             double differentRate = CurrencyFormatUtils.formatDoubleValue(nearestRate - farthestRate, CurrencyFormatUtils.decimalFormatFourDigits);
             double differentRatePercentage = CurrencyFormatUtils.formatDoubleValue((differentRate / farthestRate) * 100, CurrencyFormatUtils.decimalFormatFourDigits);
 
-            log.info(currentCurrency + " - " + currency + ": " + differentRatePercentage);
-
-            String state = "stable";
             if(Math.abs(differentRatePercentage) > 5) {
                 StringBuilder sb = new StringBuilder();
                 Formatter formatter = new Formatter(sb);
-                formatter.format("%(,.2f", differentRate);
+                formatter.format("%,.2f", differentRate);
 
                 if(differentRatePercentage < 0) weakerCurrencies.add(currency + " by " + sb + " (" + differentRatePercentage + "%)");
                 else strongerCurrencies.add(currency + " by +" + sb + " (+" + differentRatePercentage + "%)");
             }
             else stableCurrencies.add(currency);
-            data.put(currency, new CompareCurrencyResponse(exchangeRateList, differentRate, differentRatePercentage, state));
+            data.put(currency, new CompareCurrencyResponse(exchangeRateList, differentRate, differentRatePercentage));
         }
 
         data.put("stable", stableCurrencies);
@@ -232,7 +229,7 @@ public class ExchangeRateService extends BasedService {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
-        Sheet sheet = workbook.getSheet("Summary AOP");
+        Sheet sheet = workbook.getSheet("Summary Current Interlocking");
         List<ExchangeRate> exchangeRatesList = new ArrayList<>();
 
         for(int i = 3; i <=34; i++) {
