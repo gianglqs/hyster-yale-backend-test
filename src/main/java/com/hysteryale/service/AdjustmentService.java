@@ -4,7 +4,7 @@ import com.hysteryale.model.Booking;
 import com.hysteryale.model.filters.CalculatorModel;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.payLoad.AdjustmentPayLoad;
-import com.hysteryale.repository.BookingOrderRepository;
+import com.hysteryale.repository.BookingRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.*;
 public class AdjustmentService extends BasedService {
 
     @Resource
-    BookingOrderRepository bookingOrderRepository;
+    BookingRepository bookingRepository;
 
     /**
      * load OrderByFilter
@@ -34,7 +34,7 @@ public class AdjustmentService extends BasedService {
         //TODO : set Margin after Adj for filter
         logInfo("marginPercentageAfterAdjFilter" + filterMap.get("marginPercentageAfterAdjFilter"));
 
-        List<Booking> bookingList = bookingOrderRepository.selectForAdjustmentByFilter(
+        List<Booking> bookingList = bookingRepository.selectForAdjustmentByFilter(
                 (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
                 (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
                 (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
@@ -51,7 +51,7 @@ public class AdjustmentService extends BasedService {
         setIdForList(listAdj);
         result.put("listAdjustment", listAdj);
         // get total
-        List<Booking> getSumAllRow = bookingOrderRepository.selectTotalForAdjustment(
+        List<Booking> getSumAllRow = bookingRepository.selectTotalForAdjustment(
                 (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
                 (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
                 (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
@@ -65,7 +65,7 @@ public class AdjustmentService extends BasedService {
         List<AdjustmentPayLoad> calculateAll = calculateTotal(totalAdj, calculatorModel);
         result.put("total", calculateAll);
 
-        List<Integer> countAll = bookingOrderRepository.getCountAllForAdjustmentByFilter(
+        List<Integer> countAll = bookingRepository.getCountAllForAdjustmentByFilter(
                 (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
                 (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
                 (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),

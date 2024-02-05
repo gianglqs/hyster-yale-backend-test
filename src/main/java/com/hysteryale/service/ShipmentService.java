@@ -1,12 +1,11 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.Booking;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ShipmentRepository;
-import com.hysteryale.repository.BookingOrderRepository;
+import com.hysteryale.repository.BookingRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.TargetCurrency;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.*;
 
 @Service
@@ -28,7 +26,7 @@ public class ShipmentService extends BasedService {
     ExchangeRateService exchangeRateService;
 
     @Resource
-    BookingOrderRepository bookingOrderRepository;
+    BookingRepository bookingRepository;
 
     public Map<String, Object> getShipmentByFilter(FilterModel filterModel) throws ParseException {
         Map<String, Object> result = new HashMap<>();
@@ -112,7 +110,7 @@ public class ShipmentService extends BasedService {
         marginAfterSurcharge = dealerNetAfterSurcharge - totalCost;
         marginPercentageAfterSurcharge = marginAfterSurcharge / dealerNetAfterSurcharge;
 
-        double bookingMargin = bookingOrderRepository.getTotalMarginPercentage(listOrderNo);
+        double bookingMargin = bookingRepository.getTotalMarginPercentage(listOrderNo);
 
         Shipment shipment = new Shipment("Total", new Currency("USD"), quantity, dealerNet, dealerNetAfterSurcharge, totalCost, netRevenue, marginAfterSurcharge, marginPercentageAfterSurcharge, bookingMargin);
         result.put("total", List.of(shipment));

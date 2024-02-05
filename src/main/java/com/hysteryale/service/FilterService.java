@@ -1,6 +1,5 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.Currency;
 import com.hysteryale.model.filters.FilterRow;
 import com.hysteryale.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ public class FilterService {
     ShipmentRepository shipmentRepository;
 
     @Resource
-    BookingOrderRepository bookingOrderRepository;
+    BookingRepository bookingRepository;
     @Resource
     CountryRepository countryRepository;
     @Resource
@@ -241,7 +240,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllModels() {
         List<Map<String, String>> result = new ArrayList<>();
-        List<String> modelList = bookingOrderRepository.getAllModel();
+        List<String> modelList = bookingRepository.getAllModel();
         modelList.sort(String::compareTo);
         for (String model : modelList) {
             Map<String, String> map = new HashMap<>();
@@ -381,7 +380,7 @@ public class FilterService {
     }
 
     private List<Map<String, String>> getListOrderNoByModelCode(String modelCode) {
-        List<String> orderNos = bookingOrderRepository.getOrderNosByModelCode(modelCode);
+        List<String> orderNos = bookingRepository.getOrderNosByModelCode(modelCode);
         log.info(orderNos.toString());
         List<Map<String, String>> listResult = new ArrayList<>();
         orderNos.sort(String::compareToIgnoreCase);

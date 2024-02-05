@@ -6,7 +6,7 @@ import com.hysteryale.model.*;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.repository.PartRepository;
-import com.hysteryale.repository.BookingOrderRepository;
+import com.hysteryale.repository.BookingRepository;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unchecked")
 public class BookingService extends BasedService {
     @Resource
-    BookingOrderRepository bookingOrderRepository;
+    BookingRepository bookingRepository;
     @Resource
     ProductDimensionService productDimensionService;
 
@@ -310,7 +310,7 @@ public class BookingService extends BasedService {
 
             }
         }
-        bookingOrderRepository.saveAll(bookingList);
+        bookingRepository.saveAll(bookingList);
 
     }
 
@@ -343,7 +343,7 @@ public class BookingService extends BasedService {
                     logInfo("US Plant");
                     // import totalCost when import file totalCost
 
-                    Optional<Booking> orderExisted = bookingOrderRepository.getBookingOrderByOrderNo(newBooking.getOrderNo());
+                    Optional<Booking> orderExisted = bookingRepository.getBookingOrderByOrderNo(newBooking.getOrderNo());
                     if (orderExisted.isPresent()) {
                         Booking oldBooking = orderExisted.get();
                         newBooking.setCurrency(oldBooking.getCurrency());
@@ -362,7 +362,7 @@ public class BookingService extends BasedService {
 
         }
         logInfo("list booked" + bookingList.size());
-        bookingOrderRepository.saveAll(bookingList);
+        bookingRepository.saveAll(bookingList);
 
     }
 
@@ -370,7 +370,7 @@ public class BookingService extends BasedService {
     private List<Booking> getListBookingExist(List<Booking> booking) {
         List<String> listOrderNo = new ArrayList<>();
         booking.forEach(b -> listOrderNo.add(b.getOrderNo()));
-        return bookingOrderRepository.getListBookingExist(listOrderNo);
+        return bookingRepository.getListBookingExist(listOrderNo);
     }
 
 
@@ -404,7 +404,7 @@ public class BookingService extends BasedService {
             }
         }
 
-        bookingOrderRepository.saveAll(bookingList);
+        bookingRepository.saveAll(bookingList);
     }
 
     public Booking importOldMarginPercentageAndCurrency(Booking booking, List<MarginDataFile> marginDataFileList) {
@@ -596,7 +596,7 @@ public class BookingService extends BasedService {
         List<CostDataFile> costDataList = getListCostDataByMonthAndYear(is);
         List<String> listOrderNo = new ArrayList<>();
         costDataList.forEach(c -> listOrderNo.add(c.orderNo));
-        List<Booking> listBookingExisted = bookingOrderRepository.getListBookingExist(listOrderNo);
+        List<Booking> listBookingExisted = bookingRepository.getListBookingExist(listOrderNo);
         for (Booking booking : listBookingExisted) {
             for (CostDataFile costData : costDataList) {
                 if (booking.getOrderNo().equals(costData.orderNo)) {
@@ -608,7 +608,7 @@ public class BookingService extends BasedService {
                 }
             }
         }
-        bookingOrderRepository.saveAll(listBookingExisted);
+        bookingRepository.saveAll(listBookingExisted);
     }
 
 
@@ -670,7 +670,7 @@ public class BookingService extends BasedService {
     }
 
     public Optional<Booking> getBookingOrderByOrderNumber(String orderNumber) {
-        return bookingOrderRepository.findById(orderNumber);
+        return bookingRepository.findById(orderNumber);
     }
 
     public Map<String, Object> getBookingByFilter(FilterModel filterModel) throws java.text.ParseException {
@@ -679,7 +679,7 @@ public class BookingService extends BasedService {
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filterModel);
         logInfo(filterMap.toString());
 
-        List<Booking> bookingList = bookingOrderRepository.selectAllForBookingOrder(
+        List<Booking> bookingList = bookingRepository.selectAllForBookingOrder(
                 (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
@@ -718,7 +718,7 @@ public class BookingService extends BasedService {
         result.put("listBookingOrder", bookingList);
 
         // get data for totalRow
-        List<Booking> getTotalBookings = bookingOrderRepository.getTotal(
+        List<Booking> getTotalBookings = bookingRepository.getTotal(
                 (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
