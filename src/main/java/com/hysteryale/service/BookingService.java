@@ -5,6 +5,7 @@ import com.hysteryale.model.Currency;
 import com.hysteryale.model.*;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
+import com.hysteryale.repository.DealerRepository;
 import com.hysteryale.repository.PartRepository;
 import com.hysteryale.repository.BookingRepository;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
@@ -61,6 +62,9 @@ public class BookingService extends BasedService {
 
     @Resource
     CurrencyService currencyService;
+
+    @Resource
+    DealerRepository dealerRepository;
 
     /**
      * Get Columns' name in Booking Excel file, then store them (columns' name) respectively with the index into HashMap
@@ -181,7 +185,8 @@ public class BookingService extends BasedService {
         // dealerName
         if (ORDER_COLUMNS_NAME.get("DEALERNAME") != null) {
             Cell dealerNameCell = row.getCell(ORDER_COLUMNS_NAME.get("DEALERNAME"));
-          //  booking.setDealerName(dealerNameCell.getStringCellValue());
+            Dealer dealer = dealerRepository.findByName(dealerNameCell.getStringCellValue());
+            booking.setDealer(dealer);
         } else {
             throw new MissingColumnException("Missing column 'DEALERNAME'!");
         }

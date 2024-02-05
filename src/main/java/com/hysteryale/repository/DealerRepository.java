@@ -10,4 +10,7 @@ public interface DealerRepository extends JpaRepository<Dealer, Integer> {
 
     @Query("SELECT DISTINCT name FROM Dealer ")
     List<String> getAllDealerName();
+
+    @Query("SELECT d FROM Dealer d WHERE d.name = :name")
+    Dealer findByName(String name);
 }
