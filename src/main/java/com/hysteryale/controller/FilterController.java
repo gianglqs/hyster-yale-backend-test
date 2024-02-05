@@ -46,5 +46,12 @@ public class FilterController {
         return filterService.getProductDetailFilter(modelCode);
     }
 
+    @GetMapping("/currency")
+    public Map<String, Object> getCurrencyFilter() {
+        return Map.of(
+                "currencyFilter", filterService.getCurrencyFilter()
+        );
+    }
+
 }
 
