@@ -24,7 +24,7 @@ import java.util.Map;
 
 @RestController
 @Slf4j
-public class BookingOrderController {
+public class BookingController {
 
     @Resource
     BookingService bookingService;
