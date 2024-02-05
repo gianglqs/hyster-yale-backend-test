@@ -1,12 +1,15 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="delete-duplicate-field-competitorcolor" author="hoangnhan">
         <dropColumn tableName="competitorcolor" columnName="groupName"/>
     </changeSet>
 
 
     <changeSet id="rename-competitor-color" author="hoangnhan">
-       <renameTable oldTableName="competitorcolor" newTableName="competitor_color"/>
+        <renameTable oldTableName="competitorcolor" newTableName="competitor_color"/>
     </changeSet>
 
     <changeSet id="rename-competitor-color-fields" author="hoangnhan">
@@ -24,14 +27,22 @@
         <renameColumn tableName="competitor_pricing" oldColumnName="averagedn" newColumnName="average_dn"/>
         <renameColumn tableName="competitor_pricing" oldColumnName="chinesebrand" newColumnName="chinese_brand"/>
         <renameColumn tableName="competitor_pricing" oldColumnName="hygleadtime" newColumnName="hyg_lead_time"/>
-        <renameColumn tableName="competitor_pricing" oldColumnName="competitorleadtime" newColumnName="competitor_lead_time"/>
-        <renameColumn tableName="competitor_pricing" oldColumnName="competitorpricing" newColumnName="competitor_pricing"/>
-        <renameColumn tableName="competitor_pricing" oldColumnName="dealerpremiumpercentage" newColumnName="dealer_premium_percentage"/>
-        <renameColumn tableName="competitor_pricing" oldColumnName="dealerstreetpricing" newColumnName="dealer_street_pricing"/>
-        <renameColumn tableName="competitor_pricing" oldColumnName="dealerhandlingcost" newColumnName="dealer_handling_cost"/>
-        <renameColumn tableName="competitor_pricing" oldColumnName="dealerpricingpremiumpercentage" newColumnName="dealer_pricing_premium_percentage"/>
-        <renameColumn tableName="competitor_pricing" oldColumnName="dealerpricingpremium" newColumnName="dealer_pricing_premium"/>
-        <renameColumn tableName="competitor_pricing" oldColumnName="variancepercentage" newColumnName="variance_percentage"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="competitorleadtime"
+                      newColumnName="competitor_lead_time"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="competitorpricing"
+                      newColumnName="competitor_pricing"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="dealerpremiumpercentage"
+                      newColumnName="dealer_premium_percentage"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="dealerstreetpricing"
+                      newColumnName="dealer_street_pricing"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="dealerhandlingcost"
+                      newColumnName="dealer_handling_cost"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="dealerpricingpremiumpercentage"
+                      newColumnName="dealer_pricing_premium_percentage"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="dealerpricingpremium"
+                      newColumnName="dealer_pricing_premium"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="variancepercentage"
+                      newColumnName="variance_percentage"/>
         <renameColumn tableName="competitor_pricing" oldColumnName="dealernet" newColumnName="dealer_net"/>
         <renameColumn tableName="competitor_pricing" oldColumnName="marketshare" newColumnName="market_share"/>
     </changeSet>
@@ -52,7 +63,8 @@
     <changeSet id="rename-target_margin" author="hoangnhan">
         <renameColumn tableName="target_margin" oldColumnName="metaseries" newColumnName="meta_series"/>
         <renameColumn tableName="target_margin" oldColumnName="monthyear" newColumnName="month_year"/>
-        <renameColumn tableName="target_margin" oldColumnName="stdmarginpercentage" newColumnName="std_margin_percentage"/>
+        <renameColumn tableName="target_margin" oldColumnName="stdmarginpercentage"
+                      newColumnName="std_margin_percentage"/>
     </changeSet>
 
     <changeSet id="rename-warranty" author="hoangnhan">
@@ -79,35 +91,288 @@
         <dropColumn tableName="part" columnName="role_id"/>
     </changeSet>
 
+    <changeSet id="rename-table-booking_order-to-booking" author="songiang">
+        <renameTable oldTableName="booking_order" newTableName="booking"/>
+    </changeSet>
+
     <changeSet id="rename-booking-fields" author="songiang">
-        <renameColumn tableName="booking_order" oldColumnName="dealer_net_after_sur_charge" newColumnName="dealer_net_after_surcharge"/>
-        <renameColumn tableName="booking_order" oldColumnName="margin_after_sur_charge" newColumnName="margin_after_surcharge"/>
-        <renameColumn tableName="booking_order" oldColumnName="margin_percentage_after_sur_charge" newColumnName="margin_percentage_after_surcharge"/>
-        <renameColumn tableName="booking_order" oldColumnName="product_dimension" newColumnName="product"/>
+        <renameColumn tableName="booking" oldColumnName="dealer_net_after_sur_charge"
+                      newColumnName="dealer_net_after_surcharge"/>
+        <renameColumn tableName="booking" oldColumnName="margin_after_sur_charge"
+                      newColumnName="margin_after_surcharge"/>
+        <renameColumn tableName="booking" oldColumnName="margin_percentage_after_sur_charge"
+                      newColumnName="margin_percentage_after_surcharge"/>
+        <renameColumn tableName="booking" oldColumnName="product_dimension" newColumnName="product"/>
+        <renameColumn tableName="booking" oldColumnName="aopmargin_percentage" newColumnName="aopmargin"/>
     </changeSet>
 
     <changeSet id="rename-shipment-fields" author="songiang">
         <renameColumn tableName="shipment" oldColumnName="product_dimension" newColumnName="product"/>
-        <renameColumn tableName="shipment" oldColumnName="dealer_net_after_sur_charge" newColumnName="dealer_net_after_surcharge"/>
-        <renameColumn tableName="shipment" oldColumnName="margin_after_sur_charge" newColumnName="margin_after_surcharge"/>
-        <renameColumn tableName="shipment" oldColumnName="margin_percentage_after_sur_charge" newColumnName="margin_percentage_after_surcharge"/>
-        <renameColumn tableName="shipment" oldColumnName="booking_margin_percentage_after_sur_charge" newColumnName="booking_margin_percentage_after_surcharge"/>
+        <renameColumn tableName="shipment" oldColumnName="dealer_net_after_sur_charge"
+                      newColumnName="dealer_net_after_surcharge"/>
+        <renameColumn tableName="shipment" oldColumnName="margin_after_sur_charge"
+                      newColumnName="margin_after_surcharge"/>
+        <renameColumn tableName="shipment" oldColumnName="margin_percentage_after_sur_charge"
+                      newColumnName="margin_percentage_after_surcharge"/>
+        <renameColumn tableName="shipment" oldColumnName="booking_margin_percentage_after_sur_charge"
+                      newColumnName="booking_margin_percentage_after_surcharge"/>
+        <renameColumn tableName="shipment" oldColumnName="aopmargin_percentage" newColumnName="aopmargin"/>
     </changeSet>
 
-    <changeSet id="rename-table-booking" author="songiang">
-        <renameTable oldTableName="booking_order" newTableName="booking"/>
-    </changeSet>
-    
-    <changeSet id="create-foreign-key-shipment-to-booking" author="songiang">
-        <addForeignKeyConstraint baseColumnNames="order_no" baseTableName="shipment" constraintName="constraint_booking_and_shipment" referencedTableName="booking" referencedColumnNames="order_no"/>
-    </changeSet>
 
+    <!--    Adjust Product-->
     <changeSet id="rename-table-productdimension" author="songiang">
         <renameTable oldTableName="productdimension" newTableName="product"/>
     </changeSet>
 
-    <changeSet id="drop-column-in-aopmargin" author="songiang">
+    <changeSet id="adjust-columnName-product" author="songiang">
+        <renameColumn tableName="product" oldColumnName="modelcode" newColumnName="model_code"/>
+        <renameColumn tableName="product" oldColumnName="metaseries" newColumnName="meta_series"/>
+    </changeSet>
+
+    <changeSet id="drop-all-ForeignKeyConstraints-to-product-to-change-primaryKey" author="songiang">
+        <dropForeignKeyConstraint baseTableName="booking" constraintName="fk5k86x6qjyf79jccumn08h8fry"/>
+        <dropForeignKeyConstraint baseTableName="shipment" constraintName="fkp8ap09olk9b8o46fpat50w4lr"/>
+
+        <dropPrimaryKey tableName="product"/>
+
+        <sql>ALTER TABLE product
+            ADD COLUMN id SERIAL </sql>
+
+        <addPrimaryKey tableName="product" columnNames="id" constraintName="product_primary_key_contraint"/>
+    </changeSet>
+
+    <changeSet id="update-data-product-in-booking" author="songiang">
+        <renameColumn tableName="booking" oldColumnName="product" newColumnName="modelcode"/>
+
+        <addColumn tableName="booking">
+            <column name="product" type="int"/>
+        </addColumn>
+
+        <sql>
+            UPDATE booking b
+            SET product = (SELECT id
+                           FROM product p
+                           WHERE b.modelcode = p.model_code
+                             and SUBSTRING(b.series, 2, 4) = p.meta_series)
+        </sql>
+
+        <!--        delete recode have product IS NULL-->
+        <sql>
+            DELETE
+            FROM booking
+            WHERE product IS NULL
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="booking" baseColumnNames="product"
+                                 constraintName="contraint_key_booking_product" referencedTableName="product"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+
+    <changeSet id="update-data-product-in-shipment" author="songiang">
+        <renameColumn tableName="shipment" oldColumnName="product" newColumnName="modelcode"/>
+
+        <addColumn tableName="shipment">
+            <column name="product" type="int"/>
+        </addColumn>
+        <sql>
+            UPDATE shipment b
+            SET product = (SELECT id
+                           FROM product p
+                           WHERE b.modelcode = p.model_code
+                             and SUBSTRING(b.series, 2, 4) = p.meta_series)
+        </sql>
+        <sql>
+            DELETE
+            FROM shipment
+            WHERE product IS NULL
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="shipment" baseColumnNames="product"
+                                 constraintName="contraint_key_shipment_product" referencedTableName="product"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <!--  insert data into Region  -->
+    <changeSet id="insert-data-into-region" author="songiang">
+        <sql>
+            insert into region(id, region_short_name, region_name)
+            values (5, 'AU', 'Australia'),
+                   (6, 'ISC', 'ISC'),
+                   (7, 'Pacific excl AUS', 'Pacific excl AUS')
+        </sql>
+    </changeSet>
+
+    <!--    Adjust AOPMargin-->
+
+    <changeSet id="update-in-aopmargin" author="songiang">
+        <sql>
+            UPDATE aopmargin
+            SET region = 'Pacific excl AUS'
+            WHERE region_series_plant LIKE 'Pacific excl AUS%';
+        </sql>
+    </changeSet>
+
+    <changeSet id="modify-aopmargin" author="songiang">
         <dropColumn tableName="aopmargin" columnName="region_series_plant"/>
+
+        <renameColumn tableName="aopmargin" oldColumnName="series" newColumnName="meta_series"/>
+    </changeSet>
+
+
+    <changeSet id="update-data-in-aopmargin" author="songiang">
+        <renameColumn tableName="aopmargin" oldColumnName="region" newColumnName="region_old"/>
+
+        <addColumn tableName="aopmargin">
+            <column name="region" type="int"/>
+        </addColumn>
+        <sql>
+            UPDATE aopmargin a
+            SET region = (SELECT id
+                          FROM region r
+                          WHERE a.region_old = r.region_name)
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="aopmargin" baseColumnNames="region"
+                                 constraintName="constraint_aopmargin_region" referencedTableName="region"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+
+    <changeSet id="update-data-aopmargin-in-booking" author="songiang">
+        <sql>
+            UPDATE booking
+            set aopmargin = 0
+        </sql>
+        <modifyDataType tableName="booking" columnName="aopmargin" newDataType="int"/>
+
+        <sql>
+            UPDATE booking b
+            SET aopmargin =(SELECT id
+                            FROM aopmargin a
+                            WHERE substring(b.series, 2, 4) = a.meta_series
+                              AND b.region = a.region
+                              AND p.plant = a.plant
+                              AND EXTRACT(YEAR FROM b.date) = a.year) FROM product p
+
+            WHERE b.product = p.id
+        </sql>
+
+        <sql>
+            DELETE
+            FROM booking
+            WHERE aopmargin IS NULL
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="booking" baseColumnNames="aopmargin"
+                                 constraintName="constraint_booking_and_aopmargin"
+                                 referencedTableName="aopmargin" referencedColumnNames="id"/>
+
+    </changeSet>
+
+    <changeSet id="update-data-aopmargin-in-shipment" author="songiang">
+        <sql>
+            UPDATE shipment
+            set aopmargin = 0
+        </sql>
+        <modifyDataType tableName="shipment" columnName="aopmargin" newDataType="int"/>
+
+        <sql>
+            UPDATE shipment b
+            SET aopmargin =(SELECT id
+                            FROM aopmargin a
+                            WHERE substring(b.series, 2, 4) = a.meta_series
+                              AND b.region = a.region
+                              AND p.plant = a.plant
+                              AND EXTRACT(YEAR FROM b.date) = a.year) FROM product p
+
+            WHERE b.product = p.id
+        </sql>
+
+        <sql>
+            DELETE
+            FROM shipment
+            WHERE aopmargin IS NULL
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="shipment" baseColumnNames="aopmargin"
+                                 constraintName="constraint_shipment_and_aopmargin"
+                                 referencedTableName="aopmargin" referencedColumnNames="id"/>
+
+    </changeSet>
+
+    <changeSet id="create-foreign-key-shipment-to-booking" author="songiang">
+        <sql>
+            delete
+            from shipment
+            where order_no not in (select order_no from booking)
+        </sql>
+        <addForeignKeyConstraint baseColumnNames="order_no" baseTableName="shipment"
+                                 constraintName="constraint_booking_and_shipment" referencedTableName="booking"
+                                 referencedColumnNames="order_no" onDelete="CASCADE" onUpdate="CASCADE"/>
+    </changeSet>
+
+    <!--  update dealerName  -->
+
+    <changeSet id="createTable-dealer" author="songiang">
+        <createTable tableName="dealer">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="importData-dealer" author="songiang">
+        <sql>
+            INSERT INTO dealer(name)
+            SELECT DISTINCT dealer_name
+            FROM booking
+        </sql>
+    </changeSet>
+
+    <changeSet id="updateData-dealerName-in-booking" author="songiang">
+        <addColumn tableName="booking">
+            <column name="dealer" type="INT"/>
+        </addColumn>
+
+        <sql>
+            UPDATE booking b
+            SET dealer = (SELECT id
+                          FROM dealer d
+                          WHERE b.dealer_name = d.name)
+        </sql>
+        <addNotNullConstraint tableName="booking" columnName="dealer"/>
+        <dropColumn tableName="booking" columnName="dealer_name"/>
+        <addForeignKeyConstraint baseTableName="booking" baseColumnNames="dealer"
+                                 constraintName="constraint_booking_and_dealer" referencedTableName="dealer"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+    <changeSet id="updateData-dealer-in-shipment" author="songiang">
+        <addColumn tableName="shipment">
+            <column name="dealer" type="INT"/>
+        </addColumn>
+
+        <sql>
+            UPDATE shipment s
+            SET dealer = (SELECT dealer
+                          FROM booking b
+                          WHERE s.order_no = b.order_no)
+        </sql>
+
+        <addNotNullConstraint tableName="shipment" columnName="dealer"/>
+        <dropColumn tableName="shipment" columnName="dealer_name"/>
+        <addForeignKeyConstraint baseTableName="shipment" baseColumnNames="dealer"
+                                 constraintName="constraint_booking_and_dealer" referencedTableName="dealer"
+                                 referencedColumnNames="id"/>
+
     </changeSet>
 
 </databaseChangeLog>

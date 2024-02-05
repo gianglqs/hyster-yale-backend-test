@@ -26,7 +26,7 @@ public class TrendsServiceTest {
     @Resource
     TrendsService trendsService;
     @Resource
-    BookingOrderService bookingOrderService;
+    BookingService bookingService;
     @Resource
     ShipmentService shipmentService;
     FilterModel filters;
@@ -70,7 +70,7 @@ public class TrendsServiceTest {
             filters.setFromDate("2023-0" + data.getMonth() + "-01");
             filters.setToDate("2023-0" + data.getMonth() + "-" + DateUtils.getMonth(data.getMonth()).maxLength());
 
-            List<Booking> bookingOrdersList = (List<Booking>) bookingOrderService.getBookingByFilter(filters).get("listBookingOrder");
+            List<Booking> bookingOrdersList = (List<Booking>) bookingService.getBookingByFilter(filters).get("listBookingOrder");
             double totalCost = 0.0;
             double marginPercentage = 0.0;
 
@@ -118,7 +118,7 @@ public class TrendsServiceTest {
             filters.setFromDate("2023-0" + data.getMonth() + "-01");
             filters.setToDate("2023-0" + data.getMonth() + "-" + DateUtils.getMonth(data.getMonth()).maxLength());
 
-            List<Booking> bookingOrdersList = (List<Booking>) bookingOrderService.getBookingByFilter(filters).get("listBookingOrder");
+            List<Booking> bookingOrdersList = (List<Booking>) bookingService.getBookingByFilter(filters).get("listBookingOrder");
             double dealerNet = 0.0;
             double marginPercentage = 0.0;
 

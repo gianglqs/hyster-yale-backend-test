@@ -1,11 +1,9 @@
 package com.hysteryale.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -20,5 +18,18 @@ public class Currency {
 
     public Currency(String currency){
         this.currency =currency;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Currency currency1 = (Currency) o;
+        return Objects.equals(currency, currency1.currency);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(currency);
     }
 }

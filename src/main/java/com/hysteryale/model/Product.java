@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 
@@ -15,9 +16,17 @@ import javax.persistence.*;
 @Table(name = "product")
 public class Product {
     @Id
-    @Column(name = "modelcode")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
+    @NaturalId
+    @Column(name = "model_code")
     private String modelCode;
+
+    @NaturalId
+    @Column(name = "meta_series")
     private String metaSeries;
+
     private String brand;
     private String plant;
     private String clazz;

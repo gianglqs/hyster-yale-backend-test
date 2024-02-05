@@ -423,9 +423,11 @@ public class ImportService extends BasedService {
                 Shipment newShipment = mapExcelDataIntoShipmentObject(row, SHIPMENT_COLUMNS_NAME);
 
                 // check it has BookingOrder
-                if (newShipment.getProduct() != null) {
-                    shipmentList.add(newShipment);
-                }
+                if (newShipment == null)
+                    continue;
+
+                shipmentList.add(newShipment);
+
             }
         }
 
@@ -437,6 +439,7 @@ public class ImportService extends BasedService {
             if (s != null) {
                 updateShipment(s, shipment);
             } else {
+                // add into shipmentListAfterCalculate to save new
                 shipmentListAfterCalculate.add(shipment);
             }
         }
@@ -488,14 +491,13 @@ public class ImportService extends BasedService {
         Double marginPercentage = margin / s1.getDealerNetAfterSurcharge();
         s1.setMarginAfterSurcharge(margin);
         s1.setMarginPercentageAfterSurcharge(marginPercentage);
-        s1.setQuantity(s1.getQuantity()+s2.getQuantity());
+        s1.setQuantity(s1.getQuantity() + s2.getQuantity());
         return s1;
     }
 
 
     private Shipment mapExcelDataIntoShipmentObject(Row row, HashMap<String, Integer> shipmentColumnsName) throws MissingColumnException {
         Shipment shipment = new Shipment();
-
 
         // Set orderNo
         String orderNo;
@@ -504,6 +506,40 @@ public class ImportService extends BasedService {
             shipment.setOrderNo(orderNo);
         } else {
             throw new MissingColumnException("Missing column 'Order number'!");
+        }
+
+        // get data from BookingOrder
+        Optional<Booking> bookingOrderOptional = bookingOrderRepository.getBookingOrderByOrderNo(orderNo);
+        if (bookingOrderOptional.isPresent()) {
+            Booking booking = bookingOrderOptional.get();
+            // productDimension
+            shipment.setProduct(booking.getProduct());
+
+            // set Region
+            shipment.setRegion(booking.getRegion());
+
+            // currency
+            shipment.setCurrency(booking.getCurrency());
+
+            // DN
+            shipment.setDealerNet(booking.getDealerNet());
+
+            // Dealer
+            shipment.setDealer(booking.getDealer());
+
+            //DN AfterSurcharge  <- booking
+            double dealerNetAfterSurcharge = booking.getDealerNetAfterSurcharge();
+            shipment.setDealerNetAfterSurcharge(dealerNetAfterSurcharge);
+
+            // set Booking margin percentage
+            shipment.setBookingMarginPercentageAfterSurcharge(booking.getMarginPercentageAfterSurcharge());
+
+            // AOP Margin %
+            shipment.setAOPMargin(booking.getAOPMargin());
+
+        } else {
+            logWarning("Not found BookingOrder with OrderNo:  " + orderNo);
+            return null;
         }
 
         // Set serialNUmber
@@ -578,48 +614,14 @@ public class ImportService extends BasedService {
             throw new MissingColumnException("Missing column 'Series'!");
         }
 
-        // get data from BookingOrder
-        Optional<Booking> bookingOrderOptional = bookingOrderRepository.getBookingOrderByOrderNo(orderNo);
-        if (bookingOrderOptional.isPresent()) {
-            Booking booking = bookingOrderOptional.get();
+        double marginAfterSurcharge = shipment.getDealerNetAfterSurcharge() - totalCost;
+        double marginPercentageAfterSurcharge = marginAfterSurcharge / shipment.getDealerNetAfterSurcharge();
 
-            // productDimension
-            shipment.setProduct(booking.getProduct());
+        // set Margin Percentage After surcharge
+        shipment.setMarginPercentageAfterSurcharge(marginPercentageAfterSurcharge);
 
-            // set Region
-            shipment.setRegion(booking.getRegion());
-
-            // currency
-            shipment.setCurrency(booking.getCurrency());
-
-            // DN
-            shipment.setDealerNet(booking.getDealerNet());
-
-            // DealerName
-            shipment.setDealerName(booking.getDealerName());
-
-            //DN AfterSurcharge
-            double dealerNetAfterSurcharge = booking.getDealerNetAfterSurcharge();
-            shipment.setDealerNetAfterSurcharge(dealerNetAfterSurcharge);
-
-            double marginAfterSurcharge = dealerNetAfterSurcharge - totalCost;
-            double marginPercentageAfterSurcharge = marginAfterSurcharge / dealerNetAfterSurcharge;
-
-            // set Margin Percentage After surcharge
-            shipment.setMarginPercentageAfterSurcharge(marginPercentageAfterSurcharge);
-
-            // Set Margin after surcharge
-            shipment.setMarginAfterSurcharge(marginAfterSurcharge);
-
-            // set Booking margin percentage
-            shipment.setBookingMarginPercentageAfterSurcharge(booking.getMarginPercentageAfterSurcharge());
-
-            // AOP Margin %
-            shipment.setAOPMarginPercentage(booking.getAOPMarginPercentage());
-
-        } else {
-            logWarning("Not found BookingOrder with OrderNo:  " + orderNo);
-        }
+        // Set Margin after surcharge
+        shipment.setMarginAfterSurcharge(marginAfterSurcharge);
 
         return shipment;
     }
