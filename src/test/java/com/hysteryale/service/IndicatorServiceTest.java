@@ -175,7 +175,7 @@ public class IndicatorServiceTest {
         double competitorPricingTotal = 0.0;
         double averageDealerNetTotal = 0.0;
         for (CompetitorPricing cp : competitorPricingList) {
-            Assertions.assertEquals(expectedRegion, cp.getRegion());
+            Assertions.assertEquals(expectedRegion, cp.getCountry().getRegion().getRegionName());
 
             actualTotal += cp.getActual();
             AOPFTotal += cp.getAOPF();
@@ -418,7 +418,7 @@ public class IndicatorServiceTest {
         double averageDealerNetTotal = 0.0;
 
         for (CompetitorPricing cp : competitorPricingList) {
-            Assertions.assertEquals(expectedRegion, cp.getRegion());
+            Assertions.assertEquals(expectedRegion, cp.getCountry().getRegion().getRegionName());
             Assertions.assertEquals(expectedPlant, cp.getPlant());
             Assertions.assertEquals(expectedClass, cp.getClazz());
 
@@ -735,7 +735,7 @@ public class IndicatorServiceTest {
        Assertions.assertEquals(country, cp.getCountry().getCountryName());
        Assertions.assertEquals(competitorName, cp.getCompetitorName());
        Assertions.assertEquals(group, cp.getColor().getGroupName());
-       Assertions.assertEquals(region, cp.getRegion());
+       Assertions.assertEquals(region, cp.getCountry().getRegion().getRegionName());
        Assertions.assertEquals(clazz, cp.getClazz());
        Assertions.assertEquals(marketShare, cp.getMarketShare());
        Assertions.assertEquals(price, cp.getCompetitorPricing());

@@ -23,8 +23,9 @@ public class Shipment {
     @JoinColumn(name = "region")
     private Region region;
 
-    @Column(name = "dealer_name")
-    private String dealerName;
+    @JoinColumn(name = "dealer")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Dealer dealer;
 
     private LocalDate date;
 
@@ -36,8 +37,8 @@ public class Shipment {
     private String ctryCode;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_dimension")
-    private ProductDimension productDimension;
+    @JoinColumn(name = "product")
+    private Product product;
 
     private String series;
 
@@ -54,30 +55,41 @@ public class Shipment {
     @Column(name = "dealer_net")
     private double dealerNet;
 
-    @Column(name = "dealer_net_after_sur_charge")
-    private double dealerNetAfterSurCharge;
+    @Column(name = "dealer_net_after_surcharge")
+    private double dealerNetAfterSurcharge;
 
-    @Column(name = "margin_after_sur_charge")
-    private double marginAfterSurCharge;
+    @Column(name = "margin_after_surcharge")
+    private double marginAfterSurcharge;
 
-    @Column(name = "margin_percentage_after_sur_charge")
-    private double marginPercentageAfterSurCharge;
+    @Column(name = "margin_percentage_after_surcharge")
+    private double marginPercentageAfterSurcharge;
 
-    @Column(name = "booking_margin_percentage_after_sur_charge")
-    private double bookingMarginPercentageAfterSurCharge;
+    @Column(name = "booking_margin_percentage_after_surcharge")
+    private double bookingMarginPercentageAfterSurcharge;
 
-    @Column(name = "aopmargin_percentage")
-    private double AOPMarginPercentage;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "aopmargin")
+    private AOPMargin AOPMargin;
 
-    public Shipment(String id, long quantity, double dealerNet, double dealerNetAfterSurCharge, double totalCost, double netRevenue, double marginAfterSurCharge, double marginPercentageAfterSurCharge) {
+    public Shipment(String id, Currency currency, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue, double marginAfterSurcharge, double marginPercentageAfterSurcharge, double bookingMargin) {
         this.orderNo = id;
+        this.currency = currency;
         this.dealerNet = dealerNet;
         this.quantity = quantity;
-        this.dealerNetAfterSurCharge = dealerNetAfterSurCharge;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
         this.totalCost = totalCost;
-        this.marginAfterSurCharge = marginAfterSurCharge;
-        this.marginPercentageAfterSurCharge = marginPercentageAfterSurCharge;
+        this.marginAfterSurcharge = marginAfterSurcharge;
+        this.marginPercentageAfterSurcharge = marginPercentageAfterSurcharge;
         this.netRevenue = netRevenue;
+        this.bookingMarginPercentageAfterSurcharge = bookingMargin;
     }
 
+    public Shipment(String orderNo, Currency currency, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue) {
+        this.orderNo = orderNo;
+        this.currency = currency;
+        this.netRevenue = netRevenue;
+        this.totalCost = totalCost;
+        this.dealerNet = dealerNet;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
+    }
 }

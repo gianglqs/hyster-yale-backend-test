@@ -1,6 +1,7 @@
 package com.hysteryale.model.competitor;
 
 import com.hysteryale.model.Country;
+import com.hysteryale.model.Region;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "competitor_pricing")
 public class CompetitorPricing {
 
     @Id
@@ -20,32 +22,57 @@ public class CompetitorPricing {
     private int id;
     @ManyToOne
     private Country country;
-    private String region;
     private String plant;
+
+    @Column(name = "competitor_name")
     private String competitorName;
     private String clazz;
     private String category;
     private String series;
+
+    @Column(name = "average_dn")
     private Double averageDN;
+
+    @Column(name = "chinese_brand")
     private Boolean chineseBrand;
     private String model;
     private long actual;
     private long AOPF;
     private long LRFF;
+
+    @Column(name = "hyg_lead_time")
     private Double HYGLeadTime;
+
+    @Column(name = "competitor_lead_time")
     private Double competitorLeadTime;
+
+    @Column(name = "competitor_pricing")
     private Double competitorPricing;
+
+    @Column(name = "dealer_premium_percentage")
     private Double dealerPremiumPercentage;
+
+    @Column(name = "dealer_street_pricing")
     private Double dealerStreetPricing;
+
+    @Column(name = "dealer_handling_cost")
     private Double dealerHandlingCost;
+
+    @Column(name = "dealer_pricing_premium_percentage")
     private Double dealerPricingPremiumPercentage;
+
+    @Column(name = "dealer_pricing_premium")
     private Double dealerPricingPremium;
 
 
     // variance % (competitor - (Dealer street + premium))
+    @Column(name = "variance_percentage")
     private Double variancePercentage;
-    private boolean isChineseBrand;
+
+    @Column(name = "dealer_net")
     private double dealerNet;
+
+    @Column(name = "market_share")
     private double marketShare;
 
     @ManyToOne()
@@ -53,7 +80,7 @@ public class CompetitorPricing {
 
 
     public CompetitorPricing(String region, long actual, long AOPF, long LRFF) {
-        this.region = region;
+        this.country = new Country("", new Region(region));
         this.actual = actual;
         this.AOPF = AOPF;
         this.LRFF = LRFF;

@@ -32,7 +32,7 @@ public class RegionServiceTest {
 
         Region result = regionService.getRegionByName(region);
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(region, result.getRegion());
+        Assertions.assertEquals(region, result.getRegionName());
     }
 
     @Test

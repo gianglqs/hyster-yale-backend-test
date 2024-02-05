@@ -1,13 +1,13 @@
 package com.hysteryale.service.marginAnalyst;
 
-import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.marginAnalyst.MarginAnalysisAOPRate;
 import com.hysteryale.model_h2.IMMarginAnalystData;
 import com.hysteryale.model_h2.IMMarginAnalystSummary;
-import com.hysteryale.repository.ProductDimensionRepository;
+import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.repository.marginAnalyst.MarginAnalysisAOPRateRepository;
 import com.hysteryale.repository_h2.IMMarginAnalystDataRepository;
-import com.hysteryale.service.BookingOrderService;
+import com.hysteryale.service.BookingService;
 import com.hysteryale.service.ExchangeRateService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.CurrencyFormatUtils;
@@ -15,10 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
@@ -39,11 +37,11 @@ public class IMMarginAnalystDataService {
     @Resource
     MarginAnalysisAOPRateRepository marginAnalysisAOPRateRepository;
     @Resource
-    BookingOrderService bookingOrderService;
+    BookingService bookingService;
     @Resource
     ExchangeRateService exchangeRateService;
     @Resource
-    ProductDimensionRepository productDimensionRepository;
+    ProductRepository productRepository;
     static HashMap<String, Integer> COLUMN_NAME = new HashMap<>();
 
     void getColumnName(Row row) {
@@ -265,7 +263,7 @@ public class IMMarginAnalystDataService {
     public IMMarginAnalystSummary calculateUSPlantMarginSummary(String modelCode, String series, String strCurrency, String durationUnit, String orderNumber, Integer type, String fileUUID) {
         double defMFGCost = 0;
         LocalDate monthYear = LocalDate.now();
-        Optional<BookingOrder> optionalBookingOrder = bookingOrderService.getBookingOrderByOrderNumber(orderNumber);
+        Optional<Booking> optionalBookingOrder = bookingService.getBookingOrderByOrderNumber(orderNumber);
         if(optionalBookingOrder.isPresent())
         {
             defMFGCost = optionalBookingOrder.get().getTotalCost();
@@ -387,11 +385,11 @@ public class IMMarginAnalystDataService {
                 if(!orderIDCellValue.isEmpty()) orderNumber = orderIDCellValue;
 
                 // Find Booking Order for checking plant and monthYear
-                Optional<BookingOrder> optionalBookingOrder = bookingOrderService.getBookingOrderByOrderNumber(orderNumber);
+                Optional<Booking> optionalBookingOrder = bookingService.getBookingOrderByOrderNumber(orderNumber);
                 if(optionalBookingOrder.isEmpty())
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Booking Order: " + orderNumber);
+                    continue;
 
-                String plant = optionalBookingOrder.get().getProductDimension().getPlant();
+                String plant = optionalBookingOrder.get().getProduct().getPlant();
                 LocalDate monthYear = optionalBookingOrder.get().getDate();
                 monthYear = LocalDate.of(monthYear.getYear(), monthYear.getMonth(), 1);
 
@@ -416,7 +414,7 @@ public class IMMarginAnalystDataService {
     }
 
     public Map<String, Object> calculateMarginAnalysisSummary(String fileUUID, Integer type, String modelCode, String series, String orderNumber, String currency) {
-        String plant = productDimensionRepository.getPlantByMetaSeries(series.substring(1));
+        String plant = productRepository.getPlantByMetaSeries(series.substring(1));
 
         IMMarginAnalystSummary monthly;
         IMMarginAnalystSummary annually;
@@ -528,7 +526,7 @@ public class IMMarginAnalystDataService {
     /**
      * Check a file which has fileUUID has already been calculated Margin Data or not
      */
-    public boolean isFileCalculated(String fileUUID) {
-        return imMarginAnalystDataRepository.isFileCalculated(fileUUID);
+    public boolean isFileCalculated(String fileUUID, String currency) {
+        return imMarginAnalystDataRepository.isFileCalculated(fileUUID, currency);
     }
 }

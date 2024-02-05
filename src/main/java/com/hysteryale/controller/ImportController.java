@@ -3,7 +3,6 @@ package com.hysteryale.controller;
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.service.*;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
-import com.hysteryale.service.marginAnalyst.MarginAnalystService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +15,7 @@ public class ImportController {
     @Resource
     APICDealerService apicDealerService;
     @Resource
-    BookingOrderService bookingOrderService;
+    BookingService bookingService;
     @Resource
     AOPMarginService aopMarginService;
     @Resource
@@ -27,10 +26,7 @@ public class ImportController {
     CostUpliftService costUpliftService;
 
     @Resource
-    MarginAnalystService marginAnalystService;
-
-    @Resource
-    ProductDimensionService productDimensionService;
+    ProductService productService;
 
     @Resource
     PartService partService;
@@ -50,7 +46,6 @@ public class ImportController {
         importOrder();
         importExchangeRate();
         importMarginAnalystMacro();
-        importMarginAnalystData();
         importCompetitorPricing();
         importShipment();
     }
@@ -71,18 +66,18 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importAOPMargin")
-    void importAOPMargin() throws IOException, IllegalAccessException {
+    void importAOPMargin() throws IOException, IllegalAccessException, MissingColumnException {
         aopMarginService.importAOPMargin();
     }
 
     @PostMapping(path = "/importProductDimension")
     void importProductDimension() throws IOException, IllegalAccessException {
-        productDimensionService.importProductDimension();
+        productService.importProductDimension();
     }
 
     @PostMapping(path = "/importOrder")
     void importOrder() throws IOException, IllegalAccessException, MissingColumnException {
-        bookingOrderService.importOrder();
+        bookingService.importOrder();
     }
 
     @PostMapping(path = "/importExchangeRate")
@@ -100,10 +95,6 @@ public class ImportController {
         marginAnalystMacroService.importMarginAnalystMacro();
     }
 
-    @PostMapping(path = "/importMarginAnalystData")
-    void importMarginAnalystData() throws IOException {
-        marginAnalystService.importMarginAnalystData();
-    }
 
     @PostMapping(path = "/importCompetitorPricing")
     void importCompetitorPricing() throws IOException {
@@ -113,6 +104,14 @@ public class ImportController {
     @PostMapping(path = "/importShipment")
     void importShipment() throws IOException, MissingColumnException {
         importService.importShipment();
+    }
+
+    /**
+     * Extract Product (Model Code) from Part (in power bi files)
+     */
+    @PostMapping(path = "/importProductFromPart")
+    void importProductFromPart() throws IOException {
+        productService.extractProductFromPart();
     }
 
 

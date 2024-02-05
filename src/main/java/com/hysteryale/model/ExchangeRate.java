@@ -33,4 +33,8 @@ public class ExchangeRate {
         this.date = date;
     }
 
+    public ExchangeRate(Currency from, Currency to) {
+        this.from = from;
+        this.to = to;
+    }
 }

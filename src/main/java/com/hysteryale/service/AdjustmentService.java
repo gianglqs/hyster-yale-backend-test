@@ -1,10 +1,10 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.filters.CalculatorModel;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.payLoad.AdjustmentPayLoad;
-import com.hysteryale.repository.BookingOrderRepository;
+import com.hysteryale.repository.BookingRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.*;
 public class AdjustmentService extends BasedService {
 
     @Resource
-    BookingOrderRepository bookingOrderRepository;
+    BookingRepository bookingRepository;
 
     /**
      * load OrderByFilter
@@ -34,7 +34,7 @@ public class AdjustmentService extends BasedService {
         //TODO : set Margin after Adj for filter
         logInfo("marginPercentageAfterAdjFilter" + filterMap.get("marginPercentageAfterAdjFilter"));
 
-        List<BookingOrder> bookingOrderList = bookingOrderRepository.selectForAdjustmentByFilter(
+        List<Booking> bookingList = bookingRepository.selectForAdjustmentByFilter(
                 (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
                 (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
                 (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
@@ -47,11 +47,11 @@ public class AdjustmentService extends BasedService {
                 (Pageable) filterMap.get("pageable"));
 
         //convert booking to adjustment
-        List<AdjustmentPayLoad> listAdj = convertToListAdjustment(bookingOrderList, calculatorModel);
+        List<AdjustmentPayLoad> listAdj = convertToListAdjustment(bookingList, calculatorModel);
         setIdForList(listAdj);
         result.put("listAdjustment", listAdj);
         // get total
-        List<BookingOrder> getSumAllRow = bookingOrderRepository.selectTotalForAdjustment(
+        List<Booking> getSumAllRow = bookingRepository.selectTotalForAdjustment(
                 (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
                 (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
                 (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
@@ -65,7 +65,7 @@ public class AdjustmentService extends BasedService {
         List<AdjustmentPayLoad> calculateAll = calculateTotal(totalAdj, calculatorModel);
         result.put("total", calculateAll);
 
-        List<Integer> countAll = bookingOrderRepository.getCountAllForAdjustmentByFilter(
+        List<Integer> countAll = bookingRepository.getCountAllForAdjustmentByFilter(
                 (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("dealerNameFilter"),
                 (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("segmentFilter"),
                 (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
@@ -103,9 +103,9 @@ public class AdjustmentService extends BasedService {
         return list;
     }
 
-    private List<AdjustmentPayLoad> convertToListAdjustment(List<BookingOrder> bookingOrders, CalculatorModel calculatorModel) {
+    private List<AdjustmentPayLoad> convertToListAdjustment(List<Booking> bookings, CalculatorModel calculatorModel) {
         List<AdjustmentPayLoad> result = new ArrayList<>();
-        bookingOrders.forEach(b -> result.add(convertToAdjustment(b, calculatorModel)));
+        bookings.forEach(b -> result.add(convertToAdjustment(b, calculatorModel)));
         return result;
     }
 
@@ -132,15 +132,16 @@ public class AdjustmentService extends BasedService {
         return result;
     }
 
-    private AdjustmentPayLoad convertToAdjustment(BookingOrder booking, CalculatorModel calculatorModel) {
+    private AdjustmentPayLoad convertToAdjustment(Booking booking, CalculatorModel calculatorModel) {
         AdjustmentPayLoad adjustmentPayLoad = new AdjustmentPayLoad();
         if (booking.getRegion() != null) {
-            adjustmentPayLoad.setRegion(booking.getRegion().getRegion());
+            adjustmentPayLoad.setRegion(booking.getRegion().getRegionName());
         }
-        if (booking.getProductDimension() != null) {
-            adjustmentPayLoad.setPlant(booking.getProductDimension().getPlant());
-            adjustmentPayLoad.setClazz(booking.getProductDimension().getClazz());
-            adjustmentPayLoad.setModel(booking.getProductDimension().getModelCode());
+        if (booking.getProduct() != null) {
+            adjustmentPayLoad.setPlant(booking.getProduct().getPlant());
+            adjustmentPayLoad.setClazz(booking.getProduct().getClazz());
+            adjustmentPayLoad.setModel(booking.getProduct().getModelCode());
+            adjustmentPayLoad.setMetaSeries(booking.getProduct().getMetaSeries());
             if (booking.getSeries() != null)
                 adjustmentPayLoad.setMetaSeries(booking.getSeries().substring(1));
         }
@@ -149,13 +150,13 @@ public class AdjustmentService extends BasedService {
 
         adjustmentPayLoad.setNoOfOrder(booking.getQuantity());
 
-        adjustmentPayLoad.setOriginalDN(booking.getDealerNetAfterSurCharge());
-        adjustmentPayLoad.setOriginalMargin(booking.getMarginAfterSurCharge());
+        adjustmentPayLoad.setOriginalDN(booking.getDealerNetAfterSurcharge());
+        adjustmentPayLoad.setOriginalMargin(booking.getMarginAfterSurcharge());
 
         //recalculate MarginPercentageAfterSurCharge of booking in group
-        double marginPercentageAfterSurcharge = booking.getMarginAfterSurCharge() / booking.getDealerNetAfterSurCharge();
-        booking.setMarginPercentageAfterSurCharge(marginPercentageAfterSurcharge);
-        adjustmentPayLoad.setOriginalMarginPercentage(booking.getMarginPercentageAfterSurCharge());
+        double marginPercentageAfterSurcharge = booking.getMarginAfterSurcharge() / booking.getDealerNetAfterSurcharge();
+        booking.setMarginPercentageAfterSurcharge(marginPercentageAfterSurcharge);
+        adjustmentPayLoad.setOriginalMarginPercentage(booking.getMarginPercentageAfterSurcharge());
 
         //calculate
         // Manual Adj Cost (‘000 USD) = Total Cost * Cost Adj% (1) - (rename to Adjusted Cost)
@@ -172,7 +173,7 @@ public class AdjustmentService extends BasedService {
         adjustmentPayLoad.setTotalManualAdjCost(adjustmentPayLoad.getManualAdjCost() + adjustmentPayLoad.getManualAdjFreight() + adjustmentPayLoad.getManualAdjFX());
 
         //New DN (‘000 USD) - After manual Adj = Original DN * DN Adj % (rename to Adjusted Dealer Net) (5)
-        adjustmentPayLoad.setNewDN(booking.getDealerNetAfterSurCharge() * (1 + calculatorModel.getDnAdjPercentage() / 100));
+        adjustmentPayLoad.setNewDN(booking.getDealerNetAfterSurcharge() * (1 + calculatorModel.getDnAdjPercentage() / 100));
 
         //New margin $ (‘000 USD) - After  manual Adj  =  (5) - (4) (6)
         adjustmentPayLoad.setNewMargin(adjustmentPayLoad.getNewDN() - adjustmentPayLoad.getTotalManualAdjCost());
@@ -181,7 +182,7 @@ public class AdjustmentService extends BasedService {
         adjustmentPayLoad.setNewMarginPercentage(adjustmentPayLoad.getNewMargin() / adjustmentPayLoad.getNewDN());
 
         //Additional Volume at BEP For Discount =  ABS( margin) / (DN* % DN adj) - (Original total cost/no of order)
-        adjustmentPayLoad.setAdditionalVolume((int) (Math.round(booking.getMarginAfterSurCharge() / (adjustmentPayLoad.getNewDN() / booking.getQuantity() - (adjustmentPayLoad.getTotalManualAdjCost() / booking.getQuantity())) - booking.getQuantity())));
+        adjustmentPayLoad.setAdditionalVolume((int) (Math.round(booking.getMarginAfterSurcharge() / (adjustmentPayLoad.getNewDN() / booking.getQuantity() - (adjustmentPayLoad.getTotalManualAdjCost() / booking.getQuantity())) - booking.getQuantity())));
 
         return adjustmentPayLoad;
     }

@@ -155,7 +155,7 @@ public class MarginAnalystControllerTest {
         marginData.setFileUUID("123");
         CalculatedMargin filter = new CalculatedMargin(marginData, "Asia");
 
-        when(imMarginAnalystDataService.isFileCalculated("123")).thenReturn(true);
+        when(imMarginAnalystDataService.isFileCalculated("123", "USD")).thenReturn(true);
 
         MvcResult result =
                 mockMvc

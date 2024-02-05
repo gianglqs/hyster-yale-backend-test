@@ -1,10 +1,10 @@
 package com.hysteryale.controller;
 
-import com.hysteryale.model.ProductDimension;
+import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
-import com.hysteryale.service.ProductDimensionService;
+import com.hysteryale.service.ProductService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import javassist.NotFoundException;
@@ -23,10 +23,10 @@ import java.util.Map;
 
 @RestController()
 @RequestMapping("product")
-public class ProductDimensionController {
+public class ProductController {
 
     @Resource
-    private ProductDimensionService productDimensionService;
+    private ProductService productService;
 
     @Resource
     private FileUploadService fileUploadService;
@@ -37,7 +37,7 @@ public class ProductDimensionController {
                                                @RequestParam(defaultValue = "100") int perPage) throws java.text.ParseException {
         filters.setPageNo(pageNo);
         filters.setPerPage(perPage);
-        return productDimensionService.getDataByFilter(filters);
+        return productService.getDataByFilter(filters);
     }
 
     @PutMapping(path = "/updateProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -63,12 +63,12 @@ public class ProductDimensionController {
                 imageName = targetFolder + savedImageName;
             }
         }
-        productDimensionService.updateImageAndDescription(modelCode, imageName, description);
+        productService.updateImageAndDescription(modelCode, imageName, description);
     }
 
     @GetMapping("/getProductDetail")
-    public ProductDimension getDataForProductDetail(@RequestParam String modelCode) throws NotFoundException, IOException {
-        return productDimensionService.getProductDimensionDetail(modelCode);
+    public Product getDataForProductDetail(@RequestParam String modelCode, @RequestParam String metaSeries) throws NotFoundException {
+        return productService.getProductDimensionDetail(modelCode, metaSeries);
     }
 
     @PostMapping(path="/importData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -80,7 +80,7 @@ public class ProductDimensionController {
             throw new InvalidPropertiesFormatException("Importing file is not Excel file");
 
         String pathFileUploaded = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
-        productDimensionService.importProduct(pathFileUploaded);
+        productService.importProduct(pathFileUploaded);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));
     }
 }

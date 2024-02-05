@@ -1,7 +1,6 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.service.*;
-import com.hysteryale.service.marginAnalyst.MarginAnalystService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
@@ -18,7 +17,7 @@ public abstract class BasedControllerTest {
     @Resource @Mock
     protected APICDealerService apicDealerService;
     @Resource @Mock
-    protected BookingOrderService bookingOrderService;
+    protected BookingService bookingService;
     @Resource @Mock
     protected AOPMarginService aopMarginService;
     @Resource @Mock
@@ -28,8 +27,6 @@ public abstract class BasedControllerTest {
     @Resource @Mock
     protected CostUpliftService costUpliftService;
 
-    @Mock
-    protected MarginAnalystService marginAnalystService;
 
     @BeforeEach
     void setUp() {

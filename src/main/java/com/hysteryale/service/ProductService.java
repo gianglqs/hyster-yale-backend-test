@@ -1,36 +1,29 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.ProductDimension;
-import com.hysteryale.model.ProductDimension;
+import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
-import com.hysteryale.repository.ProductDimensionRepository;
-import com.hysteryale.repository.ProductDimensionRepository;
+import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import javassist.NotFoundException;
-import liquibase.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.swing.text.html.Option;
 import java.io.*;
-import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.*;
 
 
 @Service
 @Slf4j
-public class ProductDimensionService extends BasedService {
+public class ProductService extends BasedService {
     @Resource
-    ProductDimensionRepository productDimensionRepository;
+    ProductRepository productRepository;
 
     private final HashMap<String, Integer> COLUMNS = new HashMap<>();
 
@@ -41,42 +34,42 @@ public class ProductDimensionService extends BasedService {
         }
     }
 
-    public ProductDimension mapExcelSheetToProductDimension(Row row) throws IllegalAccessException {
-        ProductDimension productDimension = new ProductDimension();
+    public Product mapExcelSheetToProductDimension(Row row) throws IllegalAccessException {
+        Product product = new Product();
 
         // brand
         String brand = row.getCell(COLUMNS.get("Brand")).getStringCellValue();
-        productDimension.setBrand(brand);
+        product.setBrand(brand);
 
         // metaseries
         String metaSeries = row.getCell(COLUMNS.get("Metaseries")).getStringCellValue();
-        productDimension.setMetaSeries(metaSeries);
+        product.setMetaSeries(metaSeries);
 
         // plant
         String plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
-        productDimension.setPlant(plant);
+        product.setPlant(plant);
 
         // Class
         String clazz = row.getCell(COLUMNS.get("Class_wBT")).getStringCellValue();
-        productDimension.setClazz(clazz);
+        product.setClazz(clazz);
 
         //Segment
         String segment = row.getCell(COLUMNS.get("Segment")).getStringCellValue();
-        productDimension.setSegment(segment);
+        product.setSegment(segment);
 
         // modeCode
         String modelCode = row.getCell(COLUMNS.get("Model")).getStringCellValue();
-        productDimension.setModelCode(modelCode);
+        product.setModelCode(modelCode);
 
         // family
         String family = row.getCell(COLUMNS.get("Family_Name")).getStringCellValue();
-        productDimension.setFamily(family);
+        product.setFamily(family);
 
         // truckType
         String truckType = row.getCell(COLUMNS.get("Truck_Type")).getStringCellValue();
-        productDimension.setTruckType(truckType);
+        product.setTruckType(truckType);
 
-        return productDimension;
+        return product;
     }
 
 
@@ -115,15 +108,15 @@ public class ProductDimensionService extends BasedService {
             else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 2) {
 
-                ProductDimension newProductDimension = mapExcelSheetToProductDimension(row);
-                if (!checkExist(newProductDimension))
-                    productDimensionRepository.save(newProductDimension);
+                Product newProduct = mapExcelSheetToProductDimension(row);
+                if (!checkExist(newProduct))
+                    productRepository.save(newProduct);
             }
         }
     }
 
-    public boolean checkExist(ProductDimension productDimension) {
-        Optional<ProductDimension> productDimensionOptional = productDimensionRepository.findByMetaSeries(productDimension.getMetaSeries());
+    public boolean checkExist(Product product) {
+        Optional<Product> productDimensionOptional = productRepository.findByModelCodeAndMetaSeries(product.getModelCode(), product.getMetaSeries());
         if (productDimensionOptional.isPresent())
             return true;
         return false;
@@ -134,7 +127,7 @@ public class ProductDimensionService extends BasedService {
      */
     public List<Map<String, String>> getAllMetaSeries() {
         List<Map<String, String>> metaSeriesMap = new ArrayList<>();
-        List<String> metaSeries = productDimensionRepository.getAllMetaSeries();
+        List<String> metaSeries = productRepository.getAllMetaSeries();
         metaSeries.sort(String::compareTo);
         for (String m : metaSeries) {
             Map<String, String> mMap = new HashMap<>();
@@ -150,7 +143,7 @@ public class ProductDimensionService extends BasedService {
      */
     public List<Map<String, String>> getAllPlants() {
         List<Map<String, String>> plantListMap = new ArrayList<>();
-        List<String> plants = productDimensionRepository.getPlants();
+        List<String> plants = productRepository.getPlants();
         plants.sort(String::compareTo);
         for (String p : plants) {
             Map<String, String> pMap = new HashMap<>();
@@ -161,15 +154,15 @@ public class ProductDimensionService extends BasedService {
         return plantListMap;
     }
 
-    public ProductDimension getProductDimensionByModelCode(String modelCode) {
-        Optional<ProductDimension> productDimensionOptional = productDimensionRepository.findByModelCode(modelCode);
+    public Product getProductDimensionByModelCode(String modelCode) {
+        Optional<Product> productDimensionOptional = productRepository.findByModelCode(modelCode);
         return productDimensionOptional.orElse(null);
     }
 
 
     public List<Map<String, String>> getAllClasses() {
         List<Map<String, String>> classMap = new ArrayList<>();
-        List<String> classes = productDimensionRepository.getAllClass();
+        List<String> classes = productRepository.getAllClass();
         classes.sort(String::compareTo);
         for (String m : classes) {
             Map<String, String> mMap = new HashMap<>();
@@ -181,7 +174,7 @@ public class ProductDimensionService extends BasedService {
 
     public List<Map<String, String>> getAllSegments() {
         List<Map<String, String>> segmentMap = new ArrayList<>();
-        List<String> segments = productDimensionRepository.getAllSegments();
+        List<String> segments = productRepository.getAllSegments();
         segments.sort(String::compareTo);
         for (String m : segments) {
             Map<String, String> mMap = new HashMap<>();
@@ -193,7 +186,7 @@ public class ProductDimensionService extends BasedService {
     }
 
     public String getModelFromMetaSeries(String metaSeries) {
-        Optional<String> modelOptional = productDimensionRepository.getModelByMetaSeries(metaSeries);
+        Optional<String> modelOptional = productRepository.getModelByMetaSeries(metaSeries);
         return modelOptional.orElse(null);
     }
 
@@ -202,7 +195,7 @@ public class ProductDimensionService extends BasedService {
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
         logInfo(filterMap.toString());
         // product filter by: plant, segment, brand, family, metaSeries
-        List<ProductDimension> getData = productDimensionRepository.getDataByFilter(
+        List<Product> getData = productRepository.getDataByFilter(
                 (String) filterMap.get("modelCodeFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
@@ -210,7 +203,7 @@ public class ProductDimensionService extends BasedService {
         );
         result.put("listData", getData);
         //Count data
-        long countAll = productDimensionRepository.countAll(
+        long countAll = productRepository.countAll(
                 (String) filterMap.get("modelCode"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
@@ -222,26 +215,100 @@ public class ProductDimensionService extends BasedService {
     }
 
     public void updateImageAndDescription(String modelCode, String imagePath, String description) throws NotFoundException {
-        Optional<ProductDimension> productOptional = productDimensionRepository.findByModelCode(modelCode);
+        Optional<Product> productOptional = productRepository.findByModelCode(modelCode);
         if (productOptional.isEmpty())
             throw new NotFoundException("No product found with modelCode: " + modelCode);
 
-        ProductDimension product = productOptional.get();
+        Product product = productOptional.get();
         if (imagePath != null)
             product.setImage(imagePath);
 
         if (description != null)
             product.setDescription(description);
 
-        productDimensionRepository.save(product);
+        productRepository.save(product);
     }
 
-    public ProductDimension getProductDimensionDetail(String modelCode) throws NotFoundException {
-        Optional<ProductDimension> productOptional = productDimensionRepository.getProductByModelCode(modelCode);
+    public Product getProductDimensionDetail(String modelCode, String metaSeries) throws NotFoundException {
+        Optional<Product> productOptional = productRepository.findByModelCodeAndMetaSeries(modelCode, metaSeries);
         if (productOptional.isEmpty())
             throw new NotFoundException("Not found Product with ModelCode " + modelCode);
 
         return productOptional.get();
+    }
+
+    /**
+     * Extract Product (Model Code) from Part (in power bi files) --- will be removed later
+     */
+    public void extractProductFromPart() throws IOException {
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
+        String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.bi-download");
+        List<String> files = FileUtils.getAllFilesInFolder(folderPath);
+
+        logInfo("Files: " + files);
+
+        for (String fileName : files) {
+            String filePath = folderPath + "/" + fileName;
+            //check file has been imported ?
+            if (isImported(filePath)) {
+                logWarning("file '" + fileName + "' has been imported");
+                continue;
+            }
+            log.info("Importing " + fileName);
+            importProductFromPowerBi(filePath);
+        }
+    }
+
+    private HashMap<String, Integer> getPowerBiColumnsName(Row row) {
+        HashMap<String, Integer> columns = new HashMap<>();
+        for (Cell cell : row) {
+            String columnsName = cell.getStringCellValue();
+            columns.put(columnsName, cell.getColumnIndex());
+        }
+        return columns;
+    }
+
+    private boolean checkDuplicateModelCode(String modelCode, List<Product> productList) {
+        for(Product p : productList) {
+            if(Objects.equals(p.getModelCode(), modelCode))
+                return true;
+        }
+        return false;
+    }
+
+    private void importProductFromPowerBi(String filePath) throws IOException {
+        InputStream is = new FileInputStream(filePath);
+        Workbook workbook = new XSSFWorkbook(is);
+        Sheet sheet = workbook.getSheet("Export");
+
+        List<Product> productForSaving = new ArrayList<>();
+
+        HashMap<String, Integer> columns = getPowerBiColumnsName(sheet.getRow(0));
+        for(Row row : sheet) {
+            if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
+                String modelCode = row.getCell(columns.get("Model")).getStringCellValue();
+                Optional<Product> optionalProduct = productRepository.findByModelCode(modelCode);
+                if(optionalProduct.isEmpty() && checkDuplicateModelCode(modelCode, productForSaving)) {
+                    String series = row.getCell(columns.get("Series")).getStringCellValue();
+                    Product seriesInformation = productRepository.getProductByMetaSeries(series.substring(1));
+                    if(seriesInformation != null) {
+                        productForSaving.add(new Product(
+                                modelCode,
+                                seriesInformation.getMetaSeries(),
+                                seriesInformation.getBrand(),
+                                seriesInformation.getPlant(),
+                                seriesInformation.getClazz(),
+                                seriesInformation.getSegment(),
+                                seriesInformation.getFamily(),
+                                seriesInformation.getTruckType(),
+                                seriesInformation.getImage(),
+                                seriesInformation.getDescription())
+                        );
+                    }
+                }
+            }
+        }
+        productRepository.saveAll(productForSaving);
     }
 
 }

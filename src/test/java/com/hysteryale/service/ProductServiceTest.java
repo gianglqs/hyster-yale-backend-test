@@ -1,8 +1,8 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.ProductDimension;
+import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
-import com.hysteryale.repository.ProductDimensionRepository;
+import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,16 +15,16 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
-public class ProductDimensionServiceTest {
+public class ProductServiceTest {
     @Resource
-    ProductDimensionService productDimensionService;
+    ProductService productService;
     @Resource
-    ProductDimensionRepository productDimensionRepository;
+    ProductRepository productRepository;
 
     @Test
     public void testGetAllMetaSeries() {
-        int expectedSize = productDimensionRepository.getAllMetaSeries().size();
-        List<Map<String, String>> result = productDimensionService.getAllMetaSeries();
+        int expectedSize = productRepository.getAllMetaSeries().size();
+        List<Map<String, String>> result = productService.getAllMetaSeries();
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(expectedSize, result.size());
@@ -32,8 +32,8 @@ public class ProductDimensionServiceTest {
 
     @Test
     public void testGetAllPlants() {
-        int expectedSize = productDimensionRepository.getPlants().size();
-        List<Map<String, String>> result = productDimensionService.getAllPlants();
+        int expectedSize = productRepository.getPlants().size();
+        List<Map<String, String>> result = productService.getAllPlants();
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(expectedSize, result.size());
@@ -41,8 +41,8 @@ public class ProductDimensionServiceTest {
 
     @Test
     public void testGetAllClasses() {
-        int expectedSize = productDimensionRepository.getAllClass().size();
-        List<Map<String, String>> result = productDimensionService.getAllClasses();
+        int expectedSize = productRepository.getAllClass().size();
+        List<Map<String, String>> result = productService.getAllClasses();
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(expectedSize, result.size());
@@ -50,8 +50,8 @@ public class ProductDimensionServiceTest {
 
     @Test
     public void testGetAllSegments() {
-        int expectedSize = productDimensionRepository.getAllSegments().size();
-        List<Map<String, String>> result = productDimensionService.getAllSegments();
+        int expectedSize = productRepository.getAllSegments().size();
+        List<Map<String, String>> result = productService.getAllSegments();
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(expectedSize, result.size());
@@ -61,14 +61,14 @@ public class ProductDimensionServiceTest {
     public void testGetProductDimensionByModelCode() {
         String modelCode = "J40XN";
 
-        ProductDimension result = productDimensionService.getProductDimensionByModelCode(modelCode);
+        Product result = productService.getProductDimensionByModelCode(modelCode);
         Assertions.assertNotNull(result);
         Assertions.assertEquals(modelCode, result.getModelCode());
     }
 
     @Test
     public void testGetProductDimensionByModelCode_notFound() {
-        ProductDimension result = productDimensionService.getProductDimensionByModelCode("asdbasjhdb");
+        Product result = productService.getProductDimensionByModelCode("asdbasjhdb");
         Assertions.assertNull(result);
     }
 
@@ -76,14 +76,14 @@ public class ProductDimensionServiceTest {
     public void testGetModelFromMetaSeries() {
         String metaSeries = "935";
 
-        String modelCode = productDimensionService.getModelFromMetaSeries(metaSeries);
+        String modelCode = productService.getModelFromMetaSeries(metaSeries);
         Assertions.assertNotNull(modelCode);
         Assertions.assertEquals("J40XN", modelCode);
     }
 
     @Test
     public void testGetModelFromMetaSeries_notFound() {
-        String modelCode = productDimensionService.getModelFromMetaSeries("askjdh");
+        String modelCode = productService.getModelFromMetaSeries("askjdh");
         Assertions.assertNull(modelCode);
     }
 
@@ -92,19 +92,19 @@ public class ProductDimensionServiceTest {
         FilterModel filters = new FilterModel();
 
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
-        List<ProductDimension> getData = productDimensionRepository.getDataByFilter(
+        List<Product> getData = productRepository.getDataByFilter(
                 (String) filterMap.get("modelCodeFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
                 (List<String>) filterMap.get("familyFilter"),(Pageable) filterMap.get("pageable")
         );
-        long countAll = productDimensionRepository.countAll(
+        long countAll = productRepository.countAll(
                 (String) filterMap.get("modelCode"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
                 (List<String>) filterMap.get("truckType"), (List<String>) filterMap.get("familyFilter"));
 
-        Map<String, Object> result = productDimensionService.getDataByFilter(filters);
+        Map<String, Object> result = productService.getDataByFilter(filters);
 
         Assertions.assertNotNull(result.get("listData"));
         Assertions.assertNotNull(result.get("totalItems"));
