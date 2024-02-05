@@ -57,7 +57,7 @@ public class BookingServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(),"");
     }
     @BeforeEach
     public void setUp(){
@@ -261,7 +261,7 @@ public class BookingServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Booking bo : listResult) {
-            Assertions.assertEquals(dealer, bo.getDealerName());
+            Assertions.assertEquals(dealer, bo.getDealer().getName());
 
             quantity += bo.getQuantity();
             if(bo.getCurrency().getCurrency().equals("AUD")) {

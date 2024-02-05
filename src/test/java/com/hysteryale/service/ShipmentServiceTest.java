@@ -64,7 +64,7 @@ public class ShipmentServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(),"");
     }
 
     private void assertTotalValue(Shipment totalResult, long totalQuantity, double totalDealerNet,
@@ -382,7 +382,7 @@ public class ShipmentServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Shipment sm : shipmentList) {
-            Assertions.assertEquals(dealerName, sm.getDealerName());
+            Assertions.assertEquals(dealerName, sm.getDealer().getName());
 
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
