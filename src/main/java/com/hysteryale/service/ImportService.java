@@ -7,7 +7,7 @@ import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.competitor.ForeCastValue;
 import com.hysteryale.repository.CompetitorPricingRepository;
 import com.hysteryale.repository.ShipmentRepository;
-import com.hysteryale.repository.BookingOrderRepository;
+import com.hysteryale.repository.BookingRepository;
 import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -50,7 +50,7 @@ public class ImportService extends BasedService {
     ShipmentRepository shipmentRepository;
 
     @Resource
-    BookingOrderRepository bookingOrderRepository;
+    BookingRepository bookingRepository;
 
     @Resource
     IndicatorService indicatorService;
@@ -509,7 +509,7 @@ public class ImportService extends BasedService {
         }
 
         // get data from BookingOrder
-        Optional<Booking> bookingOrderOptional = bookingOrderRepository.getBookingOrderByOrderNo(orderNo);
+        Optional<Booking> bookingOrderOptional = bookingRepository.getBookingOrderByOrderNo(orderNo);
         if (bookingOrderOptional.isPresent()) {
             Booking booking = bookingOrderOptional.get();
             // productDimension

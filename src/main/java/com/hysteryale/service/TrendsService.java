@@ -3,7 +3,7 @@ package com.hysteryale.service;
 import com.hysteryale.model.TrendData;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ShipmentRepository;
-import com.hysteryale.repository.BookingOrderRepository;
+import com.hysteryale.repository.BookingRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.Map;
 @Slf4j
 public class TrendsService {
     @Resource
-    BookingOrderRepository bookingOrderRepository;
+    BookingRepository bookingRepository;
     @Resource
     ShipmentRepository shipmentRepository;
 
@@ -25,7 +25,7 @@ public class TrendsService {
 
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
 
-        List<TrendData> bookingData = bookingOrderRepository.getMarginVsCostData(
+        List<TrendData> bookingData = bookingRepository.getMarginVsCostData(
                 (List<String>) filterMap.get("regionFilter"),  (List<String>)  filterMap.get("plantFilter"),  (List<String>)  filterMap.get("metaSeriesFilter"),
                 (List<String>)  filterMap.get("classFilter"),  (List<String>)  filterMap.get("modelFilter"),  (List<String>)  filterMap.get("segmentFilter"),
                 (List<String>)  filterMap.get("dealerNameFilter"), (Integer) filterMap.get("year")
@@ -53,7 +53,7 @@ public class TrendsService {
 
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
 
-        List<TrendData> bookingData = bookingOrderRepository.getMarginVsDNData(
+        List<TrendData> bookingData = bookingRepository.getMarginVsDNData(
                 (List<String>) filterMap.get("regionFilter"),  (List<String>)  filterMap.get("plantFilter"),  (List<String>)  filterMap.get("metaSeriesFilter"),
                 (List<String>)  filterMap.get("classFilter"),  (List<String>)  filterMap.get("modelFilter"),  (List<String>)  filterMap.get("segmentFilter"),
                 (List<String>)  filterMap.get("dealerNameFilter"), (Integer) filterMap.get("year")

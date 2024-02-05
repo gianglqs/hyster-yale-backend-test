@@ -11,20 +11,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookingOrderRepository extends JpaRepository<Booking, String> {
-
-    @Query("SELECT DISTINCT b.dealer.name FROM Booking b ORDER BY b.dealer.name")
-    List<String> getAllDealerName();
+public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query("SELECT DISTINCT b.product.modelCode FROM Booking b ORDER BY b.product.modelCode ASC ")
     List<String> getAllModel();
 
     @Query("SELECT b FROM Booking b WHERE b.orderNo = ?1")
     Optional<Booking> getBookingOrderByOrderNo(String orderNo);
-
-    // it is not including condition on currency due to missing currency data
-    @Query("SELECT DISTINCT b FROM Booking b WHERE b.product.modelCode = ?1 AND extract(year from b.date) = ?2 AND extract(month from b.date ) = ?3")
-    List<Booking> getDistinctBookingOrderByModelCode(String modelCode, int year, int month);
 
     @Query("SELECT new Booking(c.region.regionName, c.product.plant, c.product.clazz," +
             " c.series, c.product.modelCode, sum(c.quantity), sum(c.totalCost), sum(c.dealerNet), " +
@@ -45,10 +38,11 @@ public interface BookingOrderRepository extends JpaRepository<Booking, String> {
             " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))" +
+            " AND c.currency IS NOT NULL " +
             " GROUP BY c.region.regionName, c.product.plant, c.product.clazz, c.series, c.product.modelCode" +
             " ORDER BY c.region.regionName"
     )
-    List<Booking> getOrderForOutline(
+    List<Booking> getOrderForOutlier(
             @Param("regions") List<String> regions,
             @Param("plants") List<String> plants,
             @Param("metaSeries") List<String> metaSeries,
@@ -78,9 +72,10 @@ public interface BookingOrderRepository extends JpaRepository<Booking, String> {
             "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
             " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
-            " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))"
+            " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))"+
+            " AND c.currency IS NOT NULL "
     )
-    List<Booking> getSumAllOrderForOutline(
+    List<Booking> getSumAllOrderForOutlier(
             @Param("regions") List<String> regions,
             @Param("plants") List<String> plants,
             @Param("metaSeries") List<String> metaSeries,
@@ -92,7 +87,6 @@ public interface BookingOrderRepository extends JpaRepository<Booking, String> {
             @Param("fromDate") LocalDate fromDate,
             @Param("toDate") LocalDate toDate);
 
-    //   @Query("SELECT COUNT(distinct (c.region.regionShortName || c.productDimension.plant || c.productDimension.clazz || c.series || c.productDimension.model) )" +
     @Query("SELECT COUNT(c)" +
             " FROM Booking c WHERE " +
             " ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
@@ -110,9 +104,10 @@ public interface BookingOrderRepository extends JpaRepository<Booking, String> {
             " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))" +
+            " AND c.currency IS NOT NULL " +
             " GROUP BY c.region.regionName, c.product.plant, c.product.clazz, c.series, c.product.modelCode"
     )
-    List<Integer> countAllForOutline(
+    List<Integer> countAllForOutlier(
             @Param("regions") List<String> regions,
             @Param("plants") List<String> plants,
             @Param("metaSeries") List<String> metaSeries,
@@ -217,9 +212,9 @@ public interface BookingOrderRepository extends JpaRepository<Booking, String> {
             " AND ((:segments) IS NULL OR b.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR b.dealer.name IN (:dealerName)) " +
             " AND EXTRACT(year FROM b.date) = :year" +
-            " AND b.marginPercentageAfterSurCharge != 'NaN'" +
-            " AND b.marginPercentageAfterSurCharge != '-Infinity'" +
-            " AND b.marginPercentageAfterSurCharge != 'Infinity'" +
+            " AND b.marginPercentageAfterSurcharge != 'NaN'" +
+            " AND b.marginPercentageAfterSurcharge != '-Infinity'" +
+            " AND b.marginPercentageAfterSurcharge != 'Infinity'" +
             " GROUP BY EXTRACT(month FROM b.date) ORDER BY month ASC"
     )
     List<TrendData> getMarginVsCostData(
@@ -276,7 +271,7 @@ public interface BookingOrderRepository extends JpaRepository<Booking, String> {
             "   (:comparator = '<' AND c.marginPercentageAfterSurcharge < :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '>' AND c.marginPercentageAfterSurcharge > :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
-            " AND c.currency IS NOT NULL "+
+            " AND c.currency IS NOT NULL " +
             " GROUP BY c.region.regionName, c.product, c.currency " +
             " HAVING (:marginPercentageAfterSurChargeAfterAdj) IS NULL OR " +
             "   (:comparatorAfterAdj = '<' AND sum(c.dealerNetAfterSurcharge) <> 0 AND ((sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0))) < :marginPercentageAfterSurChargeAfterAdj) OR" +
@@ -315,7 +310,7 @@ public interface BookingOrderRepository extends JpaRepository<Booking, String> {
             "   (:comparator = '<' AND c.marginPercentageAfterSurcharge < :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '>' AND c.marginPercentageAfterSurcharge > :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
-            " AND c.currency IS NOT NULL "+
+            " AND c.currency IS NOT NULL " +
             " GROUP BY c.region.regionName, c.product, c.currency" +
             " HAVING (:marginPercentageAfterSurChargeAfterAdj) IS NULL OR " +
             "   (:comparatorAfterAdj = '<' AND sum(c.dealerNetAfterSurcharge) <> 0 AND (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0)) < :marginPercentageAfterSurChargeAfterAdj) OR" +
@@ -396,7 +391,7 @@ public interface BookingOrderRepository extends JpaRepository<Booking, String> {
             "   (:comparator = '<' AND c.marginPercentageAfterSurcharge < :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '>' AND c.marginPercentageAfterSurcharge > :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
-            " AND c.currency IS NOT NULL "+
+            " AND c.currency IS NOT NULL " +
             " GROUP BY c.region.regionName, c.product" +
             " HAVING (:marginPercentageAfterSurChargeAfterAdj) IS NULL OR " +
             "   (:comparatorAfterAdj = '<' AND sum(c.dealerNetAfterSurcharge) <> 0 AND (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0)) < :marginPercentageAfterSurChargeAfterAdj) OR" +
