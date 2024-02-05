@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +35,7 @@ import java.util.regex.Pattern;
 @Service
 @Slf4j
 @SuppressWarnings("unchecked")
-public class BookingOrderService extends BasedService {
+public class BookingService extends BasedService {
     @Resource
     BookingOrderRepository bookingOrderRepository;
     @Resource
@@ -105,13 +104,13 @@ public class BookingOrderService extends BasedService {
     }
 
 
-    BookingOrder mapExcelDataIntoOrderObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) throws MissingColumnException {
-        BookingOrder bookingOrder = new BookingOrder();
+    Booking mapExcelDataIntoOrderObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) throws MissingColumnException {
+        Booking booking = new Booking();
 
         //set OrderNo
         if (ORDER_COLUMNS_NAME.get("ORDERNO") != null) {
             String orderNo = row.getCell(ORDER_COLUMNS_NAME.get("ORDERNO")).getStringCellValue();
-            bookingOrder.setOrderNo(orderNo);
+            booking.setOrderNo(orderNo);
         } else {
             throw new MissingColumnException("Missing column 'ORDERNO'!");
         }
@@ -119,7 +118,7 @@ public class BookingOrderService extends BasedService {
         // Series
         if (ORDER_COLUMNS_NAME.get("SERIES") != null) {
             String series = row.getCell(ORDER_COLUMNS_NAME.get("SERIES")).getStringCellValue();
-            bookingOrder.setSeries(series);
+            booking.setSeries(series);
         } else {
             throw new MissingColumnException("Missing column 'SERIES'!");
         }
@@ -127,7 +126,7 @@ public class BookingOrderService extends BasedService {
         // set billToCost
         if (ORDER_COLUMNS_NAME.get("BILLTO") != null) {
             Cell billtoCell = row.getCell(ORDER_COLUMNS_NAME.get("BILLTO"));
-            bookingOrder.setBillTo(billtoCell.getStringCellValue());
+            booking.setBillTo(billtoCell.getStringCellValue());
         } else {
             throw new MissingColumnException("Missing column 'BILLTO'!");
         }
@@ -136,11 +135,12 @@ public class BookingOrderService extends BasedService {
         if (ORDER_COLUMNS_NAME.get("MODEL") != null) {
             Cell modelCell = row.getCell(ORDER_COLUMNS_NAME.get("MODEL"));
             //set ProductDimension
-            ProductDimension productDimension = productDimensionService.getProductDimensionByModelCode(modelCell.getStringCellValue());
-            if (productDimension != null) {
-                bookingOrder.setProductDimension(productDimension);
+            Product product = productDimensionService.getProductDimensionByModelCode(modelCell.getStringCellValue());
+            if (product != null) {
+                booking.setProduct(product);
             } else {
-                logWarning("Not found ProductDimension with OrderNo: " + bookingOrder.getOrderNo());
+                logWarning("Not found ProductDimension with OrderNo: " + booking.getOrderNo());
+                return null;
             }
         } else {
             throw new MissingColumnException("Missing column 'MODEL'!");
@@ -151,9 +151,10 @@ public class BookingOrderService extends BasedService {
             Cell regionCell = row.getCell(ORDER_COLUMNS_NAME.get("REGION"));
             Region region = regionService.getRegionByShortName(regionCell.getStringCellValue());
             if (region != null) {
-                bookingOrder.setRegion(region);
+                booking.setRegion(region);
             } else {
-                logWarning("Not found Region with OrderNo" + bookingOrder.getOrderNo());
+                logWarning("Not found Region with OrderNo" + booking.getOrderNo());
+                return null;
             }
         } else {
             throw new MissingColumnException("Missing column 'REGION'!");
@@ -171,7 +172,7 @@ public class BookingOrderService extends BasedService {
                 month = Integer.parseInt(matcher.group(2));
                 day = Integer.parseInt(matcher.group(3));
 
-                bookingOrder.setDate(LocalDate.of(year, DateUtils.getMonth(month), day));
+                booking.setDate(LocalDate.of(year, DateUtils.getMonth(month), day));
             }
         } else {
             throw new MissingColumnException("Missing column 'DATE'!");
@@ -180,7 +181,7 @@ public class BookingOrderService extends BasedService {
         // dealerName
         if (ORDER_COLUMNS_NAME.get("DEALERNAME") != null) {
             Cell dealerNameCell = row.getCell(ORDER_COLUMNS_NAME.get("DEALERNAME"));
-            bookingOrder.setDealerName(dealerNameCell.getStringCellValue());
+          //  booking.setDealerName(dealerNameCell.getStringCellValue());
         } else {
             throw new MissingColumnException("Missing column 'DEALERNAME'!");
         }
@@ -188,12 +189,19 @@ public class BookingOrderService extends BasedService {
         // country code
         if (ORDER_COLUMNS_NAME.get("CTRYCODE") != null) {
             Cell ctryCodeCell = row.getCell(ORDER_COLUMNS_NAME.get("CTRYCODE"));
-            bookingOrder.setCtryCode(ctryCodeCell.getStringCellValue());
+            booking.setCtryCode(ctryCodeCell.getStringCellValue());
         } else {
             throw new MissingColumnException("Missing column 'CTRYCODE'!");
         }
 
-        return bookingOrder;
+        // AOPMargin
+        AOPMargin aopMargin = aopMarginService.getAOPMargin(booking.getRegion(), booking.getSeries(), booking.getProduct().getPlant(), booking.getDate());
+        if (aopMargin == null)
+            return null;
+
+        booking.setAOPMargin(aopMargin);
+
+        return booking;
     }
 
     private Date extractDate(String fileName) {
@@ -267,7 +275,7 @@ public class BookingOrderService extends BasedService {
     public void importNewBookingFileByFile(String filePath, InputStream isListCostData) throws IOException, MissingColumnException {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
-        List<BookingOrder> bookingOrderList = new LinkedList<>();
+        List<Booking> bookingList = new LinkedList<>();
         HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
         List<String> USPlant = PlantUtil.getUSPlant();
         List<CostDataFile> listCostDataByMonthAndYear = getListCostDataByMonthAndYear(isListCostData);
@@ -282,24 +290,27 @@ public class BookingOrderService extends BasedService {
         for (Row row : orderSheet) {
             if (row.getRowNum() == numRowName) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
             else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
-                BookingOrder newBookingOrder = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
-                // import DN, DNAfterSurcharge
-                newBookingOrder = importDNAndDNAfterSurcharge(newBookingOrder);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
 
-                if (newBookingOrder.getProductDimension() != null) { // check productDimension
-                    if (USPlant.contains(newBookingOrder.getProductDimension().getPlant())) {
-                        newBookingOrder = setTotalCostAndCurrency(newBookingOrder, listCostDataByMonthAndYear);
-                        logInfo("US Plant");
-                    } else {
-                        newBookingOrder = importCostRMBOfEachParts(newBookingOrder);
-                    }
-                    newBookingOrder = calculateMargin(newBookingOrder);
-                    newBookingOrder = importAOPMargin(newBookingOrder);
-                    bookingOrderList.add(newBookingOrder);
+                if (newBooking == null)
+                    continue;
+
+                // import DN, DNAfterSurcharge
+                newBooking = importDNAndDNAfterSurcharge(newBooking);
+
+                // check productDimension
+                if (USPlant.contains(newBooking.getProduct().getPlant())) {
+                    newBooking = setTotalCostAndCurrency(newBooking, listCostDataByMonthAndYear);
+                    logInfo("US Plant");
+                } else {
+                    newBooking = importCostRMBOfEachParts(newBooking);
                 }
+                newBooking = calculateMargin(newBooking);
+                bookingList.add(newBooking);
+
             }
         }
-        bookingOrderRepository.saveAll(bookingOrderList);
+        bookingOrderRepository.saveAll(bookingList);
 
     }
 
@@ -307,7 +318,7 @@ public class BookingOrderService extends BasedService {
 
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
-        List<BookingOrder> bookingOrderList = new LinkedList<>();
+        List<Booking> bookingList = new LinkedList<>();
         HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
         List<String> USPlant = PlantUtil.getUSPlant();
         Sheet orderSheet = workbook.getSheet("NOPLDTA.NOPORDP,NOPLDTA.>Sheet1");
@@ -320,42 +331,43 @@ public class BookingOrderService extends BasedService {
         for (Row row : orderSheet) {
             if (row.getRowNum() == numRowName) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
             else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
-                BookingOrder newBookingOrder = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
 
-                if (newBookingOrder.getProductDimension() != null) {
-                    // import DN, DNAfterSurcharge
-                    newBookingOrder = importDNAndDNAfterSurcharge(newBookingOrder);
+                if (newBooking == null)
+                    continue;
 
-                    if (USPlant.contains(newBookingOrder.getProductDimension().getPlant())) {
-                        logInfo("US Plant");
-                        // import totalCost when import file totalCost
+                // import DN, DNAfterSurcharge
+                newBooking = importDNAndDNAfterSurcharge(newBooking);
 
-                        Optional<BookingOrder> orderExisted = bookingOrderRepository.getBookingOrderByOrderNo(newBookingOrder.getOrderNo());
-                        if (orderExisted.isPresent()) {
-                            BookingOrder oldBooking = orderExisted.get();
-                            newBookingOrder.setCurrency(oldBooking.getCurrency());
-                            newBookingOrder.setAOPMarginPercentage(oldBooking.getAOPMarginPercentage());
-                            newBookingOrder.setMarginPercentageAfterSurCharge(oldBooking.getMarginPercentageAfterSurCharge());
-                            newBookingOrder.setMarginAfterSurCharge(oldBooking.getMarginAfterSurCharge());
-                            newBookingOrder.setTotalCost(oldBooking.getTotalCost());
-                        }
-                    } else {
-                        newBookingOrder = importCostRMBOfEachParts(newBookingOrder);
+                if (USPlant.contains(newBooking.getProduct().getPlant())) {
+                    logInfo("US Plant");
+                    // import totalCost when import file totalCost
+
+                    Optional<Booking> orderExisted = bookingOrderRepository.getBookingOrderByOrderNo(newBooking.getOrderNo());
+                    if (orderExisted.isPresent()) {
+                        Booking oldBooking = orderExisted.get();
+                        newBooking.setCurrency(oldBooking.getCurrency());
+                        newBooking.setAOPMargin(oldBooking.getAOPMargin());
+                        newBooking.setMarginPercentageAfterSurcharge(oldBooking.getMarginPercentageAfterSurcharge());
+                        newBooking.setMarginAfterSurcharge(oldBooking.getMarginAfterSurcharge());
+                        newBooking.setTotalCost(oldBooking.getTotalCost());
                     }
-
-                    newBookingOrder = calculateMargin(newBookingOrder);
-                    newBookingOrder = importAOPMargin(newBookingOrder);
-                    bookingOrderList.add(newBookingOrder);
+                } else {
+                    newBooking = importCostRMBOfEachParts(newBooking);
                 }
+
+                newBooking = calculateMargin(newBooking);
+                bookingList.add(newBooking);
             }
+
         }
-        logInfo("list booked" + bookingOrderList.size());
-        bookingOrderRepository.saveAll(bookingOrderList);
+        logInfo("list booked" + bookingList.size());
+        bookingOrderRepository.saveAll(bookingList);
 
     }
 
     //get Booking Exist
-    private List<BookingOrder> getListBookingExist(List<BookingOrder> booking) {
+    private List<Booking> getListBookingExist(List<Booking> booking) {
         List<String> listOrderNo = new ArrayList<>();
         booking.forEach(b -> listOrderNo.add(b.getOrderNo()));
         return bookingOrderRepository.getListBookingExist(listOrderNo);
@@ -368,7 +380,7 @@ public class BookingOrderService extends BasedService {
         //step 3: calculate totalCost
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
-        List<BookingOrder> bookingOrderList = new LinkedList<>();
+        List<Booking> bookingList = new LinkedList<>();
         HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
 
         Sheet orderSheet = workbook.getSheet("NOPLDTA.NOPORDP,NOPLDTA.>Sheet1");
@@ -379,25 +391,26 @@ public class BookingOrderService extends BasedService {
             if (row.getRowNum() == 0) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
             else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 1) {
                 // map data from excel file
-                BookingOrder newBookingOrder = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
 
-                if (newBookingOrder.getProductDimension() != null) {
-                    newBookingOrder = importDNAndDNAfterSurcharge(newBookingOrder);
-                    newBookingOrder = importOldMarginPercentageAndCurrency(newBookingOrder, marginDataFileList);
-                    newBookingOrder = calculateTotalCostAndMarginAfterSurcharge(newBookingOrder);
-                    newBookingOrder = importAOPMargin(newBookingOrder);
-                    bookingOrderList.add(newBookingOrder);
-                }
+                if (newBooking == null)
+                    continue;
+
+                newBooking = importDNAndDNAfterSurcharge(newBooking);
+                newBooking = importOldMarginPercentageAndCurrency(newBooking, marginDataFileList);
+                newBooking = calculateTotalCostAndMarginAfterSurcharge(newBooking);
+                bookingList.add(newBooking);
+
             }
         }
 
-        bookingOrderRepository.saveAll(bookingOrderList);
+        bookingOrderRepository.saveAll(bookingList);
     }
 
-    public BookingOrder importOldMarginPercentageAndCurrency(BookingOrder booking, List<MarginDataFile> marginDataFileList) {
+    public Booking importOldMarginPercentageAndCurrency(Booking booking, List<MarginDataFile> marginDataFileList) {
         for (MarginDataFile marginDataFile : marginDataFileList) {
             if (marginDataFile.orderNo.equals(booking.getOrderNo())) {
-                booking.setMarginPercentageAfterSurCharge(marginDataFile.marginPercentage);
+                booking.setMarginPercentageAfterSurcharge(marginDataFile.marginPercentage);
                 Currency currency = currencyService.getCurrenciesByName(marginDataFile.currency);
                 booking.setCurrency(currency);
                 break;
@@ -406,7 +419,7 @@ public class BookingOrderService extends BasedService {
         return booking;
     }
 
-    public BookingOrder setTotalCostAndCurrency(BookingOrder booking, List<CostDataFile> costDataFileList) {
+    public Booking setTotalCostAndCurrency(Booking booking, List<CostDataFile> costDataFileList) {
         for (CostDataFile costDataFile : costDataFileList) {
             if (costDataFile.orderNo.equals(booking.getOrderNo())) {
                 booking.setTotalCost(costDataFile.totalCost);
@@ -418,57 +431,48 @@ public class BookingOrderService extends BasedService {
         return booking;
     }
 
-    private BookingOrder importAOPMargin(BookingOrder booking) {
-        if (booking.getProductDimension() != null) {
-            Double aopMargin = aopMarginService.getAOPMargin(booking.getSeries(), booking.getRegion().getRegionName(), booking.getProductDimension().getPlant());
-            if (aopMargin != null)
-                booking.setAOPMarginPercentage(aopMargin);
-        }
-        return booking;
-    }
+    public Booking importCostRMBOfEachParts(Booking booking) {
+        List<String> listPartNumber = partService.getAllPartNumbersByOrderNo(booking.getOrderNo());
+        Currency currency = partService.getCurrencyByOrderNo(booking.getOrderNo());
 
-    public BookingOrder importCostRMBOfEachParts(BookingOrder bookingOrder) {
-        List<String> listPartNumber = partService.getAllPartNumbersByOrderNo(bookingOrder.getOrderNo());
-        Currency currency = partService.getCurrencyByOrderNo(bookingOrder.getOrderNo());
-
-        LocalDate date = LocalDate.of(bookingOrder.getDate().getYear(), bookingOrder.getDate().getMonth(), 1);
+        LocalDate date = LocalDate.of(booking.getDate().getYear(), booking.getDate().getMonth(), 1);
 
         if (currency == null)
-            return bookingOrder;
-        bookingOrder.setCurrency(currency);
-        logInfo(bookingOrder.getOrderNo() + "   " + currency.getCurrency());
+            return booking;
+        booking.setCurrency(currency);
+        logInfo(booking.getOrderNo() + "   " + currency.getCurrency());
         double totalCost = 0;
-        if (!bookingOrder.getProductDimension().getPlant().equals("SN")) { // plant is Hysteryale, Maximal, Ruyi, Staxx
+        if (!booking.getProduct().getPlant().equals("SN")) { // plant is Hysteryale, Maximal, Ruyi, Staxx
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByHYMPlantAndListPartNumber(
-                    bookingOrder.getProductDimension().getModelCode(), listPartNumber, bookingOrder.getCurrency().getCurrency(), date);
+                    booking.getProduct().getModelCode(), listPartNumber, booking.getCurrency().getCurrency(), date);
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
                 totalCost += marginAnalystMacro.getCostRMB();
             }
             // exchange rate
-            ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("CNY", bookingOrder.getCurrency().getCurrency());
+            ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("CNY", booking.getCurrency().getCurrency());
             if (exchangeRate != null) {
                 totalCost *= exchangeRate.getRate();
-                logInfo("None SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getProductDimension().getModelCode() + "  " + exchangeRate.getRate());
+                logInfo("None SN list " + marginAnalystMacroList.size() + "  " + booking.getOrderNo() + "  " + booking.getProduct().getModelCode() + "  " + exchangeRate.getRate());
             }
         } else { // plant is SN
             List<MarginAnalystMacro> marginAnalystMacroList = marginAnalystMacroService.getMarginAnalystMacroByPlantAndListPartNumber(
-                    bookingOrder.getProductDimension().getModelCode(), listPartNumber, bookingOrder.getCurrency().getCurrency(),
-                    bookingOrder.getProductDimension().getPlant(), date);
+                    booking.getProduct().getModelCode(), listPartNumber, booking.getCurrency().getCurrency(),
+                    booking.getProduct().getPlant(), date);
 
             for (MarginAnalystMacro marginAnalystMacro : marginAnalystMacroList) {
                 totalCost += marginAnalystMacro.getCostRMB();
             }
-            ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("USD", bookingOrder.getCurrency().getCurrency());
+            ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate("USD", booking.getCurrency().getCurrency());
             if (exchangeRate != null) {
                 totalCost *= exchangeRate.getRate();
-                logInfo(" SN list " + marginAnalystMacroList.size() + "  " + bookingOrder.getOrderNo() + "  " + bookingOrder.getProductDimension().getModelCode() + "  " + exchangeRate.getRate());
+                logInfo(" SN list " + marginAnalystMacroList.size() + "  " + booking.getOrderNo() + "  " + booking.getProduct().getModelCode() + "  " + exchangeRate.getRate());
             }
         }
 
 
-        bookingOrder.setTotalCost(totalCost);
-        logInfo(bookingOrder.getTotalCost() + "");
-        return bookingOrder;
+        booking.setTotalCost(totalCost);
+        logInfo(booking.getTotalCost() + "");
+        return booking;
     }
 
     private InputStream getInputStreamForCostData(String month, String year) throws IOException {
@@ -592,14 +596,14 @@ public class BookingOrderService extends BasedService {
         List<CostDataFile> costDataList = getListCostDataByMonthAndYear(is);
         List<String> listOrderNo = new ArrayList<>();
         costDataList.forEach(c -> listOrderNo.add(c.orderNo));
-        List<BookingOrder> listBookingExisted = bookingOrderRepository.getListBookingExist(listOrderNo);
-        for (BookingOrder bookingOrder : listBookingExisted) {
+        List<Booking> listBookingExisted = bookingOrderRepository.getListBookingExist(listOrderNo);
+        for (Booking booking : listBookingExisted) {
             for (CostDataFile costData : costDataList) {
-                if (bookingOrder.getOrderNo().equals(costData.orderNo)) {
-                    bookingOrder.setTotalCost(costData.totalCost);
+                if (booking.getOrderNo().equals(costData.orderNo)) {
+                    booking.setTotalCost(costData.totalCost);
                     Currency currency = currencyService.getCurrencies(costData.currency);
-                    bookingOrder.setCurrency(currency);
-                    bookingOrder = calculateMargin(bookingOrder);
+                    booking.setCurrency(currency);
+                    booking = calculateMargin(booking);
 
                 }
             }
@@ -625,7 +629,7 @@ public class BookingOrderService extends BasedService {
         return Integer.parseInt(year) < 2023 | (Integer.parseInt(year) == 2023 && !(month.equals("Sep") | month.equals("Oct") | month.equals("Nov") | month.equals("Dec")));
     }
 
-    public BookingOrder importDNAndDNAfterSurcharge(BookingOrder booking) {
+    public Booking importDNAndDNAfterSurcharge(Booking booking) {
         Set<Part> newParts = partRepository.getPartByOrderNumber(booking.getOrderNo());
         double dealerNet = 0;
         for (Part part : newParts) {
@@ -633,39 +637,39 @@ public class BookingOrderService extends BasedService {
         }
         double surcharge = 0;
         booking.setDealerNet(dealerNet);
-        booking.setDealerNetAfterSurCharge(dealerNet - surcharge);
+        booking.setDealerNetAfterSurcharge(dealerNet - surcharge);
         return booking;
     }
 
     /**
      * for new data
      */
-    private BookingOrder calculateMargin(BookingOrder booking) {
+    private Booking calculateMargin(Booking booking) {
         //need : DNAfterSurcharge, totalCost
-        double dealerNetAfterSurcharge = booking.getDealerNetAfterSurCharge();
+        double dealerNetAfterSurcharge = booking.getDealerNetAfterSurcharge();
         double totalCost = booking.getTotalCost();
         double marginAfterSurcharge = dealerNetAfterSurcharge - totalCost;
         double marginPercentageAfterSurcharge = marginAfterSurcharge / dealerNetAfterSurcharge;
-        booking.setMarginAfterSurCharge(marginAfterSurcharge);
-        booking.setMarginPercentageAfterSurCharge(marginPercentageAfterSurcharge);
+        booking.setMarginAfterSurcharge(marginAfterSurcharge);
+        booking.setMarginPercentageAfterSurcharge(marginPercentageAfterSurcharge);
         return booking;
     }
 
     /**
      * old data
      */
-    private BookingOrder calculateTotalCostAndMarginAfterSurcharge(BookingOrder booking) {
+    private Booking calculateTotalCostAndMarginAfterSurcharge(Booking booking) {
         // need : Margin% , DNAfterSurcharge
-        double dealerNetAfterSurcharge = booking.getDealerNetAfterSurCharge();
-        double marginPercentageAfterSurcharge = booking.getMarginPercentageAfterSurCharge();
+        double dealerNetAfterSurcharge = booking.getDealerNetAfterSurcharge();
+        double marginPercentageAfterSurcharge = booking.getMarginPercentageAfterSurcharge();
         double marginAfterSurcharge = dealerNetAfterSurcharge * marginPercentageAfterSurcharge;
         double totalCost = dealerNetAfterSurcharge - marginAfterSurcharge;
         booking.setTotalCost(totalCost);
-        booking.setMarginAfterSurCharge(marginAfterSurcharge);
+        booking.setMarginAfterSurcharge(marginAfterSurcharge);
         return booking;
     }
 
-    public Optional<BookingOrder> getBookingOrderByOrderNumber(String orderNumber) {
+    public Optional<Booking> getBookingOrderByOrderNumber(String orderNumber) {
         return bookingOrderRepository.findById(orderNumber);
     }
 
@@ -675,7 +679,7 @@ public class BookingOrderService extends BasedService {
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filterModel);
         logInfo(filterMap.toString());
 
-        List<BookingOrder> bookingOrderList = bookingOrderRepository.selectAllForBookingOrder(
+        List<Booking> bookingList = bookingOrderRepository.selectAllForBookingOrder(
                 (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
@@ -689,9 +693,15 @@ public class BookingOrderService extends BasedService {
         List<ExchangeRate> exchangeRateList = new ArrayList<>();
         List<String> listTargetCurrency = TargetCurrency.getListTargetCurrency;
 
-        for (BookingOrder bookingOrder : bookingOrderList) {
-            if (bookingOrder.getCurrency() != null) {
-                String currency = bookingOrder.getCurrency().getCurrency();
+        listCurrency.add("USD");
+        listCurrency.add("AUD");
+
+        exchangeRateList.add(exchangeRateService.getNearestExchangeRate("USD", "AUD"));
+        exchangeRateList.add(exchangeRateService.getNearestExchangeRate("AUD", "USD"));
+
+        for (Booking booking : bookingList) {
+            if (booking.getCurrency() != null) {
+                String currency = booking.getCurrency().getCurrency();
                 if (!listCurrency.contains(currency)) { // get distinct currency in list order
                     listCurrency.add(currency);
                     for (String targetCurrency : listTargetCurrency) {
@@ -702,52 +712,87 @@ public class BookingOrderService extends BasedService {
                 }
             }
         }
-        boolean hasUSDToAUD = false;
-        boolean hasAUDToUSD = false;
-        for(ExchangeRate exchangeRate : exchangeRateList){
-            if(exchangeRate.getFrom().getCurrency().equals("USD") && exchangeRate.getTo().getCurrency().equals("AUD"))
-                hasUSDToAUD = true;
-            if(exchangeRate.getFrom().getCurrency().equals("AUD") && exchangeRate.getTo().getCurrency().equals("USD"))
-                hasAUDToUSD = true;
-        }
 
-        if(!hasUSDToAUD)
-            exchangeRateList.add(exchangeRateService.getNearestExchangeRate("USD", "AUD"));
-        if(!hasAUDToUSD)
-            exchangeRateList.add(exchangeRateService.getNearestExchangeRate("AUD", "USD"));
 
         result.put("listExchangeRate", exchangeRateList);
-        result.put("listBookingOrder", bookingOrderList);
+        result.put("listBookingOrder", bookingList);
 
-
-        //get count Recode
-        int countAll = bookingOrderRepository.getCount((String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
+        // get data for totalRow
+        List<Booking> getTotalBookings = bookingOrderRepository.getTotal(
+                (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"));
-        result.put("totalItems", countAll);
-
-        // get data for totalRow
-        List<BookingOrder> getTotal = bookingOrderRepository.getTotalRowForBookingPage(
-                (String) filterMap.get("orderNoFilter"),
-                filterMap.get("regionFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("regionFilter"),
-                filterMap.get("plantFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("plantFilter"),
-                filterMap.get("metaSeriesFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("metaSeriesFilter"),
-                filterMap.get("classFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("classFilter"),
-                filterMap.get("modelFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("modelFilter"),
-                filterMap.get("segmentFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("segmentFilter"),
-                filterMap.get("dealerNameFilter") == null ? Collections.emptyList() : (List<String>) filterMap.get("dealerNameFilter"),
-                (String) filterMap.get("aopMarginPercentageFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                filterMap.get("fromDateFilter") == null ? LocalDate.of(1996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("fromDateFilter"),
-                filterMap.get("toDateFilter") == null ? LocalDate.of(2996, Month.OCTOBER, 23) : (LocalDate) filterMap.get("toDateFilter")
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter")
         );
-        result.put("total", getTotal);
+
+        Booking totalBooking = calculateTotal(getTotalBookings, exchangeRateList);
+
+        result.put("totalItems", totalBooking.getQuantity());
+        result.put("total", List.of(totalBooking));
 
         return result;
+    }
+
+    private Booking calculateTotal(List<Booking> bookings, List<ExchangeRate> exchangeRates) {
+        double dealerNet = 0;
+        double dealerNetAfterSurcharge = 0;
+        int quantity = 0;
+        double totalCost = 0;
+        double marginAfterSurcharge = 0;
+        double marginPercentageAfterSurcharge;
+
+        for (Booking booking : bookings) {
+            if (!booking.getCurrency().getCurrency().equals("USD")) {
+                // checking exchange( currency of Booking -> 'USD') in exchangeRates
+                if (!isExistedExchangeRateInList(exchangeRates, createExchangeRateOfBookingToUSD(booking))) {
+                    // get ExchangeRate from DB
+                    ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate(booking.getCurrency().getCurrency(), "USD");
+                    exchangeRates.add(exchangeRate);
+
+                    dealerNet += booking.getDealerNet() * exchangeRate.getRate();
+                    dealerNetAfterSurcharge += booking.getDealerNetAfterSurcharge() * exchangeRate.getRate();
+                    totalCost += booking.getTotalCost() * exchangeRate.getRate();
+                } else {
+                    ExchangeRate exchangeRate = getExchangeRateFromList(exchangeRates, booking.getCurrency().getCurrency(), "USD");
+
+                    dealerNet += booking.getDealerNet() * exchangeRate.getRate();
+                    dealerNetAfterSurcharge += booking.getDealerNetAfterSurcharge() * exchangeRate.getRate();
+                    totalCost += booking.getTotalCost() * exchangeRate.getRate();
+                }
+            } else {
+                dealerNet += booking.getDealerNet();
+                dealerNetAfterSurcharge += booking.getDealerNetAfterSurcharge();
+                totalCost += booking.getTotalCost();
+            }
+            quantity++;
+        }
+
+        marginAfterSurcharge = dealerNetAfterSurcharge - totalCost;
+        marginPercentageAfterSurcharge = marginAfterSurcharge / dealerNetAfterSurcharge;
+
+        return new Booking("Total", new Currency("USD"), quantity, dealerNet, dealerNetAfterSurcharge, totalCost, marginAfterSurcharge, marginPercentageAfterSurcharge);
+    }
+
+    private ExchangeRate getExchangeRateFromList(List<ExchangeRate> exchangeRates, String fromCurrency, String toCurrency) {
+        for (ExchangeRate exchangeRate : exchangeRates) {
+            if (exchangeRate.getFrom().getCurrency().equals(fromCurrency) && exchangeRate.getTo().getCurrency().equals(toCurrency))
+                return exchangeRate;
+        }
+        return null;
+    }
+
+    private ExchangeRate createExchangeRateOfBookingToUSD(Booking booking) {
+        return new ExchangeRate(booking.getCurrency(), new Currency("USD"));
+    }
+
+    private boolean isExistedExchangeRateInList(List<ExchangeRate> exchangeRateList, ExchangeRate exchangeRate) {
+        for (ExchangeRate ex : exchangeRateList) {
+            if (ex.getFrom().equals(exchangeRate.getFrom()) && ex.getTo().equals(exchangeRate.getTo()))
+                return true;
+        }
+        return false;
     }
 
 

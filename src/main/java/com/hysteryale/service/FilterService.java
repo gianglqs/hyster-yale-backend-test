@@ -1,13 +1,15 @@
 package com.hysteryale.service;
 
 import com.hysteryale.repository.*;
-import com.hysteryale.repository.BookingOrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -29,6 +31,9 @@ public class FilterService {
     BookingOrderRepository bookingOrderRepository;
     @Resource
     CountryRepository countryRepository;
+
+    @Resource
+    DealerRepository dealerRepository;
 
     public Map<String, Object> getCompetitorPricingFilter() {
 
@@ -195,7 +200,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllDealerNames() {
         List<Map<String, String>> DealerNameMap = new ArrayList<>();
-        List<String> dealerNames = bookingOrderRepository.getAllDealerName();
+        List<String> dealerNames = dealerRepository.getAllDealerName();
         dealerNames.sort(String::compareTo);
         for (String m : dealerNames) {
             Map<String, String> mMap = new HashMap<>();
