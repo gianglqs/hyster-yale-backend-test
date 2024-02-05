@@ -267,6 +267,15 @@ public class ProductDimensionService extends BasedService {
         }
         return columns;
     }
+
+    private boolean checkDuplicateModelCode(String modelCode, List<Product> productList) {
+        for(Product p : productList) {
+            if(Objects.equals(p.getModelCode(), modelCode))
+                return true;
+        }
+        return false;
+    }
+
     private void importProductFromPowerBi(String filePath) throws IOException {
         InputStream is = new FileInputStream(filePath);
         Workbook workbook = new XSSFWorkbook(is);
@@ -279,7 +288,7 @@ public class ProductDimensionService extends BasedService {
             if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
                 String modelCode = row.getCell(columns.get("Model")).getStringCellValue();
                 Optional<Product> optionalProduct = productDimensionRepository.findByModelCode(modelCode);
-                if(optionalProduct.isEmpty()) {
+                if(optionalProduct.isEmpty() && checkDuplicateModelCode(modelCode, productForSaving)) {
                     String series = row.getCell(columns.get("Series")).getStringCellValue();
                     Product seriesInformation = productDimensionRepository.getProductByMetaSeries(series.substring(1));
                     if(seriesInformation != null) {
