@@ -16,22 +16,22 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
     @Query("SELECT c FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region IS NULL OR COALESCE(c.region.regionName, NULL) IN (:regions) )" +
-            " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
+            " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
-            " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
-            " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
+            " AND ((:classes) IS NULL OR c.product.clazz IN (:classes))" +
+            " AND ((:models) IS NULL OR c.product.modelCode IN (:models))" +
+            " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
+            " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
-            "   (:AOPMarginPercentage = 'Above AOP Margin %' AND c.AOPMarginPercentage < c.marginPercentageAfterSurCharge) OR" +
-            "   (:AOPMarginPercentage = 'Below AOP Margin %' AND c.AOPMarginPercentage >= c.marginPercentageAfterSurCharge))" +
+            "   (:AOPMarginPercentage = 'Above AOP Margin %' AND c.AOPMargin.marginSTD < c.marginPercentageAfterSurcharge) OR" +
+            "   (:AOPMarginPercentage = 'Below AOP Margin %' AND c.AOPMargin.marginSTD >= c.marginPercentageAfterSurcharge))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
-            "   (:comparator = '<=' AND c.marginPercentageAfterSurCharge <= :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '>=' AND c.marginPercentageAfterSurCharge >= :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '<' AND c.marginPercentageAfterSurCharge < :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '>' AND c.marginPercentageAfterSurCharge > :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '=' AND c.marginPercentageAfterSurCharge = :marginPercentageAfterSurCharge))" +
-            " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
+            "   (:comparator = '<=' AND c.marginPercentageAfterSurcharge <= :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '>=' AND c.marginPercentageAfterSurcharge >= :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '<' AND c.marginPercentageAfterSurcharge < :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '>' AND c.marginPercentageAfterSurcharge > :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
+            " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND (cast(:fromDate as date ) IS NULL OR c.date >= :fromDate)" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= :toDate) ORDER BY c.orderNo"
     )
@@ -54,22 +54,22 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
     @Query("SELECT COUNT(c) FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
-            " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
+            " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
-            " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
-            " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
+            " AND ((:classes) IS NULL OR c.product.clazz IN (:classes))" +
+            " AND ((:models) IS NULL OR c.product.modelCode IN (:models))" +
+            " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
+            " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
-            "   (:AOPMarginPercentage = 'Above AOP Margin %' AND c.AOPMarginPercentage < c.marginPercentageAfterSurCharge) OR" +
-            "   (:AOPMarginPercentage = 'Below AOP Margin %' AND c.AOPMarginPercentage >= c.marginPercentageAfterSurCharge))" +
+            "   (:AOPMarginPercentage = 'Above AOP Margin %' AND c.AOPMargin.marginSTD < c.marginPercentageAfterSurcharge) OR" +
+            "   (:AOPMarginPercentage = 'Below AOP Margin %' AND c.AOPMargin.marginSTD >= c.marginPercentageAfterSurcharge))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
-            "   (:comparator = '<=' AND c.marginPercentageAfterSurCharge <= :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '>=' AND c.marginPercentageAfterSurCharge >= :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '<' AND c.marginPercentageAfterSurCharge < :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '>' AND c.marginPercentageAfterSurCharge > :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '=' AND c.marginPercentageAfterSurCharge = :marginPercentageAfterSurCharge))" +
-            " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
+            "   (:comparator = '<=' AND c.marginPercentageAfterSurcharge <= :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '>=' AND c.marginPercentageAfterSurcharge >= :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '<' AND c.marginPercentageAfterSurcharge < :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '>' AND c.marginPercentageAfterSurcharge > :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
+            " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))"
     )
@@ -87,28 +87,24 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                  @Param("fromDate") LocalDate fromDate,
                  @Param("toDate") LocalDate toDate);
 
-    @Query("SELECT DISTINCT s.dealerName from Shipment s WHERE s.dealerName IS NOT NULL")
-    List<String> findAllDealerName();
-
-
     @Query("SELECT s FROM Shipment s WHERE s.orderNo = :orderNo")
     Optional<Shipment> findShipmentByOrderNo(String orderNo);
 
     @Query("SELECT new com.hysteryale.model.TrendData( EXTRACT(month FROM b.date) as month, " +
-            "AVG(b.marginPercentageAfterSurCharge) as marginPercentage, " +
+            "AVG(b.marginPercentageAfterSurcharge) as marginPercentage, " +
             "AVG(b.totalCost) as costOrDealerNet ) " +
             "FROM Shipment b WHERE " +
             " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
-            " AND ((:plants) IS NULL OR b.productDimension.plant IN (:plants))" +
+            " AND ((:plants) IS NULL OR b.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR b.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR b.productDimension.modelCode IN (:models))" +
-            " AND ((:segments) IS NULL OR b.productDimension.segment IN (:segments))" +
-            " AND ((:dealerName) IS NULL OR b.dealerName IN (:dealerName)) " +
+            " AND ((:classes) IS NULL OR b.product.clazz IN (:classes))" +
+            " AND ((:models) IS NULL OR b.product.modelCode IN (:models))" +
+            " AND ((:segments) IS NULL OR b.product.segment IN (:segments))" +
+            " AND ((:dealerName) IS NULL OR b.dealer.name IN (:dealerName)) " +
             " AND EXTRACT(year FROM b.date) = :year" +
-            " AND b.marginPercentageAfterSurCharge != 'NaN'" +
-            " AND b.marginPercentageAfterSurCharge != '-Infinity'" +
-            " AND b.marginPercentageAfterSurCharge != 'Infinity'" +
+            " AND b.marginPercentageAfterSurcharge != 'NaN'" +
+            " AND b.marginPercentageAfterSurcharge != '-Infinity'" +
+            " AND b.marginPercentageAfterSurcharge != 'Infinity'" +
             " GROUP BY EXTRACT(month FROM b.date) ORDER BY month ASC"
     )
     List<TrendData> getMarginVsCostData(@Param("regions") List<String> regions,
@@ -121,20 +117,20 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                                         @Param("year") int year);
 
     @Query("SELECT new com.hysteryale.model.TrendData( EXTRACT(month FROM b.date) as month, " +
-            "AVG(b.marginPercentageAfterSurCharge) as marginPercentage, " +
+            "AVG(b.marginPercentageAfterSurcharge) as marginPercentage, " +
             "AVG(b.dealerNet) as costOrDealerNet ) " +
             "FROM Shipment b WHERE " +
             " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
-            " AND ((:plants) IS NULL OR b.productDimension.plant IN (:plants))" +
+            " AND ((:plants) IS NULL OR b.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR b.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR b.productDimension.modelCode IN (:models))" +
-            " AND ((:segments) IS NULL OR b.productDimension.segment IN (:segments))" +
-            " AND ((:dealerName) IS NULL OR b.dealerName IN (:dealerName)) " +
+            " AND ((:classes) IS NULL OR b.product.clazz IN (:classes))" +
+            " AND ((:models) IS NULL OR b.product.modelCode IN (:models))" +
+            " AND ((:segments) IS NULL OR b.product.segment IN (:segments))" +
+            " AND ((:dealerName) IS NULL OR b.dealer.name IN (:dealerName)) " +
             " AND EXTRACT(year FROM b.date) = :year" +
-            " AND b.marginPercentageAfterSurCharge != 'NaN'" +
-            " AND b.marginPercentageAfterSurCharge != '-Infinity'" +
-            " AND b.marginPercentageAfterSurCharge != 'Infinity'" +
+            " AND b.marginPercentageAfterSurcharge != 'NaN'" +
+            " AND b.marginPercentageAfterSurcharge != '-Infinity'" +
+            " AND b.marginPercentageAfterSurcharge != 'Infinity'" +
             " GROUP BY EXTRACT(month FROM b.date) ORDER BY month ASC"
     )
     List<TrendData> getMarginVsDNData(
@@ -147,25 +143,25 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             @Param("dealerName") List<String> dealerName,
             @Param("year") int year);
 
-    @Query("SELECT new Shipment('Total', COALESCE(sum(c.quantity),0), COALESCE(sum(c.dealerNet),0), COALESCE(sum(c.dealerNetAfterSurCharge),0), COALESCE(sum(c.totalCost),0), COALESCE(sum(c.netRevenue),0), COALESCE(sum(c.marginAfterSurCharge),0), COALESCE((sum(c.marginAfterSurCharge) / sum(c.dealerNetAfterSurCharge)),0) ) FROM Shipment c WHERE " +
+    @Query("SELECT new Shipment(c.orderNo, c.currency, c.dealerNet, c.dealerNetAfterSurcharge, c.totalCost, c.netRevenue) FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
-            " AND ((:plants) IS NULL OR c.productDimension.plant IN (:plants))" +
+            " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.productDimension.clazz IN (:classes))" +
-            " AND ((:models) IS NULL OR c.productDimension.modelCode IN (:models))" +
-            " AND ((:segments) IS NULL OR c.productDimension.segment IN (:segments))" +
-            " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
+            " AND ((:classes) IS NULL OR c.product.clazz IN (:classes))" +
+            " AND ((:models) IS NULL OR c.product.modelCode IN (:models))" +
+            " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
+            " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
-            "   (:AOPMarginPercentage = 'Above AOP Margin %' AND c.AOPMarginPercentage < c.marginPercentageAfterSurCharge) OR" +
-            "   (:AOPMarginPercentage = 'Below AOP Margin %' AND c.AOPMarginPercentage >= c.marginPercentageAfterSurCharge))" +
+            "   (:AOPMarginPercentage = 'Above AOP Margin %' AND c.AOPMargin.marginSTD < c.marginPercentageAfterSurcharge) OR" +
+            "   (:AOPMarginPercentage = 'Below AOP Margin %' AND c.AOPMargin.marginSTD >= c.marginPercentageAfterSurcharge))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
-            "   (:comparator = '<=' AND c.marginPercentageAfterSurCharge <= :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '>=' AND c.marginPercentageAfterSurCharge >= :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '<' AND c.marginPercentageAfterSurCharge < :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '>' AND c.marginPercentageAfterSurCharge > :marginPercentageAfterSurCharge) OR" +
-            "   (:comparator = '=' AND c.marginPercentageAfterSurCharge = :marginPercentageAfterSurCharge))" +
-            " AND ((:dealerName) IS NULL OR c.dealerName IN (:dealerName))" +
+            "   (:comparator = '<=' AND c.marginPercentageAfterSurcharge <= :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '>=' AND c.marginPercentageAfterSurcharge >= :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '<' AND c.marginPercentageAfterSurcharge < :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '>' AND c.marginPercentageAfterSurcharge > :marginPercentageAfterSurCharge) OR" +
+            "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
+            " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND (cast(:fromDate as date ) IS NULL OR c.date >= :fromDate)" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= :toDate)"
     )
@@ -210,7 +206,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                     ")" +
                     "select " +
                     "   'Total' as order_no, " +
-                    "   0 as aopmargin_percentage, " +
+                    "   null as aopmargin, " +
                     "   null as bill_to, " +
                     "   null as comment, " +
                     "   null as ctry_code, " +
@@ -222,17 +218,17 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                     "   null as series, " +
                     "   null as truck_class, " +
                     "   null as serial_number, " +
-                    "   null as product_dimension, " +
+                    "   null as product, " +
                     "   null as region, " +
                     "   null as model, " +
                     "   coalesce(total_cost, 0) as total_cost, " +
                     "   coalesce(dealer_net, 0) as dealer_net, " +
                     "   coalesce(netrevenue, 0) as netrevenue, " +
-                    "   coalesce(dealer_net_after_sur_charge, 0) as dealer_net_after_sur_charge, " +
-                    "   coalesce(dealer_net_after_sur_charge - total_cost, 0)as margin_after_sur_charge, " +
-                    "   coalesce((dealer_net_after_sur_charge - total_cost) / nullif(dealer_net_after_sur_charge, 0), 0) as margin_percentage_after_sur_charge, " +
+                    "   coalesce(dealer_net_after_surcharge, 0) as dealer_net_after_surcharge, " +
+                    "   coalesce(dealer_net_after_surcharge - total_cost, 0)as margin_after_surcharge, " +
+                    "   coalesce((dealer_net_after_surcharge - total_cost) / nullif(dealer_net_after_surcharge, 0), 0) as margin_percentage_after_surcharge, " +
                     "   coalesce(quantity, 0) as quantity, " +
-                    "   0 as booking_margin_percentage_after_sur_charge " +
+                    "   0 as booking_margin_percentage_after_surcharge " +
                     "from " +
                     "   (" +
                     "   select" +
@@ -256,17 +252,17 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                     "        ) as netrevenue, " +
                     "       sum(" +
                     "            case " +
-                    "                when bo.currency = 'USD' then bo.dealer_net_after_sur_charge " +
-                    "                when bo.currency is not null then coalesce(er.latest_rate, 1) * bo.dealer_net_after_sur_charge " +
+                    "                when bo.currency = 'USD' then bo.dealer_net_after_surcharge " +
+                    "                when bo.currency is not null then coalesce(er.latest_rate, 1) * bo.dealer_net_after_surcharge " +
                     "            end " +
-                    "        ) as dealer_net_after_sur_charge, " +
+                    "        ) as dealer_net_after_surcharge, " +
                     "       sum(bo.quantity) as quantity " +
                     "    from " +
                     "       shipment bo " +
                     "   left join exchange_rate_cte er on " +
                     "       bo.currency = er.from_currency " +
-                    "   left join productdimension pd on " +
-                    "       bo.product_dimension = pd.modelcode " +
+                    "   left join product pd on " +
+                    "       bo.product = pd.modelcode " +
                     "   left join region r on " +
                     "       bo.region = r.id " +
                     "   where " +
@@ -277,17 +273,17 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
                     "       and ((:plants) is null or pd.plant in (:plants)) " +
                     "       and ((:segments) is null or pd.segment in (:segments)) " +
                     "       and ((:metaSeries) is null or substring(bo.series, 2, 3) in (:metaSeries)) " +
-                    "       and ((:models) is null or pd.modelcode in (:models)) " +
+                    "       and ((:models) is null or pd.model_code in (:models)) " +
                     "       AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
-                    "           (:comparator = '<=' AND bo.margin_percentage_after_sur_charge <= :marginPercentageAfterSurCharge) OR" +
-                    "           (:comparator = '>=' AND bo.margin_percentage_after_sur_charge >= :marginPercentageAfterSurCharge) OR" +
-                    "           (:comparator = '<' AND bo.margin_percentage_after_sur_charge < :marginPercentageAfterSurCharge) OR" +
-                    "           (:comparator = '>' AND bo.margin_percentage_after_sur_charge > :marginPercentageAfterSurCharge) OR" +
-                    "           (:comparator = '=' AND bo.margin_percentage_after_sur_charge = :marginPercentageAfterSurCharge))" +
+                    "           (:comparator = '<=' AND bo.margin_percentage_after_surcharge <= :marginPercentageAfterSurCharge) OR" +
+                    "           (:comparator = '>=' AND bo.margin_percentage_after_surcharge >= :marginPercentageAfterSurCharge) OR" +
+                    "           (:comparator = '<' AND bo.margin_percentage_after_surcharge < :marginPercentageAfterSurCharge) OR" +
+                    "           (:comparator = '>' AND bo.margin_percentage_after_surcharge > :marginPercentageAfterSurCharge) OR" +
+                    "           (:comparator = '=' AND bo.margin_percentage_after_surcharge = :marginPercentageAfterSurCharge))" +
                     "       and ((:AOPMarginPercentage) IS NULL or " +
-                    "           (:AOPMarginPercentage = 'Above AOP Margin %' and bo.margin_percentage_after_sur_charge > bo.aopmargin_percentage ) or " +
-                    "           (:AOPMarginPercentage = 'Below AOP Margin %' and bo.margin_percentage_after_sur_charge <= bo.aopmargin_percentage ) )" +
-                    "       and ( bo.date >= :fromDate) "+
+                    "           (:AOPMarginPercentage = 'Above AOP Margin %' and bo.margin_percentage_after_surcharge > bo.aopmargin ) or " +
+                    "           (:AOPMarginPercentage = 'Below AOP Margin %' and bo.margin_percentage_after_surcharge <= bo.aopmargin ) )" +
+                    "       and ( bo.date >= :fromDate) " +
                     "       and ( bo.date <= :toDate) " +
                     ") as subquery; ", nativeQuery = true)
     List<Shipment> getTotalRowForShipmentPage(

@@ -1,6 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.BookingOrder;
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.utils.CurrencyFormatUtils;
@@ -26,7 +26,7 @@ public class ShipmentServiceTest {
     @Resource
     ShipmentService shipmentService;
     @Resource
-    BookingOrderService bookingOrderService;
+    BookingService bookingService;
     FilterModel filters;
     @Resource
     ExchangeRateService exchangeRateService;
@@ -80,7 +80,7 @@ public class ShipmentServiceTest {
         );
         Assertions.assertEquals(
                 CurrencyFormatUtils.formatDoubleValue(totalDNAfterSurcharge, CurrencyFormatUtils.decimalFormatFourDigits),
-                CurrencyFormatUtils.formatDoubleValue(totalResult.getDealerNetAfterSurCharge(), CurrencyFormatUtils.decimalFormatFourDigits)
+                CurrencyFormatUtils.formatDoubleValue(totalResult.getDealerNetAfterSurcharge(), CurrencyFormatUtils.decimalFormatFourDigits)
         );
         Assertions.assertEquals(
                 CurrencyFormatUtils.formatDoubleValue(totalCost, CurrencyFormatUtils.decimalFormatFourDigits),
@@ -92,23 +92,23 @@ public class ShipmentServiceTest {
         );
         Assertions.assertEquals(
                 CurrencyFormatUtils.formatDoubleValue(totalMarginAfterSurcharge, CurrencyFormatUtils.decimalFormatFourDigits),
-                CurrencyFormatUtils.formatDoubleValue(totalResult.getMarginAfterSurCharge(), CurrencyFormatUtils.decimalFormatFourDigits)
+                CurrencyFormatUtils.formatDoubleValue(totalResult.getMarginAfterSurcharge(), CurrencyFormatUtils.decimalFormatFourDigits)
         );
         Assertions.assertEquals(
                 CurrencyFormatUtils.formatDoubleValue(totalMarginPercentageAfterSurcharge, CurrencyFormatUtils.decimalFormatTwoDigits),
-                CurrencyFormatUtils.formatDoubleValue(totalResult.getMarginPercentageAfterSurCharge(), CurrencyFormatUtils.decimalFormatTwoDigits)
+                CurrencyFormatUtils.formatDoubleValue(totalResult.getMarginPercentageAfterSurcharge(), CurrencyFormatUtils.decimalFormatTwoDigits)
         );
     }
 
     private void assertTotalBookingMarginPercentage(FilterModel filters, double marginResult) throws ParseException {
-        Map<String, Object> result = bookingOrderService.getBookingByFilter(filters);
+        Map<String, Object> result = bookingService.getBookingByFilter(filters);
 
-        List<BookingOrder> listResult = (List<BookingOrder>) result.get("listBookingOrder");
+        List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
 
         double totalDealerNet = 0.0;
         double totalCost = 0.0;
 
-        for(BookingOrder bo : listResult) {
+        for(Booking bo : listResult) {
             if(bo.getCurrency().getCurrency().equals("AUD")) {
                 totalDealerNet += bo.getDealerNet() * rate;
                 totalCost += bo.getTotalCost() * rate;
@@ -155,13 +155,13 @@ public class ShipmentServiceTest {
 
             totalQuantity += sm.getQuantity();
             totalDealerNet += sm.getDealerNet();
-            totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge();
+            totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge();
             totalCost += sm.getTotalCost();
             totalNetRevenue += sm.getNetRevenue();
-            totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
+            totalMarginAfterSurcharge += sm.getMarginAfterSurcharge();
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -195,21 +195,21 @@ public class ShipmentServiceTest {
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
                 totalDealerNet += sm.getDealerNet() * rate;
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge() * rate;
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge() * rate;
                 totalCost += sm.getTotalCost() * rate;
                 totalNetRevenue += sm.getNetRevenue() * rate;
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge() * rate;
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge() * rate;
             }
             else {
                 totalDealerNet += sm.getDealerNet();
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge();
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge();
                 totalCost += sm.getTotalCost();
                 totalNetRevenue += sm.getNetRevenue();
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge();
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -238,26 +238,26 @@ public class ShipmentServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Shipment sm : shipmentList) {
-            Assertions.assertEquals(plant, sm.getProductDimension().getPlant());
+            Assertions.assertEquals(plant, sm.getProduct().getPlant());
 
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
                 totalDealerNet += sm.getDealerNet() * rate;
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge() * rate;
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge() * rate;
                 totalCost += sm.getTotalCost() * rate;
                 totalNetRevenue += sm.getNetRevenue() * rate;
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge() * rate;
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge() * rate;
             }
             else {
                 totalDealerNet += sm.getDealerNet();
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge();
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge();
                 totalCost += sm.getTotalCost();
                 totalNetRevenue += sm.getNetRevenue();
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge();
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -291,21 +291,21 @@ public class ShipmentServiceTest {
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
                 totalDealerNet += sm.getDealerNet() * rate;
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge() * rate;
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge() * rate;
                 totalCost += sm.getTotalCost() * rate;
                 totalNetRevenue += sm.getNetRevenue() * rate;
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge() * rate;
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge() * rate;
             }
             else {
                 totalDealerNet += sm.getDealerNet();
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge();
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge();
                 totalCost += sm.getTotalCost();
                 totalNetRevenue += sm.getNetRevenue();
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge();
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -334,26 +334,26 @@ public class ShipmentServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Shipment sm : shipmentList) {
-            Assertions.assertEquals(clazz, sm.getProductDimension().getClazz());
+            Assertions.assertEquals(clazz, sm.getProduct().getClazz());
 
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
                 totalDealerNet += sm.getDealerNet() * rate;
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge() * rate;
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge() * rate;
                 totalCost += sm.getTotalCost() * rate;
                 totalNetRevenue += sm.getNetRevenue() * rate;
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge() * rate;
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge() * rate;
             }
             else {
                 totalDealerNet += sm.getDealerNet();
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge();
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge();
                 totalCost += sm.getTotalCost();
                 totalNetRevenue += sm.getNetRevenue();
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge();
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -387,21 +387,21 @@ public class ShipmentServiceTest {
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
                 totalDealerNet += sm.getDealerNet() * rate;
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge() * rate;
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge() * rate;
                 totalCost += sm.getTotalCost() * rate;
                 totalNetRevenue += sm.getNetRevenue() * rate;
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge() * rate;
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge() * rate;
             }
             else {
                 totalDealerNet += sm.getDealerNet();
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge();
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge();
                 totalCost += sm.getTotalCost();
                 totalNetRevenue += sm.getNetRevenue();
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge();
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -430,26 +430,26 @@ public class ShipmentServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Shipment sm : shipmentList) {
-            Assertions.assertEquals(modelCode, sm.getProductDimension().getModelCode());
+            Assertions.assertEquals(modelCode, sm.getProduct().getModelCode());
 
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
                 totalDealerNet += sm.getDealerNet() * rate;
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge() * rate;
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge() * rate;
                 totalCost += sm.getTotalCost() * rate;
                 totalNetRevenue += sm.getNetRevenue() * rate;
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge() * rate;
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge() * rate;
             }
             else {
                 totalDealerNet += sm.getDealerNet();
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge();
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge();
                 totalCost += sm.getTotalCost();
                 totalNetRevenue += sm.getNetRevenue();
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge();
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -478,26 +478,26 @@ public class ShipmentServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Shipment sm : shipmentList) {
-            Assertions.assertTrue(sm.getMarginPercentageAfterSurCharge() < 0.1);
+            Assertions.assertTrue(sm.getMarginPercentageAfterSurcharge() < 0.1);
 
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
                 totalDealerNet += sm.getDealerNet() * rate;
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge() * rate;
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge() * rate;
                 totalCost += sm.getTotalCost() * rate;
                 totalNetRevenue += sm.getNetRevenue() * rate;
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge() * rate;
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge() * rate;
             }
             else {
                 totalDealerNet += sm.getDealerNet();
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge();
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge();
                 totalCost += sm.getTotalCost();
                 totalNetRevenue += sm.getNetRevenue();
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge();
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -534,21 +534,21 @@ public class ShipmentServiceTest {
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
                 totalDealerNet += sm.getDealerNet() * rate;
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge() * rate;
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge() * rate;
                 totalCost += sm.getTotalCost() * rate;
                 totalNetRevenue += sm.getNetRevenue() * rate;
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge() * rate;
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge() * rate;
             }
             else {
                 totalDealerNet += sm.getDealerNet();
-                totalDNAfterSurcharge += sm.getDealerNetAfterSurCharge();
+                totalDNAfterSurcharge += sm.getDealerNetAfterSurcharge();
                 totalCost += sm.getTotalCost();
                 totalNetRevenue += sm.getNetRevenue();
-                totalMarginAfterSurcharge += sm.getMarginAfterSurCharge();
+                totalMarginAfterSurcharge += sm.getMarginAfterSurcharge();
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurCharge());
+        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 

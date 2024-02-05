@@ -1,6 +1,6 @@
 package com.hysteryale.Schedule;
 
-import com.hysteryale.service.BookingOrderService;
+import com.hysteryale.service.BookingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.util.Date;
 public class ScheduledTasks {
 
     @Resource
-    BookingOrderService bookingOrderService;
+    BookingService bookingService;
     private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -30,7 +30,7 @@ public class ScheduledTasks {
     public void autoUpdateBookingOrder() {
         log.info("Start import booking orders at {}", dateFormat.format(new Date()));
         try {
-            bookingOrderService.importOrder();
+            bookingService.importOrder();
         } catch (FileNotFoundException | IllegalAccessException e) {
             log.error(e.getMessage());
         } catch (Exception e) {
