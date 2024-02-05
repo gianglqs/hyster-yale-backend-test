@@ -287,10 +287,10 @@ public class ProductService extends BasedService {
         for(Row row : sheet) {
             if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
                 String modelCode = row.getCell(columns.get("Model")).getStringCellValue();
-                Optional<Product> optionalProduct = productDimensionRepository.findByModelCode(modelCode);
+                Optional<Product> optionalProduct = productRepository.findByModelCode(modelCode);
                 if(optionalProduct.isEmpty() && checkDuplicateModelCode(modelCode, productForSaving)) {
                     String series = row.getCell(columns.get("Series")).getStringCellValue();
-                    Product seriesInformation = productDimensionRepository.getProductByMetaSeries(series.substring(1));
+                    Product seriesInformation = productRepository.getProductByMetaSeries(series.substring(1));
                     if(seriesInformation != null) {
                         productForSaving.add(new Product(
                                 modelCode,
@@ -308,7 +308,7 @@ public class ProductService extends BasedService {
                 }
             }
         }
-        productDimensionRepository.saveAll(productForSaving);
+        productRepository.saveAll(productForSaving);
     }
 
 }

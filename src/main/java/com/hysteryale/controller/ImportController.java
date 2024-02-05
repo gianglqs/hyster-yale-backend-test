@@ -111,7 +111,7 @@ public class ImportController {
      */
     @PostMapping(path = "/importProductFromPart")
     void importProductFromPart() throws IOException {
-        productDimensionService.extractProductFromPart();
+        productService.extractProductFromPart();
     }
 
 
