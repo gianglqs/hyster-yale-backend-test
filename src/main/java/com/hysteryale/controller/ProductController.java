@@ -67,8 +67,8 @@ public class ProductController {
     }
 
     @GetMapping("/getProductDetail")
-    public Product getDataForProductDetail(@RequestParam String modelCode) throws NotFoundException, IOException {
-        return productService.getProductDimensionDetail(modelCode);
+    public Product getDataForProductDetail(@RequestParam String modelCode, @RequestParam String metaSeries) throws NotFoundException {
+        return productService.getProductDimensionDetail(modelCode, metaSeries);
     }
 
     @PostMapping(path="/importData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

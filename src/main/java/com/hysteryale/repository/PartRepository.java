@@ -16,7 +16,7 @@ import java.util.Set;
 public interface PartRepository extends JpaRepository<Part, String> {
 
     @Query("SELECT DISTINCT p FROM Part p WHERE p.orderNumber = ?1 ")
-    public Set<Part> getPartByOrderNumber(String orderNumber) ;
+    public Set<Part> getPartByOrderNumber(String orderNumber);
 
     @Query("SELECT CASE WHEN (COUNT(p) > 0) THEN 1 ELSE 0 END " +
             "FROM Part p WHERE p.modelCode = ?1 AND p.partNumber = ?2 AND p.orderNumber = ?3 AND p.recordedTime = ?4 and p.currency.currency = ?5")
@@ -33,12 +33,12 @@ public interface PartRepository extends JpaRepository<Part, String> {
 
     @Query(
             value =
-            "select p.id, p.bill_to, p.customer_price, p.description, p.discount, p.discount_percentage, " +
-                    "p.discount_to_customer_percentage, p.extended_customer_price, p.list_price, p.part_number, p.model_code, " +
-                    "p.net_price_each, p.option_type, p.order_booked_date, p.order_request_date, p.order_number, p.quantity, p.quote_id, " +
-                    "p.recorded_time, p.series, p.currency_currency, p.clazz, p.issped, p.region " +
-            "from (select *, row_number() over (partition by model_code, part_number, currency_currency order by model_code asc) rn from part) p\n" +
-            "where rn = 1 and model_code = :modelCode and currency_currency = :currency",
+                    "select p.id, p.bill_to, p.customer_price, p.description, p.discount, p.discount_percentage, " +
+                            "p.discount_to_customer_percentage, p.extended_customer_price, p.list_price, p.part_number, p.model_code, " +
+                            "p.net_price_each, p.option_type, p.order_booked_date, p.order_request_date, p.order_number, p.quantity, p.quote_id, " +
+                            "p.recorded_time, p.series, p.currency_currency, p.clazz, p.issped, p.region " +
+                            "from (select *, row_number() over (partition by model_code, part_number, currency_currency order by model_code asc) rn from part) p\n" +
+                            "where rn = 1 and model_code = :modelCode and currency_currency = :currency",
             nativeQuery = true
     )
     public List<Part> getDistinctPart(@Param("modelCode") String modelCode, @Param("currency") String currency);
@@ -61,18 +61,20 @@ public interface PartRepository extends JpaRepository<Part, String> {
     Optional<Part> getPart(@Param("modelCode") String modelCode, @Param("partNumber") String partNumber,
                            @Param("orderNumber") String orderNumber, @Param("recordedTime") LocalDate recordedTime, @Param("currency") String currency);
 
-    @Query(value =  "SELECT distinct new Part(p.partNumber, p.image, p.currency, p.listPrice, p.description) FROM Part p WHERE " +
-                    "   p.modelCode = :modelCode " +
-                    "   AND ((:orderNumbers) IS NULL OR p.orderNumber in (:orderNumbers))"+
-                    "   ORDER BY p.partNumber"
+    @Query(value = "SELECT distinct new Part(p.partNumber, p.image, p.currency, p.listPrice, p.description) FROM Part p WHERE " +
+            "   p.modelCode = :modelCode " +
+            "   AND SUBSTRING(p.series,2,4) = :metaSeries " +
+            "   AND ((:orderNumbers) IS NULL OR p.orderNumber in (:orderNumbers))" +
+            "   ORDER BY p.partNumber"
 
     )
-    List<Part> getPartForProductDimensionDetail(String modelCode,
+    List<Part> getPartForProductDimensionDetail(String modelCode, String metaSeries,
                                                 List<String> orderNumbers,
                                                 Pageable pageable);
 
-    @Query(value =  "SELECT COUNT(distinct (p.part_number, p.image, p.currency_currency, p.list_price, p.description)) FROM Part p WHERE " +
+    @Query(value = "SELECT COUNT(distinct (p.part_number, p.image, p.currency_currency, p.list_price, p.description)) FROM Part p WHERE " +
             "   p.model_code = :modelCode " +
+            "   AND SUBSTRING(p.series,2,4) = :metaSeries" +
             "   AND ((:orderNumbers) IS NULL OR p.order_number in (:orderNumbers))", nativeQuery = true)
-    long countAllForProductDetail(String modelCode, List<String> orderNumbers);
+    long countAllForProductDetail(String modelCode, String metaSeries, List<String> orderNumbers);
 }

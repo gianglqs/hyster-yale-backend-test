@@ -372,15 +372,15 @@ public class FilterService {
     }
 
 
-    public Map<String, Object> getProductDetailFilter(String modelCode) {
-        List<Map<String, String>> listOrderMaps = getListOrderNoByModelCode(modelCode);
+    public Map<String, Object> getProductDetailFilter(String modelCode, String metaSeries) {
+        List<Map<String, String>> listOrderMaps = getListOrderNoByModelCode(modelCode, metaSeries);
         return Map.of("orderNos", listOrderMaps);
 
 
     }
 
-    private List<Map<String, String>> getListOrderNoByModelCode(String modelCode) {
-        List<String> orderNos = bookingRepository.getOrderNosByModelCode(modelCode);
+    private List<Map<String, String>> getListOrderNoByModelCode(String modelCode, String metaSeries) {
+        List<String> orderNos = bookingRepository.getOrderNosByModelCodeAndMetaSeries(modelCode, metaSeries);
         log.info(orderNos.toString());
         List<Map<String, String>> listResult = new ArrayList<>();
         orderNos.sort(String::compareToIgnoreCase);

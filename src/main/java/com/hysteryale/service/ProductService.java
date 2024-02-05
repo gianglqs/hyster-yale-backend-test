@@ -230,8 +230,8 @@ public class ProductService extends BasedService {
         productRepository.save(product);
     }
 
-    public Product getProductDimensionDetail(String modelCode) throws NotFoundException {
-        Optional<Product> productOptional = productRepository.getProductByModelCode(modelCode);
+    public Product getProductDimensionDetail(String modelCode, String metaSeries) throws NotFoundException {
+        Optional<Product> productOptional = productRepository.findByModelCodeAndMetaSeries(modelCode, metaSeries);
         if (productOptional.isEmpty())
             throw new NotFoundException("Not found Product with ModelCode " + modelCode);
 
