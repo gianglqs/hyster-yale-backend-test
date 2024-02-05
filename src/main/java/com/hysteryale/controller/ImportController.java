@@ -26,7 +26,7 @@ public class ImportController {
     CostUpliftService costUpliftService;
 
     @Resource
-    ProductDimensionService productDimensionService;
+    ProductService productService;
 
     @Resource
     PartService partService;
@@ -72,7 +72,7 @@ public class ImportController {
 
     @PostMapping(path = "/importProductDimension")
     void importProductDimension() throws IOException, IllegalAccessException {
-        productDimensionService.importProductDimension();
+        productService.importProductDimension();
     }
 
     @PostMapping(path = "/importOrder")

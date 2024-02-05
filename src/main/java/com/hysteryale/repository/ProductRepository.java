@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Transactional
-public interface ProductDimensionRepository extends JpaRepository<Product, String> {
+public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT DISTINCT a.plant FROM Product a")
     List<String> getPlants();
 

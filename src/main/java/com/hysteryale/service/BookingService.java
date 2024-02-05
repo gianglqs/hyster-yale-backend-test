@@ -39,7 +39,7 @@ public class BookingService extends BasedService {
     @Resource
     BookingRepository bookingRepository;
     @Resource
-    ProductDimensionService productDimensionService;
+    ProductService productService;
 
     @Resource
     AOPMarginService aopMarginService;
@@ -135,7 +135,7 @@ public class BookingService extends BasedService {
         if (ORDER_COLUMNS_NAME.get("MODEL") != null) {
             Cell modelCell = row.getCell(ORDER_COLUMNS_NAME.get("MODEL"));
             //set ProductDimension
-            Product product = productDimensionService.getProductDimensionByModelCode(modelCell.getStringCellValue());
+            Product product = productService.getProductDimensionByModelCode(modelCell.getStringCellValue());
             if (product != null) {
                 booking.setProduct(product);
             } else {

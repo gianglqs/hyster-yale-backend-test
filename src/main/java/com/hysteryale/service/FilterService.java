@@ -20,7 +20,7 @@ public class FilterService {
     CompetitorPricingRepository competitorPricingRepository;
 
     @Resource
-    ProductDimensionRepository productDimensionRepository;
+    ProductRepository productRepository;
 
     @Resource
     RegionRepository regionRepository;
@@ -116,7 +116,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllFamily() {
         List<Map<String, String>> familyMaps = new ArrayList<>();
-        List<String> listFamily = productDimensionRepository.getAllFamily();
+        List<String> listFamily = productRepository.getAllFamily();
         listFamily.sort(String::compareTo);
         for (String m : listFamily) {
             Map<String, String> mMap = new HashMap<>();
@@ -128,7 +128,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllTruckTypes() {
         List<Map<String, String>> truckTypeMaps = new ArrayList<>();
-        List<String> truckTypes = productDimensionRepository.getAllTruckType();
+        List<String> truckTypes = productRepository.getAllTruckType();
         truckTypes.sort(String::compareTo);
         for (String m : truckTypes) {
             Map<String, String> mMap = new HashMap<>();
@@ -140,7 +140,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllBrands() {
         List<Map<String, String>> brandMaps = new ArrayList<>();
-        List<String> brands = productDimensionRepository.getAllBrands();
+        List<String> brands = productRepository.getAllBrands();
         brands.sort(String::compareTo);
         for (String m : brands) {
             Map<String, String> mMap = new HashMap<>();
@@ -177,7 +177,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllClassesForIndicators() {
         List<Map<String, String>> classMap = new ArrayList<>();
-        List<String> classes = productDimensionRepository.getAllClass();
+        List<String> classes = productRepository.getAllClass();
         classes.sort(String::compareTo);
         for (String m : classes) {
             if (m.equals("Class 5 not BT"))
@@ -191,7 +191,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllClasses() {
         List<Map<String, String>> classMap = new ArrayList<>();
-        List<String> classes = productDimensionRepository.getAllClass();
+        List<String> classes = productRepository.getAllClass();
         classes.sort(String::compareTo);
         for (String m : classes) {
             Map<String, String> mMap = new HashMap<>();
@@ -215,7 +215,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllPlants() {
         List<Map<String, String>> plantListMap = new ArrayList<>();
-        List<String> plants = productDimensionRepository.getPlants();
+        List<String> plants = productRepository.getPlants();
         plants.sort(String::compareTo);
         for (String p : plants) {
             Map<String, String> pMap = new HashMap<>();
@@ -228,7 +228,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllMetaSeries() {
         List<Map<String, String>> metaSeriesMap = new ArrayList<>();
-        List<String> metaSeries = productDimensionRepository.getAllMetaSeries();
+        List<String> metaSeries = productRepository.getAllMetaSeries();
         metaSeries.sort(String::compareTo);
         for (String m : metaSeries) {
             Map<String, String> mMap = new HashMap<>();
@@ -252,7 +252,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllSegments() {
         List<Map<String, String>> segmentMap = new ArrayList<>();
-        List<String> segments = productDimensionRepository.getAllSegments();
+        List<String> segments = productRepository.getAllSegments();
         segments.sort(String::compareTo);
         for (String m : segments) {
             Map<String, String> mMap = new HashMap<>();
