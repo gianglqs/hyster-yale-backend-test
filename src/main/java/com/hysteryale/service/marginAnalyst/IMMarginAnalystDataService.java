@@ -15,10 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
@@ -389,7 +387,7 @@ public class IMMarginAnalystDataService {
                 // Find Booking Order for checking plant and monthYear
                 Optional<Booking> optionalBookingOrder = bookingService.getBookingOrderByOrderNumber(orderNumber);
                 if(optionalBookingOrder.isEmpty())
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Booking Order: " + orderNumber);
+                    continue;
 
                 String plant = optionalBookingOrder.get().getProduct().getPlant();
                 LocalDate monthYear = optionalBookingOrder.get().getDate();
