@@ -42,4 +42,17 @@ public class Product {
         this.clazz = clazz;
         this.modelCode = modelCode;
     }
+
+    public Product(String modelCode, String metaSeries, String brand, String plant, String clazz, String segment, String family, String truckType, String image, String description) {
+        this.modelCode = modelCode;
+        this.metaSeries = metaSeries;
+        this.brand = brand;
+        this.plant = plant;
+        this.clazz = clazz;
+        this.segment = segment;
+        this.family = family;
+        this.truckType = truckType;
+        this.image = image;
+        this.description = description;
+    }
 }

@@ -106,5 +106,13 @@ public class ImportController {
         importService.importShipment();
     }
 
+    /**
+     * Extract Product (Model Code) from Part (in power bi files)
+     */
+    @PostMapping(path = "/importProductFromPart")
+    void importProductFromPart() throws IOException {
+        productDimensionService.extractProductFromPart();
+    }
+
 
 }
