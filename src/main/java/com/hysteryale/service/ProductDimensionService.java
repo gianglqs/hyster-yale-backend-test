@@ -1,15 +1,11 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.ProductDimension;
-import com.hysteryale.model.ProductDimension;
+import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
-import com.hysteryale.repository.ProductDimensionRepository;
 import com.hysteryale.repository.ProductDimensionRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.FileUtils;
 import javassist.NotFoundException;
-import liquibase.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -19,9 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.swing.text.html.Option;
 import java.io.*;
-import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.*;
 
@@ -41,42 +35,42 @@ public class ProductDimensionService extends BasedService {
         }
     }
 
-    public ProductDimension mapExcelSheetToProductDimension(Row row) throws IllegalAccessException {
-        ProductDimension productDimension = new ProductDimension();
+    public Product mapExcelSheetToProductDimension(Row row) throws IllegalAccessException {
+        Product product = new Product();
 
         // brand
         String brand = row.getCell(COLUMNS.get("Brand")).getStringCellValue();
-        productDimension.setBrand(brand);
+        product.setBrand(brand);
 
         // metaseries
         String metaSeries = row.getCell(COLUMNS.get("Metaseries")).getStringCellValue();
-        productDimension.setMetaSeries(metaSeries);
+        product.setMetaSeries(metaSeries);
 
         // plant
         String plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
-        productDimension.setPlant(plant);
+        product.setPlant(plant);
 
         // Class
         String clazz = row.getCell(COLUMNS.get("Class_wBT")).getStringCellValue();
-        productDimension.setClazz(clazz);
+        product.setClazz(clazz);
 
         //Segment
         String segment = row.getCell(COLUMNS.get("Segment")).getStringCellValue();
-        productDimension.setSegment(segment);
+        product.setSegment(segment);
 
         // modeCode
         String modelCode = row.getCell(COLUMNS.get("Model")).getStringCellValue();
-        productDimension.setModelCode(modelCode);
+        product.setModelCode(modelCode);
 
         // family
         String family = row.getCell(COLUMNS.get("Family_Name")).getStringCellValue();
-        productDimension.setFamily(family);
+        product.setFamily(family);
 
         // truckType
         String truckType = row.getCell(COLUMNS.get("Truck_Type")).getStringCellValue();
-        productDimension.setTruckType(truckType);
+        product.setTruckType(truckType);
 
-        return productDimension;
+        return product;
     }
 
 
@@ -115,15 +109,15 @@ public class ProductDimensionService extends BasedService {
             else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 2) {
 
-                ProductDimension newProductDimension = mapExcelSheetToProductDimension(row);
-                if (!checkExist(newProductDimension))
-                    productDimensionRepository.save(newProductDimension);
+                Product newProduct = mapExcelSheetToProductDimension(row);
+                if (!checkExist(newProduct))
+                    productDimensionRepository.save(newProduct);
             }
         }
     }
 
-    public boolean checkExist(ProductDimension productDimension) {
-        Optional<ProductDimension> productDimensionOptional = productDimensionRepository.findByMetaSeries(productDimension.getMetaSeries());
+    public boolean checkExist(Product product) {
+        Optional<Product> productDimensionOptional = productDimensionRepository.findByMetaSeries(product.getMetaSeries());
         if (productDimensionOptional.isPresent())
             return true;
         return false;
@@ -161,8 +155,8 @@ public class ProductDimensionService extends BasedService {
         return plantListMap;
     }
 
-    public ProductDimension getProductDimensionByModelCode(String modelCode) {
-        Optional<ProductDimension> productDimensionOptional = productDimensionRepository.findByModelCode(modelCode);
+    public Product getProductDimensionByModelCode(String modelCode) {
+        Optional<Product> productDimensionOptional = productDimensionRepository.findByModelCode(modelCode);
         return productDimensionOptional.orElse(null);
     }
 
@@ -202,7 +196,7 @@ public class ProductDimensionService extends BasedService {
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
         logInfo(filterMap.toString());
         // product filter by: plant, segment, brand, family, metaSeries
-        List<ProductDimension> getData = productDimensionRepository.getDataByFilter(
+        List<Product> getData = productDimensionRepository.getDataByFilter(
                 (String) filterMap.get("modelCodeFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
@@ -222,11 +216,11 @@ public class ProductDimensionService extends BasedService {
     }
 
     public void updateImageAndDescription(String modelCode, String imagePath, String description) throws NotFoundException {
-        Optional<ProductDimension> productOptional = productDimensionRepository.findByModelCode(modelCode);
+        Optional<Product> productOptional = productDimensionRepository.findByModelCode(modelCode);
         if (productOptional.isEmpty())
             throw new NotFoundException("No product found with modelCode: " + modelCode);
 
-        ProductDimension product = productOptional.get();
+        Product product = productOptional.get();
         if (imagePath != null)
             product.setImage(imagePath);
 
@@ -236,8 +230,8 @@ public class ProductDimensionService extends BasedService {
         productDimensionRepository.save(product);
     }
 
-    public ProductDimension getProductDimensionDetail(String modelCode) throws NotFoundException {
-        Optional<ProductDimension> productOptional = productDimensionRepository.getProductByModelCode(modelCode);
+    public Product getProductDimensionDetail(String modelCode) throws NotFoundException {
+        Optional<Product> productOptional = productDimensionRepository.getProductByModelCode(modelCode);
         if (productOptional.isEmpty())
             throw new NotFoundException("Not found Product with ModelCode " + modelCode);
 

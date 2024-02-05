@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 
@@ -12,12 +13,20 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "productdimension")
-public class ProductDimension {
+@Table(name = "product")
+public class Product {
     @Id
-    @Column(name = "modelcode")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
+    @NaturalId
+    @Column(name = "model_code")
     private String modelCode;
+
+    @NaturalId
+    @Column(name = "meta_series")
     private String metaSeries;
+
     private String brand;
     private String plant;
     private String clazz;
@@ -27,7 +36,7 @@ public class ProductDimension {
     private String image;
     private String description;
 
-    public ProductDimension(String plant, String clazz, String modelCode) {
+    public Product(String plant, String clazz, String modelCode) {
         this.plant = plant;
         this.clazz = clazz;
         this.modelCode = modelCode;
