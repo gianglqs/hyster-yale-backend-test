@@ -2,15 +2,23 @@ package com.hysteryale.service;
 
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
+import com.hysteryale.model.reports.CompareCurrencyRequest;
+import com.hysteryale.model.reports.CompareCurrencyResponse;
 import com.hysteryale.repository.ExchangeRateRepository;
+import com.hysteryale.utils.CurrencyFormatUtils;
 import com.hysteryale.utils.DateUtils;
 import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
@@ -28,6 +36,8 @@ public class ExchangeRateService extends BasedService {
     ExchangeRateRepository exchangeRateRepository;
     @Resource
     CurrencyService currencyService;
+    @Resource
+    FileUploadService fileUploadService;
     public static Map<Integer, String> fromCurrenciesTitle = new HashMap<>();
 
     public Map<Integer, String> getFromCurrencyTitle(Row row) {
@@ -85,8 +95,9 @@ public class ExchangeRateService extends BasedService {
 
             log.info("from: " + fromCurrency.getCurrency() + " to: " + toCurrency.getCurrency());
 
-            if(exchangeRateRepository.getExchangeRateByFromToCurrencyAndDate(fromCurrency.getCurrency(), toCurrency.getCurrency(), date).isEmpty())
-                exchangeRateList.add(exchangeRate);
+            Optional<ExchangeRate> dbExchangeRate = exchangeRateRepository.getExchangeRateByFromToCurrencyAndDate(fromCurrency.getCurrency(), toCurrency.getCurrency(), date);
+            dbExchangeRate.ifPresent(value -> exchangeRate.setId(value.getId()));
+            exchangeRateList.add(exchangeRate);
         }
         return exchangeRateList;
     }
@@ -145,5 +156,95 @@ public class ExchangeRateService extends BasedService {
             return optionalExchangeRate.get();
         else
             return null;
+    }
+
+    /**
+     * Compare Currencies for reporting in Reports page
+     */
+    public Map<String, Object> compareCurrency(CompareCurrencyRequest request) {
+        String currentCurrency = request.getCurrentCurrency();
+        List<String> comparisonCurrencies = request.getComparisonCurrencies();
+
+        Map<String, Object> data = new HashMap<>();
+        List<String> stableCurrencies = new ArrayList<>();
+        List<String> weakerCurrencies = new ArrayList<>();
+        List<String> strongerCurrencies = new ArrayList<>();
+
+        for(String currency : comparisonCurrencies) {
+            List<ExchangeRate> exchangeRateList = exchangeRateRepository.getCurrentExchangeRate(currentCurrency, currency);
+
+            if(exchangeRateList.isEmpty())
+                continue;
+            double nearestRate = exchangeRateList.get(0).getRate();
+            double farthestRate = exchangeRateList.get(exchangeRateList.size() - 1).getRate();
+            double differentRate = CurrencyFormatUtils.formatDoubleValue(nearestRate - farthestRate, CurrencyFormatUtils.decimalFormatFourDigits);
+            double differentRatePercentage = CurrencyFormatUtils.formatDoubleValue((differentRate / farthestRate) * 100, CurrencyFormatUtils.decimalFormatFourDigits);
+
+            log.info(currentCurrency + " - " + currency + ": " + differentRatePercentage);
+
+            String state = "stable";
+            if(Math.abs(differentRatePercentage) > 5) {
+                StringBuilder sb = new StringBuilder();
+                Formatter formatter = new Formatter(sb);
+                formatter.format("%(,.2f", differentRate);
+
+                if(differentRatePercentage < 0) weakerCurrencies.add(currency + " by " + sb + " (" + differentRatePercentage + "%)");
+                else strongerCurrencies.add(currency + " by +" + sb + " (+" + differentRatePercentage + "%)");
+            }
+            else stableCurrencies.add(currency);
+            data.put(currency, new CompareCurrencyResponse(exchangeRateList, differentRate, differentRatePercentage, state));
+        }
+
+        data.put("stable", stableCurrencies);
+        data.put("weakening", weakerCurrencies);
+        data.put("strengthening", strongerCurrencies);
+        return data;
+    }
+
+    public void importExchangeRateFromFile(MultipartFile file, Authentication authentication) throws Exception {
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+
+        // Verify file's type
+        if(!FileUtils.isExcelFile(file.getInputStream()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File is not an Excel file");
+
+        // Verify whether file's name is null or not
+        String originalFileName = file.getOriginalFilename();
+        if(originalFileName == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File's name is not in appropriate format");
+
+        //Pattern for getting date from fileName
+        Pattern pattern = Pattern.compile("^\\w{3}(\\w{3})(\\d{4}).");
+        Matcher matcher = pattern.matcher(originalFileName);
+
+        LocalDate date;
+        if(matcher.find()) {
+            String month = matcher.group(1);
+            month = month.charAt(0) + month.substring(1).toLowerCase();
+            int year = Integer.parseInt(matcher.group(2));
+            date = LocalDate.of(year, DateUtils.getMonth(month), 1);
+        }
+        else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File's name is not in appropriate format");
+
+        String filePath = fileUploadService.saveFileUploaded(file, authentication, baseFolder, ".xlsx");
+
+        InputStream is = new FileInputStream(filePath);
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+
+        Sheet sheet = workbook.getSheet("Summary AOP");
+        List<ExchangeRate> exchangeRatesList = new ArrayList<>();
+
+        for(int i = 3; i <=34; i++) {
+            Row row = sheet.getRow(i);
+            if(i == 3)
+                fromCurrenciesTitle = getFromCurrencyTitle(row);
+            else
+                exchangeRatesList.addAll(mapExcelDataToExchangeRate(row, date));
+        }
+
+        exchangeRateRepository.saveAll(exchangeRatesList);
+        log.info("ExchangeRate are newly saved or updated: " + exchangeRatesList.size());
+        exchangeRatesList.clear();
     }
 }

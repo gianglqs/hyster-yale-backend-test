@@ -1,5 +1,7 @@
 package com.hysteryale.service;
 
+import com.hysteryale.model.Currency;
+import com.hysteryale.model.filters.FilterRow;
 import com.hysteryale.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,8 @@ public class FilterService {
     BookingOrderRepository bookingOrderRepository;
     @Resource
     CountryRepository countryRepository;
+    @Resource
+    CurrencyRepository currencyRepository;
 
     @Resource
     DealerRepository dealerRepository;
@@ -385,5 +389,14 @@ public class FilterService {
             listResult.add(Map.of("value", orderNo));
         }
         return listResult;
+    }
+
+    public List<FilterRow> getCurrencyFilter() {
+        List<String> currencyList = currencyRepository.getExistingCurrencies();
+        List<FilterRow> filters = new ArrayList<>();
+        for(String c : currencyList)
+            filters.add(new FilterRow(c));
+
+        return filters;
     }
 }

@@ -23,9 +23,6 @@ public class Shipment {
     @JoinColumn(name = "region")
     private Region region;
 
-//    @Column(name = "dealer_name")
-//    private String dealerName;
-
     @JoinColumn(name = "dealer")
     @ManyToOne(fetch = FetchType.EAGER)
     private Dealer dealer;

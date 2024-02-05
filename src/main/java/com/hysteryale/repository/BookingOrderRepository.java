@@ -217,9 +217,9 @@ public interface BookingOrderRepository extends JpaRepository<Booking, String> {
             " AND ((:segments) IS NULL OR b.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR b.dealer.name IN (:dealerName)) " +
             " AND EXTRACT(year FROM b.date) = :year" +
-            " AND b.marginPercentageAfterSurcharge != 'NaN'" +
-            " AND b.marginPercentageAfterSurcharge != '-Infinity'" +
-            " AND b.marginPercentageAfterSurcharge != 'Infinity'" +
+            " AND b.marginPercentageAfterSurCharge != 'NaN'" +
+            " AND b.marginPercentageAfterSurCharge != '-Infinity'" +
+            " AND b.marginPercentageAfterSurCharge != 'Infinity'" +
             " GROUP BY EXTRACT(month FROM b.date) ORDER BY month ASC"
     )
     List<TrendData> getMarginVsCostData(
