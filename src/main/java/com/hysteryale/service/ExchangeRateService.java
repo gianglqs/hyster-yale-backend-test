@@ -177,13 +177,13 @@ public class ExchangeRateService extends BasedService {
                 continue;
             double nearestRate = exchangeRateList.get(0).getRate();
             double farthestRate = exchangeRateList.get(exchangeRateList.size() - 1).getRate();
-            double differentRate = CurrencyFormatUtils.formatDoubleValue(nearestRate - farthestRate, CurrencyFormatUtils.decimalFormatFourDigits);
+            double differentRate = nearestRate - farthestRate;
             double differentRatePercentage = CurrencyFormatUtils.formatDoubleValue((differentRate / farthestRate) * 100, CurrencyFormatUtils.decimalFormatFourDigits);
 
             if(Math.abs(differentRatePercentage) > 5) {
                 StringBuilder sb = new StringBuilder();
                 Formatter formatter = new Formatter(sb);
-                formatter.format("%,.2f", differentRate);
+                formatter.format("%,.7f", differentRate);
 
                 if(differentRatePercentage < 0) weakerCurrencies.add(currency + " by " + sb + " (" + differentRatePercentage + "%)");
                 else strongerCurrencies.add(currency + " by +" + sb + " (+" + differentRatePercentage + "%)");
