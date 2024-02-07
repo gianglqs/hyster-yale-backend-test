@@ -4,7 +4,7 @@ import com.hysteryale.model.Booking;
 import com.hysteryale.model.marginAnalyst.MarginAnalysisAOPRate;
 import com.hysteryale.model_h2.IMMarginAnalystData;
 import com.hysteryale.model_h2.IMMarginAnalystSummary;
-import com.hysteryale.repository.ProductDimensionRepository;
+import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.repository.marginAnalyst.MarginAnalysisAOPRateRepository;
 import com.hysteryale.repository_h2.IMMarginAnalystDataRepository;
 import com.hysteryale.service.BookingService;
@@ -41,7 +41,7 @@ public class IMMarginAnalystDataService {
     @Resource
     ExchangeRateService exchangeRateService;
     @Resource
-    ProductDimensionRepository productDimensionRepository;
+    ProductRepository productRepository;
     static HashMap<String, Integer> COLUMN_NAME = new HashMap<>();
 
     void getColumnName(Row row) {
@@ -414,7 +414,7 @@ public class IMMarginAnalystDataService {
     }
 
     public Map<String, Object> calculateMarginAnalysisSummary(String fileUUID, Integer type, String modelCode, String series, String orderNumber, String currency) {
-        String plant = productDimensionRepository.getPlantByMetaSeries(series.substring(1));
+        String plant = productRepository.getPlantByMetaSeries(series.substring(1));
 
         IMMarginAnalystSummary monthly;
         IMMarginAnalystSummary annually;

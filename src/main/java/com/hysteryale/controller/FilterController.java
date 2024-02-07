@@ -42,8 +42,8 @@ public class FilterController {
     public Map<String, Object> getProductFilters(){ return filterService.getProductFilter();}
 
     @GetMapping("/productDetail")
-    public Map<String, Object> getOrderNoForProductDetail(@RequestParam String modelCode){
-        return filterService.getProductDetailFilter(modelCode);
+    public Map<String, Object> getOrderNoForProductDetail(@RequestParam String modelCode, @RequestParam String metaSeries){
+        return filterService.getProductDetailFilter(modelCode, metaSeries);
     }
 
     @GetMapping("/currency")

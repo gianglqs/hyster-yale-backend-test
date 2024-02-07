@@ -35,4 +35,7 @@ public class FilterModel {
     private List<String> truckType;
     //for productDimension detail
     private List<String> orderNumbers;
+    private String metaSeriez;
+
+
 }

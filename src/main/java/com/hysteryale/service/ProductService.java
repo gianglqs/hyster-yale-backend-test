@@ -2,7 +2,7 @@ package com.hysteryale.service;
 
 import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
-import com.hysteryale.repository.ProductDimensionRepository;
+import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
@@ -21,9 +21,9 @@ import java.util.*;
 
 @Service
 @Slf4j
-public class ProductDimensionService extends BasedService {
+public class ProductService extends BasedService {
     @Resource
-    ProductDimensionRepository productDimensionRepository;
+    ProductRepository productRepository;
 
     private final HashMap<String, Integer> COLUMNS = new HashMap<>();
 
@@ -110,13 +110,13 @@ public class ProductDimensionService extends BasedService {
 
                 Product newProduct = mapExcelSheetToProductDimension(row);
                 if (!checkExist(newProduct))
-                    productDimensionRepository.save(newProduct);
+                    productRepository.save(newProduct);
             }
         }
     }
 
     public boolean checkExist(Product product) {
-        Optional<Product> productDimensionOptional = productDimensionRepository.findByMetaSeries(product.getMetaSeries());
+        Optional<Product> productDimensionOptional = productRepository.findByModelCodeAndMetaSeries(product.getModelCode(), product.getMetaSeries());
         if (productDimensionOptional.isPresent())
             return true;
         return false;
@@ -127,7 +127,7 @@ public class ProductDimensionService extends BasedService {
      */
     public List<Map<String, String>> getAllMetaSeries() {
         List<Map<String, String>> metaSeriesMap = new ArrayList<>();
-        List<String> metaSeries = productDimensionRepository.getAllMetaSeries();
+        List<String> metaSeries = productRepository.getAllMetaSeries();
         metaSeries.sort(String::compareTo);
         for (String m : metaSeries) {
             Map<String, String> mMap = new HashMap<>();
@@ -143,7 +143,7 @@ public class ProductDimensionService extends BasedService {
      */
     public List<Map<String, String>> getAllPlants() {
         List<Map<String, String>> plantListMap = new ArrayList<>();
-        List<String> plants = productDimensionRepository.getPlants();
+        List<String> plants = productRepository.getPlants();
         plants.sort(String::compareTo);
         for (String p : plants) {
             Map<String, String> pMap = new HashMap<>();
@@ -155,14 +155,14 @@ public class ProductDimensionService extends BasedService {
     }
 
     public Product getProductDimensionByModelCode(String modelCode) {
-        Optional<Product> productDimensionOptional = productDimensionRepository.findByModelCode(modelCode);
+        Optional<Product> productDimensionOptional = productRepository.findByModelCode(modelCode);
         return productDimensionOptional.orElse(null);
     }
 
 
     public List<Map<String, String>> getAllClasses() {
         List<Map<String, String>> classMap = new ArrayList<>();
-        List<String> classes = productDimensionRepository.getAllClass();
+        List<String> classes = productRepository.getAllClass();
         classes.sort(String::compareTo);
         for (String m : classes) {
             Map<String, String> mMap = new HashMap<>();
@@ -174,7 +174,7 @@ public class ProductDimensionService extends BasedService {
 
     public List<Map<String, String>> getAllSegments() {
         List<Map<String, String>> segmentMap = new ArrayList<>();
-        List<String> segments = productDimensionRepository.getAllSegments();
+        List<String> segments = productRepository.getAllSegments();
         segments.sort(String::compareTo);
         for (String m : segments) {
             Map<String, String> mMap = new HashMap<>();
@@ -186,7 +186,7 @@ public class ProductDimensionService extends BasedService {
     }
 
     public String getModelFromMetaSeries(String metaSeries) {
-        Optional<String> modelOptional = productDimensionRepository.getModelByMetaSeries(metaSeries);
+        Optional<String> modelOptional = productRepository.getModelByMetaSeries(metaSeries);
         return modelOptional.orElse(null);
     }
 
@@ -195,7 +195,7 @@ public class ProductDimensionService extends BasedService {
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
         logInfo(filterMap.toString());
         // product filter by: plant, segment, brand, family, metaSeries
-        List<Product> getData = productDimensionRepository.getDataByFilter(
+        List<Product> getData = productRepository.getDataByFilter(
                 (String) filterMap.get("modelCodeFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
@@ -203,7 +203,7 @@ public class ProductDimensionService extends BasedService {
         );
         result.put("listData", getData);
         //Count data
-        long countAll = productDimensionRepository.countAll(
+        long countAll = productRepository.countAll(
                 (String) filterMap.get("modelCode"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
@@ -215,7 +215,7 @@ public class ProductDimensionService extends BasedService {
     }
 
     public void updateImageAndDescription(String modelCode, String imagePath, String description) throws NotFoundException {
-        Optional<Product> productOptional = productDimensionRepository.findByModelCode(modelCode);
+        Optional<Product> productOptional = productRepository.findByModelCode(modelCode);
         if (productOptional.isEmpty())
             throw new NotFoundException("No product found with modelCode: " + modelCode);
 
@@ -226,11 +226,11 @@ public class ProductDimensionService extends BasedService {
         if (description != null)
             product.setDescription(description);
 
-        productDimensionRepository.save(product);
+        productRepository.save(product);
     }
 
-    public Product getProductDimensionDetail(String modelCode) throws NotFoundException {
-        Optional<Product> productOptional = productDimensionRepository.getProductByModelCode(modelCode);
+    public Product getProductDimensionDetail(String modelCode, String metaSeries) throws NotFoundException {
+        Optional<Product> productOptional = productRepository.findByModelCodeAndMetaSeries(modelCode, metaSeries);
         if (productOptional.isEmpty())
             throw new NotFoundException("Not found Product with ModelCode " + modelCode);
 
@@ -287,10 +287,10 @@ public class ProductDimensionService extends BasedService {
         for(Row row : sheet) {
             if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
                 String modelCode = row.getCell(columns.get("Model")).getStringCellValue();
-                Optional<Product> optionalProduct = productDimensionRepository.findByModelCode(modelCode);
+                Optional<Product> optionalProduct = productRepository.findByModelCode(modelCode);
                 if(optionalProduct.isEmpty() && checkDuplicateModelCode(modelCode, productForSaving)) {
                     String series = row.getCell(columns.get("Series")).getStringCellValue();
-                    Product seriesInformation = productDimensionRepository.getProductByMetaSeries(series.substring(1));
+                    Product seriesInformation = productRepository.getProductByMetaSeries(series.substring(1));
                     if(seriesInformation != null) {
                         productForSaving.add(new Product(
                                 modelCode,
@@ -308,7 +308,7 @@ public class ProductDimensionService extends BasedService {
                 }
             }
         }
-        productDimensionRepository.saveAll(productForSaving);
+        productRepository.saveAll(productForSaving);
     }
 
 }

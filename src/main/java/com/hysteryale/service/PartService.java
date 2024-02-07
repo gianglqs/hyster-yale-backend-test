@@ -214,14 +214,17 @@ public class PartService extends BasedService {
         // get Parts by modelCode and orderNos
         List<Part> partList = partRepository.getPartForProductDimensionDetail(
                 (String) filtersMap.get("modelCodeFilter"),
+                (String) filtersMap.get("metaseriesFilter"),
                 (List<String>) filtersMap.get("orderNumberListFilter"),
                 (Pageable) filtersMap.get("pageable")
         );
         setIdForListPart(partList);
         result.put("listPart", partList);
+        log.info(filtersMap.toString());
 
         // count
         long countAll = partRepository.countAllForProductDetail((String) filtersMap.get("modelCodeFilter"),
+                (String) filtersMap.get("metaseriesFilter"),
                 filtersMap.get("orderNumberListFilter") == null ? Collections.emptyList() : (List<String>) filtersMap.get("orderNumberListFilter"));
         result.put("totalItems", countAll);
 
