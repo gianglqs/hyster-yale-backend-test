@@ -11,10 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.*;
 
@@ -25,16 +29,26 @@ public class ProductService extends BasedService {
     @Resource
     ProductRepository productRepository;
 
+    @Resource
+    FileUploadService fileUploadService;
+
     private final HashMap<String, Integer> COLUMNS = new HashMap<>();
 
     public void assignColumnNames(Row row) {
-        for (int i = 0; i < 35; i++) {
+        COLUMNS.clear();
+        for (int i = 0; i < 30; i++) {
+            if (row.getCell(i) == null || row.getCell(i).getCellType() != CellType.STRING)
+                continue;
             String columnName = row.getCell(i).getStringCellValue();
-            COLUMNS.put(columnName, i);
+            if (COLUMNS.get(columnName) == null) {
+                COLUMNS.put(columnName, i);
+            } else {
+                COLUMNS.put(columnName + "_Y", i);
+            }
         }
     }
 
-    public Product mapExcelSheetToProductDimension(Row row) throws IllegalAccessException {
+    public Product mapExcelSheetToProductDimension(Row row) {
         Product product = new Product();
 
         // brand
@@ -101,7 +115,7 @@ public class ProductService extends BasedService {
         importProduct(sheet);
     }
 
-    private void importProduct(Sheet sheet) throws IllegalAccessException {
+    private void importProduct(Sheet sheet) {
         for (Row row : sheet) {
             if (row.getRowNum() == 1)
                 assignColumnNames(row);
@@ -269,8 +283,8 @@ public class ProductService extends BasedService {
     }
 
     private boolean checkDuplicateModelCode(String modelCode, List<Product> productList) {
-        for(Product p : productList) {
-            if(Objects.equals(p.getModelCode(), modelCode))
+        for (Product p : productList) {
+            if (Objects.equals(p.getModelCode(), modelCode))
                 return true;
         }
         return false;
@@ -284,14 +298,14 @@ public class ProductService extends BasedService {
         List<Product> productForSaving = new ArrayList<>();
 
         HashMap<String, Integer> columns = getPowerBiColumnsName(sheet.getRow(0));
-        for(Row row : sheet) {
+        for (Row row : sheet) {
             if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
                 String modelCode = row.getCell(columns.get("Model")).getStringCellValue();
                 Optional<Product> optionalProduct = productRepository.findByModelCode(modelCode);
-                if(optionalProduct.isEmpty() && checkDuplicateModelCode(modelCode, productForSaving)) {
+                if (optionalProduct.isEmpty() && checkDuplicateModelCode(modelCode, productForSaving)) {
                     String series = row.getCell(columns.get("Series")).getStringCellValue();
                     Product seriesInformation = productRepository.getProductByMetaSeries(series.substring(1));
-                    if(seriesInformation != null) {
+                    if (seriesInformation != null) {
                         productForSaving.add(new Product(
                                 modelCode,
                                 seriesInformation.getMetaSeries(),
@@ -311,4 +325,165 @@ public class ProductService extends BasedService {
         productRepository.saveAll(productForSaving);
     }
 
+
+    public List<Product> mappedFromAPACFile(Row row) {
+        List<Product> listProduct = new ArrayList<>();
+
+        String plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
+        String clazz = row.getCell(COLUMNS.get("Class")).getStringCellValue();
+
+        // Hyster
+        Product hysterProduct = new Product();
+        Cell hysterSeriesCell = row.getCell(COLUMNS.get("Hyster"));
+        Cell hysterModelCell = row.getCell(COLUMNS.get("Model"));
+
+        if (hysterSeriesCell.getCellType() == CellType.STRING && hysterModelCell.getCellType() == CellType.STRING) {
+            String hysterSeries = hysterSeriesCell.getStringCellValue();
+            String hysterModel = hysterModelCell.getStringCellValue();
+
+
+            if (!hysterModel.equals("NA") && !hysterSeries.equals("NA")) {
+                hysterProduct.setModelCode(hysterModel);
+                hysterProduct.setMetaSeries(hysterSeries);
+                hysterProduct.setPlant(plant);
+                hysterProduct.setClazz(clazz);
+                hysterProduct.setBrand("H");
+                listProduct.add(hysterProduct);
+            }
+        }
+
+        // Yale
+        Product yaleProduct = new Product();
+        Cell yaleSeriesCell = row.getCell(COLUMNS.get("Yale"));
+        Cell yaleModelCell = row.getCell(COLUMNS.get("Model_Y"));
+
+        if (yaleSeriesCell.getCellType() == CellType.STRING && yaleModelCell.getCellType() == CellType.STRING) {
+            String yaleSeries = yaleSeriesCell.getStringCellValue();
+            String yaleModel = yaleModelCell.getStringCellValue();
+
+
+            if (!yaleModel.equals("NA") && !yaleSeries.equals("NA")) {
+                yaleProduct.setModelCode(yaleModel);
+                yaleProduct.setMetaSeries(yaleSeries);
+                yaleProduct.setPlant(plant);
+                yaleProduct.setClazz(clazz);
+                yaleProduct.setBrand("Y");
+                listProduct.add(yaleProduct);
+            }
+        }
+
+
+        return listProduct;
+    }
+
+    public void importProduct(List<MultipartFile> fileList, Authentication authentication) throws Exception {
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        for (MultipartFile file : fileList) {
+            String pathFileUploaded = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
+            try {
+                if (file.getOriginalFilename().contains("APAC")) {
+                    importBaseProduct(pathFileUploaded);
+                }
+                if (file.getOriginalFilename().contains("dimension")) {
+                    importDimensionProduct(pathFileUploaded);
+                }
+            } catch (Exception e) {
+                fileUploadService.deleteFileInDisk(pathFileUploaded);
+            }
+        }
+    }
+
+    // brand, segment, family, truckType
+    private void importDimensionProduct(String pathFile) throws IOException {
+        InputStream is = new FileInputStream(pathFile);
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+
+        Sheet sheet = workbook.getSheet("Data");
+        Set<Product> listDimensionProduct = new HashSet<>();
+
+        for (Row row : sheet) {
+            if (row.getRowNum() == 1)
+                assignColumnNames(row);
+            else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
+                    && row.getRowNum() >= 2) {
+                listDimensionProduct.add(mapExcelSheetToProductDimension(row));
+            }
+        }
+        saveListDimensionProduct(listDimensionProduct);
+    }
+
+
+    private void importBaseProduct(String pathFile) throws IOException {
+        InputStream is = new FileInputStream(pathFile);
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+
+        Sheet sheet = workbook.getSheet("Master Summary");
+        Set<Product> listProduct = new HashSet<>();
+
+        for (Row row : sheet) {
+            if (row.getRowNum() == 0)
+                assignColumnNames(row);
+            else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
+                    && row.getRowNum() >= 1) {
+
+
+                listProduct.addAll(mappedFromAPACFile(row));
+            }
+        }
+        saveListBaseProduct(listProduct);
+    }
+
+    private void saveListDimensionProduct(Set<Product> listDimensionProduct) {
+        List<Product> listProductInDB = new ArrayList<>();
+        for (Product p : listDimensionProduct) {
+            Optional<Product> optionalProduct = productRepository.findByModelCodeAndMetaSeries(p.getModelCode(), p.getMetaSeries());
+            optionalProduct.ifPresent(listProductInDB::add);
+        }
+
+
+        for (Product oldProduct : listProductInDB) {
+            for (Product newProduct : listDimensionProduct) {
+                if (newProduct.getModelCode().equals(oldProduct.getModelCode())
+                        //in DB : series but in ProductDimension file is metaSeries
+                        && newProduct.getMetaSeries().equals(oldProduct.getMetaSeries().substring(1))) {
+                    oldProduct.setBrand(newProduct.getBrand());
+                    oldProduct.setFamily(newProduct.getFamily());
+                    oldProduct.setSegment(newProduct.getSegment());
+                    oldProduct.setBrand(newProduct.getBrand());
+                    break;
+                }
+            }
+        }
+        productRepository.saveAll(listProductInDB);
+    }
+
+
+    private void saveListBaseProduct(Set<Product> list) {
+        List<Product> listProductInDB = new ArrayList<>();
+        for (Product p : list) {
+            Optional<Product> optionalProduct = productRepository.findByModelCodeAndMetaSeries(p.getModelCode(), p.getMetaSeries());
+            optionalProduct.ifPresent(listProductInDB::add);
+        }
+
+        List<Product> listNewProductIsExist = new ArrayList<>();
+
+        // update product if exist
+        for (Product newProduct : list) {
+            for (Product product : listProductInDB) {
+                if (product.getModelCode().equals(newProduct.getModelCode()) && product.getMetaSeries().equals(newProduct.getMetaSeries())) {
+                    product.setPlant(newProduct.getPlant());
+                    product.setClazz(newProduct.getClazz());
+                    product.setBrand(newProduct.getBrand());
+                    listNewProductIsExist.add(newProduct);
+                    break;
+                }
+            }
+        }
+        listNewProductIsExist.forEach(list::remove);
+        list.addAll(listProductInDB);
+
+        productRepository.saveAll(list);
+
+    }
 }
