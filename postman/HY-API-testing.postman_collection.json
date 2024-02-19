@@ -19,6 +19,7 @@
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
 									"postman.setEnvironmentVariable(\"access_token\", \"Bearer \" + jsonData.data.accessToken);",
+									"postman.setEnvironmentVariable(\"refreshToken\", jsonData.data.refreshToken);",
 									"",
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -108,6 +109,1968 @@
 							"path": [
 								"oauth",
 								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get refresh token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has a JSON body\", function () {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response have a message\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.a('string');",
+									"})",
+									"",
+									"pm.test(\"Response have a token properties\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.accessToken).to.be.a('string');",
+									"    pm.expect(jsonData.data.refreshToken).to.be.a('string');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/oauth/refreshToken",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"oauth",
+								"refreshToken"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Adjusment Controller",
+			"item": [
+				{
+					"name": "Test Get Adjustment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function () {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response has a List of Adjustment and Total\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.listAdjustment).to.be.a('array')",
+									"    pm.expect(jsonData.total[0]).to.be.a('object')",
+									"})",
+									"",
+									"pm.test(\"Response has pagination properties\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.totalItems).to.be.a('number')",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"dataCalculate\": {\n        \"costAdjPercentage\": \"\",\n        \"dnAdjPercentage\": \"\",\n        \"freightAdj\": \"\",\n        \"fxAdj\": \"\"\n    },\n    \"dataFilter\": {\n        \"aopMarginPercentageGroup\": \"\",\n        \"classes\": [],\n        \"dealers\": [],\n        \"fromDate\": \"\",\n        \"toDate\": \"\",\n        \"marginPercentage\": \"\",\n        \"marginPercentageAfterAdj\": \"\",\n        \"metaSeries\": [],\n        \"models\": [],\n        \"orderNo\": \"\",\n        \"plant\": [],\n        \"regions\": [],\n        \"segments\": []\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/getAdjustmentData",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"getAdjustmentData"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Booking Controller",
+			"item": [
+				{
+					"name": "Test Get Data Booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response has a List of booking, List of exchange rate and total\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.listBookingOrder).to.be.a('array');",
+									"    pm.expect(jsonData.total[0]).to.be.a('object');",
+									"    pm.expect(jsonData.listExchangeRate).to.be.a('array');",
+									"",
+									"})",
+									"",
+									"pm.test(\"Response has pagination properties\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.totalItems).to.be.a('number')",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"aopMarginPercentageGroup\": \"\",\n    \"classes\": [],\n    \"dealers\": [],\n    \"fromDate\": \"\",\n    \"toDate\": \"\",\n    \"marginPercentage\": \"\",\n    \"marginPercentageAfterAdj\": \"\",\n    \"metaSeries\": [],\n    \"models\": [],\n    \"orderNo\": \"\",\n    \"plants\": [],\n    \"regions\": [],\n    \"segments\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/bookingOrders",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"bookingOrders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Import Booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json",
+									"})",
+									"",
+									"pm.test(\"Response has a message\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.a('string');",
+									"    pm.expect(jsonData.message).to.contains(\"Import successfully\")",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "import_files/booked/BOOKED ORDER May Final 2023.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/importNewBooking",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"importNewBooking"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Filter Controller",
+			"item": [
+				{
+					"name": "Test Get Competitor Pricing filter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a list of filters\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.models).to.be.a('array');",
+									"    pm.expect(jsonData.regions).to.be.a('array');",
+									"    pm.expect(jsonData.plants).to.be.a('array');",
+									"    pm.expect(jsonData.series).to.be.a('array');",
+									"    pm.expect(jsonData.classes).to.be.a('array');",
+									"    pm.expect(jsonData.dealers).to.be.a('array');",
+									"    pm.expect(jsonData.chineseBrands).to.be.a('array');",
+									"    pm.expect(jsonData.categories).to.be.a('array');",
+									"    pm.expect(jsonData.countries).to.be.a('array');",
+									"    pm.expect(jsonData.metaSeries).to.be.a('array');",
+									"    pm.expect(jsonData.marginPercentageGrouping).to.be.a('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/filters/competitorPricing",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"filters",
+								"competitorPricing"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Shipment filter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a list of filters\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.models).to.be.a('array');",
+									"    pm.expect(jsonData.regions).to.be.a('array');",
+									"    pm.expect(jsonData.plants).to.be.a('array');",
+									"    pm.expect(jsonData.metaSeries).to.be.a('array');",
+									"    pm.expect(jsonData.classes).to.be.a('array');",
+									"    pm.expect(jsonData.dealers).to.be.a('array');",
+									"    pm.expect(jsonData.marginPercentageGroup).to.be.a('array');",
+									"    pm.expect(jsonData.AOPMarginPercentageGroup).to.be.a('array');",
+									"    pm.expect(jsonData.segments).to.be.a('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/filters/shipment",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"filters",
+								"shipment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Booking filter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a list of filters\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.models).to.be.a('array');",
+									"    pm.expect(jsonData.regions).to.be.a('array');",
+									"    pm.expect(jsonData.plants).to.be.a('array');",
+									"    pm.expect(jsonData.metaSeries).to.be.a('array');",
+									"    pm.expect(jsonData.classes).to.be.a('array');",
+									"    pm.expect(jsonData.dealers).to.be.a('array');",
+									"    pm.expect(jsonData.marginPercentageGroup).to.be.a('array');",
+									"    pm.expect(jsonData.AOPMarginPercentageGroup).to.be.a('array');",
+									"    pm.expect(jsonData.segments).to.be.a('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/filters/booking",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"filters",
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Outlier filter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a list of filters\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.models).to.be.a('array');",
+									"    pm.expect(jsonData.regions).to.be.a('array');",
+									"    pm.expect(jsonData.plants).to.be.a('array');",
+									"    pm.expect(jsonData.series).to.be.a('array');",
+									"    pm.expect(jsonData.classes).to.be.a('array');",
+									"    pm.expect(jsonData.dealers).to.be.a('array');",
+									"    pm.expect(jsonData.marginPercentageGroup).to.be.a('array');",
+									"    pm.expect(jsonData.metaSeries).to.be.a('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/filters/outlier",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"filters",
+								"outlier"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Trends Filter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a list of filters\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.models).to.be.a('array');",
+									"    pm.expect(jsonData.regions).to.be.a('array');",
+									"    pm.expect(jsonData.plants).to.be.a('array');",
+									"    pm.expect(jsonData.classes).to.be.a('array');",
+									"    pm.expect(jsonData.dealers).to.be.a('array');",
+									"    pm.expect(jsonData.metaSeries).to.be.a('array');",
+									"    pm.expect(jsonData.years).to.be.a('array');",
+									"    pm.expect(jsonData.segments).to.be.a('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/filters/trends",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"filters",
+								"trends"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Product filter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a list of filters\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.plants).to.be.a('array');",
+									"    pm.expect(jsonData.metaSeries).to.be.a('array');",
+									"    pm.expect(jsonData.classes).to.be.a('array');",
+									"    pm.expect(jsonData.segments).to.be.a('array');",
+									"    pm.expect(jsonData.brands).to.be.a('array');",
+									"    pm.expect(jsonData.truckType).to.be.a('array');",
+									"    pm.expect(jsonData.family).to.be.a('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/filters/product",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"filters",
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Currency Filter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a list of filters\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.currencyFilter).to.be.a('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/filters/currency",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"filters",
+								"currency"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Indicator Controller",
+			"item": [
+				{
+					"name": "Test Get Competitor Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response has a list of data and total\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.listCompetitor).to.be.a('array');",
+									"    pm.expect(jsonData.total[0]).to.be.a('object');",
+									"})",
+									"",
+									"pm.test(\"Response has pagination properties\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.totalItems).to.be.a('number')",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"aopMarginPercentageGroup\": \"\",\n    \"chineseBrand\": \"\",\n    \"classes\": [],\n    \"countries\": [],\n    \"dealers\": [],\n    \"metaSeries\": [],\n    \"models\": [],\n    \"plants\": [],\n    \"regions\": [],\n    \"segments\": [],\n    \"series\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/getCompetitorData",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"getCompetitorData"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Line Chart Region Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response has a list of data\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.lineChartRegion).to.be.a('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"aopMarginPercentageGroup\": \"\",\n    \"chineseBrand\": \"\",\n    \"classes\": [],\n    \"countries\": [],\n    \"dealers\": [],\n    \"metaSeries\": [],\n    \"models\": [],\n    \"plants\": [],\n    \"regions\": [],\n    \"segments\": [],\n    \"series\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/chart/getDataForRegionLineChart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"chart",
+								"getDataForRegionLineChart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Line Chart Plant Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response has a list of data\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.lineChartPlant).to.be.a('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"aopMarginPercentageGroup\": \"\",\n    \"chineseBrand\": \"\",\n    \"classes\": [],\n    \"countries\": [],\n    \"dealers\": [],\n    \"metaSeries\": [],\n    \"models\": [],\n    \"plants\": [],\n    \"regions\": [],\n    \"segments\": [],\n    \"series\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/chart/getDataForPlantLineChart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"chart",
+								"getDataForPlantLineChart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Data For Bubble Chart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response has a list of data\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.competitiveLandscape).to.be.a('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"categories\": [\n        \"Lead Acid\"\n    ],\n    \"classes\": [\n        \"Class 1\"\n    ],\n    \"countries\": [\n        \"South Korea\"\n    ],\n    \"regions\": \"Asia\",\n    \"series\": [\n        \"A3C4\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/chart/getDataForCompetitorBubbleChart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"chart",
+								"getDataForCompetitorBubbleChart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Competitor Color",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response has a list of data\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.competitorColors).to.be.a('array');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/competitorColors?search=",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"competitorColors"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Competitor Color Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response has a detail property\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.competitorColorDetail).to.be.a('object');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/competitorColors/getDetails?id=1543",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"competitorColors",
+								"getDetails"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1543"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Upload Forecast File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "import_files/forecast_pricing/Forecast Database Dynamic Pricing.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/uploadForecastFile",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"uploadForecastFile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Import Indicator File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "import_files/competitor_pricing/Competitor Pricing Database.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/importIndicatorsFile",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"importIndicatorsFile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Margin Analysis Controller",
+			"item": [
+				{
+					"name": "Test Upload NOVO file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 and Response has a JSON body\", function() {",
+									"    pm.response.to.have.status(200)",
+									"    pm.response.to.be.json",
+									"})",
+									"",
+									"pm.test(\"Response has a list of filters and file UUID properties\", function() {",
+									"    const jsonData = pm.response.json();",
+									"",
+									"    const marginFilters = jsonData.marginFilters",
+									"    pm.expect(marginFilters).to.be.a('object');",
+									"    pm.expect(marginFilters.orderNumbers).to.be.a('array');",
+									"    pm.expect(marginFilters.modelCodes).to.be.a('array');",
+									"    pm.expect(marginFilters.series).to.be.a('array');",
+									"    pm.expect(marginFilters.types).to.be.a('array');",
+									"",
+									"    pm.expect(jsonData.fileUUID).to.be.a('string');",
+									"    postman.setEnvironmentVariable(\"fileUUID\", jsonData.fileUUID);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "import_files/novo/SN_AUD.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/marginData/readNOVOFile",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"marginData",
+								"readNOVOFile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Estimate Margin Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 and response has a JSON body\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response has TargetMargin, list of Margin Analysis Data and Margin Analysis Summary\", function() {",
+									"    const jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.TargetMargin).to.be.a('number');",
+									"    pm.expect(jsonData.MarginAnalystData).to.be.a('array');",
+									"",
+									"    pm.expect(jsonData.MarginAnalystSummary).to.be.a('object')",
+									"    pm.expect(jsonData.MarginAnalystSummary.MarginAnalystSummaryAnnually).to.be.a('object')",
+									"    pm.expect(jsonData.MarginAnalystSummary.MarginAnalystSummaryMonthly).to.be.a('object')",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"marginData\": {\n        \"currency\": \"AUD\",\n        \"fileUUID\": \"{{fileUUID}}\",\n        \"modelCode\": \"H2.5XT\",\n        \"orderNumber\": \"H60372\",\n        \"plant\": \"SN\",\n        \"series\": \"D466\",\n        \"type\": \"1\"\n    },\n    \"region\": \"Asia\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estimateMarginAnalystData",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estimateMarginAnalystData"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Import Macro File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "import_files/margin_analyst_data/USD AUD Margin Analysis Template Macro_Oct  2023 Rev.xlsb"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/importMacroFile",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"importMacroFile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Outlier Controller",
+			"item": [
+				{
+					"name": "Test Get Outlier Table",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json",
+									"})",
+									"",
+									"pm.test(\"Response has a list of data and total\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.listOutlier).to.be.a('array');",
+									"    pm.expect(jsonData.total[0]).to.be.a('object');",
+									"})",
+									"",
+									"pm.test(\"Response has a pagination property\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.totalItems).to.be.a('number');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"aopMarginPercentageGroup\": \"\",\n    \"classes\": [],\n    \"dealers\": [],\n    \"fromDate\": \"\",\n    \"toDate\": \"\",\n    \"marginPercentage\": \"\",\n    \"marginPercentageAfterAdj\": \"\",\n    \"metaSeries\": [],\n    \"models\": [],\n    \"orderNo\": \"\",\n    \"plants\": [],\n    \"regions\": [],\n    \"segments\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/table/getOutlierTable",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"table",
+								"getOutlierTable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Chart Outlier data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json",
+									"})",
+									"",
+									"pm.test(\"Response has a list of data\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.chartOutliersData).to.be.a('array');",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"aopMarginPercentageGroup\": \"\",\n    \"classes\": [],\n    \"dealers\": [],\n    \"fromDate\": \"\",\n    \"toDate\": \"\",\n    \"marginPercentage\": \"\",\n    \"marginPercentageAfterAdj\": \"\",\n    \"metaSeries\": [],\n    \"models\": [],\n    \"orderNo\": \"\",\n    \"plants\": [],\n    \"regions\": [],\n    \"segments\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/chart/getOutliers",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"chart",
+								"getOutliers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Part Controller",
+			"item": [
+				{
+					"name": "Test Get Part For Table Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body and list Parts\", function() {",
+									"    pm.response.to.be.json;",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.listPart).to.be.a('array')",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"metaSeriez\": \"269\",\n    \"modelCode\": \"E40XN\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/part/getPartForTableProductDetail",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"part",
+								"getPartForTableProductDetail"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product Controller",
+			"item": [
+				{
+					"name": "Test Get Product Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response has a List of data and pagination properties\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.listData).to.be.a('array');",
+									"    pm.expect(jsonData.totalItems).to.be.a('number')",
+									"",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"brands\": [],\n    \"classes\": [],\n    \"family\": [],\n    \"metaSeries\": [],\n    \"modelCode\": \"\",\n    \"plants\": [],\n    \"segments\": [],\n    \"truckType\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/product/getData",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"product",
+								"getData"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Update Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "modelCode",
+									"value": "H2.5XT",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/product/updateProduct",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"product",
+								"updateProduct"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Product Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseURL}}/product/getProductDetail?modelCode=H2.5XT&metaSeries=466",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"product",
+								"getProductDetail"
+							],
+							"query": [
+								{
+									"key": "modelCode",
+									"value": "H2.5XT"
+								},
+								{
+									"key": "metaSeries",
+									"value": "466"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Import Product Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 and Response has a JSON body\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response returns a message\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.equals(\"Import data successfully\")",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "import_files/ProductDimension/Product Fcst dimension 2023_02_24.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/product/importData",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"product",
+								"importData"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Report Controller",
+			"item": [
+				{
+					"name": "Test Compare Currency",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test(\"Response has comparison properties\", function() {",
+									"    const requestBody = JSON.parse(pm.request.body.raw);",
+									"    const jsonData = pm.response.json().compareCurrency;",
+									"",
+									"    pm.expect(jsonData.stable).to.be.a('array');",
+									"    pm.expect(jsonData.strengthening).to.be.a('array');",
+									"    pm.expect(jsonData.weakening).to.be.a('array');",
+									"    ",
+									"    requestBody.comparisonCurrencies.forEach((item) => {",
+									"        pm.expect(jsonData[item]).to.be.a('object')",
+									"    })",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"currentCurrency\": \"EUR\",\n    \"comparisonCurrencies\": [\n        \"AUD\", \n        \"JPY\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/reports/compareCurrency",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"reports",
+								"compareCurrency"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Upload Exchange Rate file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body and returns message\", function() {",
+									"    pm.response.to.be.json;",
+									"",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.a('string');",
+									"    pm.expect(jsonData.message).to.equals(\"Upload successfully\")",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "import_files/currency_exchangerate/EXCJAN2024.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/reports/uploadExchangeRate",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"reports",
+								"uploadExchangeRate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Shipment Controller",
+			"item": [
+				{
+					"name": "Test Get Shipment data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json",
+									"})",
+									"",
+									"pm.test(\"Response has a list of data and total\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.listShipment).to.be.a('array');",
+									"    pm.expect(jsonData.total[0]).to.be.a('object')",
+									"})",
+									"",
+									"pm.test(\"Response has a pagination properties\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.totalItems).to.be.a('number');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"aopMarginPercentageGroup\": \"\",\n    \"classes\": [],\n    \"dealers\": [],\n    \"fromDate\": \"\",\n    \"toDate\": \"\",\n    \"marginPercentage\": \"\",\n    \"marginPercentageAfterAdj\": \"\",\n    \"metaSeries\": [],\n    \"models\": [],\n    \"orderNo\": \"\",\n    \"plants\": [],\n    \"regions\": [],\n    \"segments\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/getShipmentData",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"getShipmentData"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Import Shipment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json",
+									"})",
+									"",
+									"pm.test(\"Response has a message\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.a('string');",
+									"    pm.expect(jsonData.message).to.contains(\"Import data successfully\")",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "import_files/shipment/SAP KE24 (shipment data).xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/importNewShipment",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"importNewShipment"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trends Controller",
+			"item": [
+				{
+					"name": "Test Get Margin Vs Cost data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json",
+									"})",
+									"",
+									"pm.test(\"Response has a list of data and total\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.marginVsCostData.bookingData).to.be.a('array');",
+									"    pm.expect(jsonData.marginVsCostData.shipmentData).to.be.a('array');",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"classes\": [],\n    \"dealers\": [],\n    \"metaSeries\": [],\n    \"models\": [],\n    \"plants\": [],\n    \"regions\": [\n        \"Asia\"\n    ],\n    \"segments\": [],\n    \"year\": 2023\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/trends/getMarginVsCostData",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"trends",
+								"getMarginVsCostData"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Get Margin Vs DN data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									"pm.test(\"Response has a JSON body\", function() {",
+									"    pm.response.to.be.json",
+									"})",
+									"",
+									"pm.test(\"Response has a list of data and total\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.marginVsDNData.bookingData).to.be.a('array');",
+									"    pm.expect(jsonData.marginVsDNData.shipmentData).to.be.a('array');",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"classes\": [],\n    \"dealers\": [],\n    \"metaSeries\": [],\n    \"models\": [],\n    \"plants\": [],\n    \"regions\": [\n        \"Asia\"\n    ],\n    \"segments\": [],\n    \"year\": 2023\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/trends/getMarginVsDNData",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"trends",
+								"getMarginVsDNData"
 							]
 						}
 					},
@@ -205,6 +2168,237 @@
 								"users",
 								"getDetails",
 								"091283"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Change active state of User 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/users/activate/9",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"activate",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Change active state of User 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/users/activate/9",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"activate",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Update User information",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"user1\",\n    \"role\": {\n        \"id\": 1\n    },\n    \"defaultLocale\": \"us\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/updateUser/9",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"updateUser",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Update User information - Not found id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 404', function () {",
+									"    pm.response.to.have.status(404)",
+									"})",
+									"",
+									"pm.test('Response has a JSON body', function () {",
+									"    pm.response.to.be.json",
+									"})",
+									"",
+									"pm.test(\"Response have a message\", function() {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.be.a('string');",
+									"    pm.expect(jsonData.message).to.be.contains('No user with id:')",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"user1\",\n    \"role\": {\n        \"id\": 1\n    },\n    \"defaultLocale\": \"us\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/updateUser/8",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"updateUser",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Search User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Response has a JSON body', function () {",
+									"    pm.response.to.be.json;",
+									"})",
+									"",
+									"pm.test('Response has a list of users', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.userList).to.be.a('array')",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/users?search=",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": ""
+								}
 							]
 						}
 					},
