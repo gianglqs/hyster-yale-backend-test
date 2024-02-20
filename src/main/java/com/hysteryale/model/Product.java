@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
@@ -54,5 +55,18 @@ public class Product {
         this.truckType = truckType;
         this.image = image;
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(modelCode, product.modelCode) && Objects.equals(metaSeries, product.metaSeries);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(modelCode, metaSeries);
     }
 }

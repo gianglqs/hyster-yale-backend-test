@@ -21,10 +21,10 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT DISTINCT a.metaSeries FROM Product a")
     List<String> getAllMetaSeries();
 
-    @Query("SELECT DISTINCT a.clazz FROM Product a")
+    @Query("SELECT DISTINCT a.clazz FROM Product a WHERE a.clazz IS NOT NULL")
     List<String> getAllClass();
 
-    @Query("SELECT DISTINCT p.segment FROM Product p")
+    @Query("SELECT DISTINCT p.segment FROM Product p WHERE p.segment IS NOT NULL")
     List<String> getAllSegments();
 
     @Query("SELECT DISTINCT p.modelCode FROM Product p")
@@ -77,13 +77,13 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT p FROM Product p WHERE p.modelCode = ?1")
     Optional<Product> findByModelCode(String modelCode);
 
-    @Query("SELECT DISTINCT p.brand FROM Product p ")
+    @Query("SELECT DISTINCT p.brand FROM Product p WHERE p.brand IS NOT NULL")
     List<String> getAllBrands();
 
-    @Query("SELECT DISTINCT p.family FROM Product p ")
+    @Query("SELECT DISTINCT p.family FROM Product p WHERE p.family IS NOT NULL")
     List<String> getAllFamily();
 
-    @Query("SELECT DISTINCT p.truckType FROM Product p ")
+    @Query("SELECT DISTINCT p.truckType FROM Product p WHERE p.truckType IS NOT NULL")
     List<String> getAllTruckType();
 
     @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode")
