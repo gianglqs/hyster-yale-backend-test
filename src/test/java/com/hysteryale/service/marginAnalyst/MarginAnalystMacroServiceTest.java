@@ -1,5 +1,6 @@
 package com.hysteryale.service.marginAnalyst;
 
+import com.hysteryale.model.Region;
 import com.hysteryale.model.marginAnalyst.Freight;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.model.marginAnalyst.TargetMargin;
@@ -179,13 +180,13 @@ public class MarginAnalystMacroServiceTest {
 
     @Test
     public void testGetTargetMargin() {
-        String region = "Region Test";
+        String region = "Asia";
         String metaSeries = "MetaSeries Test";
         LocalDate monthYear = LocalDate.of(2024, Month.JANUARY, 1);
         double expectedTargetMargin = 100;
 
         // Test case TargetMargin is existed
-        targetMarginRepository.save(new TargetMargin(region, metaSeries, monthYear, expectedTargetMargin));
+        targetMarginRepository.save(new TargetMargin(new Region(1, "Asia", "A"), metaSeries, monthYear, expectedTargetMargin));
         double result = marginAnalystMacroService.getTargetMarginValue(region, metaSeries, monthYear);
         Assertions.assertEquals(expectedTargetMargin, result);
 
