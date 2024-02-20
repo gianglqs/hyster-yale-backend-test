@@ -5,9 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 @Getter
 @Setter
 @NoArgsConstructor
