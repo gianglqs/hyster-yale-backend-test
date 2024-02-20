@@ -405,6 +405,8 @@ public class IMMarginAnalystDataService {
                 //Check plant of Model Code
                 String modelCode = row.getCell(COLUMN_NAME.get("Model Code")).getStringCellValue();
                 String plant = productRepository.getPlantByModelCode(modelCode);
+                if(plant == null)
+                    continue;
 
                 //Extract MonthYear from file
                 String monthYearCell = row.getCell(COLUMN_NAME.get("Order Booked Date")).getStringCellValue();
