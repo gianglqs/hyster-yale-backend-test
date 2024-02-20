@@ -1,6 +1,118 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.6.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
-    <changeSet author="hoangnhan (generated)" id="1706496779185-1">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-1">
+        <createTable tableName="product">
+            <column name="model_code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="brand" type="VARCHAR(255)"/>
+            <column name="clazz" type="VARCHAR(255)"/>
+            <column name="family" type="VARCHAR(255)"/>
+            <column name="meta_series" type="VARCHAR(255)"/>
+            <column name="plant" type="VARCHAR(255)"/>
+            <column name="segment" type="VARCHAR(255)"/>
+            <column name="trucktype" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="image" type="VARCHAR(255)"/>
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="product_primary_key_contraint"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-2">
+        <addUniqueConstraint columnNames="meta_series, model_code" constraintName="uk_1onsrfub7tpmstil3s7amjw1g" tableName="product"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-3">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="aopmargin_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-4">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="apacserial_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-5">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="competitorpricing_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-6">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="cost_uplift_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-7">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="costupliftseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-8">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="currency_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-9">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="discount_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-10">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="exchange_rate_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-11">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="exchangerateseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-12">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="file_uploaded_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-13">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="fileuploadedseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-14">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="freight_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-15">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-16">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="margin_analyst_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-17">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="margin_analyst_summary_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-18">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalysisaoprateseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-19">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalystseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-20">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalystsummarysequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-21">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginmacroseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-22">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="part_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-23">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="partsequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-24">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="price_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-25">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="pricesequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-26">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="productdimension_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-27">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="region_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-28">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="role_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-29">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="series_part_numberlpseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-30">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="target_margin_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-31">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="user_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-32">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="warranty_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-33">
         <createTable tableName="aopmargin">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="aopmargin_pkey"/>
@@ -13,108 +125,15 @@
                 <constraints nullable="false"/>
             </column>
             <column name="plant" type="VARCHAR(255)"/>
-            <column name="region" type="VARCHAR(255)"/>
-            <column name="region_series_plant" type="VARCHAR(255)"/>
-            <column name="series" type="VARCHAR(255)"/>
+            <column name="region_old" type="VARCHAR(255)"/>
+            <column name="meta_series" type="VARCHAR(255)"/>
             <column name="year" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
+            <column name="region" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-2">
-        <addUniqueConstraint columnNames="region_series_plant" constraintName="uk_kmmqtrmgl0l0g8hnk766ey65g" tableName="aopmargin"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-3">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="aopmargin_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-4">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="apacserial_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-5">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="competitorpricing_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-6">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="cost_uplift_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-7">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="costupliftseq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-8">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="currency_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-9">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="discount_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-10">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="exchange_rate_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-11">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="exchangerateseq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-12">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="file_uploaded_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-13">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="fileuploadedseq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-14">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="freight_sequence" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-15">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-16">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="margin_analyst_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-17">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="margin_analyst_summary_sequence" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-18">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalysisaoprateseq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-19">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalystseq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-20">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalystsummarysequence" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-21">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginmacroseq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-22">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="part_sequence" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-23">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="partsequence" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-24">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="price_sequence" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-25">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="pricesequence" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-26">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="productdimension_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-27">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="region_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-28">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="role_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-29">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="series_part_numberlpseq" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-30">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="target_margin_sequence" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-31">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="user_seq" startValue="10"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-32">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="warranty_sequence" startValue="1"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-33">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-34">
         <createTable tableName="apicdealer">
             <column name="billtocode" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="apicdealer_pkey"/>
@@ -124,22 +143,21 @@
             <column name="mkggroup" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-34">
-        <createTable tableName="booking_order">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-35">
+        <createTable tableName="booking">
             <column name="order_no" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="booking_order_pkey"/>
             </column>
-            <column name="aopmargin_percentage" type="FLOAT8"/>
+            <column name="aopmargin" type="INTEGER"/>
             <column name="bill_to" type="VARCHAR(255)"/>
             <column name="comment" type="VARCHAR(255)"/>
             <column name="ctry_code" type="VARCHAR(255)"/>
             <column name="date" type="date"/>
-            <column name="dealer_name" type="VARCHAR(255)"/>
             <column name="dealer_net" type="FLOAT8"/>
-            <column name="dealer_net_after_sur_charge" type="FLOAT8"/>
+            <column name="dealer_net_after_surcharge" type="FLOAT8"/>
             <column name="dealerpo" type="VARCHAR(255)"/>
-            <column name="margin_after_sur_charge" type="FLOAT8"/>
-            <column name="margin_percentage_after_sur_charge" type="FLOAT8"/>
+            <column name="margin_after_surcharge" type="FLOAT8"/>
+            <column name="margin_percentage_after_surcharge" type="FLOAT8"/>
             <column name="order_type" type="VARCHAR(255)"/>
             <column name="quantity" type="BIGINT">
                 <constraints nullable="false"/>
@@ -148,12 +166,15 @@
             <column name="total_cost" type="FLOAT8"/>
             <column name="truck_class" type="VARCHAR(255)"/>
             <column name="currency" type="VARCHAR(255)"/>
-            <column name="product_dimension" type="VARCHAR(255)"/>
+            <column name="modelcode" type="VARCHAR(255)"/>
             <column name="region" type="INTEGER"/>
-            <column name="model" type="VARCHAR(255)"/>
+            <column name="product" type="INTEGER"/>
+            <column name="dealer" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-35">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-36">
         <createTable tableName="competitor_color">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="competitorcolor_pkey"/>
@@ -162,7 +183,7 @@
             <column name="group_name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-36">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-37">
         <createTable tableName="competitor_pricing">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="competitorpricing_pkey"/>
@@ -203,7 +224,7 @@
             <column name="country_id" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-37">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-38">
         <createTable tableName="cost_uplift">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cost_uplift_pkey"/>
@@ -213,7 +234,7 @@
             <column name="plant" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-38">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-39">
         <createTable tableName="country">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="country_pkey"/>
@@ -222,7 +243,7 @@
             <column name="region_id" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-39">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-40">
         <createTable tableName="currency">
             <column name="currency" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="currency_pkey"/>
@@ -230,7 +251,18 @@
             <column name="currency_name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-40">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-41">
+        <createTable tableName="dealer">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dealer_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-42">
         <createTable tableName="exchange_rate">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="exchange_rate_pkey"/>
@@ -243,7 +275,7 @@
             <column name="to_currency" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-41">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-43">
         <createTable tableName="file_upload">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="file_upload_pkey"/>
@@ -254,7 +286,7 @@
             <column name="uploadedby_id" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-42">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-44">
         <createTable tableName="freight">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="freight_pkey"/>
@@ -266,7 +298,15 @@
             <column name="month_year" type="date"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-43">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-45">
+        <createTable tableName="hibernate_sequences">
+            <column name="sequence_name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="hibernate_sequences_pkey"/>
+            </column>
+            <column name="next_val" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-46">
         <createTable tableName="margin_analyst_macro">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="margin_analyst_macro_pkey"/>
@@ -285,7 +325,7 @@
             <column name="region" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-44">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-47">
         <createTable tableName="marginanalysisaoprate">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="marginanalysisaoprate_pkey"/>
@@ -314,7 +354,7 @@
             <column name="currency_currency" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-45">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-48">
         <createTable tableName="part">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="part_pkey"/>
@@ -351,23 +391,7 @@
             <column name="image" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-46">
-        <createTable tableName="productdimension">
-            <column name="modelcode" type="VARCHAR(255)">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="productdimension_pkey"/>
-            </column>
-            <column name="brand" type="VARCHAR(255)"/>
-            <column name="clazz" type="VARCHAR(255)"/>
-            <column name="family" type="VARCHAR(255)"/>
-            <column name="metaseries" type="VARCHAR(255)"/>
-            <column name="plant" type="VARCHAR(255)"/>
-            <column name="segment" type="VARCHAR(255)"/>
-            <column name="description" type="VARCHAR(255)"/>
-            <column name="image" type="VARCHAR(255)"/>
-            <column name="trucktype" type="VARCHAR(255)"/>
-        </createTable>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-47">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-49">
         <createTable tableName="region">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="region_pkey"/>
@@ -376,7 +400,7 @@
             <column name="region_short_name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-48">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-50">
         <createTable tableName="role">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="role_pkey"/>
@@ -384,20 +408,19 @@
             <column name="role_name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-49">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-51">
         <createTable tableName="shipment">
             <column name="order_no" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="shipment_pkey"/>
             </column>
-            <column name="aopmargin_percentage" type="FLOAT8"/>
-            <column name="booking_margin_percentage_after_sur_charge" type="FLOAT8"/>
+            <column name="aopmargin" type="INTEGER"/>
+            <column name="booking_margin_percentage_after_surcharge" type="FLOAT8"/>
             <column name="ctry_code" type="VARCHAR(255)"/>
             <column name="date" type="date"/>
-            <column name="dealer_name" type="VARCHAR(255)"/>
             <column name="dealer_net" type="FLOAT8"/>
-            <column name="dealer_net_after_sur_charge" type="FLOAT8"/>
-            <column name="margin_after_sur_charge" type="FLOAT8"/>
-            <column name="margin_percentage_after_sur_charge" type="FLOAT8"/>
+            <column name="dealer_net_after_surcharge" type="FLOAT8"/>
+            <column name="margin_after_surcharge" type="FLOAT8"/>
+            <column name="margin_percentage_after_surcharge" type="FLOAT8"/>
             <column name="netrevenue" type="FLOAT8">
                 <constraints nullable="false"/>
             </column>
@@ -408,12 +431,15 @@
             <column name="series" type="VARCHAR(255)"/>
             <column name="total_cost" type="FLOAT8"/>
             <column name="currency" type="VARCHAR(255)"/>
-            <column name="product_dimension" type="VARCHAR(255)"/>
+            <column name="modelcode" type="VARCHAR(255)"/>
             <column name="region" type="INTEGER"/>
-            <column name="model" type="VARCHAR(255)"/>
+            <column name="product" type="INTEGER"/>
+            <column name="dealer" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-50">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-52">
         <createTable tableName="target_margin">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="target_margin_pkey"/>
@@ -426,7 +452,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-51">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-53">
         <createTable tableName="user">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="user_pkey"/>
@@ -440,7 +466,7 @@
             <column name="role_id" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-52">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-54">
         <createTable tableName="warranty">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="warranty_pkey"/>
@@ -452,52 +478,70 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-53">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-55">
+        <addForeignKeyConstraint baseColumnNames="region" baseTableName="aopmargin" constraintName="constraint_aopmargin_region" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-56">
+        <addForeignKeyConstraint baseColumnNames="aopmargin" baseTableName="booking" constraintName="constraint_booking_and_aopmargin" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="aopmargin" validate="true"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-57">
+        <addForeignKeyConstraint baseColumnNames="dealer" baseTableName="booking" constraintName="constraint_booking_and_dealer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dealer" validate="true"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-58">
+        <addForeignKeyConstraint baseColumnNames="dealer" baseTableName="shipment" constraintName="constraint_shipment_and_dealer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dealer" validate="true"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-59">
+        <addForeignKeyConstraint baseColumnNames="order_no" baseTableName="shipment" constraintName="constraint_booking_and_shipment" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="order_no" referencedTableName="booking" validate="true"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-60">
+        <addForeignKeyConstraint baseColumnNames="aopmargin" baseTableName="shipment" constraintName="constraint_shipment_and_aopmargin" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="aopmargin" validate="true"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-61">
+        <addForeignKeyConstraint baseColumnNames="product" baseTableName="booking" constraintName="contraint_key_booking_product" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-62">
+        <addForeignKeyConstraint baseColumnNames="product" baseTableName="shipment" constraintName="contraint_key_shipment_product" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
+    </changeSet>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-63">
         <addForeignKeyConstraint baseColumnNames="from_currency" baseTableName="exchange_rate" constraintName="fk1rwcvrt8tiqppvlwu3cyh4bli" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-54">
-        <addForeignKeyConstraint baseColumnNames="uploadedby_id" baseTableName="file_upload" constraintName="fk31sgtl2h7lmobydyutt0w6kcg" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user" validate="true"/>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-64">
+        <addForeignKeyConstraint baseColumnNames="uploadedby_id" baseTableName="file_upload" constraintName="fk331rjjrewvc14f26xlav1ii24" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-55">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-65">
         <addForeignKeyConstraint baseColumnNames="currency_currency" baseTableName="part" constraintName="fk5gc3etg0f0v84k5l7lgxrgeup" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-56">
-        <addForeignKeyConstraint baseColumnNames="product_dimension" baseTableName="booking_order" constraintName="fk5k86x6qjyf79jccumn08h8fry" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="modelcode" referencedTableName="productdimension" validate="true"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-57">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-66">
         <addForeignKeyConstraint baseColumnNames="color_id" baseTableName="competitor_pricing" constraintName="fk5vyptr5fyxtgrbblddkm1aifc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="competitor_color" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-58">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-67">
         <addForeignKeyConstraint baseColumnNames="region_id" baseTableName="country" constraintName="fk76d15mm086trvaxraob3c7shj" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-59">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-68">
         <addForeignKeyConstraint baseColumnNames="currency" baseTableName="shipment" constraintName="fkb5511f7geiylgseh5euon3or7" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-60">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-69">
         <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="user" constraintName="fkbolg2pe8eh0aaug0qwmc4cy6u" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="role" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-61">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-70">
         <addForeignKeyConstraint baseColumnNames="to_currency" baseTableName="exchange_rate" constraintName="fkis2145dar1rfybx9fwjyanuoa" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-62">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-71">
         <addForeignKeyConstraint baseColumnNames="currency_currency" baseTableName="marginanalysisaoprate" constraintName="fkm07xacikh03ijwk4odjgu07xr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-63">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-72">
         <addForeignKeyConstraint baseColumnNames="region" baseTableName="shipment" constraintName="fknv9n2am8s3uqb3j5bs5u9o1l2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-64">
-        <addForeignKeyConstraint baseColumnNames="product_dimension" baseTableName="shipment" constraintName="fkp8ap09olk9b8o46fpat50w4lr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="modelcode" referencedTableName="productdimension" validate="true"/>
-    </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-65">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-73">
         <addForeignKeyConstraint baseColumnNames="currency_currency" baseTableName="margin_analyst_macro" constraintName="fkq3j8hm7fc54pmcdsp54u3dt3x" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-66">
-        <addForeignKeyConstraint baseColumnNames="region" baseTableName="booking_order" constraintName="fkq4rhwytbwu4kdi3ty6qkmuyvq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-74">
+        <addForeignKeyConstraint baseColumnNames="region" baseTableName="booking" constraintName="fkq4rhwytbwu4kdi3ty6qkmuyvq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-67">
+    <changeSet author="hoangnhan (generated)" id="1707120924867-75">
         <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="competitor_pricing" constraintName="fkqb15wk5jg24m2hdttkbd6i2f8" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="country" validate="true"/>
     </changeSet>
-    <changeSet author="hoangnhan (generated)" id="1706496779185-68">
-        <addForeignKeyConstraint baseColumnNames="currency" baseTableName="booking_order" constraintName="fks7fhlcyemwr6qlieh7itp5pbt" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
+    <changeSet author="hoangnhan (generated)" id="1707120924867-76">
+        <addForeignKeyConstraint baseColumnNames="currency" baseTableName="booking" constraintName="fks7fhlcyemwr6qlieh7itp5pbt" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
 </databaseChangeLog>
