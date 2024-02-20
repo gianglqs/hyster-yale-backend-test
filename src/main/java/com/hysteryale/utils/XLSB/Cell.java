@@ -28,6 +28,9 @@ public class Cell {
         else {
             number = Double.parseDouble(modifiedValue);
         }
+
+        if(value.contains("-"))
+            number = number * -1;
         return number;
     }
 }
