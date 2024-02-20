@@ -8,6 +8,7 @@ import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.repository.DealerRepository;
 import com.hysteryale.repository.PartRepository;
 import com.hysteryale.repository.BookingRepository;
+import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,9 @@ public class BookingService extends BasedService {
     BookingRepository bookingRepository;
     @Resource
     ProductService productService;
+
+    @Resource
+    ProductRepository productRepository;
 
     @Resource
     AOPMarginService aopMarginService;
@@ -120,8 +124,9 @@ public class BookingService extends BasedService {
         }
 
         // Series
+        String series;
         if (ORDER_COLUMNS_NAME.get("SERIES") != null) {
-            String series = row.getCell(ORDER_COLUMNS_NAME.get("SERIES")).getStringCellValue();
+            series = row.getCell(ORDER_COLUMNS_NAME.get("SERIES")).getStringCellValue();
             booking.setSeries(series);
         } else {
             throw new MissingColumnException("Missing column 'SERIES'!");
@@ -139,9 +144,9 @@ public class BookingService extends BasedService {
         if (ORDER_COLUMNS_NAME.get("MODEL") != null) {
             Cell modelCell = row.getCell(ORDER_COLUMNS_NAME.get("MODEL"));
             //set ProductDimension
-            Product product = productService.getProductDimensionByModelCode(modelCell.getStringCellValue());
-            if (product != null) {
-                booking.setProduct(product);
+            Optional<Product> productOptional = productRepository.findByModelCodeAndSeries(modelCell.getStringCellValue(), series);
+            if (productOptional.isPresent()) {
+                booking.setProduct(productOptional.get());
             } else {
                 logWarning("Not found ProductDimension with OrderNo: " + booking.getOrderNo());
                 return null;
@@ -184,9 +189,17 @@ public class BookingService extends BasedService {
 
         // dealerName
         if (ORDER_COLUMNS_NAME.get("DEALERNAME") != null) {
-            Cell dealerNameCell = row.getCell(ORDER_COLUMNS_NAME.get("DEALERNAME"));
-            Dealer dealer = dealerRepository.findByName(dealerNameCell.getStringCellValue());
-            booking.setDealer(dealer);
+            String dealerName = row.getCell(ORDER_COLUMNS_NAME.get("DEALERNAME")).getStringCellValue();
+            Optional<Dealer> dealerOptional = dealerRepository.findByName(dealerName);
+            if (dealerOptional.isPresent()) {
+                booking.setDealer(dealerOptional.get());
+            } else {
+                dealerRepository.save(new Dealer(dealerName));
+                Optional<Dealer> dealerOptional1 = dealerRepository.findByName(dealerName);
+                booking.setDealer(dealerOptional1.get());
+            }
+
+
         } else {
             throw new MissingColumnException("Missing column 'DEALERNAME'!");
         }

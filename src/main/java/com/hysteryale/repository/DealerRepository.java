@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DealerRepository extends JpaRepository<Dealer, Integer> {
 
@@ -12,5 +13,5 @@ public interface DealerRepository extends JpaRepository<Dealer, Integer> {
     List<String> getAllDealerName();
 
     @Query("SELECT d FROM Dealer d WHERE d.name = :name")
-    Dealer findByName(String name);
+    Optional<Dealer> findByName(String name);
 }
