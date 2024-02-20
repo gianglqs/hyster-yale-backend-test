@@ -92,8 +92,10 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode AND p.metaSeries = :metaSeries")
     Optional<Product> findByModelCodeAndMetaSeries(String modelCode, String metaSeries);
 
-
     @Query(value = "SELECT * FROM product p WHERE p.meta_series = :metaSeries LIMIT 1", nativeQuery = true)
     Product getProductByMetaSeries(@Param("metaSeries") String metaSeries);
+
+    @Query(value = "SELECT p.plant FROM product p WHERE p.model_code = :model_code LIMIT 1", nativeQuery = true)
+    String getPlantByModelCode(@Param("model_code") String modelCode);
 
 }
