@@ -11,18 +11,23 @@ import com.hysteryale.service.BookingService;
 import com.hysteryale.service.ExchangeRateService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.CurrencyFormatUtils;
+import com.hysteryale.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -360,22 +365,35 @@ public class IMMarginAnalystDataService {
         return imMarginAnalystSummary;
     }
 
+    /**
+     * Extract MonthYear from uploaded file with pattern 'mmm dd yyyy' as  'Dec 27 2023'
+     */
+    private LocalDate extractMonthYear(String monthYear) {
+        Pattern pattern = Pattern.compile("(\\w{3}) (\\d{2}) (\\d{4})"); // mmm dd yyyy
+        Matcher matcher = pattern.matcher(monthYear);
+
+        if(matcher.find()) {
+            String strMonth = matcher.group(1);
+            int year = Integer.parseInt(matcher.group(3));
+            return LocalDate.of(year, DateUtils.getMonth(strMonth), 1);
+        }
+        else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order Booked Date in file does not in appropriate form");
+    }
+
     public void calculateMarginAnalysisData(String fileUUID, String currency) throws IOException {
         String fileName = fileUploadService.getFileNameByUUID(fileUUID); // fileName has been hashed
-
         FileInputStream is = new FileInputStream(fileName);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
-
         Sheet sheet = workbook.getSheetAt(0);
         List<IMMarginAnalystData> imMarginAnalystDataList = new ArrayList<>();
 
         String orderNumber = "";
-
+        String strMonthYear = "";
         for(Row row : sheet) {
             if(row.getRowNum() == 0)
                 getColumnName(row);
             else if (!row.getCell(COLUMN_NAME.get("Model Code"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
-
                 // Check if the Part Number is "Commission" then ignore it.
                 if(row.getCell(COLUMN_NAME.get("Part Number"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("Commission"))
                     continue;
@@ -384,14 +402,14 @@ public class IMMarginAnalystDataService {
                 String orderIDCellValue = row.getCell(COLUMN_NAME.get("Order ID"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                 if(!orderIDCellValue.isEmpty()) orderNumber = orderIDCellValue;
 
-                // Find Booking Order for checking plant and monthYear
-                Optional<Booking> optionalBookingOrder = bookingService.getBookingOrderByOrderNumber(orderNumber);
-                if(optionalBookingOrder.isEmpty())
-                    continue;
+                //Check plant of Model Code
+                String modelCode = row.getCell(COLUMN_NAME.get("Model Code")).getStringCellValue();
+                String plant = productRepository.getPlantByModelCode(modelCode);
 
-                String plant = optionalBookingOrder.get().getProduct().getPlant();
-                LocalDate monthYear = optionalBookingOrder.get().getDate();
-                monthYear = LocalDate.of(monthYear.getYear(), monthYear.getMonth(), 1);
+                //Extract MonthYear from file
+                String monthYearCell = row.getCell(COLUMN_NAME.get("Order Booked Date")).getStringCellValue();
+                if(!monthYearCell.isEmpty()) strMonthYear = monthYearCell;
+                LocalDate monthYear = extractMonthYear(strMonthYear);
 
                 IMMarginAnalystData imMarginAnalystData;
                 if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
@@ -400,6 +418,8 @@ public class IMMarginAnalystDataService {
                 }
                 else {
                     // calculate US plant Margin Analysis Data
+                    Optional<Booking> optionalBookingOrder = bookingService.getBookingOrderByOrderNumber(orderNumber);
+                    if(optionalBookingOrder.isEmpty()) continue;
                     double manufacturingCost = optionalBookingOrder.get().getTotalCost();
                     imMarginAnalystData = mapUSPlantMarginAnalysisData(row, manufacturingCost, currency, monthYear, orderNumber, plant);
                 }
