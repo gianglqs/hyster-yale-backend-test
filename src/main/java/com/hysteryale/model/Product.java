@@ -26,8 +26,8 @@ public class Product {
     private String modelCode;
 
     @NaturalId
-    @Column(name = "meta_series")
-    private String metaSeries;
+    @Column(name = "series")
+    private String series;
 
     private String brand;
     private String plant;
@@ -44,9 +44,9 @@ public class Product {
         this.modelCode = modelCode;
     }
 
-    public Product(String modelCode, String metaSeries, String brand, String plant, String clazz, String segment, String family, String truckType, String image, String description) {
+    public Product(String modelCode, String series, String brand, String plant, String clazz, String segment, String family, String truckType, String image, String description) {
         this.modelCode = modelCode;
-        this.metaSeries = metaSeries;
+        this.series = series;
         this.brand = brand;
         this.plant = plant;
         this.clazz = clazz;
@@ -62,11 +62,11 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(modelCode, product.modelCode) && Objects.equals(metaSeries, product.metaSeries);
+        return Objects.equals(modelCode, product.modelCode) && Objects.equals(series, product.series);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(modelCode, metaSeries);
+        return Objects.hash(modelCode, series);
     }
 }

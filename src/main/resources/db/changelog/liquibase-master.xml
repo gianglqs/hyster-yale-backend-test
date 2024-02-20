@@ -3,4 +3,7 @@
     <include file="classpath:db/changelog/liquibase-outputChangeLog.xml" relativeToChangelogFile="false" />
     <include file="classpath:db/changelog/liquibase-uploadData.xml" relativeToChangelogFile="false"/>
 
+
+    <include file="classpath:db/changelog/liquibase-modify-table-product.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

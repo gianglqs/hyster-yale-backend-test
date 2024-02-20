@@ -1,0 +1,66 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="rename-column-metaseries" author="songiang">
+        <renameColumn tableName="product" oldColumnName="meta_series" newColumnName="series"/>
+    </changeSet>
+
+    <changeSet id="update-data-product-in-booking" author="songiang">
+        <dropForeignKeyConstraint baseTableName="booking" constraintName="contraint_key_booking_product"/>
+
+        <sql>
+            UPDATE booking
+            SET product = 0
+        </sql>
+
+        <sql>
+            UPDATE booking b
+            SET product = (SELECT id
+                           FROM product p
+                           WHERE b.modelcode = p.model_code
+                             and b.series = p.series)
+        </sql>
+
+        <!--        delete recode have product = 0 -->
+        <sql>
+            DELETE
+            FROM booking
+            WHERE product = 0
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="booking" baseColumnNames="product"
+                                 constraintName="contraint_key_booking_product" referencedTableName="product"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="update-data-product-in-shipment" author="songiang">
+        <dropForeignKeyConstraint baseTableName="shipment" constraintName="contraint_key_shipment_product"/>
+
+        <sql>
+            UPDATE shipment
+            SET product = 0
+        </sql>
+
+        <sql>
+            UPDATE shipment b
+            SET product = (SELECT id
+                           FROM product p
+                           WHERE b.modelcode = p.model_code
+                             and b.series = p.series)
+        </sql>
+
+        <!--        delete recode have product = 0 -->
+        <sql>
+            DELETE
+            FROM shipment
+            WHERE product = 0
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="shipment" baseColumnNames="product"
+                                 constraintName="contraint_key_shipment_product" referencedTableName="product"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>
