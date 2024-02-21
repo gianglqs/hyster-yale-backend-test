@@ -444,10 +444,9 @@ public class ProductService extends BasedService {
                 if (newProduct.getModelCode().equals(oldProduct.getModelCode())
                         //in DB : series but in ProductDimension file is metaSeries
                         && newProduct.getSeries().equals(oldProduct.getSeries().substring(1))) {
-                    oldProduct.setBrand(newProduct.getBrand());
                     oldProduct.setFamily(newProduct.getFamily());
                     oldProduct.setSegment(newProduct.getSegment());
-                    oldProduct.setBrand(newProduct.getBrand());
+                    oldProduct.setTruckType(newProduct.getTruckType());
                     break;
                 }
             }
