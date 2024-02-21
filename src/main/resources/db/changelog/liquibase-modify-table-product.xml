@@ -127,4 +127,16 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="delete-column-modelcode" author="songiang">
+        <dropColumn tableName="booking" columnName="modelcode"/>
+    </changeSet>
+
+    <changeSet id="delete-column-modelcode-shipment" author="songiang">
+        <dropColumn tableName="shipment" columnName="modelcode"/>
+    </changeSet>
+
+    <changeSet id="recreate-dealer-sequence" author="songiang">
+        <createSequence sequenceName="dealer_seq" startValue="32" cacheSize="100" incrementBy="1"/>
+    </changeSet>
+    
 </databaseChangeLog>
