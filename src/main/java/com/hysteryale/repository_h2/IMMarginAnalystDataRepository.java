@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IMMarginAnalystDataRepository extends JpaRepository<IMMarginAnalystData, Integer> {
     @Query("SELECT m from IMMarginAnalystData m " +
@@ -25,4 +26,10 @@ public interface IMMarginAnalystDataRepository extends JpaRepository<IMMarginAna
     @Query("SELECT CASE WHEN (COUNT(m) > 0) THEN true ELSE false END " +
             "FROM IMMarginAnalystData m WHERE m.fileUUID = ?1 AND currency = ?2")
     boolean isFileCalculated(String fileUIID, String currency);
+
+    @Query("SELECT m from IMMarginAnalystData m " +
+            "WHERE m.modelCode = ?1 " +
+            "AND m.optionCode = ?2 " +
+            "AND m.type = ?3")
+    Optional<IMMarginAnalystData> getIMMarginAnalystDataForTesting(String modelCode, String partNumber, int type);
 }

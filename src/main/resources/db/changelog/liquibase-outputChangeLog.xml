@@ -389,4 +389,18 @@
         </sql>
     </changeSet>
 
+    <changeSet id="update-target-margin-region" author="hoangnhan">
+        <sql>
+            UPDATE target_margin
+            SET region = (SELECT r.id FROM region r WHERE r.region_name = region)
+        </sql>
+    </changeSet>
+    <changeSet id="rename-target-margin-region" author="hoangnhan">
+        <renameColumn tableName="target_margin" oldColumnName="region" newColumnName="region_id"/>
+    </changeSet>
+    <changeSet id="change-target-margin-region-dtype" author="hoangnhan">
+        <modifyDataType tableName="target_margin" columnName="region_id" newDataType="int"/>
+    </changeSet>
+    
+
 </databaseChangeLog>

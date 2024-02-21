@@ -5,9 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,6 +25,9 @@ public class Cell {
         else {
             number = Double.parseDouble(modifiedValue);
         }
+
+        if(value.contains("-"))
+            number = number * -1;
         return number;
     }
 }

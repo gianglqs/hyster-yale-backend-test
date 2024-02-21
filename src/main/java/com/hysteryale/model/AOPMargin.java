@@ -20,6 +20,7 @@ public class AOPMargin {
     private String description;
     private double dnUSD;
     private double marginSTD;
+    @Column(name="\"year\"")
     private int year;
     private String plant;
     @Column(name = "meta_series")

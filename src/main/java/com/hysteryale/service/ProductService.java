@@ -426,8 +426,6 @@ public class ProductService extends BasedService {
                 assignColumnNames(row);
             else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 1) {
-
-
                 listProduct.addAll(mappedFromAPACFile(row));
             }
         }

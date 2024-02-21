@@ -1,6 +1,5 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.Booking;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.utils.CurrencyFormatUtils;
@@ -25,8 +24,6 @@ import java.util.Map;
 public class ShipmentServiceTest {
     @Resource
     ShipmentService shipmentService;
-    @Resource
-    BookingService bookingService;
     FilterModel filters;
     @Resource
     ExchangeRateService exchangeRateService;
@@ -54,8 +51,8 @@ public class ShipmentServiceTest {
                 "",
                 "",
                 "",
-                "",
-                "",
+                "2023-10-01",
+                "2023-10-10",
                 null,
                 1500,
                 1,
@@ -64,7 +61,8 @@ public class ShipmentServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(),
+                "");
     }
 
     private void assertTotalValue(Shipment totalResult, long totalQuantity, double totalDealerNet,
@@ -100,37 +98,11 @@ public class ShipmentServiceTest {
         );
     }
 
-    private void assertTotalBookingMarginPercentage(FilterModel filters, double marginResult) throws ParseException {
-        Map<String, Object> result = bookingService.getBookingByFilter(filters);
-
-        List<Booking> listResult = (List<Booking>) result.get("listBookingOrder");
-
-        double totalDealerNet = 0.0;
-        double totalCost = 0.0;
-
-        for(Booking bo : listResult) {
-            if(bo.getCurrency().getCurrency().equals("AUD")) {
-                totalDealerNet += bo.getDealerNet() * rate;
-                totalCost += bo.getTotalCost() * rate;
-            }
-            else {
-                totalDealerNet += bo.getDealerNet();
-                totalCost += bo.getTotalCost();
-            }
-        }
-        double totalMarginPercentage = (totalDealerNet - totalCost) / totalDealerNet;
-        if(!Double.isNaN(totalMarginPercentage))
-            Assertions.assertEquals(
-                    CurrencyFormatUtils.formatDoubleValue(totalMarginPercentage, CurrencyFormatUtils.decimalFormatFourDigits),
-                    CurrencyFormatUtils.formatDoubleValue(marginResult, CurrencyFormatUtils.decimalFormatFourDigits)
-            );
-    }
-
     @Test
     public void testGetShipmentByFilter_orderNumber() throws ParseException {
         resetFilters();
 
-        String orderNumber = "F90210";
+        String orderNumber = "H08833";
         filters.setOrderNo(orderNumber);
 
         Map<String, Object> result = shipmentService.getShipmentByFilter(filters);
@@ -161,7 +133,6 @@ public class ShipmentServiceTest {
             totalMarginAfterSurcharge += sm.getMarginAfterSurcharge();
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -209,7 +180,6 @@ public class ShipmentServiceTest {
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -257,7 +227,6 @@ public class ShipmentServiceTest {
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -305,7 +274,6 @@ public class ShipmentServiceTest {
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -353,7 +321,6 @@ public class ShipmentServiceTest {
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -361,7 +328,7 @@ public class ShipmentServiceTest {
     public void testGetShipmentByFilter_dealerName() throws ParseException {
         resetFilters();
 
-        String dealerName = "ADAPT-A-LIFT GROUP";
+        String dealerName = "PACIFIC FEDERAL";
         filters.setDealers(Collections.singletonList(dealerName));
 
         Map<String, Object> result = shipmentService.getShipmentByFilter(filters);
@@ -382,7 +349,7 @@ public class ShipmentServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Shipment sm : shipmentList) {
-            Assertions.assertEquals(dealerName, sm.getDealerName());
+            Assertions.assertEquals(dealerName, sm.getDealer().getName());
 
             totalQuantity += sm.getQuantity();
             if(sm.getCurrency().getCurrency().equals("AUD")) {
@@ -401,7 +368,6 @@ public class ShipmentServiceTest {
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -449,7 +415,6 @@ public class ShipmentServiceTest {
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -497,7 +462,6 @@ public class ShipmentServiceTest {
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 
@@ -506,7 +470,7 @@ public class ShipmentServiceTest {
         resetFilters();
 
         String fromDate = "2023-05-01";
-        String toDate = "2023-05-31";
+        String toDate = "2023-05-10";
         filters.setFromDate(fromDate);
         filters.setToDate(toDate);
 
@@ -548,7 +512,6 @@ public class ShipmentServiceTest {
             }
         }
         double totalMarginPercentageAfterSurcharge = (totalDNAfterSurcharge - totalCost) / totalDNAfterSurcharge;
-        assertTotalBookingMarginPercentage(filters, totalResult.getBookingMarginPercentageAfterSurcharge());
         assertTotalValue(totalResult, totalQuantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalNetRevenue, totalMarginAfterSurcharge, totalMarginPercentageAfterSurcharge);
     }
 

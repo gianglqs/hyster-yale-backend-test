@@ -1,5 +1,6 @@
 package com.hysteryale.model.marginAnalyst;
 
+import com.hysteryale.model.Region;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,9 @@ public class TargetMargin {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "target_margin_sequence")
     private int id;
-    private String region;
+
+    @ManyToOne
+    private Region region;
 
     @Column(name = "meta_series")
     private String metaSeries;
@@ -29,7 +32,7 @@ public class TargetMargin {
     @Column(name = "std_margin_percentage")
     private double stdMarginPercentage;
 
-    public TargetMargin (String region, String metaSeries, LocalDate monthYear, double stdMarginPercentage) {
+    public TargetMargin (Region region, String metaSeries, LocalDate monthYear, double stdMarginPercentage) {
         this.region = region;
         this.metaSeries = metaSeries;
         this.monthYear = monthYear;
