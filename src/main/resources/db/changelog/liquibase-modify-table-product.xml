@@ -127,4 +127,14 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
+    <changeSet id="delete-column-modelcode" author="songiang">
+        <dropColumn tableName="booking" columnName="modelcode"/>
+    </changeSet>
+
+    <changeSet id="delete-column-modelcode-shipment" author="songiang">
+        <dropColumn tableName="shipment" columnName="modelcode"/>
+    </changeSet>
+
+
+    
 </databaseChangeLog>
