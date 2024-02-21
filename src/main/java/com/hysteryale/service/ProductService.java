@@ -334,7 +334,7 @@ public class ProductService extends BasedService {
 
         if (hysterSeriesCell.getCellType() == CellType.STRING && hysterModelCell.getCellType() == CellType.STRING) {
             String hysterSeries = hysterSeriesCell.getStringCellValue();
-            String hysterModel = hysterModelCell.getStringCellValue();
+            String hysterModel = getValidModelCodeFromModelCell(hysterModelCell);
 
 
             if (!hysterModel.equals("NA") && !hysterSeries.equals("NA")) {
@@ -342,7 +342,7 @@ public class ProductService extends BasedService {
                 hysterProduct.setSeries(hysterSeries);
                 hysterProduct.setPlant(plant);
                 hysterProduct.setClazz(clazz);
-                hysterProduct.setBrand("H");
+                hysterProduct.setBrand("Hyster");
                 listProduct.add(hysterProduct);
             }
         }
@@ -354,7 +354,7 @@ public class ProductService extends BasedService {
 
         if (yaleSeriesCell.getCellType() == CellType.STRING && yaleModelCell.getCellType() == CellType.STRING) {
             String yaleSeries = yaleSeriesCell.getStringCellValue();
-            String yaleModel = yaleModelCell.getStringCellValue();
+            String yaleModel = getValidModelCodeFromModelCell(yaleModelCell);
 
 
             if (!yaleModel.equals("NA") && !yaleSeries.equals("NA")) {
@@ -362,13 +362,18 @@ public class ProductService extends BasedService {
                 yaleProduct.setSeries(yaleSeries);
                 yaleProduct.setPlant(plant);
                 yaleProduct.setClazz(clazz);
-                yaleProduct.setBrand("Y");
+                yaleProduct.setBrand("Yale");
                 listProduct.add(yaleProduct);
             }
         }
 
 
         return listProduct;
+    }
+
+    private String getValidModelCodeFromModelCell(Cell modelCell){
+        String modelCode = modelCell.getStringCellValue();
+        return modelCode.split("_| -")[0];
     }
 
     public void importProduct(List<MultipartFile> fileList, Authentication authentication) throws Exception {

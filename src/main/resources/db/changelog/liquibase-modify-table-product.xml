@@ -63,4 +63,68 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
+    <!--    modify import valid modelCode-->
+    <changeSet id="delete-old-product" author="songiang">
+        <dropForeignKeyConstraint baseTableName="booking" constraintName="contraint_key_booking_product"/>
+        <dropForeignKeyConstraint baseTableName="shipment" constraintName="contraint_key_shipment_product"/>
+        <sql>
+            DELETE
+            FROM product
+        </sql>
+    </changeSet>
+
+    <changeSet id="upload-new-data-product" author="songiang">
+        <loadUpdateData
+                encoding="UTF-8"
+                file="classpath:db/database/product.csv"
+                onlyUpdate="false"
+                primaryKey="id"
+                quotchar="'"
+                separator=","
+                tableName="product">
+        </loadUpdateData>
+    </changeSet>
+
+    <changeSet id="update-data-product-in-booking-2" author="songiang">
+        <sql>
+            UPDATE booking b
+            SET product = (SELECT id
+                           FROM product p
+                           WHERE b.modelcode = p.model_code
+                             and b.series = p.series)
+        </sql>
+
+        <!--        delete recode have product = 0 -->
+        <sql>
+            DELETE
+            FROM booking
+            WHERE product = 0
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="booking" baseColumnNames="product"
+                                 constraintName="contraint_key_booking_product" referencedTableName="product"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="update-data-product-in-shipment-2" author="songiang">
+        <sql>
+            UPDATE shipment b
+            SET product = (SELECT id
+                           FROM product p
+                           WHERE b.modelcode = p.model_code
+                             and b.series = p.series)
+        </sql>
+
+        <!--        delete recode have product = 0 -->
+        <sql>
+            DELETE
+            FROM shipment
+            WHERE product = 0
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="shipment" baseColumnNames="product"
+                                 constraintName="contraint_key_shipment_product" referencedTableName="product"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
 </databaseChangeLog>
