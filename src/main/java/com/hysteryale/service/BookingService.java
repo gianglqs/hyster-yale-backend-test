@@ -212,6 +212,16 @@ public class BookingService extends BasedService {
             throw new MissingColumnException("Missing column 'CTRYCODE'!");
         }
 
+        // truck class
+        if (ORDER_COLUMNS_NAME.get("TRUCKCLASS") != null) {
+            Cell truckClass = row.getCell(ORDER_COLUMNS_NAME.get("TRUCKCLASS"));
+            booking.setTruckClass(truckClass.getStringCellValue());
+        } else {
+            throw new MissingColumnException("Missing column 'TRUCKCLASS'!");
+        }
+
+
+
         // AOPMargin
         AOPMargin aopMargin = aopMarginService.getAOPMargin(booking.getRegion(), booking.getSeries(), booking.getProduct().getPlant(), booking.getDate());
         if (aopMargin == null)

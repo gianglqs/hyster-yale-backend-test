@@ -135,6 +135,8 @@
         <dropColumn tableName="shipment" columnName="modelcode"/>
     </changeSet>
 
-
+    <changeSet id="recreate-dealer-sequence" author="songiang">
+        <createSequence sequenceName="dealer_seq" startValue="32" cacheSize="100" incrementBy="1"/>
+    </changeSet>
     
 </databaseChangeLog>
