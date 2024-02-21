@@ -138,5 +138,14 @@
     <changeSet id="recreate-dealer-sequence" author="songiang">
         <createSequence sequenceName="dealer_seq" startValue="32" cacheSize="100" incrementBy="1"/>
     </changeSet>
-    
+
+    <changeSet id="delete-booking-and-shipment-where-currency-is-null" author="songiang">
+        <sql>DELETE
+             FROM shipment
+             WHERE currency IS NULL</sql>
+        <sql>DELETE
+             FROM booking
+             WHERE currency IS NULL</sql>
+    </changeSet>
+
 </databaseChangeLog>
