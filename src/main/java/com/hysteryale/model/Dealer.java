@@ -19,7 +19,11 @@ public class Dealer {
     private String name;
     private String description;
 
-    public Dealer(String name){
+    public Dealer(String name) {
         this.name = name;
+    }
+
+    public boolean equals(String name) {
+        return this.name.equals(name);
     }
 }

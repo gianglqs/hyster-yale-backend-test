@@ -65,6 +65,10 @@ public class Product {
         return Objects.equals(modelCode, product.modelCode) && Objects.equals(series, product.series);
     }
 
+    public boolean equals(String modelCode, String series) {
+        return this.modelCode.equals(modelCode) && this.series.equals(series);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(modelCode, series);
