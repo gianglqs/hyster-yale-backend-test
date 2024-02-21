@@ -5,10 +5,7 @@ import com.hysteryale.model.Currency;
 import com.hysteryale.model.*;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
-import com.hysteryale.repository.DealerRepository;
-import com.hysteryale.repository.PartRepository;
-import com.hysteryale.repository.BookingRepository;
-import com.hysteryale.repository.ProductRepository;
+import com.hysteryale.repository.*;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +47,9 @@ public class BookingService extends BasedService {
     AOPMarginService aopMarginService;
 
     @Resource
+    AOPMarginRepository aopMarginRepository;
+
+    @Resource
     PartRepository partRepository;
 
     @Resource
@@ -66,6 +66,9 @@ public class BookingService extends BasedService {
 
     @Resource
     CurrencyService currencyService;
+
+    @Resource
+    RegionRepository regionRepository;
 
     @Resource
     DealerRepository dealerRepository;
@@ -112,7 +115,7 @@ public class BookingService extends BasedService {
     }
 
 
-    Booking mapExcelDataIntoOrderObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) throws MissingColumnException {
+    Booking mapExcelDataIntoOrderObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME, List<Product> products, List<Region> regions, List<AOPMargin> aopMargins, List<Dealer> dealers) throws MissingColumnException {
         Booking booking = new Booking();
 
         //set OrderNo
@@ -144,13 +147,16 @@ public class BookingService extends BasedService {
         if (ORDER_COLUMNS_NAME.get("MODEL") != null) {
             Cell modelCell = row.getCell(ORDER_COLUMNS_NAME.get("MODEL"));
             //set ProductDimension
-            Optional<Product> productOptional = productRepository.findByModelCodeAndSeries(modelCell.getStringCellValue(), series);
-            if (productOptional.isPresent()) {
-                booking.setProduct(productOptional.get());
-            } else {
-                logWarning("Not found ProductDimension with OrderNo: " + booking.getOrderNo());
+            Product product = null;
+            for (Product p : products) {
+                if (p.equals(modelCell.getStringCellValue(), series))
+                    product = p;
+            }
+            if (product == null) {
+                log.error("Not found Product with OrderNo: " + booking.getOrderNo());
                 return null;
             }
+            booking.setProduct(product);
         } else {
             throw new MissingColumnException("Missing column 'MODEL'!");
         }
@@ -158,13 +164,17 @@ public class BookingService extends BasedService {
         //set region
         if (ORDER_COLUMNS_NAME.get("REGION") != null) {
             Cell regionCell = row.getCell(ORDER_COLUMNS_NAME.get("REGION"));
-            Region region = regionService.getRegionByShortName(regionCell.getStringCellValue());
-            if (region != null) {
-                booking.setRegion(region);
-            } else {
-                logWarning("Not found Region with OrderNo" + booking.getOrderNo());
+            Region region = null;
+
+            for (Region r : regions) {
+                if (r.getRegionShortName().equals(regionCell.getStringCellValue()))
+                    region = r;
+            }
+            if (region == null) {
+                log.error("Not found Region with OrderNo" + booking.getOrderNo());
                 return null;
             }
+            booking.setRegion(region);
         } else {
             throw new MissingColumnException("Missing column 'REGION'!");
         }
@@ -187,19 +197,28 @@ public class BookingService extends BasedService {
             throw new MissingColumnException("Missing column 'DATE'!");
         }
 
-        // dealerName
+        // dealer
         if (ORDER_COLUMNS_NAME.get("DEALERNAME") != null) {
             String dealerName = row.getCell(ORDER_COLUMNS_NAME.get("DEALERNAME")).getStringCellValue();
-            Optional<Dealer> dealerOptional = dealerRepository.findByName(dealerName);
-            if (dealerOptional.isPresent()) {
-                booking.setDealer(dealerOptional.get());
-            } else {
-                dealerRepository.save(new Dealer(dealerName));
-                Optional<Dealer> dealerOptional1 = dealerRepository.findByName(dealerName);
-                booking.setDealer(dealerOptional1.get());
+
+            Dealer dealer = null;
+            for (Dealer d : dealers) {
+                if (d.equals(dealerName)) {
+                    dealer = d;
+                }
             }
-
-
+            if (dealer == null) {
+                dealerRepository.save(new Dealer(dealerName));
+                Optional<Dealer> dealerOptional = dealerRepository.findByName(dealerName);
+                if (dealerOptional.isPresent()) {
+                    dealer = dealerOptional.get();
+                    dealers.add(dealer);
+                } else {
+                    log.error("Not found Dealer with OrderNo " + booking.getOrderNo());
+                    return null;
+                }
+            }
+            booking.setDealer(dealer);
         } else {
             throw new MissingColumnException("Missing column 'DEALERNAME'!");
         }
@@ -220,14 +239,36 @@ public class BookingService extends BasedService {
             throw new MissingColumnException("Missing column 'TRUCKCLASS'!");
         }
 
+        // Order type
+        if (ORDER_COLUMNS_NAME.get("ORDERTYPE") != null) {
+            Cell orderType = row.getCell(ORDER_COLUMNS_NAME.get("ORDERTYPE"));
+            booking.setOrderType(orderType.getStringCellValue());
+        } else {
+            throw new MissingColumnException("Missing column 'ORDERTYPE'!");
+        }
 
+        // Dealer Pro
+        if (ORDER_COLUMNS_NAME.get("DEALERPO") != null) {
+            Cell dealerPo = row.getCell(ORDER_COLUMNS_NAME.get("DEALERPO"));
+            booking.setDealerPO(dealerPo.getStringCellValue());
+        } else {
+            throw new MissingColumnException("Missing column 'DEALERPO'!");
+        }
 
         // AOPMargin
-        AOPMargin aopMargin = aopMarginService.getAOPMargin(booking.getRegion(), booking.getSeries(), booking.getProduct().getPlant(), booking.getDate());
-        if (aopMargin == null)
+        AOPMargin aopMargin = null;
+        for (AOPMargin a : aopMargins) {
+            if (a.equals(booking.getRegion(), booking.getSeries().substring(1),
+                    booking.getProduct().getPlant(), booking.getDate().getYear()))
+                aopMargin = a;
+        }
+        if (aopMargin == null) {
+            log.error("Not found AOPMargin with OrderNo " + booking.getOrderNo());
             return null;
+        }
 
         booking.setAOPMargin(aopMargin);
+
 
         return booking;
     }
@@ -300,7 +341,7 @@ public class BookingService extends BasedService {
         }
     }
 
-    public void importNewBookingFileByFile(String filePath, InputStream isListCostData) throws IOException, MissingColumnException {
+    private void importNewBookingFileByFile(String filePath, InputStream isListCostData) throws IOException, MissingColumnException {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         List<Booking> bookingList = new LinkedList<>();
@@ -313,22 +354,31 @@ public class BookingService extends BasedService {
             orderSheet = workbook.getSheet("Input - Bookings");
             numRowName = 1;
         }
+
+        // prepare data for import
+        List<Product> products = productRepository.findAll();
+        List<Region> regions = regionRepository.findAll();
+        List<AOPMargin> aopMargins = aopMarginRepository.findAll();
+        List<Dealer> dealers = dealerRepository.findAll();
+
         //get list cost data from month and year
 
         for (Row row : orderSheet) {
             if (row.getRowNum() == numRowName) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
             else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
-                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers);
 
                 if (newBooking == null)
                     continue;
 
                 // import DN, DNAfterSurcharge
                 newBooking = importDNAndDNAfterSurcharge(newBooking);
+                if (newBooking == null)
+                    continue;
 
                 // check productDimension
                 if (USPlant.contains(newBooking.getProduct().getPlant())) {
-                    newBooking = setTotalCostAndCurrency(newBooking, listCostDataByMonthAndYear);
+                    newBooking = setTotalCost(newBooking, listCostDataByMonthAndYear);
                     logInfo("US Plant");
                 } else {
                     newBooking = importCostRMBOfEachParts(newBooking);
@@ -356,16 +406,24 @@ public class BookingService extends BasedService {
             numRowName = 1;
         }
 
+        // prepare data for import
+        List<Product> products = productRepository.findAll();
+        List<Region> regions = regionRepository.findAll();
+        List<AOPMargin> aopMargins = aopMarginRepository.findAll();
+        List<Dealer> dealers = dealerRepository.findAll();
+
         for (Row row : orderSheet) {
             if (row.getRowNum() == numRowName) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
             else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
-                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers);
 
                 if (newBooking == null)
                     continue;
 
                 // import DN, DNAfterSurcharge
                 newBooking = importDNAndDNAfterSurcharge(newBooking);
+                if (newBooking == null)
+                    continue;
 
                 if (USPlant.contains(newBooking.getProduct().getPlant())) {
                     logInfo("US Plant");
@@ -415,16 +473,24 @@ public class BookingService extends BasedService {
 
         List<MarginDataFile> marginDataFileList = getListMarginDataByMonthAndYear(month, year);
 
+        // prepare data for import
+        List<Product> products = productRepository.findAll();
+        List<Region> regions = regionRepository.findAll();
+        List<AOPMargin> aopMargins = aopMarginRepository.findAll();
+        List<Dealer> dealers = dealerRepository.findAll();
+
         for (Row row : orderSheet) {
             if (row.getRowNum() == 0) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
             else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 1) {
                 // map data from excel file
-                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers);
 
                 if (newBooking == null)
                     continue;
 
                 newBooking = importDNAndDNAfterSurcharge(newBooking);
+                if (newBooking == null)
+                    continue;
                 newBooking = importOldMarginPercentageAndCurrency(newBooking, marginDataFileList);
                 newBooking = calculateTotalCostAndMarginAfterSurcharge(newBooking);
                 bookingList.add(newBooking);
@@ -439,20 +505,16 @@ public class BookingService extends BasedService {
         for (MarginDataFile marginDataFile : marginDataFileList) {
             if (marginDataFile.orderNo.equals(booking.getOrderNo())) {
                 booking.setMarginPercentageAfterSurcharge(marginDataFile.marginPercentage);
-                Currency currency = currencyService.getCurrenciesByName(marginDataFile.currency);
-                booking.setCurrency(currency);
                 break;
             }
         }
         return booking;
     }
 
-    public Booking setTotalCostAndCurrency(Booking booking, List<CostDataFile> costDataFileList) {
+    public Booking setTotalCost(Booking booking, List<CostDataFile> costDataFileList) {
         for (CostDataFile costDataFile : costDataFileList) {
             if (costDataFile.orderNo.equals(booking.getOrderNo())) {
                 booking.setTotalCost(costDataFile.totalCost);
-                Currency currency = currencyService.getCurrencies(costDataFile.currency);
-                booking.setCurrency(currency);
                 break;
             }
         }
@@ -467,7 +529,6 @@ public class BookingService extends BasedService {
 
         if (currency == null)
             return booking;
-        booking.setCurrency(currency);
         logInfo(booking.getOrderNo() + "   " + currency.getCurrency());
         double totalCost = 0;
         if (!booking.getProduct().getPlant().equals("SN")) { // plant is Hysteryale, Maximal, Ruyi, Staxx
@@ -552,10 +613,6 @@ public class BookingService extends BasedService {
                     costDataFile.totalCost = Double.parseDouble(totalCostCell.getStringCellValue());
                 }
 
-                //get Currency
-                Cell currencyCell = row.getCell(ORDER_COLUMNS_NAME.get("Curr"));
-                costDataFile.currency = currencyCell.getStringCellValue();
-
                 result.add(costDataFile);
             }
         }
@@ -607,10 +664,6 @@ public class BookingService extends BasedService {
                             marginDataFile.marginPercentage = 0;
                         }
 
-                        //get Currency
-                        Cell currencyCell = row.getCell(ORDER_COLUMNS_NAME.get("Currency"));
-                        marginDataFile.currency = currencyCell.getStringCellValue();
-
                         result.add(marginDataFile);
                     }
                 }
@@ -629,8 +682,6 @@ public class BookingService extends BasedService {
             for (CostDataFile costData : costDataList) {
                 if (booking.getOrderNo().equals(costData.orderNo)) {
                     booking.setTotalCost(costData.totalCost);
-                    Currency currency = currencyService.getCurrencies(costData.currency);
-                    booking.setCurrency(currency);
                     booking = calculateMargin(booking);
 
                 }
@@ -643,13 +694,11 @@ public class BookingService extends BasedService {
     private static class CostDataFile {
         String orderNo;
         double totalCost;
-        String currency;
     }
 
     private static class MarginDataFile {
         String orderNo;
         double marginPercentage;
-        String currency;
     }
 
 
@@ -658,14 +707,20 @@ public class BookingService extends BasedService {
     }
 
     public Booking importDNAndDNAfterSurcharge(Booking booking) {
-        Set<Part> newParts = partRepository.getPartByOrderNumber(booking.getOrderNo());
+        List<Part> parts = partRepository.getPartByOrderNumber(booking.getOrderNo());
+        if (parts.isEmpty()) {
+            log.info("Not found Part with OrderNo: " + booking.getOrderNo());
+            return null;
+        }
+
         double dealerNet = 0;
-        for (Part part : newParts) {
+        for (Part part : parts) {
             dealerNet += part.getNetPriceEach();
         }
         double surcharge = 0;
         booking.setDealerNet(dealerNet);
         booking.setDealerNetAfterSurcharge(dealerNet - surcharge);
+        booking.setCurrency(parts.get(0).getCurrency());
         return booking;
     }
 
@@ -757,7 +812,7 @@ public class BookingService extends BasedService {
 
         Booking totalBooking = calculateTotal(getTotalBookings, exchangeRateList);
 
-        result.put("totalItems", totalBooking.getQuantity());
+        result.put("totalItems", getTotalBookings.size());
         result.put("total", List.of(totalBooking));
 
         return result;
@@ -766,41 +821,42 @@ public class BookingService extends BasedService {
     private Booking calculateTotal(List<Booking> bookings, List<ExchangeRate> exchangeRates) {
         double dealerNet = 0;
         double dealerNetAfterSurcharge = 0;
-        int quantity = 0;
+
         double totalCost = 0;
         double marginAfterSurcharge = 0;
         double marginPercentageAfterSurcharge;
 
         for (Booking booking : bookings) {
-            if (!booking.getCurrency().getCurrency().equals("USD")) {
-                // checking exchange( currency of Booking -> 'USD') in exchangeRates
-                if (!isExistedExchangeRateInList(exchangeRates, createExchangeRateOfBookingToUSD(booking))) {
-                    // get ExchangeRate from DB
-                    ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate(booking.getCurrency().getCurrency(), "USD");
-                    exchangeRates.add(exchangeRate);
+            if (booking.getCurrency() != null) {
+                if (!booking.getCurrency().getCurrency().equals("USD")) {
+                    // checking exchange( currency of Booking -> 'USD') in exchangeRates
+                    if (!isExistedExchangeRateInList(exchangeRates, createExchangeRateOfBookingToUSD(booking))) {
+                        // get ExchangeRate from DB
+                        ExchangeRate exchangeRate = exchangeRateService.getNearestExchangeRate(booking.getCurrency().getCurrency(), "USD");
+                        exchangeRates.add(exchangeRate);
 
-                    dealerNet += booking.getDealerNet() * exchangeRate.getRate();
-                    dealerNetAfterSurcharge += booking.getDealerNetAfterSurcharge() * exchangeRate.getRate();
-                    totalCost += booking.getTotalCost() * exchangeRate.getRate();
+                        dealerNet += booking.getDealerNet() * exchangeRate.getRate();
+                        dealerNetAfterSurcharge += booking.getDealerNetAfterSurcharge() * exchangeRate.getRate();
+                        totalCost += booking.getTotalCost() * exchangeRate.getRate();
+                    } else {
+                        ExchangeRate exchangeRate = getExchangeRateFromList(exchangeRates, booking.getCurrency().getCurrency(), "USD");
+
+                        dealerNet += booking.getDealerNet() * exchangeRate.getRate();
+                        dealerNetAfterSurcharge += booking.getDealerNetAfterSurcharge() * exchangeRate.getRate();
+                        totalCost += booking.getTotalCost() * exchangeRate.getRate();
+                    }
                 } else {
-                    ExchangeRate exchangeRate = getExchangeRateFromList(exchangeRates, booking.getCurrency().getCurrency(), "USD");
-
-                    dealerNet += booking.getDealerNet() * exchangeRate.getRate();
-                    dealerNetAfterSurcharge += booking.getDealerNetAfterSurcharge() * exchangeRate.getRate();
-                    totalCost += booking.getTotalCost() * exchangeRate.getRate();
+                    dealerNet += booking.getDealerNet();
+                    dealerNetAfterSurcharge += booking.getDealerNetAfterSurcharge();
+                    totalCost += booking.getTotalCost();
                 }
-            } else {
-                dealerNet += booking.getDealerNet();
-                dealerNetAfterSurcharge += booking.getDealerNetAfterSurcharge();
-                totalCost += booking.getTotalCost();
             }
-            quantity++;
         }
 
         marginAfterSurcharge = dealerNetAfterSurcharge - totalCost;
         marginPercentageAfterSurcharge = marginAfterSurcharge / dealerNetAfterSurcharge;
 
-        return new Booking("Total", new Currency("USD"), quantity, dealerNet, dealerNetAfterSurcharge, totalCost, marginAfterSurcharge, marginPercentageAfterSurcharge);
+        return new Booking("Total", new Currency("USD"), bookings.size(), dealerNet, dealerNetAfterSurcharge, totalCost, marginAfterSurcharge, marginPercentageAfterSurcharge);
     }
 
     private ExchangeRate getExchangeRateFromList(List<ExchangeRate> exchangeRates, String fromCurrency, String toCurrency) {
