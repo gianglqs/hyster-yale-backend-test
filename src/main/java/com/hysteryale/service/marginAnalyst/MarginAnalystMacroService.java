@@ -2,10 +2,12 @@ package com.hysteryale.service.marginAnalyst;
 
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
+import com.hysteryale.model.Region;
 import com.hysteryale.model.marginAnalyst.*;
 import com.hysteryale.repository.marginAnalyst.*;
 import com.hysteryale.service.CurrencyService;
 import com.hysteryale.service.ExchangeRateService;
+import com.hysteryale.service.RegionService;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import com.hysteryale.utils.DateUtils;
 import com.hysteryale.utils.EnvironmentUtils;
@@ -42,6 +44,8 @@ public class MarginAnalystMacroService {
     WarrantyRepository warrantyRepository;
     @Resource
     ExchangeRateService exchangeRateService;
+    @Resource
+    RegionService regionService;
 
     static HashMap<String, String> MACRO_COLUMNS = new HashMap<>();
     static List<MarginAnalystMacro> listMarginData = new ArrayList<>();
@@ -233,12 +237,16 @@ public class MarginAnalystMacroService {
                 }
                 else {
                     // Map the Target Margin value from AOPF 2023
-                    String region = row.getCell(columnMap.get("Region")).getValue();
+                    String strRegion = row.getCell(columnMap.get("Region")).getValue();
                     String metaSeries = row.getCell(columnMap.get("Series")).getValue();
                     double stdMarginPercentage = row.getCell(columnMap.get("Margin % STD")).getNumericCellValue();
+
+                    Region region = regionService.getRegionByName(strRegion);
+                    if(region == null)
+                        continue;
                     TargetMargin targetMargin = new TargetMargin(region, metaSeries, monthYear, stdMarginPercentage);
 
-                    Optional<TargetMargin> optionalTargetMargin = targetMarginRepository.getTargetMargin(region, metaSeries, monthYear);
+                    Optional<TargetMargin> optionalTargetMargin = targetMarginRepository.getTargetMargin(region.getRegionName(), metaSeries, monthYear);
                     optionalTargetMargin.ifPresent(margin -> targetMargin.setId(margin.getId()));
 
                     targetMarginList.add(targetMargin);

@@ -426,8 +426,6 @@ public class ProductService extends BasedService {
                 assignColumnNames(row);
             else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 1) {
-
-
                 listProduct.addAll(mappedFromAPACFile(row));
             }
         }
@@ -441,21 +439,26 @@ public class ProductService extends BasedService {
             optionalProduct.ifPresent(listProductInDB::add);
         }
 
+        List<Product> listNewProductIsExist = new ArrayList<>();
 
         for (Product oldProduct : listProductInDB) {
             for (Product newProduct : listDimensionProduct) {
                 if (newProduct.getModelCode().equals(oldProduct.getModelCode())
-                        //in DB : series but in ProductDimension file is metaSeries
+                        //in DB is series but in ProductDimension file is metaSeries
                         && newProduct.getMetaSeries().equals(oldProduct.getMetaSeries().substring(1))) {
-                    oldProduct.setBrand(newProduct.getBrand());
                     oldProduct.setFamily(newProduct.getFamily());
                     oldProduct.setSegment(newProduct.getSegment());
-                    oldProduct.setBrand(newProduct.getBrand());
+                    oldProduct.setTruckType(newProduct.getTruckType());
+                    listNewProductIsExist.add(newProduct);
                     break;
                 }
             }
         }
-        productRepository.saveAll(listProductInDB);
+
+        listNewProductIsExist.forEach(listDimensionProduct::remove);
+        listDimensionProduct.addAll(listProductInDB);
+
+        productRepository.saveAll(listDimensionProduct);
     }
 
 
@@ -487,3 +490,4 @@ public class ProductService extends BasedService {
 
     }
 }
+

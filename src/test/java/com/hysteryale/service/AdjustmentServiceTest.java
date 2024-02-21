@@ -53,13 +53,14 @@ public class AdjustmentServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>());
+                new ArrayList<>(),
+                "");
     }
 
     @BeforeEach
     public void setUp(){
         resetFilters();
-        calculatorModel = new CalculatorModel(1, 1, 1, 1);
+        calculatorModel = new CalculatorModel(0, 0, 0, 0);
     }
 
     private void assertTotalValue(AdjustmentPayLoad totalResult, long noOfOrders, int totalAdditionalVolume,
