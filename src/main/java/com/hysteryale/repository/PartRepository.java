@@ -63,7 +63,7 @@ public interface PartRepository extends JpaRepository<Part, String> {
 
     @Query(value = "SELECT distinct new Part(p.partNumber, p.image, p.currency, p.listPrice, p.description) FROM Part p WHERE " +
             "   p.modelCode = :modelCode " +
-            "   AND SUBSTRING(p.series,2,4) = :metaSeries " +
+            "   AND p.series = :metaSeries " +
             "   AND ((:orderNumbers) IS NULL OR p.orderNumber in (:orderNumbers))" +
             "   ORDER BY p.partNumber"
 

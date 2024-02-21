@@ -529,6 +529,6 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             @Param("toDate") LocalDate toDate
     );
 
-    @Query(value = "SELECT b.orderNo FROM Booking b WHERE b.product.modelCode = :modelCode AND b.product.metaSeries = :metaSeries ")
+    @Query(value = "SELECT b.orderNo FROM Booking b WHERE b.product.modelCode = :modelCode AND b.product.series = :metaSeries ")
     List<String> getOrderNosByModelCodeAndMetaSeries(String modelCode, String metaSeries);
 }

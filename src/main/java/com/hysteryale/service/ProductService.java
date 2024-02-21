@@ -57,7 +57,7 @@ public class ProductService extends BasedService {
 
         // metaseries
         String metaSeries = row.getCell(COLUMNS.get("Metaseries")).getStringCellValue();
-        product.setMetaSeries(metaSeries);
+        product.setSeries(metaSeries);
 
         // plant
         String plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
@@ -130,7 +130,7 @@ public class ProductService extends BasedService {
     }
 
     public boolean checkExist(Product product) {
-        Optional<Product> productDimensionOptional = productRepository.findByModelCodeAndMetaSeries(product.getModelCode(), product.getMetaSeries());
+        Optional<Product> productDimensionOptional = productRepository.findByModelCodeAndSeries(product.getModelCode(), product.getSeries());
         if (productDimensionOptional.isPresent())
             return true;
         return false;
@@ -166,11 +166,6 @@ public class ProductService extends BasedService {
             plantListMap.add(pMap);
         }
         return plantListMap;
-    }
-
-    public Product getProductDimensionByModelCode(String modelCode) {
-        Optional<Product> productDimensionOptional = productRepository.findByModelCode(modelCode);
-        return productDimensionOptional.orElse(null);
     }
 
 
@@ -243,8 +238,8 @@ public class ProductService extends BasedService {
         productRepository.save(product);
     }
 
-    public Product getProductDimensionDetail(String modelCode, String metaSeries) throws NotFoundException {
-        Optional<Product> productOptional = productRepository.findByModelCodeAndMetaSeries(modelCode, metaSeries);
+    public Product getProductDimensionDetail(String modelCode, String series) throws NotFoundException {
+        Optional<Product> productOptional = productRepository.findByModelCodeAndSeries(modelCode, series);
         if (productOptional.isEmpty())
             throw new NotFoundException("Not found Product with ModelCode " + modelCode);
 
@@ -308,7 +303,7 @@ public class ProductService extends BasedService {
                     if (seriesInformation != null) {
                         productForSaving.add(new Product(
                                 modelCode,
-                                seriesInformation.getMetaSeries(),
+                                seriesInformation.getSeries(),
                                 seriesInformation.getBrand(),
                                 seriesInformation.getPlant(),
                                 seriesInformation.getClazz(),
@@ -339,15 +334,15 @@ public class ProductService extends BasedService {
 
         if (hysterSeriesCell.getCellType() == CellType.STRING && hysterModelCell.getCellType() == CellType.STRING) {
             String hysterSeries = hysterSeriesCell.getStringCellValue();
-            String hysterModel = hysterModelCell.getStringCellValue();
+            String hysterModel = getValidModelCodeFromModelCell(hysterModelCell);
 
 
             if (!hysterModel.equals("NA") && !hysterSeries.equals("NA")) {
                 hysterProduct.setModelCode(hysterModel);
-                hysterProduct.setMetaSeries(hysterSeries);
+                hysterProduct.setSeries(hysterSeries);
                 hysterProduct.setPlant(plant);
                 hysterProduct.setClazz(clazz);
-                hysterProduct.setBrand("H");
+                hysterProduct.setBrand("Hyster");
                 listProduct.add(hysterProduct);
             }
         }
@@ -359,21 +354,26 @@ public class ProductService extends BasedService {
 
         if (yaleSeriesCell.getCellType() == CellType.STRING && yaleModelCell.getCellType() == CellType.STRING) {
             String yaleSeries = yaleSeriesCell.getStringCellValue();
-            String yaleModel = yaleModelCell.getStringCellValue();
+            String yaleModel = getValidModelCodeFromModelCell(yaleModelCell);
 
 
             if (!yaleModel.equals("NA") && !yaleSeries.equals("NA")) {
                 yaleProduct.setModelCode(yaleModel);
-                yaleProduct.setMetaSeries(yaleSeries);
+                yaleProduct.setSeries(yaleSeries);
                 yaleProduct.setPlant(plant);
                 yaleProduct.setClazz(clazz);
-                yaleProduct.setBrand("Y");
+                yaleProduct.setBrand("Yale");
                 listProduct.add(yaleProduct);
             }
         }
 
 
         return listProduct;
+    }
+
+    private String getValidModelCodeFromModelCell(Cell modelCell){
+        String modelCode = modelCell.getStringCellValue();
+        return modelCode.split("_| -")[0];
     }
 
     public void importProduct(List<MultipartFile> fileList, Authentication authentication) throws Exception {
@@ -435,37 +435,30 @@ public class ProductService extends BasedService {
     private void saveListDimensionProduct(Set<Product> listDimensionProduct) {
         List<Product> listProductInDB = new ArrayList<>();
         for (Product p : listDimensionProduct) {
-            Optional<Product> optionalProduct = productRepository.findByModelCodeAndMetaSeries(p.getModelCode(), p.getMetaSeries());
-            optionalProduct.ifPresent(listProductInDB::add);
+            List<Product> products = productRepository.findByModelCodeAndMetaSeries(p.getModelCode(), p.getSeries());
+            listProductInDB.addAll(products);
         }
-
-        List<Product> listNewProductIsExist = new ArrayList<>();
 
         for (Product oldProduct : listProductInDB) {
             for (Product newProduct : listDimensionProduct) {
                 if (newProduct.getModelCode().equals(oldProduct.getModelCode())
-                        //in DB is series but in ProductDimension file is metaSeries
-                        && newProduct.getMetaSeries().equals(oldProduct.getMetaSeries().substring(1))) {
+                        //in DB : series but in ProductDimension file is metaSeries
+                        && newProduct.getSeries().equals(oldProduct.getSeries().substring(1))) {
                     oldProduct.setFamily(newProduct.getFamily());
                     oldProduct.setSegment(newProduct.getSegment());
                     oldProduct.setTruckType(newProduct.getTruckType());
-                    listNewProductIsExist.add(newProduct);
                     break;
                 }
             }
         }
-
-        listNewProductIsExist.forEach(listDimensionProduct::remove);
-        listDimensionProduct.addAll(listProductInDB);
-
-        productRepository.saveAll(listDimensionProduct);
+        productRepository.saveAll(listProductInDB);
     }
 
 
     private void saveListBaseProduct(Set<Product> list) {
         List<Product> listProductInDB = new ArrayList<>();
         for (Product p : list) {
-            Optional<Product> optionalProduct = productRepository.findByModelCodeAndMetaSeries(p.getModelCode(), p.getMetaSeries());
+            Optional<Product> optionalProduct = productRepository.findByModelCodeAndSeries(p.getModelCode(), p.getSeries());
             optionalProduct.ifPresent(listProductInDB::add);
         }
 
@@ -474,7 +467,7 @@ public class ProductService extends BasedService {
         // update product if exist
         for (Product newProduct : list) {
             for (Product product : listProductInDB) {
-                if (product.getModelCode().equals(newProduct.getModelCode()) && product.getMetaSeries().equals(newProduct.getMetaSeries())) {
+                if (product.getModelCode().equals(newProduct.getModelCode()) && product.getSeries().equals(newProduct.getSeries())) {
                     product.setPlant(newProduct.getPlant());
                     product.setClazz(newProduct.getClazz());
                     product.setBrand(newProduct.getBrand());
@@ -490,4 +483,3 @@ public class ProductService extends BasedService {
 
     }
 }
-

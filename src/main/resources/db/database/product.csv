@@ -1,308 +1,509 @@
-'model_code','brand','clazz','family','meta_series','plant','segment','trucktype','description','image','id'
-FB15PYE,Y,Class 1,'1-2 Ton Electric DBB','881',SN,C1 1-3.5T - Standard and Premium,Counterbalance,,,1
-E40ZS,H,Class 1,'1-2 Ton Elec 4 Wheel','114',Greenville,C1 1-3.5T - Standard and Premium,Counterbalance,,,2
-J1.50EX,H,Class 1,'1-2 Ton Electric DBB','225',SN,C1 1-3.5T - Standard and Premium,Counterbalance,,,3
-E40XN,H,Class 1,'1-2 Ton Elec 4 Wheel','269',Greenville,C1 1-3.5T - Standard and Premium,Counterbalance,,,4
-EREC040AH,Y,Class 1,'1-2 Ton Elec 4 Wheel','814',Greenville,C1 1-3.5T - Standard and Premium,Counterbalance,,,5
-ERC040VA,Y,Class 1,'1-2 Ton Elec 4 Wheel','969',Greenville,C1 1-3.5T - Standard and Premium,Counterbalance,,,6
-E60XM2G,H,Class 1,'2-3 Ton Elec 4 Wheel','021',Greenville,C1 1-3.5T - Standard and Premium,Counterbalance,,,7
-E507E,H,Class 1,'2-3 Ton Elec 4 Wheel','108',Greenville,C1 1-3.5T - Standard and Premium,Counterbalance,,,8
-E70XN,H,Class 1,'2-3 Ton Elec 4 Wheel','268',Greenville,C1 1-3.5T - Standard and Premium,Counterbalance,,,9
-ERC060RF,Y,Class 1,'2-3 Ton Elec 4 Wheel','908',Greenville,C1 1-3.5T - Standard and Premium,Counterbalance,,,10
-ERC35VG,Y,Class 1,'2-3 Ton Elec 4 Wheel','968',Greenville,C1 1-3.5T - Standard and Premium,Counterbalance,,,11
-E80Z,H,Class 1,'3.2-5.5 Ton Elec 4Wh','098',Greenville,C1 4-9T - Standard and Premium,Counterbalance,,,12
-E80XN,H,Class 1,'3.2-5.5 Ton Elec 4Wh','099',Greenville,C1 4-9T - Standard and Premium,Counterbalance,,,13
-ERC120HH,Y,Class 1,'3.2-5.5 Ton Elec 4Wh','839',Greenville,C1 4-9T - Standard and Premium,Counterbalance,,,14
-ERC/P 10-15 RCF,Y,Class 1,'1-2 Ton 3 Wheel RWD','888',Craigavon,C1 1-3.5T - Standard and Premium,Counterbalance,,,15
-J40XNT,H,Class 1,'1-2 Ton 3 Wheel FWD','160',Craigavon,C1 1-3.5T - Standard and Premium,Warehouse,,,16
-ERP040VT,Y,Class 1,'1-2 Ton 3 Wheel FWD','807',Craigavon,C1 1-3.5T - Standard and Premium,Warehouse,,,17
-E40HSD2,H,Class 1,'3 Wheel Stand Up FWD','219',Greenville,C1 1-3.5T - Standard and Premium,Warehouse,,,18
-ESC035FA,Y,Class 1,'3 Wheel Stand Up FWD','883',Greenville,C1 1-3.5T - Standard and Premium,Warehouse,,,19
-E50FR,H,Class 1,'3 Wheel Stand Up FWD','943',Masate,C1 1-3.5T - Standard and Premium,Warehouse,,,20
-ESC050ZA,Y,Class 1,'3 Wheel Stand Up FWD','945',Greenville,C1 1-3.5T - Standard and Premium,Warehouse,,,21
-ESC030AD,Y,Class 1,'3 Wheel Stand Up RWD','824',Greenville,C1 1-3.5T - Standard and Premium,Warehouse,,,22
-J40XN,H,Class 1,'1-2 Ton Electric DBB','935',Craigavon,C1 1-3.5T - Standard and Premium,Counterbalance,,,23
-ERP065DH,H,Class 1,'2-3 Ton Electric DBB','216',Craigavon,C1 1-3.5T - Standard and Premium,Counterbalance,,,24
-J3.00EX,H,Class 1,'2-3 Ton Electric DBB','226',SN,C1 1-3.5T - Standard and Premium,Counterbalance,,,25
-J70XN,H,Class 1,'2-3 Ton Electric DBB','276',Craigavon,C1 1-3.5T - Standard and Premium,Counterbalance,,,26
-J65Z,H,Class 1,'2-3 Ton Electric DBB','416',Craigavon,C1 1-3.5T - Standard and Premium,Counterbalance,,,27
-FB20PYE,Y,Class 1,'2-3 Ton Electric DBB','882',SN,C1 1-3.5T - Standard and Premium,Counterbalance,,,28
-ERP070VL,Y,Class 1,'2-3 Ton Electric DBB','976',Craigavon,C1 1-3.5T - Standard and Premium,Counterbalance,,,29
-N45XMR3,H,Class 2,NA  Large Reach,'138',Greenville,C2 - Standard and Premium,Warehouse,,,30
-FBR20-30 STY,Y,Class 2,NA  Large Reach,'224',SN,C2 - Standard and Premium,Warehouse,,,31
-N45ZR,H,Class 2,NA  Large Reach,'264',Greenville,C2 - Standard and Premium,Warehouse,,,32
-NS050AE,Y,Class 2,NA  Large Reach,'816',Greenville,C2 - Standard and Premium,Warehouse,,,33
-NR045CA,Y,Class 2,NA  Large Reach,'829',Greenville,C2 - Standard and Premium,Warehouse,,,34
-NR045GA,Y,Class 2,NA  Large Reach,'861',Greenville,C2 - Standard and Premium,Warehouse,,,35
-FBR13-18SY/WY,Y,Class 2,NA  Large Reach,'900',SN,C2 - Standard and Premium,Warehouse,,,36
-R1.25-1.80EX/WEX,H,Class 2,NA  Large Reach,'915',SN,C2 - Standard and Premium,Warehouse,,,37
-N40ZRS,H,Class 2,NA  Small Reach,'265',Greenville,C2 - Standard and Premium,Warehouse,,,38
-NR040DA,Y,Class 2,NA  Small Reach,'295',Greenville,C2 - Standard and Premium,Warehouse,,,39
-R2.0WA,H,Class 2,NA  Small Reach,'435',Masate,C2 - Standard and Premium,Warehouse,,,40
-N40ZR,H,Class 2,NA  Small Reach,'470',Greenville,C2 - Standard and Premium,Warehouse,,,41
-N50XMA3,H,Class 2,NA  Small Reach,'471',Greenville,C2 - Standard and Premium,Warehouse,,,42
-NR045AC,Y,Class 2,NA  Small Reach,'815',Greenville,C2 - Standard and Premium,Warehouse,,,43
-MR20A,Y,Class 2,NA  Small Reach,'849',Masate,C2 - Standard and Premium,Warehouse,,,44
-R2.00-3.00EX *,H,Class 2,NA  Small Reach,'925',SN,C2 - Standard and Premium,Warehouse,,,45
-R30XMF2,H,Class 2,NA  Prem Ord Picker,'118',Greenville,C2 - Standard and Premium,Warehouse,,,46
-K1.0L,H,Class 2,NA  Prem Ord Picker,'457',Masate,C2 - Standard and Premium,Warehouse,,,47
-K1.0,H,Class 2,NA  Prem Ord Picker,'460',Masate,C2 - Standard and Premium,Warehouse,,,48
-SS030BE,Y,Class 2,NA  Prem Ord Picker,'826',Greenville,C2 - Standard and Premium,Warehouse,,,49
-MO 10E,Y,Class 2,NA  Prem Ord Picker,'862',Masate,C2 - Standard and Premium,Warehouse,,,50
-MO 10/S,Y,Class 2,NA  Prem Ord Picker,'865',Masate,C2 - Standard and Premium,Warehouse,,,51
-SS030BF,Y,Class 2,NA  Prem Ord Picker,'474',Greenville,C2 - Standard and Premium,Warehouse,,,52
-R30XMS2,H,Class 2,NA  Stand Ord Picker,'174',Greenville,C2 - Standard and Premium,Warehouse,,,53
-OS030EC,Y,Class 2,NA  Stand Ord Picker,'801',Greenville,C2 - Standard and Premium,Warehouse,,,54
-V30ZMU,H,Class 2,NA  Man Up Turret,'463',Masate,C2 - Standard and Premium,Warehouse,,,55
-V35ZMU,H,Class 2,NA  Man Up Turret,'464',Masate,C2 - Standard and Premium,Warehouse,,,56
-V30XMU,H,Class 2,NA  Man Up Turret,'467',Masate,C2 - Standard and Premium,Warehouse,,,57
-V35XMU,H,Class 2,NA  Man Up Turret,'468',Masate,C2 - Standard and Premium,Warehouse,,,58
-V40XMU,H,Class 2,NA  Man Up Turret,'469',Masate,C2 - Standard and Premium,Warehouse,,,59
-NTA035SB,Y,Class 2,NA  Man Up Turret,'869',Masate,C2 - Standard and Premium,Warehouse,,,60
-V30ZMD,H,Class 2,NA  Man Down Turret,'210',Greenville,C2 - Standard and Premium,Warehouse,,,61
-RP3.0A,H,Class 2,'2-3 Ton Rider Pallet','448',Masate,C2 - Standard and Premium,Warehouse,,,62
-RP2.0NA,H,Class 2,'2-3 Ton Rider Pallet','449',Masate,C2 - Standard and Premium,Warehouse,,,63
-RS1.0-1.5/D,H,Class 2,'2-3 Ton Rider Pallet','450',Masate,C2 - Standard and Premium,Warehouse,,,64
-MP 20-30 S,Y,Class 2,'2-3 Ton Rider Pallet','853',Masate,C2 - Standard and Premium,Warehouse,,,65
-MP 20T,Y,Class 2,'2-3 Ton Rider Pallet','854',Masate,C2 - Standard and Premium,Warehouse,,,66
-MS/MOS 10-15 S,Y,Class 2,'2-3 Ton Rider Pallet','855',Masate,C2 - Standard and Premium,Warehouse,,,67
-Basic Model W40ZB,H,Class 3,'1-2 Ton MH LL Walkie','218',Greenville,C3 - Standard and Premium,Warehouse,,,68
-P1.8A,H,Class 3,'1-2 Ton MH LL Walkie','437',Masate,C3 - Standard and Premium,Warehouse,,,69
-P2.0HL,H,Class 3,'2-3 Ton MH LL Walkie','472',Masate,C3 - Standard and Premium,Warehouse,,,70
-MP 20DL,Y,Class 3,'2-3 Ton MH LL Walkie','473',Masate,C3 - Standard and Premium,Warehouse,,,71
-MPB040-E,Y,Class 3,'1-2 Ton MH LL Walkie','827',Greenville,C3 - Standard and Premium,Warehouse,,,72
-MP 13-16,Y,Class 3,'1-2 Ton MH LL Walkie','841',Masate,C3 - Standard and Premium,Warehouse,,,73
-S1.0-1.5C,H,Class 3,'1-2 Ton MH CB Stack','447',Masate,C3 - Standard and Premium,Warehouse,,,74
-W40ZC,H,Class 3,'1-2 Ton MH CB Stack','454',Greenville,C3 - Standard and Premium,Warehouse,,,75
-MCW040-E,Y,Class 3,'1-2 Ton MH CB Stack','819',Greenville,C3 - Standard and Premium,Warehouse,,,76
-MC 10-15,Y,Class 3,'1-2 Ton MH CB Stack','860',Masate,C3 - Standard and Premium,Warehouse,,,77
-S1.0E,H,Class 3,'1-2 Ton MH Strad Stk','440',Masate,C3 - Standard and Premium,Warehouse,,,78
-S1.2 ACA,H,Class 3,'1-2 Ton MH Strad Stk','441',Masate,C3 - Standard and Premium,Warehouse,,,79
-S1.5SA,H,Class 3,'1-2 Ton MH Strad Stk','442',Masate,C3 - Standard and Premium,Warehouse,,,80
-S1.4 ACA,H,Class 3,'1-2 Ton MH Strad Stk','456',Masate,C3 - Standard and Premium,Warehouse,,,81
-W30ZA2,H,Class 3,'1-2 Ton MH Strad Stk','495',Greenville,C3 - Standard and Premium,Warehouse,,,82
-MSW040,Y,Class 3,'1-2 Ton MH Strad Stk','820',Greenville,C3 - Standard and Premium,Warehouse,,,83
-MS10/12,Y,Class 3,'1-2 Ton MH Strad Stk','846',Masate,C3 - Standard and Premium,Warehouse,,,84
-MS15XA,Y,Class 3,'1-2 Ton MH Strad Stk','847',Masate,C3 - Standard and Premium,Warehouse,,,85
-MS16/46,Y,Class 3,'1-2 Ton MH Strad Stk','852',Masate,C3 - Standard and Premium,Warehouse,,,86
-MSW040-E,Y,Class 3,'1-2 Ton MH Strad Stk','895',Greenville,C3 - Standard and Premium,Warehouse,,,87
-W30ZR,H,Class 3,'1-2 Ton MH Reach Stk','455',Greenville,C3 - Standard and Premium,Warehouse,,,88
-MRW030-E,Y,Class 3,'1-2 Ton MH Reach Stk','821',Greenville,C3 - Standard and Premium,Warehouse,,,89
-W50Z,H,Class 3,'2-3 Ton MH LL Walkie','215',Greenville,C3 - Standard and Premium,Warehouse,,,90
-P2.2,H,Class 3,'2-3 Ton MH LL Walkie','438',Masate,C3 - Standard and Premium,Warehouse,,,91
-MPW050E,Y,Class 3,'2-3 Ton MH LL Walkie','802',Greenville,C3 - Standard and Premium,Warehouse,,,92
-MP22A,Y,Class 3,'2-3 Ton MH LL Walkie','842',Masate,C3 - Standard and Premium,Warehouse,,,93
-MP 25-30HD,Y,Class 3,'2-3 Ton MH LL Walkie','856',Masate,C3 - Standard and Premium,Warehouse,,,94
-P2.0SD,H,Class 3,'2-3 Ton MH LL Rider','433',Masate,C3 - Standard and Premium,Warehouse,,,95
-P2.0S,H,Class 3,'2-3 Ton MH LL Rider','439',Masate,C3 - Standard and Premium,Warehouse,,,96
-LO2.0L,H,Class 3,'2-3 Ton MH LL Rider','445',Masate,C3 - Standard and Premium,Warehouse,,,97
-MP20XA FBW,Y,Class 3,'2-3 Ton MH LL Rider','843',Masate,C3 - Standard and Premium,Warehouse,,,98
-MO 20/S,Y,Class 3,'2-3 Ton MH LL Rider','857',Masate,C3 - Standard and Premium,Warehouse,,,99
-MP 20XD,Y,Class 3,'2-3 Ton MH LL Rider','892',Masate,C3 - Standard and Premium,Warehouse,,,100
-LO2.0M,H,Class 3,'2-3 Ton MH LL Rider','939',Masate,C3 - Standard and Premium,Warehouse,,,101
-MO 20F,Y,Class 3,'2-3 Ton MH LL Rider','943a',Masate,C3 - Standard and Premium,Warehouse,,,102
-P2.0SE,H,Class 3,'2-3 Ton MH LL Rider','978',Masate,C3 - Standard and Premium,Warehouse,,,103
-MP 20XV,Y,Class 3,'2-3 Ton MH LL Rider','979',Masate,C3 - Standard and Premium,Warehouse,,,104
-MO20FA,Y,Class 3,'2-3 Ton MH LL Rider','858',Masate,C3 - Standard and Premium,Warehouse,,,105
-B60ZAC,H,Class 3,'3 Ton MH LL Rider','230',Greenville,C3 - Standard and Premium,Warehouse,,,106
-B60ZHD,H,Class 3,'3 Ton MH LL Rider','262',Greenville,C3 - Standard and Premium,Warehouse,,,107
-MPE060-VG,Y,Class 3,'3 Ton MH LL Rider','292',Greenville,C3 - Standard and Premium,Warehouse,,,108
-C60ZAC,H,Class 3,'3 Ton MH LL Rider','478',Greenville,C3 - Standard and Premium,Warehouse,,,109
-MPE060,Y,Class 3,'3 Ton MH LL Rider','896',Greenville,C3 - Standard and Premium,Warehouse,,,110
-MPC060LE,Y,Class 3,'3 Ton MH LL Rider','904',Greenville,C3 - Standard and Premium,Warehouse,,,111
-MLW060,Y,Class 3,'2-3 Ton MH LL Platfm','828',Greenville,C3 - Standard and Premium,Warehouse,,,112
-W80XT,H,Class 3,'3-4 Ton MH LL Walkie','135',Greenville,C3 - Standard and Premium,Warehouse,,,113
-W65Z,H,Class 3,'3-4 Ton MH LL Walkie','229',Greenville,C3 - Standard and Premium,Warehouse,,,114
-MPW065,Y,Class 3,'3-4 Ton MH LL Walkie','894',Greenville,C3 - Standard and Premium,Warehouse,,,115
-W60Z,H,Class 3,'3 Ton MH LL Walkie','231',Greenville,C3 - Standard and Premium,Warehouse,,,116
-MPW060E,Y,Class 3,'3 Ton MH LL Walkie','897',Greenville,C3 - Standard and Premium,Warehouse,,,117
-W80Z,H,Class 3,'4 Ton MH LL Walkie','234',Greenville,C3 - Standard and Premium,Warehouse,,,118
-MPW080,Y,Class 3,'4 Ton MH LL Walkie','891',Greenville,C3 - Standard and Premium,Warehouse,,,119
-B80XT,H,Class 3,'3-4 Ton MH LL Rider','199',Greenville,C3 - Standard and Premium,Warehouse,,,120
-C80XT2,H,Class 3,'3-4 Ton MH LL Rider','499',Greenville,C3 - Standard and Premium,Warehouse,,,121
-MPC080AD,Y,Class 3,'3-4 Ton MH LL Rider','898',Greenville,C3 - Standard and Premium,Warehouse,,,122
-MPC080LD,Y,Class 3,'3-4 Ton MH LL Rider','899',Greenville,C3 - Standard and Premium,Warehouse,,,123
-B80ZAC,H,Class 3,'4 Ton MH LL Rider','233',Greenville,C3 - Standard and Premium,Warehouse,,,124
-B80ZHD,H,Class 3,'4 Ton MH LL Rider','257',Greenville,C3 - Standard and Premium,Warehouse,,,125
-MPE080-VG,Y,Class 3,'4 Ton MH LL Rider','287',Greenville,C3 - Standard and Premium,Warehouse,,,126
-C80ZAC,H,Class 3,'4 Ton MH LL Rider','479',Greenville,C3 - Standard and Premium,Warehouse,,,127
-MPE080,Y,Class 3,'4 Ton MH LL Rider','890',Greenville,C3 - Standard and Premium,Warehouse,,,128
-MPC080LE,Y,Class 3,'4 Ton MH LL Rider','905',Greenville,C3 - Standard and Premium,Warehouse,,,129
-T5XT,H,Class 3,MH Tractor,'142',Greenville,C3 - Standard and Premium,Warehouse,,,130
-T5ZAC,H,Class 3,MH Tractor,'476',Greenville,C3 - Standard and Premium,Warehouse,,,131
-T7ZAC,H,Class 3,MH Tractor,'477',Greenville,C3 - Standard and Premium,Warehouse,,,132
-MTR005-E,Y,Class 3,MH Tractor,'902',Greenville,C3 - Standard and Premium,Warehouse,,,133
-MTR007E,Y,Class 3,MH Tractor,'903',Greenville,C3 - Standard and Premium,Warehouse,,,134
-S40FTS,H,Class 4,'1-2 Ton ICE Cushion','010',Berea,C4 1-3.5T - Standard and Premium,Counterbalance,,,135
-GC040AF,Y,Class 4,'1-2 Ton ICE Cushion','809',Berea,C4 1-3.5T - Standard and Premium,Counterbalance,,,136
-S60XMM,H,Class 4,'2-3 Ton ICE Cushion','073',Berea,C4 1-3.5T - Standard and Premium,Counterbalance,,,137
-S60XMG,H,Class 4,'2-3 Ton ICE Cushion','074',Berea,C4 1-3.5T - Standard and Premium,Counterbalance,,,138
-S60FTM,H,Class 4,'2-3 Ton ICE Cushion','173',Berea,C4 1-3.5T - Standard and Premium,Counterbalance,,,139
-H50FT,H,Class 4,'2-3 Ton ICE Cushion','187',Berea,C4 1-3.5T - Standard and Premium,Counterbalance,,,140
-GC070VX,Y,Class 4,'2-3 Ton ICE Cushion','910',Berea,C4 1-3.5T - Standard and Premium,Counterbalance,,,141
-S50CT,H,Class 4,'2-3 Ton ICE Cushion','267',Berea,C4 1-3.5T - Standard and Premium,Counterbalance,,,142
-GC050LX,Y,Class 4,'2-3 Ton ICE Cushion-BST','967',Berea,C4 1-3.5T - Standard and Premium,Counterbalance,,,143
-S4.5FT,H,Class 4,'3.5-5.5 Ton ICE Cush','004',Berea,C4 4-9T - Standard and Premium,Counterbalance,,,144
-GC120VX,Y,Class 4,'3.5-5.5 Ton ICE Cush','818',Berea,C4 4-9T - Standard and Premium,Counterbalance,,,145
-S7.0FT,H,Class 4,'6-8 Ton ICE Cushion','024',Berea,C4 4-9T - Standard and Premium,Counterbalance,,,146
-GC70VX,Y,Class 4,'6-8 Ton ICE Cushion','879',Berea,C4 4-9T - Standard and Premium,Counterbalance,,,147
-H280XL,H,Class 5 BT,'8-12 Ton ICE Pneu','003',Nijmegen,Big Forklift Trucks 10-16T,Big Trucks,,,148
-H280HD,H,Class 5 BT,'8-12 Ton ICE Pneu','007',Nijmegen,Big Forklift Trucks 10-16T,Big Trucks,,,149
-GP250DB,Y,Class 5 BT,'8-12 Ton ICE Pneu','876',Nijmegen,Big Forklift Trucks 10-16T,Big Trucks,,,150
-H360HD,H,Class 5 BT,'13-16 Ton ICE Pneu','019',Nijmegen,Big Forklift Trucks 10-16T,Big Trucks,,,151
-GDP300EB,Y,Class 5 BT,'13-16 Ton ICE Pneu','877',Nijmegen,Big Forklift Trucks 10-16T,Big Trucks,,,152
-H10.00-12.00XM-12EC,H,Class 5 BT,'10-12 Ton ICE Pneu EC','019a',Nijmegen,Big Forklift Trucks 10-16T,Big Trucks,,,153
-H450HDS,H,Class 5 BT,'14-18 Ton ICE Pneu FLT','236',Nijmegen,Big Forklift Trucks >16T,Big Trucks,,,154
-H500HD-EC,H,Class 5 BT,'16-25 Ton ICE Pneu CH','214',Nijmegen,Port Equipment - Empty Container Handlers,Big Trucks,,,155
-H700HD,H,Class 5 BT,'20-32 Ton ICE Pneu','008',Nijmegen,Big Forklift Trucks >16T,Big Trucks,,,156
-H970HDS,H,Class 5 BT,'36-48 Ton ICE Pneu','917',Nijmegen,Big Forklift Trucks >16T,Big Trucks,,,157
-H1150HD-CH,H,Class 5 BT,'36-48 Ton ICE Pneu CH','117',Nijmegen,Port Equipment - Empty Container Handlers,Big Trucks,,,158
-HR45-41L,H,Class 5 BT,Reachstacker,'222',Nijmegen,Port Equipment - Reachstackers,Big Trucks,,,159
-RS45-30CH/RS46-30IH,H,Class 5 BT,Reachstacker,'289',India,Port Equipment - Reachstackers,Big Trucks,,,160
-HR45-45LSX,H,Class 5 BT,Yardmaster,'227',Terex,Big Forklift Trucks >16T,Big Trucks,,,161
-HR48-EC,H,Class 5 BT,Yardmaster,'228',Terex,Big Forklift Trucks >16T,Big Trucks,,,162
-GP040AF,Y,Class 5 not BT,'1-2 Ton ICE Pneu','810',Craigavon,C5 1-3.5T - Standard and Premium,Counterbalance,,,163
-H2.0TXS-ET,H,Class 5 not BT,'1-2 Ton ICE Pneu - SN','475',SN,C5 1-3.5T - Standard and Premium,Counterbalance,,,164
-GTP20AK,Y,Class 5 not BT,'1-2 Ton ICE Pneu - SN','812',SN,C5 1-3.5T - Standard and Premium,Counterbalance,,,165
-H60XM-AF,H,Class 5 not BT,'2-3 Ton ICE Pneu','027',Berea,C5 1-3.5T - Standard and Premium,Counterbalance,,,166
-H60XMM,H,Class 5 not BT,'2-3 Ton ICE Pneu','070',Berea,C5 1-3.5T - Standard and Premium,Counterbalance,,,167
-H40XM-AF,H,Class 5 not BT,'2-3 Ton ICE Pneu','072',Berea,C5 1-3.5T - Standard and Premium,Counterbalance,,,168
-H60FTM,H,Class 5 not BT,'2-3 Ton ICE Pneu','170',Berea,C5 1-3.5T - Standard and Premium,Counterbalance,,,169
-H60FT-AF,H,Class 5 not BT,'2-3 Ton ICE Pneu','172',Berea,C5 1-3.5T - Standard and Premium,Counterbalance,,,170
-S50FT,H,Class 5 not BT,'2-3 Ton ICE Pneu','177',Craigavon,C5 1-3.5T - Standard and Premium,Counterbalance,,,171
-H60XM,H,Class 5 not BT,'2-3 Ton ICE Pneu','806',Berea,C5 1-3.5T - Standard and Premium,Counterbalance,,,172
-UT5.0P,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','281',Hangcha,C5 1-3.5T - Low Intensity,Counterbalance,,,173
-UT50P,Y,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','285',Hangcha,C5 1-3.5T - Low Intensity,Counterbalance,,,174
-GP060TF-NI,Y,Class 5 not BT,'2-3 Ton ICE Pneu','875',Craigavon,C5 1-3.5T - Standard and Premium,Counterbalance,,,175
-GP040ZG,Y,Class 5 not BT,'2-3 Ton ICE Pneu','887',Berea,C5 1-3.5T - Standard and Premium,Counterbalance,,,176
-GP050LX,Y,Class 5 not BT,'2-3 Ton ICE Pneu - BST','974',Craigavon,C5 1-3.5T - Standard and Premium,Counterbalance,,,177
-H50CT,H,Class 5 not BT,'2-3 Ton ICE Pneu - BST','274',Craigavon,C5 1-3.5T - Standard and Premium,Counterbalance,,,178
-H3.5TX -98,H,Class 5 not BT,'2-3 Ton ICE Pneu - SN','466',SN,C5 1-3.5T - Standard and Premium,Counterbalance,,,179
-GTP35TK,Y,Class 5 not BT,'2-3 Ton ICE Pneu - SN','871',SN,C5 1-3.5T - Standard and Premium,Counterbalance,,,180
-H90FT,H,Class 5 not BT,'3.5-5.5 Ton ICE Pneu','005',Craigavon,C5 4-9T - Standard and Premium,Counterbalance,,,181
-H4.0-5.0DX,H,Class 5 not BT,'3.5-5.5 Ton ICE Pneu','232',SN,C5 4-9T - Standard and Premium,Counterbalance,,,182
-GP120MJ,Y,Class 5 not BT,'3.5-5.5 Ton ICE Pneu','813',Craigavon,C5 4-9T - Standard and Premium,Counterbalance,,,183
-H155XL2,H,Class 5 not BT,'6-8 Ton ICE Pneu','002',Berea,C5 4-9T - Standard and Premium,Counterbalance,,,184
-H155FTM,H,Class 5 not BT,'6-8 Ton ICE Pneu','006',Berea,C5 4-9T - Standard and Premium,Counterbalance,,,185
-H155XL2-AF,H,Class 5 not BT,'6-8 Ton ICE Pneu','029',Berea,C5 4-9T - Standard and Premium,Counterbalance,,,186
-GP155VX,Y,Class 5 not BT,'6-8 Ton ICE Pneu','878',Berea,C5 4-9T - Standard and Premium,Counterbalance,,,187
-H8.0FT-9,H,Class 5 BT,'8-9 Ton ICE Pneu','299',Berea,Big Forklift Trucks 10-16T,Big Trucks,,,188
-GP190VX,Y,Class 5 BT,'8-9 Ton ICE Pneu','909',Berea,Big Forklift Trucks 10-16T,Big Trucks,,,189
-UT15P,H,Class 5 not BT,'1-2 Ton ICE Pneu','261',Hangcha,C5 1-3.5T - Low Intensity,Counterbalance,,,190
-J4.0XN,H,Class 1,'3.5-5.5 Ton Elect DBB','970',Craigavon,C1 4-9T - Standard and Premium,Counterbalance,,,191
-ERPVF,Y,Class 1,'3.5-5.5 Ton Elect DBB','985',Craigavon,C1 4-9T - Standard and Premium,Counterbalance,,,192
-UT1.5P,Y,Class 5 not BT,'1-2 Ton ICE Pneu','266',Hangcha,C5 1-3.5T - Low Intensity,Counterbalance,,,193
-R30XMF3,H,Class 2,NA  Prem Ord Picker,'185',Greenville,C2 - Standard and Premium,Warehouse,,,194
-N30FR,H,Class 2,NA  Prem Ord Picker,'217',Greenville,C2 - Standard and Premium,Warehouse,,,195
-FS030BF,Y,Class 2,NA  Prem Ord Picker,'497',Greenville,C2 - Standard and Premium,Warehouse,,,196
-FB35-40PYE,Y,Class 1,'3.5-5.5 Ton Elect DBB','901',SN,C1 4-9T - Standard and Premium,Counterbalance,,,197
-J3.50-4.00EX,H,Class 1,'3.5-5.5 Ton Elect DBB','920',SN,C1 4-9T - Standard and Premium,Counterbalance,,,198
-MP20AP,Y,Class 3,'1-2 Ton MH LL Wlk UT','485',Hangcha,C3 - Low Intensity,Warehouse,,,199
-UT18PTE,H,Class 1,'1-2 Ton 3 Whl FWD UT','370',Hangcha,C1 1-3.5T - Low Intensity,Warehouse,,,200
-UT18_PTE,Y,Class 1,'1-2 Ton 3 Whl FWD UT','377',Hangcha,C1 1-3.5T - Low Intensity,Warehouse,,,201
-ERC080VH,Y,Class 1,'3.2-5.5 Ton Elec 4Wh','938',Greenville,C1 4-9T - Standard and Premium,Counterbalance,,,202
-UT25C,Y,Class 4,'2-3 Ton ICE Cush- LCT','273',Hangcha,C4 1-3.5T - Low Intensity,Counterbalance,,,203
-H16XM-12,H,Class 5 BT,'14-18 Ton ICE Pneu FLT','238',Nijmegen,Big Forklift Trucks >16T,Big Trucks,,,204
-MPC080-VG,Y,Class 3,'4 Ton MH LL Rider','283',Greenville,C3 - Standard and Premium,Warehouse,,,205
-UT40-50PS,Y,Class 5 not BT,'3.5-5.5 Ton ICE P UT','411',Hangcha,C5 4-9T - Low Intensity,Counterbalance,,,206
-UT40-49P,H,Class 5 not BT,'3.5-5.5 Ton ICE P UT','408',Hangcha,C5 4-9T - Low Intensity,Counterbalance,,,207
-UT50-70P,H,Class 5 not BT,'5.0-7.0 Ton ICE P UT','413',Hangcha,C5 4-9T - Low Intensity,Counterbalance,,,208
-UT5.0-7.0P,Y,Class 5 not BT,'5.0-7.0 Ton ICE P UT','417',Hangcha,C5 4-9T - Low Intensity,Counterbalance,,,209
-UT80-100P,H,Class 5 BT,'8-10 Ton ICE Pneu UT','253',Hangcha,Big Forklift Trucks 10-16T,Big Trucks,,,210
-UT8.0-10.0P,Y,Class 5 BT,'8-10 Ton ICE Pneu UT','973',Hangcha,Big Forklift Trucks 10-16T,Big Trucks,,,211
-MPR080VG,Y,Class 2,'3-4 Ton Rider Pallet','284',Greenville,C2 - Standard and Premium,Warehouse,,,212
-MPB045VG        ,Y,Class 3,'2-3 Ton MH LL Walkie','245',Greenville,C3 - Standard and Premium,Warehouse,,,213
-RS45-27CH,H,Class 5 BT,Reachstacker,'366',Nijmegen,Port Equipment - Reachstackers,Big Trucks,,,214
-BE80-100ZHD         ,H,Class 2,'3-4 Ton Rider Pallet','244',Greenville,C2 - Standard and Premium,Warehouse,,,215
-W45ZHD,H,Class 3,'2-3 Ton MH LL Walkie','419',Greenville,C3 - Standard and Premium,Warehouse,,,216
-UT15WE,H,Class 3,'1-2 Ton MH LL Wlk CP','378',Ruyi,C3 - Low Intensity,Warehouse,,,217
-UT1.5-1.8PFE,Y,Class 1,'1-2 Ton 3 Whl FWD UT','379',Hangcha,C1 1-3.5T - Low Intensity,Warehouse,,,218
-UT1.5-1.8 PFE,H,Class 1,'1-2 Ton 3 Whl FWD UT','374',Hangcha,C1 1-3.5T - Low Intensity,Warehouse,,,219
-J2.00-2.5EX,H,Class 1,'2-3 Ton Electric DBB','402',Shanghai,C1 1-3.5T - Low Intensity,Counterbalance,,,220
-UT30PFE,Y,Class 1,'2-3 Ton Elec 4 Wh UT','396',Hangcha,C1 1-3.5T - Low Intensity,Warehouse,,,221
-MP20,Y,Class 3,'1-2 Ton MH LL Walkie','428',Masate,C3 - Standard and Premium,Warehouse,,,222
-H2.5-H3.5DX,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','966',Shanghai,C5 1-3.5T - Low Intensity,Counterbalance,,,223
-R1.6,H,Class 2,NA  Small Reach,'406',Maximal,C2 - Standard and Premium,Warehouse,,,224
-R1.0-1.4E,H,Class 2,NA  Small Reach,'432',Masate,C2 - Standard and Premium,Warehouse,,,225
-MS10E,Y,Class 3,'1-2 Ton MH Strad Stk','845',Masate,C3 - Standard and Premium,Warehouse,,,226
-P2.0UT ,H,Class 3,'1-2 Ton MH LL Wlk UT','3B5',Ruyi,C3 - Low Intensity,Warehouse,,,227
-P2.0KUT,H,Class 3,'1-2 Ton MH LL Wlk UT','3B0',Ruyi,C3 - Low Intensity,Warehouse,,,228
-P2.0RUT,H,Class 3,'1-2 Ton MH LL Wlk UT','3B1',Ruyi,C3 - Low Intensity,Warehouse,,,229
-S1.5WUT,H,Class 3,'1-2 Ton MH Strad Stk','3C3',Ruyi,C3 - Low Intensity,Warehouse,,,230
-S1.5WLUT,H,Class 3,'1-2 Ton MH Strad Stk','3C2',Ruyi,C3 - Low Intensity,Warehouse,,,231
-S1.5RUT,H,Class 3,'1-2 Ton MH Strad Stk','3B3',Ruyi,C3 - Low Intensity,Warehouse,,,232
-SL1.5WUT,H,Class 3,'1-2 Ton MH Strad Stk','3B6',Ruyi,C3 - Low Intensity,Warehouse,,,233
-SL1.5RUT,H,Class 3,'1-2 Ton MH Strad Stk','3B7',Ruyi,C3 - Low Intensity,Warehouse,,,234
-MP20UX ,Y,Class 3,'1-2 Ton MH LL Wlk UT','7R5',Ruyi,C3 - Low Intensity,Warehouse,,,235
-MP20KUX,Y,Class 3,'1-2 Ton MH LL Wlk UT','7R0',Ruyi,C3 - Low Intensity,Warehouse,,,236
-MP20XUX,Y,Class 3,'1-2 Ton MH LL Wlk UT','7R1',Ruyi,C3 - Low Intensity,Warehouse,,,237
-MS15UX,Y,Class 3,'1-2 Ton MH Strad Stk','7S3',Ruyi,C3 - Low Intensity,Warehouse,,,238
-MS15LUX,Y,Class 3,'1-2 Ton MH Strad Stk','7S2',Ruyi,C3 - Low Intensity,Warehouse,,,239
-MS15XUX,Y,Class 3,'1-2 Ton MH Strad Stk','7R3',Ruyi,C3 - Low Intensity,Warehouse,,,240
-MSL15XUX,Y,Class 3,'1-2 Ton MH Strad Stk','7R7',Ruyi,C3 - Low Intensity,Warehouse,,,241
-UT2.0-3.5UT,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','3C1',Maximal,C5 1-3.5T - Low Intensity,Counterbalance,,,242
-GP20-35UX,Y,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','7S1',Maximal,C5 1-3.5T - Low Intensity,Counterbalance,,,243
-AP20Z,H,Class 2,Aerial Lift,'254',Berea,C2 - Standard and Premium,Warehouse,,,244
-H9XM-EC7,H,Class 5 BT,'16-25 Ton ICE Pneu CH','3C0',Maximal,Port Equipment - Empty Container Handlers,Big Trucks,,,245
-J1.5-3.5UT,H,Class 1,'2-3 Ton Elec 4 Wh UT','3C4',Maximal,C1 1-3.5T - Low Intensity,Warehouse,,,246
-ERP1.5-3.5UX,Y,Class 1,'2-3 Ton Elec 4 Wh UT','7S4',Maximal,C1 1-3.5T - Low Intensity,Warehouse,,,247
-H5.0-7.0UT,H,Class 5 not BT,'5.0-7.0 Ton ICE P UT','3D0',Maximal,C5 4-9T - Low Intensity,Counterbalance,,,248
-GP50-70UX,Y,Class 5 not BT,'5.0-7.0 Ton ICE P UT','7T0',Maximal,C5 4-9T - Low Intensity,Counterbalance,,,249
-MPC15,Y,Class 3,'1-2 Ton MH LL Wlk CP','3D4',Staxx,C3 - Low Intensity,Warehouse,,,250
-PC1.5,H,Class 3,'1-2 Ton MH LL Wlk CP','6W9',Staxx,C3 - Low Intensity,Warehouse,,,251
-MP15UX,Y,Class 3,'1-2 Ton MH LL Wlk CP','7T1',Ruyi,C3 - Low Intensity,Warehouse,,,252
-T6.0UT,H,Class 3,MH Tractor,'3C7',Ruyi,C3 - Low Intensity,Warehouse,,,253
-MT60UX,Y,Class 3,MH Tractor,'7S7',Ruyi,C3 - Low Intensity,Warehouse,,,254
-T3.0UT,H,Class 3,MH Tractor,'3C9',Ruyi,C3 - Low Intensity,Warehouse,,,255
-MT30UX,Y,Class 3,MH Tractor,'7S9',Ruyi,C3 - Low Intensity,Warehouse,,,256
-T3.0UTS,H,Class 3,MH Tractor,'3C8',Ruyi,C3 - Low Intensity,Warehouse,,,257
-MT30XUX,Y,Class 3,MH Tractor,'7S8',Ruyi,C3 - Low Intensity,Warehouse,,,258
-J1.6-2.0UTT,H,Class 1,'1-2 Ton 3 Whl FWD UT','3C5',Maximal,C1 1-3.5T - Low Intensity,Warehouse,,,259
-ERP16-20UXT,Y,Class 1,'1-2 Ton 3 Whl FWD UT','7S5',Maximal,C1 1-3.5T - Low Intensity,Warehouse,,,260
-P1.5UT,H,Class 3,'1-2 Ton MH LL Wlk CP','3D1',Ruyi,C3 - Low Intensity,Warehouse,,images/product/TWF4aW1hbC5wbmc=_26012024044642png,261
-MSL15WUX,Y,Class 3,'1-2 Ton MH Strad Stk','7R6',Ruyi,C3 - Low Intensity,Warehouse,,images/product/MTdfMS5wbmc=_26012024060113png,262
-H4.0-5.0UT,H,Class 5 not BT,'3.5-5.5 Ton ICE P UT','3C6',Maximal,C5 4-9T - Low Intensity,Counterbalance,,,263
-GP40-50UX,Y,Class 5 not BT,'3.5-5.5 Ton ICE P UT','7S6',Maximal,C5 4-9T - Low Intensity,Counterbalance,,,264
-F1.8-3.5UT,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','3B8',Maximal,C5 1-3.5T - Low Intensity,Counterbalance,,,265
-KDP18-35UX,Y,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','7R8',Maximal,C5 1-3.5T - Low Intensity,Counterbalance,,,266
-F5.0UT,H,Class 5 not BT,'3.5-5.5 Ton ICE P UT','3B9',Maximal,C5 4-9T - Low Intensity,Counterbalance,,,267
-KDP50UX,Y,Class 5 not BT,'3.5-5.5 Ton ICE P UT','7R9',Maximal,C5 4-9T - Low Intensity,Counterbalance,,,268
-GDP160EF12,Y,Class 5 BT,'14-18 Ton ICE Pneu FLT','674',Nijmegen,Big Forklift Trucks >16T,Big Trucks,,,269
-RS45-27CH/RS45-31CH,H,Class 5 BT,Reachstacker,'921',Maximal,Port Equipment - Reachstackers,Big Trucks,,,270
-P2.0,H,Class 3,'1-2 Ton MH LL Walkie','418',Masate,C3 - Standard and Premium,Warehouse,,,271
-J8.0XNSL,H,Class 1,'8-9 Ton Elec 4Wh DBB','250',Nijmegen,C1 4-9T - Standard and Premium,Warehouse,,,272
-ERP70-90VNL ,Y,Class 1,'8-9 Ton Elec 4Wh DBB','410',Nijmegen,C1 4-9T - Standard and Premium,Warehouse,,,273
-MR14E,Y,Class 2,NA  Small Reach,'942',Masate,C2 - Standard and Premium,Warehouse,,,274
-MR16,Y,Class 2,NA  Small Reach,'961',Maximal,C2 - Standard and Premium,Warehouse,,,275
-P2.0-3.0S,H,Class 3,'2-3 Ton MH LL Rider','3D9',Maximal,C3 - Standard and Premium,Warehouse,,,276
-MP20-30X,Y,Class 3,'2-3 Ton MH LL Rider','7T9',Maximal,C3 - Standard and Premium,Warehouse,,,277
-F1.8-3.5UT4,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','3B4',Maximal,C5 1-3.5T - Low Intensity,Counterbalance,,,278
-KDP18-35UX4,Y,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','7S0',Maximal,C5 1-3.5T - Low Intensity,Counterbalance,,,279
-H2.0-3.5A,H,Class 5 not BT,'2-3 Ton ICE Pneu','177a',Maximal,C5 1-3.5T - Standard and Premium,Counterbalance,,,280
-GP2.0-3.5N,Y,Class 5 not BT,'2-3 Ton ICE Pneu','875a',Maximal,C5 1-3.5T - Standard and Premium,Counterbalance,,,281
-J30-40XN,H,Class 1,'1-2 Ton Electric DBB','935a',Greenville,C1 1-3.5T - Standard and Premium,Counterbalance,,,282
-ERP030-040VF,Y,Class 1,'1-2 Ton Electric DBB','955a',Greenville,C1 1-3.5T - Standard and Premium,Counterbalance,,,283
-J30-40XNT,H,Class 1,'1-2 Ton 3 Wheel FWD','160a',Greenville,C1 1-3.5T - Standard and Premium,Warehouse,,,284
-ERP030-040VT,Y,Class 1,'1-2 Ton 3 Wheel FWD','807a',Greenville,C1 1-3.5T - Standard and Premium,Warehouse,,,285
-AER010,Y,Class 2,Aerial Lift,'7T5',Ruyi,C2 - Low Intensity,Warehouse,'edede
- ',,286
-GP35-50 LH/MH,Y,Class 5 not BT,'3.5-5.5 Ton ICE Pneu','889',SN,C5 4-9T - Standard and Premium,Counterbalance,,images/product/U2NyZWVuc2hvdCBmcm9tIDIwMjQtMDEtMjUgMTEtMDQtMDYucG5n_25012024070048png,287
-AER020AA,Y,Class 2,Aerial Lift,'944',Berea,C2 - Standard and Premium,Warehouse, efdefe,images/product/U2NyZWVuc2hvdCBmcm9tIDIwMjQtMDEtMjIgMTAtMjktNDMucG5n_25012024070535png,288
-A1.00-1.50XL,H,Class 1,'1-2 Ton 3 Wheel RWD','203',Craigavon,C1 1-3.5T - Standard and Premium,Counterbalance,'hehehehecedfe2dfTGR
-
-
-FF',images/product/U2NyZWVuc2hvdCBmcm9tIDIwMjQtMDEtMjUgMTYtNTYtMDAucG5n_26012024020729png,289
-H3.0XT,H,Class 5 not BT,'2-3 Ton ICE Pneu - SN','466',SN,C5 1-3.5T - Standard and Premium, , , ,290
-J2.5UT,H,Class 1,'2-3 Ton Elec 4 Wh UT','3C4',Maximal,C1 1-3.5T - Low Intensity, , , ,291
-H3.5UT,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','3C1',Maximal,C5 1-3.5T - Low Intensity, , , ,292
-R1.6 406,H,Class 2,NA  Small Reach,'406',Maximal,C2 - Standard and Premium, , , ,293
-H3.0UT,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','3C1',Maximal,C5 1-3.5T - Low Intensity, , , ,294
-AP10Z,H,Class 2,Aerial Lift,'3D5',Ruyi,C2 - Low Intensity,Warehouse,,images/product/U2NyZWVuc2hvdCBmcm9tIDIwMjQtMDEtMjIgMDktMzYtNDQucG5n_26012024020701png,295
-AP2.0MS,H,Class 3,'1-2 Ton MH LL Wlk UT','280',Hangcha,C3 - Low Intensity,Warehouse,,images/product/U2NyZWVuc2hvdCBmcm9tIDIwMjQtMDEtMjUgMTYtNDktMjkucG5n_26012024020715png,296
-W40ZA,H,Class 3,'1-2 Ton MH Strad Stk','453',Greenville,C3 - Standard and Premium,Warehouse,' DHFHD
-cec
-ded
-fefe
-fef',,297
-H2.5UT,H,Class 5 not BT,'2-3 Ton ICE Pneu - LCT','3C1',Maximal,C5 1-3.5T - Low Intensity, , ,images/product/TWF4aW1hbC5wbmc=_26012024053240png,298
-H2.5XT,H,Class 5 not BT,'2-3 Ton ICE Pneu - SN','466',SN,C5 1-3.5T - Standard and Premium, , ,images/product/dHJ1Y2suanBn_26012024053259png,299
+'model_code','brand','clazz','family','series','plant','segment','trucktype','description','image','id'
+GP55VX,Yale,Class 5 NOT BT,,K813,Craigavon,,,,,6879
+MS15XUX,Yale,Class 3,,A7R3,Ruyi,,,,,6880
+H18XD6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,6881
+J3.0UT,Hyster,Class 1,,A3C4,Maximal,,,,,6882
+C1.3L,Hyster,Class 2,,B463,Masate,,,,,6883
+H1.6FT,Hyster,Class 5 NOT BT,,G001,Craigavon,,,,,6884
+GP16VX,Yale,Class 5 NOT BT,,D810,Craigavon,,,,,6885
+RS46-41XD/62S,Hyster,Class 5 BT,,F222,Nijmegen,,,,,6886
+MP25X,Yale,Class 3,,A3D9,Maximal,,,,,6887
+G16EF9,Yale,Class 5 BT,,K876,Nijmegen,,,,,6888
+RS 45-27 CH,Hyster,Class 5 BT,,A404,Maximal,,,,,6889
+H18XDS9,Hyster,Class 5 BT,,D236,Nijmegen,,,,,6890
+J1.5UT,Hyster,Class 1,,A3C4,Maximal,,,,,6891
+GDP12F,Yale,Class 5 BT,,K876,Nijmegen,,,,,6892
+S2.0S,Hyster,Class 3,,D442,Masate,,,,,6893
+R2.0HD,Hyster,Class 2,,D435,Masate,,,,,6894
+MSL15XUX,Yale,Class 3,,A7R7,Ruyi,,,,,6895
+ERP16UXT,Yale,Class 1,,A7S5,Maximal,,,,,6896
+S1.2S,Hyster,Class 3,,D442,Masate,,,,,6897
+ERP50VM,Yale,Class 3,,A985,Craigavon,,,,,6898
+ME70XN,Hyster,Class 1,,A268,Greenville,,,,,6899
+GP 20MX,Yale,Class 5 NOT BT,,D871,SN,,,,,6900
+RS46-29XD/62,Hyster,Class 5 BT,,F222,Nijmegen,,,,,6901
+GLP25MX,Yale,Class 5 NOT BT,,D871,SN,,,,,6902
+GDP8F9,Yale,Class 5 BT,,K876,Nijmegen,,,,,6903
+GDP10F,Yale,Class 5 BT,,J876,Nijmegen,,,,,6904
+FB35PYE,Yale,Class 1,,A901,SN,,,,,6905
+MS14X,Yale,Class 3,,D847,Masate,,,,,6906
+H4.5FT6,Hyster,Class 5 NOT BT,,U005,Craigavon,,,,,6907
+RS46-41XD/67,Hyster,Class 5 BT,,F222,Nijmegen,,,,,6908
+J2.0GXS,Hyster,Class 1,,C225,SN,,,,,6909
+MSL15WUX,Yale,Class 3,,A7R6,Ruyi,,,,,6910
+H35XTC,Hyster,'',,D466,'',,,,,6911
+GP40VX5,Yale,Class 5 NOT BT,,K813,Craigavon,,,,,6912
+ESC030AD,Yale,Class 1,,C883,Greenville,,,,,6913
+H10XD6,Hyster,Class 5 BT,,P007,Nijmegen,,,,,6914
+F5.0UT,Hyster,Class 5 NOT BT,,A3B9,Maximal,,,,,6915
+H11XD-ECD8,Hyster,Class 5 BT,,F214,Nijmegen,,,,,6916
+H9XDL6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,6917
+P2.0S,Hyster,Class 3,,E439,Masate,,,,,6918
+GDP10D,Yale,Class 5 BT,,K876,Nijmegen,,,,,6919
+GP40UX,Yale,Class 5 NOT BT,,A7S6,Maximal,,,,,6920
+J4.5XN,Hyster,Class 3,,A970,Craigavon,,,,,6921
+J1.8UTT,Hyster,Class 1,,A3C5,Maximal,,,,,6922
+H2.0FTS,Hyster,Class 5 NOT BT,,G001,Craigavon,,,,,6923
+H170FT,Hyster,Class 5 NOT BT,,D299,Berea,,,,,6924
+H4.5UT,Hyster,Class 5 NOT BT,,A3C6,Maximal,,,,,6925
+GP40VX6,Yale,Class 5 NOT BT,,K813,Craigavon,,,,,6926
+J2.5XN,Hyster,Class 2,,A276,Craigavon,,,,,6927
+H44XDS12,Hyster,Class 5 BT,,D917,Nijmegen,,,,,6928
+ERP30VLL,Yale,Class 2,,A976,Craigavon,,,,,6929
+J80XNS,Hyster,Class 1,,A250,Craigavon,,,,,6930
+H11XD-ECD9,Hyster,Class 5 BT,,F214,Nijmegen,,,,,6931
+ERC060VG,Yale,Class 1,,A968,Greenville,,,,,6932
+GP2.5N,Yale,Class 5 NOT BT,,E875,Craigavon,,,,,6933
+H25XD12,Hyster,Class 5 BT,,J008,Nijmegen,,,,,6934
+P2.0S,Hyster,Class 3,,A3D9,Maximal,,,,,6935
+GP70UX6,Yale,Class 5 NOT BT,,A3D0,Maximal,,,,,6936
+H9XM-EC7,Hyster,Class 5 BT,,A3C0,Maximal,,,,,6937
+MS12XI,Yale,Class 3,,D847,Masate,,,,,6938
+H16XDS9,Hyster,Class 5 BT,,R007,Nijmegen,,,,,6939
+K1.0H,Hyster,Class 2,,B460,Masate,,,,,6940
+MR25,Yale,Class 2,,D849,Masate,,,,,6941
+H10XD6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,6942
+F1.8UT4,Hyster,Class 5 NOT BT,,A3B8,Maximal,,,,,6943
+ERC120VH,Yale,Class 1,,A938,Greenville,,,,,6944
+GDP90F,Yale,Class 5 BT,,K876,Nijmegen,,,,,6945
+KDP18UX,Yale,Class 5 NOT BT,,A7S0,Maximal,,,,,6946
+F2.5UT4,Hyster,Class 5 NOT BT,,A3B8,Maximal,,,,,6947
+J3.5GXS,Hyster,Class 1,,C225,SN,,,,,6948
+ME60XN,Hyster,Class 1,,A268,Greenville,,,,,6949
+MYMR16,Yale,Not Offer,,A7R4,unknown,,,,,6950
+GP2.5N6,Yale,Class 5 NOT BT,,E875,Craigavon,,,,,6951
+GP20SVX,Yale,Class 5 NOT BT,,D810,Craigavon,,,,,6952
+ERP40VM,Yale,Class 3,,A985,Craigavon,,,,,6953
+MPW080-E,Yale,Class 3,,B891,Greenville,,,,,6954
+GLP15MX,Yale,Class 5 NOT BT,,E812,SN,,,,,6955
+C1.5S,Hyster,Class 2,,B464,Masate,,,,,6956
+E100XNS,Hyster,Class 1,,A099,Greenville,,,,,6957
+G14DPE,Yale,Class 5 BT,,K876,Nijmegen,,,,,6958
+T6.0UT,Hyster,Class 3,,A3C7,Ruyi,,,,,6959
+N40ZR3,Hyster,Class 2,,E264,Greenville,,,,,6960
+S120FTPRS,Hyster,Class 4,,J004,Berea,,,,,6961
+MR14,Yale,Class 2,,D849,Masate,,,,,6962
+MO20P,Yale,Class 2,,E857,Masate,,,,,6963
+RS46-41XD/75S,Hyster,Class 5 BT,,F222,Nijmegen,,,,,6964
+H190FT,Hyster,Class 5 NOT BT,,D299,Berea,,,,,6965
+GDP12F,Yale,Class 5 BT,,J876,Nijmegen,,,,,6966
+GDP13E,Yale,Class 5 BT,,K876,Nijmegen,,,,,6967
+R1.6N,Hyster,Class 2,,D435,Masate,,,,,6968
+H8XD-EC7,Hyster,Class 5 BT,,F214,Nijmegen,,,,,6969
+GTP25B,Yale,'',,D871,'',,,,,6970
+J35XNT,Hyster,Class 2,,K160,Craigavon,,,,,6971
+H135FT,Hyster,Class 5 NOT BT,,P006,Berea,,,,,6972
+YGDP16,Yale,Class 5 BT,,B674,Nijmegen,,,,,6973
+ESC040AD,Yale,Class 1,,C883,Greenville,,,,,6974
+GDP35MX,Yale,Class 5 NOT BT,,D871,SN,,,,,6975
+MS12X,Yale,Class 3,,D847,Masate,,,,,6976
+S1.4S,Hyster,Class 3,,D442,Masate,,,,,6977
+H3.5XT,Hyster,Class 5 NOT BT,,D466,SN,,,,,6978
+H16XD6,Hyster,Class 5 BT,,N019,Nijmegen,,,,,6979
+H1.8FT,Hyster,Class 5 NOT BT,,G001,Craigavon,,,,,6980
+H7XD-EC4,Hyster,Class 5 BT,,R007,Nijmegen,,,,,6981
+ERP25VL,Yale,Class 2,,A976,Craigavon,,,,,6982
+FBR15SZ,Yale,Class 2,,C900,SN,,,,,6983
+H30XD9,Hyster,Class 5 BT,,J008,Nijmegen,,,,,6984
+H16XDS12,Hyster,Class 5 BT,,R007,Nijmegen,,,,,6985
+MS70FT,Hyster,Class 4,,H187,Berea,,,,,6986
+KDP35UX4,Yale,Class 5 NOT BT,,A7R8,Maximal,,,,,6987
+H8XD-EC6,Hyster,Class 5 BT,,F214,Nijmegen,,,,,6988
+H36XDS12,Hyster,Class 5 BT,,D917,Nijmegen,,,,,6989
+H12XD12,Hyster,Class 5 BT,,R007,Nijmegen,,,,,6990
+H9XM-EC8,Hyster,Class 5 BT,,A3C0,Maximal,,,,,6991
+H4.5FTS5,Hyster,Class 5 NOT BT,,U005,Craigavon,,,,,6992
+GP30UX,Yale,Class 5 NOT BT,,A7S1,Maximal,,,,,6993
+ERC070VG,Yale,Class 1,,A968,Greenville,,,,,6994
+FBR18WZ,Yale,Class 2,,C900,SN,,,,,6995
+MR16,Yale,Class 2,,D849,Masate,,,,,6996
+H2XTBD,Hyster,'',,D466,'',,,,,6997
+GDP10D,Yale,Class 5 BT,,J876,Nijmegen,,,,,6998
+MO12C (SPED),Yale,Class 2,,E857,Masate,,,,,6999
+P3.0S,Hyster,Class 3,,A3D9,Maximal,,,,,7000
+T5ZAC,Hyster,Class 3,,D476,Ramos,,,,,7001
+H9XD6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7002
+H16XD2,Hyster,Class 5 BT,,C238,Nijmegen,,,,,7003
+R30XMS3,Hyster,Class 2,,E174,Greenville,,,,,7004
+ERP70S,Yale,Class 1,,A410,Craigavon,,,,,7005
+W45ZHD2,Hyster,Class 3,,B419,Ramos,,,,,7006
+H2.5A,Hyster,Class 5 NOT BT,,R177,Craigavon,,,,,7007
+GC120VX,Yale,Class 4,,G818,Berea,,,,,7008
+J40XNT,Hyster,Class 2,,K160,Craigavon,,,,,7009
+ERP30VL,Yale,Class 3,,A976,Craigavon,,,,,7010
+H6.0UT6,Hyster,Class 5 NOT BT,,A3D0,Maximal,,,,,7011
+H20XDS9,Hyster,Class 5 BT,,D236,Nijmegen,,,,,7012
+N45ZR3,Hyster,Class 2,,E264,Greenville,,,,,7013
+G130DP,Yale,Class 5 BT,,K876,Nijmegen,,,,,7014
+H10XD-ECD8,Hyster,Class 5 BT,,F214,Nijmegen,,,,,7015
+P3.0S,Hyster,Class 3,,E439,Masate,,,,,7016
+GP155VX,Yale,Class 5 NOT BT,,H878,Berea,,,,,7017
+RS 45-31 CH,Hyster,Class 5 BT,,A921,Maximal,,,,,7018
+GC060V,Yale,Class 4,,C910,Berea,,,,,7019
+ERP25UX,Yale,Class 1,,A7S4,Maximal,,,,,7020
+MR14E,Yale,Class 2,,A942,Masate,,,,,7021
+S12SIL,Hyster,Class 3,,D442,Masate,,,,,7022
+S100FTBCS,Hyster,Class 4,,J004,Berea,,,,,7023
+J2.0UT,Hyster,Class 1,,A3C4,Maximal,,,,,7024
+NR035EC,Yale,Class 2,,E861,Greenville,,,,,7025
+P2.0UTS,Hyster,Class 3,,A3B1,Ruyi,,,,,7026
+ERP18UXT,Yale,Class 1,,A7S5,Maximal,,,,,7027
+N35ZDR3,Hyster,Class 2,,E264,Greenville,,,,,7028
+J4.00EX,Hyster,Class 1,,A920,SN,,,,,7029
+S55FTS,Hyster,Class 4,,H187,Berea,,,,,7030
+GP175VX,Yale,Class 5 NOT BT,,D909,Berea,,,,,7031
+H3.5UT,Hyster,Class 5 NOT BT,,A3C1,Maximal,,,,,7032
+H155FT,Hyster,Class 5 NOT BT,,P006,Berea,,,,,7033
+E20MW3,Yale,Class 2,,G807,Craigavon,,,,,7034
+H13XD6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7035
+ERP7S9,Yale,Class 1,,A410,Craigavon,,,,,7036
+GLP20SMX,Yale,Class 5 NOT BT,,E812,SN,,,,,7037
+H9XD-ECD8,Hyster,Class 5 BT,,F214,Nijmegen,,,,,7038
+G12DPE,Yale,Class 5 BT,,K876,Nijmegen,,,,,7039
+MP20X,Yale,Class 3,,A3D9,Maximal,,,,,7040
+GP 30MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7041
+FB35SRZ,Yale,Class 1,,C881,SN,,,,,7042
+G90DPF,Yale,Class 5 BT,,K876,Nijmegen,,,,,7043
+OS030BF,Yale,Class 2,,E826,Greenville,,,,,7044
+H5.0FT,Hyster,Class 5 NOT BT,,U005,Craigavon,,,,,7045
+T3.0UTS,Hyster,Class 3,,A3C8,Ruyi,,,,,7046
+ERP80S,Yale,Class 1,,A410,Craigavon,,,,,7047
+H1.8XT,Hyster,Class 5 NOT BT,,D475,SN,,,,,7048
+H2.5A6,Hyster,Class 5 NOT BT,,R177,Craigavon,,,,,7049
+S80FTBCS,Hyster,Class 4,,J004,Berea,,,,,7050
+FB20SRZ,Yale,Class 1,,C881,SN,,,,,7051
+J7XNS9,Hyster,Class 1,,A250,Craigavon,,,,,7052
+E30HSD3,Hyster,Class 1,,C219,Greenville,,,,,7053
+MS60FT,Hyster,Class 4,,H187,Berea,,,,,7054
+H12XD6,Hyster,Class 5 BT,,P007,Nijmegen,,,,,7055
+MR16HD,Yale,Class 2,,D849,Masate,,,,,7056
+GDP2CD,Yale,'',,D871,'',,,,,7057
+H18XD9,Hyster,Class 5 BT,,D236,Nijmegen,,,,,7058
+H2.5XT,Hyster,Class 5 NOT BT,,D466,SN,,,,,7059
+ERC100VHS,Yale,Class 1,,A938,Greenville,,,,,7060
+GDP25MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7061
+GLP25L,Yale,'',,D871,'',,,,,7062
+GD30CD,Yale,'',,D871,'',,,,,7063
+H5.0UT6,Hyster,Class 5 NOT BT,,A3D0,Maximal,,,,,7064
+N30ZDR3,Hyster,Class 2,,E264,Greenville,,,,,7065
+C1.5L,Hyster,Class 2,,B464,Masate,,,,,7066
+GC070V,Yale,Class 4,,C910,Berea,,,,,7067
+H18XD7,Hyster,Class 5 BT,,C238,Nijmegen,,,,,7068
+H4.0FT6,Hyster,Class 5 NOT BT,,U005,Craigavon,,,,,7069
+GDP25A,Yale,'',,D871,'',,,,,7070
+H8XD6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7071
+MS40FT,Hyster,Class 4,,H187,Berea,,,,,7072
+W30ZC,Hyster,Class 3,,C454,Greenville,,,,,7073
+S120FTS,Hyster,Class 4,,J004,Berea,,,,,7074
+H20XTC,Hyster,'',,D466,'',,,,,7075
+H6XDEC,Hyster,Class 5 BT,,N019,Nijmegen,,,,,7076
+J80XNL,Hyster,Class 1,,A250,Craigavon,,,,,7077
+GP50UXS6,Yale,Class 5 NOT BT,,A7S6,Maximal,,,,,7078
+ERP50VM6,Yale,Class 4,,A985,Craigavon,,,,,7079
+G140DP,Yale,Class 5 BT,,K876,Nijmegen,,,,,7080
+GDP15MX,Yale,Class 5 NOT BT,,E812,SN,,,,,7081
+GC120VXPRS,Yale,Class 4,,G818,Berea,,,,,7082
+GDP10F,Yale,Class 5 BT,,K876,Nijmegen,,,,,7083
+FBR13SZ,Yale,Class 2,,C900,SN,,,,,7084
+H10XD12,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7085
+MO10L,Yale,Class 2,,E857,Masate,,,,,7086
+F1.8UT,Hyster,Class 5 NOT BT,,A3B4,Maximal,,,,,7087
+MR12E,Yale,Class 2,,A942,Masate,,,,,7088
+GTP2XB,Yale,'',,D871,'',,,,,7089
+H12XD6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7090
+F3.5UT,Hyster,Class 5 NOT BT,,A3B4,Maximal,,,,,7091
+ERP35UX,Yale,Class 1,,A7S4,Maximal,,,,,7092
+GTP30MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7093
+H7.0UT6,Hyster,Class 5 NOT BT,,A3D0,Maximal,,,,,7094
+H5.0UTS6,Hyster,Class 5 NOT BT,,A3C6,Maximal,,,,,7095
+GLP35MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7096
+MO10S,Yale,Class 2,,B865,Masate,,,,,7097
+ERP040VT,Yale,Class 2,,G807,Craigavon,,,,,7098
+MP30X,Yale,Class 3,,A3D9,Maximal,,,,,7099
+R30XM3,Hyster,Class 2,,E118,Greenville,,,,,7100
+S1.5UTS,Hyster,Class 3,,A3B3,Ruyi,,,,,7101
+T3.0UT,Hyster,Class 3,,A3C9,Ruyi,,,,,7102
+MP15UX,Yale,Class 3,,A3D1,Ruyi,,,,,7103
+MTC10,Yale,Class 2,,B868,Masate,,,,,7104
+ERC045VG,Yale,Class 1,,A968,Greenville,,,,,7105
+W40ZA,Hyster,Class 3,,C453,Greenville,,,,,7106
+H28XD12,Hyster,Class 5 BT,,J008,Nijmegen,,,,,7107
+ERP030VT,Yale,Class 2,,G807,Craigavon,,,,,7108
+P2.5S,Hyster,Class 3,,A3D9,Maximal,,,,,7109
+E35HSD3,Hyster,Class 1,,C219,Greenville,,,,,7110
+H18XD9,Hyster,Class 5 BT,,C238,Nijmegen,,,,,7111
+H9XD-EC7,Hyster,Class 5 BT,,F214,Nijmegen,,,,,7112
+H25XBT,Hyster,'',,D466,'',,,,,7113
+GC080VXBCS,Yale,Class 4,,G818,Berea,,,,,7114
+H10XD2,Hyster,Class 5 BT,,P007,Nijmegen,,,,,7115
+GTP20MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7116
+FBR15WZ,Yale,Class 2,,C900,SN,,,,,7117
+H48XD12,Hyster,Class 5 BT,,D917,Nijmegen,,,,,7118
+J3.0XN,Hyster,Class 3,,A276,Craigavon,,,,,7119
+J2.0UTT,Hyster,Class 1,,A3C5,Maximal,,,,,7120
+C1.5M,Hyster,Class 2,,B464,Masate,,,,,7121
+H2.0UT,Hyster,Class 5 NOT BT,,A3C1,Maximal,,,,,7122
+K1.0M,Hyster,Class 2,,B460,Masate,,,,,7123
+MS20X,Yale,Class 3,,D847,Masate,,,,,7124
+GP50UX,Yale,Class 5 NOT BT,,A7S6,Maximal,,,,,7125
+H9XD-EC8,Hyster,Class 5 BT,,F214,Nijmegen,,,,,7126
+S135FT,Hyster,Class 4,,H024,Berea,,,,,7127
+YGDP16,Yale,Class 5 BT,,K876,Nijmegen,,,,,7128
+LO7.0T,Hyster,Class 2,,E444,Masate,,,,,7129
+W40ZC,Hyster,Class 3,,C454,Greenville,,,,,7130
+MS50FT,Hyster,Class 4,,H187,Berea,,,,,7131
+S100FT,Hyster,Class 4,,J004,Berea,,,,,7132
+GP35UX,Yale,Class 5 NOT BT,,A7S1,Maximal,,,,,7133
+N35ZR3,Hyster,Class 2,,E264,Greenville,,,,,7134
+H25XD9,Hyster,Class 5 BT,,J008,Nijmegen,,,,,7135
+W80Z,Hyster,Class 3,,B234,Greenville,,,,,7136
+KDP5.0UX,Yale,Class 5 NOT BT,,A7R9,Maximal,,,,,7137
+MS15UX,Yale,Class 3,,A7S3,Ruyi,,,,,7138
+S14SIL,Hyster,Class 3,,D442,Masate,,,,,7139
+GP135VX,Yale,Class 5 NOT BT,,H878,Berea,,,,,7140
+J30XNT,Hyster,Class 2,,K160,Craigavon,,,,,7141
+KDP25UX4,Yale,Class 5 NOT BT,,A7R8,Maximal,,,,,7142
+MCW030-E,Yale,Class 3,,D819,Greenville,,,,,7143
+C1.3,Hyster,Class 2,,B463,Masate,,,,,7144
+J3.0XNL,Hyster,Class 2,,A276,Craigavon,,,,,7145
+MTC13,Yale,Class 2,,B868,Masate,,,,,7146
+H20XMD,Hyster,Class 5 BT,,P007,Nijmegen,,,,,7147
+C1.3,Hyster,Class 2,,B464,Masate,,,,,7148
+MH8XD6,Hyster,Class 5 BT,,P007,Nijmegen,,,,,7149
+MTC13,Yale,Class 2,,B869,Masate,,,,,7150
+W25ZC,Hyster,Class 3,,C454,Greenville,,,,,7151
+RS 45-31 CH,Hyster,Class 5 BT,,A404,Maximal,,,,,7152
+E60XNL,Hyster,Class 1,,A268,Greenville,,,,,7153
+MPB045VH,Yale,Class 3,,B245,Ramos,,,,,7154
+ERP20UXT,Yale,Class 1,,A7S5,Maximal,,,,,7155
+MR10E,Yale,Class 2,,A942,Masate,,,,,7156
+W20ZR,Hyster,Class 3,,C455,Greenville,,,,,7157
+GP50VX,Yale,Class 5 NOT BT,,K813,Craigavon,,,,,7158
+GC155VX,Yale,Class 4,,G879,Berea,,,,,7159
+ERP90V,Yale,Class 1,,A410,Craigavon,,,,,7160
+GC120SVX,Yale,Class 4,,G818,Berea,,,,,7161
+GLP2BL,Yale,'',,D871,'',,,,,7162
+H28XD-16CH,Hyster,Class 5 BT,,J008,Nijmegen,,,,,7163
+MS16XS,Yale,Class 3,,D847,Masate,,,,,7164
+H1.5XT,Hyster,Class 5 NOT BT,,D475,SN,,,,,7165
+J16XNL,Hyster,Class 1,,A935,Greenville,,,,,7166
+H4.0UT,Hyster,Class 5 NOT BT,,A3C6,Maximal,,,,,7167
+H175FT,Hyster,Class 5 NOT BT,,D299,Berea,,,,,7168
+C1.0,Hyster,Class 2,,B463,Masate,,,,,7169
+ME65XN,Hyster,Class 1,,A268,Greenville,,,,,7170
+GLP30MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7171
+R2.0,Hyster,Class 2,,D435,Masate,,,,,7172
+H14XD6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7173
+GP 25MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7174
+E120XN,Hyster,Class 1,,A099,Greenville,,,,,7175
+MO20,Yale,Class 2,,E857,Masate,,,,,7176
+GP2.0N,Yale,Class 5 NOT BT,,E875,Craigavon,,,,,7177
+GDP3F9,Yale,Class 5 BT,,K876,Nijmegen,,,,,7178
+ERC080VH,Yale,Class 1,,A938,Greenville,,,,,7179
+LO2.0,Hyster,Class 2,,E444,Masate,,,,,7180
+R1.4E,Hyster,Class 2,,A432,Masate,,,,,7181
+J3.5UT,Hyster,Class 1,,A3C4,Maximal,,,,,7182
+MP25X,Yale,Class 3,,E843,Masate,,,,,7183
+MO70T,Yale,Class 2,,E857,Masate,,,,,7184
+H13XDS6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7185
+MT30XUX,Yale,Class 3,,A3C8,Ruyi,,,,,7186
+H20XD9,Hyster,Class 5 BT,,D236,Nijmegen,,,,,7187
+H4.0FT5,Hyster,Class 5 NOT BT,,U005,Craigavon,,,,,7188
+GC100VX,Yale,Class 4,,G818,Berea,,,,,7189
+R1.50EX 2,Hyster,Class 2,,C915,SN,,,,,7190
+H32XD-16CH,Hyster,Class 5 BT,,J008,Nijmegen,,,,,7191
+ERP45VM,Yale,Class 3,,A985,Craigavon,,,,,7192
+J5.0XN6,Hyster,Class 4,,A970,Craigavon,,,,,7193
+ESC035AD,Yale,Class 1,,C883,Greenville,,,,,7194
+GTP35MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7195
+GP60UX6,Yale,Class 5 NOT BT,,A3D0,Maximal,,,,,7196
+S16SSL,Hyster,Class 3,,D442,Masate,,,,,7197
+S2.0,Hyster,Class 3,,D456,Masate,,,,,7198
+GC040V,Yale,Class 4,,C910,Berea,,,,,7199
+H10XDS6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7200
+MOMP16,Yale,Class 3,,A428,Masate,,,,,7201
+H16XD9,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7202
+E40HSD3,Hyster,Class 1,,C219,Greenville,,,,,7203
+MCW040-E,Yale,Class 3,,D819,Greenville,,,,,7204
+H2XTBT,Hyster,'',,D466,'',,,,,7205
+ERP15UX,Yale,Class 1,,A7S4,Maximal,,,,,7206
+MSW040-E,Yale,Class 3,,D820,Greenville,,,,,7207
+MH9XD6,Hyster,Class 5 BT,,P007,Nijmegen,,,,,7208
+G18DPE,Yale,Class 5 BT,,K876,Nijmegen,,,,,7209
+J5.0XN,Hyster,Class 3,,A970,Craigavon,,,,,7210
+R1.80EX W2,Hyster,Class 2,,C915,SN,,,,,7211
+MO10,Yale,Class 2,,B865,Masate,,,,,7212
+J4.0XN,Hyster,Class 3,,A970,Craigavon,,,,,7213
+P2.5S,Hyster,Class 3,,E439,Masate,,,,,7214
+R1.50EX W2,Hyster,Class 2,,C915,SN,,,,,7215
+ERC065VG,Yale,Class 1,,A968,Greenville,,,,,7216
+MR20HD,Yale,Class 2,,D849,Masate,,,,,7217
+NDR035EC,Yale,Class 2,,E861,Greenville,,,,,7218
+H10XD2,Hyster,Class 5 BT,,N019,Nijmegen,,,,,7219
+FB40PYE,Yale,Class 1,,A901,SN,,,,,7220
+FB25RZ,Yale,Class 1,,C881,SN,,,,,7221
+H9XD-ECD7,Hyster,Class 5 BT,,F214,Nijmegen,,,,,7222
+GDP2BD,Yale,'',,D871,'',,,,,7223
+GP170SVX,Yale,Class 5 NOT BT,,H878,Berea,,,,,7224
+GP25UX,Yale,Class 5 NOT BT,,A7S1,Maximal,,,,,7225
+MRW020-E,Yale,Class 3,,D821,Greenville,,,,,7226
+GDP20SMX,Yale,Class 5 NOT BT,,E812,SN,,,,,7227
+R1.25EX 2,Hyster,Class 2,,C915,SN,,,,,7228
+J1.6UTT,Hyster,Class 1,,A3C5,Maximal,,,,,7229
+GDP18MX,Yale,Class 5 NOT BT,,E812,SN,,,,,7230
+NR045EC,Yale,Class 2,,E861,Greenville,,,,,7231
+ERP80V,Yale,Class 1,,A410,Craigavon,,,,,7232
+GP190VX,Yale,Class 5 NOT BT,,D909,Berea,,,,,7233
+GC050V,Yale,Class 4,,C910,Berea,,,,,7234
+F3.5UT4,Hyster,Class 5 NOT BT,,A3B8,Maximal,,,,,7235
+LO1.0F,Hyster,Class 2,,E444,Masate,,,,,7236
+H155FTS,Hyster,Class 5 NOT BT,,P006,Berea,,,,,7237
+H40XDS12,Hyster,Class 5 BT,,D917,Nijmegen,,,,,7238
+J2.5GX,Hyster,Class 1,,C225,SN,,,,,7239
+GLP20MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7240
+E80XN,Hyster,Class 1,,A099,Greenville,,,,,7241
+P1.5UT,Hyster,Class 3,,A3D1,Ruyi,,,,,7242
+J3.50EX,Hyster,Class 1,,A920,SN,,,,,7243
+MS16XL,Yale,Class 3,,D847,Masate,,,,,7244
+S155FT,Hyster,Class 4,,H024,Berea,,,,,7245
+MTC15,Yale,Class 2,,B869,Masate,,,,,7246
+LO5.0T,Hyster,Class 2,,E444,Masate,,,,,7247
+H25XBL,Hyster,'',,D466,'',,,,,7248
+S120FT,Hyster,Class 4,,J004,Berea,,,,,7249
+GC100VXBCS,Yale,Class 4,,G818,Berea,,,,,7250
+KDP25UX,Yale,Class 5 NOT BT,,A7S0,Maximal,,,,,7251
+KDP18UX4,Yale,Class 5 NOT BT,,A7R8,Maximal,,,,,7252
+H3.0XT,Hyster,Class 5 NOT BT,,D466,SN,,,,,7253
+RSTIL4,Hyster,Class 5 BT,,C289,India,,,,,7254
+M12ILY,Yale,Class 3,,D852,Masate,,,,,7255
+H5.0UT,Hyster,Class 5 NOT BT,,A3C6,Maximal,,,,,7256
+LO2.5,Hyster,Class 2,,E444,Masate,,,,,7257
+H2.0XTS,Hyster,Class 5 NOT BT,,D475,SN,,,,,7258
+J1.8UT,Hyster,Class 1,,A3C4,Maximal,,,,,7259
+MRW030-E,Yale,Class 3,,D821,Greenville,,,,,7260
+GC135VX,Yale,Class 4,,G879,Berea,,,,,7261
+GTP25MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7262
+S80FT,Hyster,Class 4,,J004,Berea,,,,,7263
+H40XD-CH,Hyster,Class 5 BT,,K117,Nijmegen,,,,,7264
+H16XD12,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7265
+GDP16E,Yale,Class 5 BT,,K876,Nijmegen,,,,,7266
+RSTILC,Hyster,Class 5 BT,,A366,India,,,,,7267
+J2.5UT,Hyster,Class 1,,A3C4,Maximal,,,,,7268
+H44XD12,Hyster,Class 5 BT,,D917,Nijmegen,,,,,7269
+SL1.5UT,Hyster,Class 3,,A3B6,Ruyi,,,,,7270
+MPC15,Yale,Class 3,,A3D4,Staxx,,,,,7271
+RS 45-27 CH,Hyster,Class 5 BT,,A921,Maximal,,,,,7272
+H2.0XT,Hyster,Class 5 NOT BT,,D466,SN,,,,,7273
+ERP20UX,Yale,Class 1,,A7S4,Maximal,,,,,7274
+GP 35MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7275
+GDP14E,Yale,Class 5 BT,,J877,Nijmegen,,,,,7276
+H32XD12,Hyster,Class 5 BT,,J008,Nijmegen,,,,,7277
+MO50T,Yale,Class 2,,E857,Masate,,,,,7278
+H48XDS12,Hyster,Class 5 BT,,D917,Nijmegen,,,,,7279
+MR16N,Yale,Class 2,,D849,Masate,,,,,7280
+GDP30MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7281
+GD25CD,Yale,'',,D871,'',,,,,7282
+J2.5XNL,Hyster,Class 2,,A276,Craigavon,,,,,7283
+R2.5,Hyster,Class 2,,D435,Masate,,,,,7284
+MT30UX,Yale,Class 3,,A3C9,Ruyi,,,,,7285
+GDP90F,Yale,Class 5 BT,,J876,Nijmegen,,,,,7286
+GDP80F,Yale,Class 5 BT,,K876,Nijmegen,,,,,7287
+GC055S,Yale,Class 4,,C910,Berea,,,,,7288
+S1.5UT,Hyster,Class 3,,A3C3,Ruyi,,,,,7289
+GC080VX,Yale,Class 4,,G818,Berea,,,,,7290
+ERP35VL,Yale,Class 3,,A976,Craigavon,,,,,7291
+MTR007-F,Yale,Class 3,,C903,Ramos,,,,,7292
+S1.6S,Hyster,Class 3,,D442,Masate,,,,,7293
+H30XD12,Hyster,Class 5 BT,,J008,Nijmegen,,,,,7294
+GP18VX,Yale,Class 5 NOT BT,,D810,Craigavon,,,,,7295
+H3.0UT,Hyster,Class 5 NOT BT,,A3C1,Maximal,,,,,7296
+J2.2XN,Hyster,Class 2,,A276,Craigavon,,,,,7297
+H14XD12,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7298
+KDP35UX,Yale,Class 5 NOT BT,,A7S0,Maximal,,,,,7299
+H25XTC,Hyster,'',,D466,'',,,,,7300
+FB30RZ,Yale,Class 1,,C881,SN,,,,,7301
+RS46-41XD/67S,Hyster,Class 5 BT,,F222,Nijmegen,,,,,7302
+MODP16,Hyster,Class 3,,A418,Masate,,,,,7303
+H52XD-CH,Hyster,Class 5 BT,,K117,Nijmegen,,,,,7304
+P2.0UTE,Hyster,Class 3,,A3B5,Ruyi,,,,,7305
+GDP13E,Yale,Class 5 BT,,J877,Nijmegen,,,,,7306
+RS46-33XD/62,Hyster,Class 5 BT,,F222,Nijmegen,,,,,7307
+NR040EC,Yale,Class 2,,E861,Greenville,,,,,7308
+GP20UX,Yale,Class 5 NOT BT,,A7S1,Maximal,,,,,7309
+J3.0GX,Hyster,Class 1,,C225,SN,,,,,7310
+E100XN,Hyster,Class 1,,A099,Greenville,,,,,7311
+MS20,Yale,Class 3,,D852,Masate,,,,,7312
+HS12IL,Hyster,Class 3,,D456,Masate,,,,,7313
+H16XD6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7314
+H40XD12,Hyster,Class 5 BT,,D917,Nijmegen,,,,,7315
+F2.5UT,Hyster,Class 5 NOT BT,,A3B4,Maximal,,,,,7316
+ME45XN,Hyster,Class 1,,A268,Greenville,,,,,7317
+NDR030EC,Yale,Class 2,,E861,Greenville,,,,,7318
+SL1.5UTS,Hyster,Class 3,,A3B7,Ruyi,,,,,7319
+PC1.5,Hyster,Class 3,,A6W9,Staxx,,,,,7320
+GDP14E,Yale,Class 5 BT,,K876,Nijmegen,,,,,7321
+R1.0E,Hyster,Class 2,,A432,Masate,,,,,7322
+J70XNS,Hyster,Class 1,,A250,Craigavon,,,,,7323
+ERP30UX,Yale,Class 1,,A7S4,Maximal,,,,,7324
+GD35CD,Yale,'',,D871,'',,,,,7325
+J90XNL,Hyster,Class 1,,A250,Craigavon,,,,,7326
+GDP20MX,Yale,Class 5 NOT BT,,D871,SN,,,,,7327
+H5.5FT,Hyster,Class 5 NOT BT,,U005,Craigavon,,,,,7328
+GLP18MX,Yale,Class 5 NOT BT,,E812,SN,,,,,7329
+E16LWB,Yale,Class 1,,A955,Greenville,,,,,7330
+R1.6HD,Hyster,Class 2,,D435,Masate,,,,,7331
+H13XD6,Hyster,Class 5 BT,,N019,Nijmegen,,,,,7332
+J5.5XN6,Hyster,Class 4,,A970,Craigavon,,,,,7333
+MS14XL,Yale,Class 3,,D847,Masate,,,,,7334
+MP20XUX,Yale,Class 3,,A7R1,Ruyi,,,,,7335
+MP20X,Yale,Class 3,,E843,Masate,,,,,7336
+H30XTC,Hyster,'',,D466,'',,,,,7337
+GP45UX,Yale,Class 5 NOT BT,,A7S6,Maximal,,,,,7338
+GDP16E,Yale,Class 5 BT,,J877,Nijmegen,,,,,7339
+MTR005-F,Yale,Class 3,,D902,Ramos,,,,,7340
+H44XD-CH,Hyster,Class 5 BT,,K117,Nijmegen,,,,,7341
+H170FTS,Hyster,Class 5 NOT BT,,P006,Berea,,,,,7342
+GP50UX6,Yale,Class 5 NOT BT,,A3D0,Maximal,,,,,7343
+ERP18UX,Yale,Class 1,,A7S4,Maximal,,,,,7344
+R1.4,Hyster,Class 2,,D435,Masate,,,,,7345
+MCW025-E,Yale,Class 3,,D819,Greenville,,,,,7346
+ERC100VH,Yale,Class 1,,A938,Greenville,,,,,7347
+J20MWB,Hyster,Class 2,,K160,Craigavon,,,,,7348
+H32XD9,Hyster,Class 5 BT,,J008,Nijmegen,,,,,7349
+W30ZR,Hyster,Class 3,,C455,Greenville,,,,,7350
+T7ZAC,Hyster,Class 3,,C477,Ramos,,,,,7351
+GP45VX6,Yale,Class 5 NOT BT,,K813,Craigavon,,,,,7352
+H2.5UT,Hyster,Class 5 NOT BT,,A3C1,Maximal,,,,,7353
+MS16X,Yale,Class 3,,D847,Masate,,,,,7354
+H14XDS6,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7355
+MP20UX,Yale,Class 3,,A7R5,Ruyi,,,,,7356
+MT60UX,Yale,Class 3,,A7S7,Ruyi,,,,,7357
+H2.0A,Hyster,Class 5 NOT BT,,R177,Craigavon,,,,,7358
+ERC060VGL,Yale,Class 1,,A968,Greenville,,,,,7359
+GDP80F,Yale,Class 5 BT,,J876,Nijmegen,,,,,7360
+ERP55VM6,Yale,Class 4,,A985,Craigavon,,,,,7361
+GP170VX,Yale,Class 5 NOT BT,,D909,Berea,,,,,7362
+J3.5XN,Hyster,Class 3,,A276,Craigavon,,,,,7363
+ERP25VLL,Yale,Class 2,,A976,Craigavon,,,,,7364
+R1.80EX 2,Hyster,Class 2,,C915,SN,,,,,7365
+R1.2E,Hyster,Class 2,,A432,Masate,,,,,7366
+OS030EF,Yale,Class 2,,D801,Greenville,,,,,7367
+H25XBD,Hyster,'',,D466,'',,,,,7368
+H14XD6,Hyster,Class 5 BT,,N019,Nijmegen,,,,,7369
+H6XD-EC3,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7370
+H18XD9,Hyster,Class 5 BT,,R007,Nijmegen,,,,,7371
+GP155SVX,Yale,Class 5 NOT BT,,H878,Berea,,,,,7372
+GP45SVX5,Yale,Class 5 NOT BT,,K813,Craigavon,,,,,7373
+RS46-36XD/62,Hyster,Class 5 BT,,F222,Nijmegen,,,,,7374
+H2XTBL,Hyster,'',,D466,'',,,,,7375
+LO2.0S,Hyster,Class 2,,E444,Masate,,,,,7376
+MO25,Yale,Class 2,,E857,Masate,,,,,7377
+S16SIL,Hyster,Class 3,,D442,Masate,,,,,7378
+G16DPE,Yale,Class 5 BT,,K876,Nijmegen,,,,,7379
+FBR18SZ,Yale,Class 2,,C900,SN,,,,,7380
+ERP22VL,Yale,Class 2,,A976,Craigavon,,,,,7381
+MR20,Yale,Class 2,,D849,Masate,,,,,7382
+LO1.2C (SPED),Hyster,Class 2,,E444,Masate,,,,,7383
+R1.6,Hyster,Class 2,,D435,Masate,,,,,7384
+ERP035VT,Yale,Class 2,,G807,Craigavon,,,,,7385
+MP30X,Yale,Class 3,,E843,Masate,,,,,7386

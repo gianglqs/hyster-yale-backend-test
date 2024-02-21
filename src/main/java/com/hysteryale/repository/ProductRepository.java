@@ -15,10 +15,10 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT DISTINCT a.plant FROM Product a")
     List<String> getPlants();
 
-    @Query("SELECT a FROM Product a WHERE a.metaSeries = ?1")
+    @Query("SELECT a FROM Product a WHERE a.series = ?1")
     Optional<Product> findByMetaSeries(String metaSeries);
 
-    @Query("SELECT DISTINCT a.metaSeries FROM Product a")
+    @Query("SELECT DISTINCT a.series FROM Product a")
     List<String> getAllMetaSeries();
 
     @Query("SELECT DISTINCT a.clazz FROM Product a WHERE a.clazz IS NOT NULL")
@@ -30,7 +30,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT DISTINCT p.modelCode FROM Product p")
     List<String> getAllModel();
 
-    @Query("SELECT p.modelCode FROM Product p WHERE p.metaSeries = :metaSeries")
+    @Query("SELECT p.modelCode FROM Product p WHERE p.series = :metaSeries")
     Optional<String> getModelByMetaSeries(String metaSeries);
 
     @Query(value = "SELECT p.plant FROM product p WHERE p.meta_series = :metaSeries LIMIT 1", nativeQuery = true)
@@ -40,7 +40,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT p FROM Product p WHERE " +
             "((:modelCode) IS Null OR p.modelCode = :modelCode )" +
             " AND ((:plants) IS NULL OR p.plant IN (:plants))" +
-            " AND ((:metaSeries) IS NULL OR SUBSTRING(p.metaSeries, 2,3) IN (:metaSeries))" +
+            " AND ((:metaSeries) IS NULL OR SUBSTRING(p.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
             " AND ((:segments) IS NULL OR p.segment IN (:segments))" +
             " AND ((:brands) IS NULL OR p.brand IN (:brands))" +
@@ -58,7 +58,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT COUNT(p) FROM Product p WHERE " +
             "((:modelCode) IS Null OR p.modelCode = :modelCode )" +
             " AND ((:plants) IS NULL OR p.plant IN (:plants))" +
-            " AND ((:metaSeries) IS NULL OR SUBSTRING(p.metaSeries, 2,3) IN (:metaSeries))" +
+            " AND ((:metaSeries) IS NULL OR SUBSTRING(p.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
             " AND ((:segments) IS NULL OR p.segment IN (:segments))" +
             " AND ((:brands) IS NULL OR p.brand IN (:brands))" +
@@ -89,13 +89,15 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode")
     Optional<Product> getProductByModelCode(String modelCode);
 
-    @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode AND p.metaSeries = :metaSeries")
-    Optional<Product> findByModelCodeAndMetaSeries(String modelCode, String metaSeries);
+    @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode AND p.series = :series")
+    Optional<Product> findByModelCodeAndSeries(String modelCode, String series);
 
-    @Query(value = "SELECT * FROM product p WHERE p.meta_series = :metaSeries LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM product p WHERE substring(p.series, 2, 4) = :metaSeries LIMIT 1", nativeQuery = true)
     Product getProductByMetaSeries(@Param("metaSeries") String metaSeries);
 
     @Query(value = "SELECT p.plant FROM product p WHERE p.model_code = :model_code LIMIT 1", nativeQuery = true)
     String getPlantByModelCode(@Param("model_code") String modelCode);
 
+    @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode AND substring(p.series, 2, 4) = :metaSeries")
+    List<Product> findByModelCodeAndMetaSeries(String modelCode, String metaSeries);
 }
