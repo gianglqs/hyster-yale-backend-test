@@ -90,7 +90,8 @@ public class IMMarginAnalystDataService {
         double warranty = 0;
 
         // Assign value for variables if existed
-        Optional<MarginAnalysisAOPRate> optionalMarginAnalysisAOPRate = getMarginAnalysisAOPRate(strCurrency, monthYear, plant, "annually");
+        String queryPlant = plant.equals("SN") ? "SN" : "HYM";
+        Optional<MarginAnalysisAOPRate> optionalMarginAnalysisAOPRate = getMarginAnalysisAOPRate(strCurrency, monthYear, queryPlant, "annually");
         if(optionalMarginAnalysisAOPRate.isPresent()) {
             MarginAnalysisAOPRate marginAnalysisAOPRate = optionalMarginAnalysisAOPRate.get();
             aopRate = marginAnalysisAOPRate.getAopRate();
@@ -124,7 +125,7 @@ public class IMMarginAnalystDataService {
 
         // ManufacturingCost must be multiplied by aopRate (to exchange the currency)
         // ManufacturingCost can be in RMB(CNY), USD or AUD -> then it must be exchanged to be the same as the currency of DealerNet
-        double manufacturingCost = getManufacturingCost(modelCode, partNumber, strCurrency, plant, monthYear, netPrice, aopRate);
+        double manufacturingCost = getManufacturingCost(modelCode, partNumber, strCurrency, queryPlant, monthYear, netPrice, aopRate);
         boolean isSPED = false;
         if(description.contains("SPED")) {
             isSPED = true;
