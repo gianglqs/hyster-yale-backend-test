@@ -436,7 +436,7 @@ public class IMMarginAnalystDataService {
     }
 
     public Map<String, Object> calculateMarginAnalysisSummary(String fileUUID, Integer type, String modelCode, String series, String orderNumber, String currency) {
-        String plant = productRepository.getPlantByMetaSeries(series.substring(1));
+        String plant = productRepository.getPlantBySeries(series);
 
         IMMarginAnalystSummary monthly;
         IMMarginAnalystSummary annually;
