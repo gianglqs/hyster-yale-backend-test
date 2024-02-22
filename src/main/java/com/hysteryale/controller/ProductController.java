@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
+import java.util.List;
 import java.util.Map;
 
 @RestController()
@@ -67,20 +67,21 @@ public class ProductController {
     }
 
     @GetMapping("/getProductDetail")
-    public Product getDataForProductDetail(@RequestParam String modelCode, @RequestParam String metaSeries) throws NotFoundException {
-        return productService.getProductDimensionDetail(modelCode, metaSeries);
+    public Product getDataForProductDetail(@RequestParam String modelCode, @RequestParam String series) throws NotFoundException {
+        return productService.getProductDimensionDetail(modelCode, series);
     }
 
-    @PostMapping(path="/importData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/importData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> importProduct(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        if (!FileUtils.isExcelFile(file.getInputStream()))
-            throw new InvalidPropertiesFormatException("Importing file is not Excel file");
+    public ResponseEntity<ResponseObject> importProduct(@RequestParam("files") List<MultipartFile> fileList, Authentication authentication) throws Exception {
+        // check 2 files is EXCEL
+        for (MultipartFile file : fileList) {
+            if (!FileUtils.isExcelFile(file.getInputStream()))
+                throw new InvalidPropertiesFormatException(file.getOriginalFilename() + " is not Excel file");
+        }
 
-        String pathFileUploaded = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
-        productService.importProduct(pathFileUploaded);
+        productService.importProduct(fileList, authentication);
+
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));
     }
 }

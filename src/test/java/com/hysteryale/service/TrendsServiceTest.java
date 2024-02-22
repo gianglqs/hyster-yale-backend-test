@@ -62,14 +62,17 @@ public class TrendsServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>(),"");
-
+                new ArrayList<>(),
+                "");
     }
 
     private void assertCostValue(List<TrendData> bookingData, List<TrendData> shipmentData) throws ParseException {
         for(TrendData data : bookingData) {
             filters.setFromDate("2023-0" + data.getMonth() + "-01");
-            filters.setToDate("2023-0" + data.getMonth() + "-" + DateUtils.getMonth(data.getMonth()).maxLength());
+            int daysOfMonth = DateUtils.getMonth(data.getMonth()).maxLength();
+            if(data.getMonth() == 2)
+                daysOfMonth = DateUtils.getMonth(data.getMonth()).maxLength() -1;
+            filters.setToDate("2023-0" + data.getMonth() + "-" + daysOfMonth);
 
             List<Booking> bookingOrdersList = (List<Booking>) bookingService.getBookingByFilter(filters).get("listBookingOrder");
             double totalCost = 0.0;
@@ -117,7 +120,10 @@ public class TrendsServiceTest {
     private void assertDealerNetValue(List<TrendData> bookingData, List<TrendData> shipmentData) throws ParseException {
         for(TrendData data : bookingData) {
             filters.setFromDate("2023-0" + data.getMonth() + "-01");
-            filters.setToDate("2023-0" + data.getMonth() + "-" + DateUtils.getMonth(data.getMonth()).maxLength());
+            int daysOfMonth = DateUtils.getMonth(data.getMonth()).maxLength();
+            if(data.getMonth() == 2)
+                daysOfMonth = DateUtils.getMonth(data.getMonth()).maxLength() -1;
+            filters.setToDate("2023-0" + data.getMonth() + "-" + daysOfMonth);
 
             List<Booking> bookingOrdersList = (List<Booking>) bookingService.getBookingByFilter(filters).get("listBookingOrder");
             double dealerNet = 0.0;

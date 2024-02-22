@@ -3,6 +3,7 @@ package com.hysteryale.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -21,5 +22,18 @@ public class Region {
 
     public Region(String regionName) {
         this.regionName = regionName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Region region = (Region) o;
+        return Objects.equals(regionShortName, region.regionShortName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(regionShortName);
     }
 }

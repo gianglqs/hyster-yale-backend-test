@@ -1,7 +1,10 @@
-'id','region_short_name','region_name'
-1,'A','Asia'
-2,'P','Pacific'
-3,'C','China'
-4,'I','India'
+'id','region_name','region_short_name'
+1,Asia,A
+2,Pacific,P
+3,China,C
+4,India,I
+5,Australia,AU
+6,ISC,ISC
+7,Pacific excl AUS,Pacific excl AUS
 5,'AU','Australia'
 6,'ISC','ISC'

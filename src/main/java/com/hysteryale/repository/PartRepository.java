@@ -1,5 +1,6 @@
 package com.hysteryale.repository;
 
+import com.hysteryale.model.Booking;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.Part;
 import org.springframework.data.domain.Pageable;
@@ -15,8 +16,8 @@ import java.util.Set;
 
 public interface PartRepository extends JpaRepository<Part, String> {
 
-    @Query("SELECT DISTINCT p FROM Part p WHERE p.orderNumber = ?1 ")
-    public Set<Part> getPartByOrderNumber(String orderNumber);
+    @Query("SELECT p FROM Part p WHERE p.orderNumber = :orderNumber")
+    List<Part> getPartByOrderNumber(String orderNumber);
 
     @Query("SELECT CASE WHEN (COUNT(p) > 0) THEN 1 ELSE 0 END " +
             "FROM Part p WHERE p.modelCode = ?1 AND p.partNumber = ?2 AND p.orderNumber = ?3 AND p.recordedTime = ?4 and p.currency.currency = ?5")
@@ -63,7 +64,7 @@ public interface PartRepository extends JpaRepository<Part, String> {
 
     @Query(value = "SELECT distinct new Part(p.partNumber, p.image, p.currency, p.listPrice, p.description) FROM Part p WHERE " +
             "   p.modelCode = :modelCode " +
-            "   AND SUBSTRING(p.series,2,4) = :metaSeries " +
+            "   AND p.series = :metaSeries " +
             "   AND ((:orderNumbers) IS NULL OR p.orderNumber in (:orderNumbers))" +
             "   ORDER BY p.partNumber"
 

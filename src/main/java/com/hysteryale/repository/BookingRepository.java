@@ -334,7 +334,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             @Param("dnAdjPercentage") double dnAdjPercentage
     );
 
-    @Query("SELECT new Booking(c.orderNo, c.currency, c.dealerNet, c.dealerNetAfterSurcharge, c.totalCost) FROM Booking c WHERE " +
+    @Query("SELECT c FROM Booking c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
@@ -529,6 +529,6 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             @Param("toDate") LocalDate toDate
     );
 
-    @Query(value = "SELECT b.orderNo FROM Booking b WHERE b.product.modelCode = :modelCode AND b.product.metaSeries = :metaSeries ")
+    @Query(value = "SELECT b.orderNo FROM Booking b WHERE b.product.modelCode = :modelCode AND b.product.series = :metaSeries ")
     List<String> getOrderNosByModelCodeAndMetaSeries(String modelCode, String metaSeries);
 }

@@ -193,7 +193,7 @@
                     <url>jdbc:postgresql://localhost:5432/hysteryale</url>
                     <username>postgres</username>
                     <password>postgres</password>
-                    <outputChangeLogFile>src/main/resources/db/changelog/liquibase-outputChangeLog.xml
+                    <outputChangeLogFile>src/test/resources/db/changelog/liquibase-outputChangeLog-test.xml
                     </outputChangeLogFile>
                 </configuration>
             </plugin>

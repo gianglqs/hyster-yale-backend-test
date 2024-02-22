@@ -177,13 +177,11 @@ public class ExchangeRateService extends BasedService {
                 continue;
             double nearestRate = exchangeRateList.get(0).getRate();
             double farthestRate = exchangeRateList.get(exchangeRateList.size() - 1).getRate();
-            double differentRate = CurrencyFormatUtils.formatDoubleValue(nearestRate - farthestRate, CurrencyFormatUtils.decimalFormatFourDigits);
-            double differentRatePercentage = CurrencyFormatUtils.formatDoubleValue((differentRate / farthestRate) * 100, CurrencyFormatUtils.decimalFormatFourDigits);
+            double differentRate = nearestRate - farthestRate;
+            double differentRatePercentage = CurrencyFormatUtils.formatDoubleValue((differentRate / farthestRate) * 100, CurrencyFormatUtils.decimalFormatTwoDigits);
 
             if(Math.abs(differentRatePercentage) > 5) {
-                StringBuilder sb = new StringBuilder();
-                Formatter formatter = new Formatter(sb);
-                formatter.format("%,.2f", differentRate);
+                StringBuilder sb = formatNumericValue(differentRate);
 
                 if(differentRatePercentage < 0) weakerCurrencies.add(currency + " by " + sb + " (" + differentRatePercentage + "%)");
                 else strongerCurrencies.add(currency + " by +" + sb + " (+" + differentRatePercentage + "%)");
@@ -196,6 +194,24 @@ public class ExchangeRateService extends BasedService {
         data.put("weakening", weakerCurrencies);
         data.put("strengthening", strongerCurrencies);
         return data;
+    }
+
+    private StringBuilder formatNumericValue(double differentRate) {
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb);
+        formatter.format("%,.7f", differentRate);
+
+        String[] array = sb.toString().split("");
+        sb.delete(0, sb.length());
+        int i = array.length - 1;
+        while(array[i].equals("0")) {
+            array[i] = "";
+            i--;
+        }
+        for(String s : array) {
+            sb.append(s);
+        }
+        return sb;
     }
 
     public void importExchangeRateFromFile(MultipartFile file, Authentication authentication) throws Exception {

@@ -45,16 +45,6 @@
 
         <loadUpdateData
                 encoding="UTF-8"
-                file="classpath:db/database/productdimension.csv"
-                onlyUpdate="false"
-                primaryKey="modelcode"
-                quotchar="'"
-                separator=","
-                tableName="productdimension">
-        </loadUpdateData>
-
-        <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/region.csv"
                 onlyUpdate="false"
                 primaryKey="id"
@@ -65,22 +55,52 @@
 
         <loadUpdateData
                 encoding="UTF-8"
-                file="classpath:db/database/booking.csv"
-                onlyUpdate="false"
-                primaryKey="order_no"
-                quotchar="'"
-                separator=","
-                tableName="booking_order">
-        </loadUpdateData>
-
-        <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/country.csv"
                 onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
                 separator=","
                 tableName="country">
+        </loadUpdateData>
+
+        <loadUpdateData
+                encoding="UTF-8"
+                file="classpath:db/database/dealer.csv"
+                onlyUpdate="false"
+                primaryKey="id"
+                quotchar="'"
+                separator=","
+                tableName="dealer">
+        </loadUpdateData>
+
+        <loadUpdateData
+                encoding="UTF-8"
+                file="classpath:db/database/aopmargin.csv"
+                onlyUpdate="false"
+                primaryKey="id"
+                quotchar="'"
+                separator=","
+                tableName="aopmargin">
+        </loadUpdateData>
+
+        <loadUpdateData
+                encoding="UTF-8"
+                file="classpath:db/database/product.csv"
+                onlyUpdate="false"
+                primaryKey="id"
+                quotchar="'"
+                separator=","
+                tableName="product">
+        </loadUpdateData>
+
+        <loadUpdateData
+                encoding="UTF-8"
+                file="classpath:db/database/booking.csv"
+                onlyUpdate="false"
+                primaryKey="order_no"
+                quotchar="'"
+                separator=","
+                tableName="booking">
         </loadUpdateData>
 
         <loadUpdateData

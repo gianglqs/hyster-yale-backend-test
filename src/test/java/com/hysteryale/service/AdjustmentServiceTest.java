@@ -53,13 +53,14 @@ public class AdjustmentServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>(),"");
+                new ArrayList<>(),
+                "");
     }
 
     @BeforeEach
     public void setUp(){
         resetFilters();
-        calculatorModel = new CalculatorModel(1, 1, 1, 1);
+        calculatorModel = new CalculatorModel(0, 0, 0, 0);
     }
 
     private void assertTotalValue(AdjustmentPayLoad totalResult, long noOfOrders, int totalAdditionalVolume,
@@ -219,7 +220,7 @@ public class AdjustmentServiceTest {
 
         Assertions.assertFalse(resultList.isEmpty());
         for(AdjustmentPayLoad adj : resultList) {
-            Assertions.assertEquals(metaSeries, adj.getMetaSeries());
+            Assertions.assertEquals(metaSeries, adj.getMetaSeries().substring(1));
 
             noOfOrders += adj.getNoOfOrder();
             totalAdditionalVolume += adj.getAdditionalVolume();

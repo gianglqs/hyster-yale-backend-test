@@ -20,6 +20,7 @@ public class AOPMargin {
     private String description;
     private double dnUSD;
     private double marginSTD;
+    @Column(name = "\"year\"")
     private int year;
     private String plant;
     @Column(name = "meta_series")
@@ -27,5 +28,12 @@ public class AOPMargin {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "region")
     private Region region;
+
+    public boolean equals(Region region, String metaSeries, String plant, int year) {
+        return this.region.equals(region)
+                && this.getMetaSeries().equals(metaSeries)
+                && this.getPlant().equals(plant)
+                && this.year == year;
+    }
 
 }

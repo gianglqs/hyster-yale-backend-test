@@ -69,7 +69,8 @@ public class AdjustmentControllerTest {
                                 new ArrayList<>(),
                                 new ArrayList<>(),
                                 new ArrayList<>(),
-                                new ArrayList<>(),""
+                                new ArrayList<>(),
+                                ""
                         )
                 );
         MvcResult result =
