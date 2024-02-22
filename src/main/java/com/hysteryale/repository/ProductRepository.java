@@ -18,7 +18,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT a FROM Product a WHERE a.series = ?1")
     Optional<Product> findByMetaSeries(String metaSeries);
 
-    @Query("SELECT DISTINCT a.series FROM Product a")
+    @Query("SELECT DISTINCT substring(a.series, 2, 4) FROM Product a")
     List<String> getAllMetaSeries();
 
     @Query("SELECT DISTINCT a.clazz FROM Product a WHERE a.clazz IS NOT NULL")
