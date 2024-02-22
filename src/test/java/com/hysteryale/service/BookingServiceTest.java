@@ -219,7 +219,7 @@ public class BookingServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for(Booking bo : listResult) {
-            Assertions.assertEquals(metaSeries, bo.getProduct().getMetaSeries());
+            Assertions.assertEquals(metaSeries, bo.getProduct().getSeries());
 
             quantity += bo.getQuantity();
             if(bo.getCurrency().getCurrency().equals("AUD")) {

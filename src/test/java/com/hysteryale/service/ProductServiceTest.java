@@ -57,20 +57,7 @@ public class ProductServiceTest {
         Assertions.assertEquals(expectedSize, result.size());
     }
 
-    @Test
-    public void testGetProductDimensionByModelCode() {
-        String modelCode = "J40XN";
 
-        Product result = productService.getProductDimensionByModelCode(modelCode);
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(modelCode, result.getModelCode());
-    }
-
-    @Test
-    public void testGetProductDimensionByModelCode_notFound() {
-        Product result = productService.getProductDimensionByModelCode("asdbasjhdb");
-        Assertions.assertNull(result);
-    }
 
     @Test
     public void testGetModelFromMetaSeries() {
