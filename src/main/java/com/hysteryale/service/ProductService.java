@@ -194,10 +194,7 @@ public class ProductService extends BasedService {
         return segmentMap;
     }
 
-    public String getModelFromMetaSeries(String metaSeries) {
-        Optional<String> modelOptional = productRepository.getModelByMetaSeries(metaSeries);
-        return modelOptional.orElse(null);
-    }
+
 
     public Map<String, Object> getDataByFilter(FilterModel filters) throws ParseException {
         Map<String, Object> result = new HashMap<>();
