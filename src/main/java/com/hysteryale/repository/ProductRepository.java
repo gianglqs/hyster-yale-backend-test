@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Transactional
 public interface ProductRepository extends JpaRepository<Product, String> {
-    @Query("SELECT DISTINCT a.plant FROM Product a")
+    @Query("SELECT DISTINCT a.plant FROM Product a WHERE a.plant IS NOT NULL AND a.plant <> ''")
     List<String> getPlants();
 
     @Query("SELECT a FROM Product a WHERE a.series = ?1")
@@ -21,10 +21,10 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT DISTINCT a.series FROM Product a")
     List<String> getAllMetaSeries();
 
-    @Query("SELECT DISTINCT a.clazz FROM Product a WHERE a.clazz IS NOT NULL")
+    @Query("SELECT DISTINCT a.clazz FROM Product a WHERE a.clazz IS NOT NULL AND a.clazz <> ''")
     List<String> getAllClass();
 
-    @Query("SELECT DISTINCT p.segment FROM Product p WHERE p.segment IS NOT NULL")
+    @Query("SELECT DISTINCT p.segment FROM Product p WHERE p.segment IS NOT NULL AND p.segment <> ''")
     List<String> getAllSegments();
 
     @Query("SELECT DISTINCT p.modelCode FROM Product p")
@@ -76,13 +76,13 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT p FROM Product p WHERE p.modelCode = ?1")
     Optional<Product> findByModelCode(String modelCode);
 
-    @Query("SELECT DISTINCT p.brand FROM Product p WHERE p.brand IS NOT NULL")
+    @Query("SELECT DISTINCT p.brand FROM Product p WHERE p.brand IS NOT NULL AND p.brand <> ''")
     List<String> getAllBrands();
 
-    @Query("SELECT DISTINCT p.family FROM Product p WHERE p.family IS NOT NULL")
+    @Query("SELECT DISTINCT p.family FROM Product p WHERE p.family IS NOT NULL AND p.family <> ''")
     List<String> getAllFamily();
 
-    @Query("SELECT DISTINCT p.truckType FROM Product p WHERE p.truckType IS NOT NULL")
+    @Query("SELECT DISTINCT p.truckType FROM Product p WHERE p.truckType IS NOT NULL AND p.truckType <> ''")
     List<String> getAllTruckType();
 
     @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode")
