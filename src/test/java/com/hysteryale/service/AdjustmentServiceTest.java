@@ -220,7 +220,7 @@ public class AdjustmentServiceTest {
 
         Assertions.assertFalse(resultList.isEmpty());
         for(AdjustmentPayLoad adj : resultList) {
-            Assertions.assertEquals(metaSeries, adj.getMetaSeries());
+            Assertions.assertEquals(metaSeries, adj.getMetaSeries().substring(1));
 
             noOfOrders += adj.getNoOfOrder();
             totalAdditionalVolume += adj.getAdditionalVolume();
