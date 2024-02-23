@@ -205,6 +205,7 @@ public class ProductService extends BasedService {
                 (String) filterMap.get("modelCodeFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
+                (List<String>) filterMap.get("truckTypeFilter"),
                 (List<String>) filterMap.get("familyFilter"), (Pageable) filterMap.get("pageable")
         );
         result.put("listData", getData);
@@ -213,7 +214,7 @@ public class ProductService extends BasedService {
                 (String) filterMap.get("modelCodeFilter"), (List<String>) filterMap.get("plantFilter"),
                 (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"),
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
-                (List<String>) filterMap.get("truckType"), (List<String>) filterMap.get("familyFilter"));
+                (List<String>) filterMap.get("truckTypeFilter"), (List<String>) filterMap.get("familyFilter"));
         result.put("totalItems", countAll);
 
         return result;
