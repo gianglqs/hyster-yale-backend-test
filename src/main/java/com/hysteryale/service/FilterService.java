@@ -47,7 +47,6 @@ public class FilterService {
         filters.put("models", getAllModels());
         filters.put("chineseBrands", getChineseBrandFilter());
         filters.put("marginPercentageGrouping", getMarginPercentageGroup());
-        //  filters.put("T&C", getTCForCompetitorPricing());
         filters.put("regions", getAllRegions());
         filters.put("dealers", getAllDealerNames());
         filters.put("series", getSeries());
