@@ -21,7 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT DISTINCT a.series FROM Product a")
     List<String> getAllMetaSeries();
 
-    @Query("SELECT DISTINCT a.clazz FROM Product a WHERE a.clazz IS NOT NULL")
+    @Query("SELECT DISTINCT a.clazz FROM Product a WHERE a.clazz IS NOT NULL and a.clazz != ''")
     List<String> getAllClass();
 
     @Query("SELECT DISTINCT p.segment FROM Product p WHERE p.segment IS NOT NULL")
