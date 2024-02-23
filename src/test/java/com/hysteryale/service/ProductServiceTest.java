@@ -58,36 +58,6 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testGetProductDimensionByModelCode() {
-        String modelCode = "J40XN";
-
-        Product result = productService.getProductDimensionByModelCode(modelCode);
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(modelCode, result.getModelCode());
-    }
-
-    @Test
-    public void testGetProductDimensionByModelCode_notFound() {
-        Product result = productService.getProductDimensionByModelCode("asdbasjhdb");
-        Assertions.assertNull(result);
-    }
-
-    @Test
-    public void testGetModelFromMetaSeries() {
-        String metaSeries = "935";
-
-        String modelCode = productService.getModelFromMetaSeries(metaSeries);
-        Assertions.assertNotNull(modelCode);
-        Assertions.assertEquals("J40XN", modelCode);
-    }
-
-    @Test
-    public void testGetModelFromMetaSeries_notFound() {
-        String modelCode = productService.getModelFromMetaSeries("askjdh");
-        Assertions.assertNull(modelCode);
-    }
-
-    @Test
     public void testGetDataByFilter() throws ParseException {
         FilterModel filters = new FilterModel();
 

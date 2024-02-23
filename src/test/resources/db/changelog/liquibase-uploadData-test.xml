@@ -87,7 +87,7 @@
                 encoding="UTF-8"
                 file="classpath:db/database/product.csv"
                 onlyUpdate="false"
-                primaryKey="model_code"
+                primaryKey="id"
                 quotchar="'"
                 separator=","
                 tableName="product">
