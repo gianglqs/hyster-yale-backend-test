@@ -6,6 +6,7 @@ import com.hysteryale.service.BookingService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.ModelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,36 +58,41 @@ public class BookingController {
     @PostMapping(path = "/importNewBooking", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> importNewDataBooking(@RequestParam("files") List<MultipartFile> fileList, Authentication authentication) {
-        String pathFileBooking = "";
-        String pathFileCostData = "";
+        String fileNameBooking = "";
+        String fileNameCostData = "";
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+
         boolean invalid = false;
+        String modelType = ModelUtil.BOOKING;
         try {
             for (MultipartFile file : fileList) {
 
                 //save file on disk
                 if (FileUtils.isExcelFile(file.getInputStream())) {
-                    String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
                     String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
                     // save file to disk
-                    if (FileUtils.checkFileNameValid(file,"booked") || FileUtils.checkFileNameValid(file,"booking")) {
-                        pathFileBooking = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
-                    } else if (FileUtils.checkFileNameValid(file,"cost_data")) {
-                        pathFileCostData = fileUploadService.saveFileUploaded(file,authentication, baseFolder, excelFileExtension);
+                    if (FileUtils.checkFileNameValid(file, "booked") || FileUtils.checkFileNameValid(file, "booking")) {
+                        fileNameBooking = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, modelType);
+                    } else if (FileUtils.checkFileNameValid(file, "cost_data")) {
+                        fileNameCostData = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, modelType);
                     }
                 }
 
             }
             // import
-            if (!pathFileBooking.isEmpty()) {
-                bookingService.importNewBookingFileByFile(pathFileBooking);
+            if (!fileNameBooking.isEmpty()) {
+                bookingService.importNewBookingFileByFile(baseFolder + "/" + fileNameBooking);
+                fileUploadService.updateUploadedSuccessfully(fileNameBooking);
                 invalid = true;
             }
-            if (!pathFileCostData.isEmpty()) {
-                bookingService.importCostData(pathFileCostData);
+            if (!fileNameCostData.isEmpty()) {
+                bookingService.importCostData(baseFolder + "/" + fileNameCostData);
+                fileUploadService.updateUploadedSuccessfully(fileNameCostData);
                 invalid = true;
             }
             if (!invalid)
                 throw new Exception("No valid file found");
+
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import successfully!", null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject(e.getMessage(), null));

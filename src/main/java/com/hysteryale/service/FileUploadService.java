@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.CanNotUpdateException;
 import com.hysteryale.model.User;
 import com.hysteryale.model.upload.FileUpload;
 import com.hysteryale.repository.upload.FileUploadRepository;
@@ -87,7 +88,8 @@ public class FileUploadService {
         }
     }
 
-    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication, String baseFolder, String extensionFile) throws Exception {
+    // TODO: check path file
+    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication, String baseFolder, String extensionFile, String modelType) throws Exception {
 
         Date uploadedTime = new Date();
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
@@ -97,34 +99,43 @@ public class FileUploadService {
         if (file.createNewFile()) {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
-            saveFileUpLoadIntoDB(authentication, encodedFileName);
-            return baseFolder + "/" + encodedFileName;
+            saveFileUpLoadIntoDB(authentication, encodedFileName, modelType);
+            return encodedFileName;
         } else {
             log.info("Can not create new file: " + encodedFileName);
             throw new Exception("Can not create new file: " + encodedFileName);
         }
     }
 
-    public String upLoadImage(MultipartFile multipartFile, String targetFolder) throws Exception {
+    public String upLoadImage(MultipartFile multipartFile, String targetFolder, Authentication authentication, String modelType) throws Exception {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String uploadFolder = baseFolder + targetFolder;
 
         Date uploadedTime = new Date();
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
         String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + "png";
-        File file = new File(uploadFolder + encodedFileName);
+        String fileUploadedPath = uploadFolder + encodedFileName;
+        File file = new File(fileUploadedPath);
         if (file.createNewFile()) {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
+
+            saveFileUpLoadIntoDB(authentication, encodedFileName, modelType);
+
+            // check the file is an image
+            if (!FileUtils.isImageFile(fileUploadedPath)) {
+                log.info("File is not an image: " + encodedFileName);
+                throw new Exception("File is not an image: " + multipartFile.getOriginalFilename());
+            }
             return encodedFileName;
         } else {
             log.info("Can not create new file: " + encodedFileName);
-            throw new Exception("Can not create new file: " + encodedFileName);
+            throw new Exception("Can not save file: " + multipartFile.getOriginalFilename());
         }
 
     }
 
-    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName) {
+    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName, String modelType) {
         String uploadedByEmail = authentication.getName();
         Optional<User> optionalUploadedBy = userService.getActiveUserByEmail(uploadedByEmail);
 
@@ -136,6 +147,8 @@ public class FileUploadService {
             fileUpload.setUuid(UUID.randomUUID().toString());
             fileUpload.setUploadedBy(uploadedBy);
             fileUpload.setUploadedTime(LocalDateTime.now());
+
+            fileUpload.setModelType(modelType);
 
             // append suffix into fileName
             fileUpload.setFileName(encodeFileName);
@@ -167,5 +180,15 @@ public class FileUploadService {
         if (fileName == null)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot find file name with uuid: " + uuid);
         return fileName;
+    }
+
+    public void updateUploadedSuccessfully(String fileName) throws CanNotUpdateException {
+        Optional<FileUpload> fileUploadOptional = fileUploadRepository.getFileUploadByFileName(fileName);
+        if (fileUploadOptional.isEmpty())
+            throw new CanNotUpdateException("Can not update time updated data");
+        FileUpload fileUpload = fileUploadOptional.get();
+        fileUpload.setUploadedTime(LocalDateTime.now());
+        fileUpload.setSuccess(true);
+        fileUploadRepository.save(fileUpload);
     }
 }

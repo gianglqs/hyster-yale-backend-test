@@ -5,10 +5,7 @@ import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.reports.CompareCurrencyRequest;
 import com.hysteryale.model.reports.CompareCurrencyResponse;
 import com.hysteryale.repository.ExchangeRateRepository;
-import com.hysteryale.utils.CurrencyFormatUtils;
-import com.hysteryale.utils.DateUtils;
-import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -42,7 +39,7 @@ public class ExchangeRateService extends BasedService {
 
     public Map<Integer, String> getFromCurrencyTitle(Row row) {
         int end = 31;
-        for(int i = 1; i <= end; i++) {
+        for (int i = 1; i <= end; i++) {
             String currency = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
             fromCurrenciesTitle.put(i, currency.toUpperCase());
         }
@@ -54,7 +51,7 @@ public class ExchangeRateService extends BasedService {
 
         //special cases of currency name
         switch (strCurrency.strip()) {
-            case "NORWAY KRONER" :
+            case "NORWAY KRONER":
                 strCurrency = "NORWEGIAN KRONER";
                 break;
             case "BRAZILIAN REAL":
@@ -79,7 +76,7 @@ public class ExchangeRateService extends BasedService {
         String strToCurrency = row.getCell(0).getStringCellValue().toUpperCase().strip();
         Currency toCurrency = currencyService.getCurrenciesByName(formatCurrencyInSpecialCase(strToCurrency));
 
-        for(int i = 1; i <= 31; i++) {
+        for (int i = 1; i <= 31; i++) {
             Cell cell = row.getCell(i);
 
             ExchangeRate exchangeRate = new ExchangeRate();
@@ -114,8 +111,7 @@ public class ExchangeRateService extends BasedService {
 
         // Assign date get from fileName
         LocalDate date = LocalDate.now();
-        if(matcher.find())
-        {
+        if (matcher.find()) {
             String month = matcher.group(1);
             int year = Integer.parseInt(matcher.group(2));
 
@@ -128,9 +124,9 @@ public class ExchangeRateService extends BasedService {
         Sheet sheet = workbook.getSheet("Summary AOP");
         List<ExchangeRate> exchangeRatesList = new ArrayList<>();
 
-        for(int i = 3; i <=34; i++) {
+        for (int i = 3; i <= 34; i++) {
             Row row = sheet.getRow(i);
-            if(i == 3)
+            if (i == 3)
                 fromCurrenciesTitle = getFromCurrencyTitle(row);
             else
                 exchangeRatesList.addAll(mapExcelDataToExchangeRate(row, date));
@@ -152,7 +148,7 @@ public class ExchangeRateService extends BasedService {
 
     public ExchangeRate getNearestExchangeRate(String fromCurrency, String toCurrency) {
         Optional<ExchangeRate> optionalExchangeRate = exchangeRateRepository.getNearestExchangeRateByFromToCurrency(fromCurrency, toCurrency);
-        if(optionalExchangeRate.isPresent())
+        if (optionalExchangeRate.isPresent())
             return optionalExchangeRate.get();
         else
             return null;
@@ -170,23 +166,23 @@ public class ExchangeRateService extends BasedService {
         List<String> weakerCurrencies = new ArrayList<>();
         List<String> strongerCurrencies = new ArrayList<>();
 
-        for(String currency : comparisonCurrencies) {
+        for (String currency : comparisonCurrencies) {
             List<ExchangeRate> exchangeRateList = exchangeRateRepository.getCurrentExchangeRate(currentCurrency, currency);
 
-            if(exchangeRateList.isEmpty())
+            if (exchangeRateList.isEmpty())
                 continue;
             double nearestRate = exchangeRateList.get(0).getRate();
             double farthestRate = exchangeRateList.get(exchangeRateList.size() - 1).getRate();
             double differentRate = nearestRate - farthestRate;
             double differentRatePercentage = CurrencyFormatUtils.formatDoubleValue((differentRate / farthestRate) * 100, CurrencyFormatUtils.decimalFormatTwoDigits);
 
-            if(Math.abs(differentRatePercentage) > 5) {
+            if (Math.abs(differentRatePercentage) > 5) {
                 StringBuilder sb = formatNumericValue(differentRate);
 
-                if(differentRatePercentage < 0) weakerCurrencies.add(currency + " by " + sb + " (" + differentRatePercentage + "%)");
+                if (differentRatePercentage < 0)
+                    weakerCurrencies.add(currency + " by " + sb + " (" + differentRatePercentage + "%)");
                 else strongerCurrencies.add(currency + " by +" + sb + " (+" + differentRatePercentage + "%)");
-            }
-            else stableCurrencies.add(currency);
+            } else stableCurrencies.add(currency);
             data.put(currency, new CompareCurrencyResponse(exchangeRateList, differentRate, differentRatePercentage));
         }
 
@@ -204,11 +200,11 @@ public class ExchangeRateService extends BasedService {
         String[] array = sb.toString().split("");
         sb.delete(0, sb.length());
         int i = array.length - 1;
-        while(array[i].equals("0")) {
+        while (array[i].equals("0")) {
             array[i] = "";
             i--;
         }
-        for(String s : array) {
+        for (String s : array) {
             sb.append(s);
         }
         return sb;
@@ -216,14 +212,14 @@ public class ExchangeRateService extends BasedService {
 
     public void importExchangeRateFromFile(MultipartFile file, Authentication authentication) throws Exception {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-
+        String modelType = ModelUtil.EXCHANGE_RATE;
         // Verify file's type
-        if(!FileUtils.isExcelFile(file.getInputStream()))
+        if (!FileUtils.isExcelFile(file.getInputStream()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File is not an Excel file");
 
         // Verify whether file's name is null or not
         String originalFileName = file.getOriginalFilename();
-        if(originalFileName == null)
+        if (originalFileName == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File's name is not in appropriate format");
 
         //Pattern for getting date from fileName
@@ -231,26 +227,25 @@ public class ExchangeRateService extends BasedService {
         Matcher matcher = pattern.matcher(originalFileName);
 
         LocalDate date;
-        if(matcher.find()) {
+        if (matcher.find()) {
             String month = matcher.group(1);
             month = month.charAt(0) + month.substring(1).toLowerCase();
             int year = Integer.parseInt(matcher.group(2));
             date = LocalDate.of(year, DateUtils.getMonth(month), 1);
-        }
-        else
+        } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File's name is not in appropriate format");
 
-        String filePath = fileUploadService.saveFileUploaded(file, authentication, baseFolder, ".xlsx");
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, baseFolder, ".xlsx", modelType);
 
-        InputStream is = new FileInputStream(filePath);
+        InputStream is = new FileInputStream(baseFolder + "/" + fileName);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         Sheet sheet = workbook.getSheet("Summary Current Interlocking");
         List<ExchangeRate> exchangeRatesList = new ArrayList<>();
 
-        for(int i = 3; i <=34; i++) {
+        for (int i = 3; i <= 34; i++) {
             Row row = sheet.getRow(i);
-            if(i == 3)
+            if (i == 3)
                 fromCurrenciesTitle = getFromCurrencyTitle(row);
             else
                 exchangeRatesList.addAll(mapExcelDataToExchangeRate(row, date));

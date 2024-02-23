@@ -6,6 +6,7 @@ import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.ModelUtil;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -195,7 +196,6 @@ public class ProductService extends BasedService {
     }
 
 
-
     public Map<String, Object> getDataByFilter(FilterModel filters) throws ParseException {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filters);
@@ -368,7 +368,7 @@ public class ProductService extends BasedService {
         return listProduct;
     }
 
-    private String getValidModelCodeFromModelCell(Cell modelCell){
+    private String getValidModelCodeFromModelCell(Cell modelCell) {
         String modelCode = modelCell.getStringCellValue();
         return modelCode.split("_| -")[0];
     }
@@ -376,18 +376,19 @@ public class ProductService extends BasedService {
     public void importProduct(List<MultipartFile> fileList, Authentication authentication) throws Exception {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        String modelType = ModelUtil.PRODUCT;
         for (MultipartFile file : fileList) {
-            String pathFileUploaded = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
-            try {
-                if (file.getOriginalFilename().contains("APAC")) {
-                    importBaseProduct(pathFileUploaded);
-                }
-                if (file.getOriginalFilename().contains("dimension")) {
-                    importDimensionProduct(pathFileUploaded);
-                }
-            } catch (Exception e) {
-                fileUploadService.deleteFileInDisk(pathFileUploaded);
+            String savedFileNameUploaded = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, modelType);
+            String pathFileUploaded = baseFolder + "/" + savedFileNameUploaded;
+
+            if (file.getOriginalFilename().contains("APAC")) {
+                importBaseProduct(pathFileUploaded);
             }
+            if (file.getOriginalFilename().contains("dimension")) {
+                importDimensionProduct(pathFileUploaded);
+            }
+
+            fileUploadService.updateUploadedSuccessfully(savedFileNameUploaded);
         }
     }
 
