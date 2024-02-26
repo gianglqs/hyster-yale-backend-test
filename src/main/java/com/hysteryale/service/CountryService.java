@@ -26,4 +26,11 @@ public class CountryService {
         return countryRepository.getCountryNameByRegion(region);
     }
 
+    public Country findByCountryCode(List<Country> countries, String ctryCode) {
+        for (Country country : countries) {
+            if (country.getCode()!= null && country.getCode().equals(ctryCode))
+                return country;
+        }
+        return null;
+    }
 }

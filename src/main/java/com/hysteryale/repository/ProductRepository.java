@@ -12,19 +12,19 @@ import java.util.Optional;
 
 @Transactional
 public interface ProductRepository extends JpaRepository<Product, String> {
-    @Query("SELECT DISTINCT a.plant FROM Product a")
+    @Query("SELECT DISTINCT a.plant FROM Product a WHERE a.plant IS NOT NULL AND a.plant <> ''")
     List<String> getPlants();
 
     @Query("SELECT a FROM Product a WHERE a.series = ?1")
     Optional<Product> findByMetaSeries(String metaSeries);
 
-    @Query("SELECT DISTINCT a.series FROM Product a")
+    @Query("SELECT DISTINCT substring(a.series, 2, 4) FROM Product a")
     List<String> getAllMetaSeries();
 
-    @Query("SELECT DISTINCT a.clazz FROM Product a WHERE a.clazz IS NOT NULL")
+    @Query("SELECT DISTINCT a.clazz FROM Product a WHERE a.clazz IS NOT NULL AND a.clazz <> ''")
     List<String> getAllClass();
 
-    @Query("SELECT DISTINCT p.segment FROM Product p WHERE p.segment IS NOT NULL")
+    @Query("SELECT DISTINCT p.segment FROM Product p WHERE p.segment IS NOT NULL AND p.segment <> ''")
     List<String> getAllSegments();
 
     @Query("SELECT DISTINCT p.modelCode FROM Product p")
@@ -32,8 +32,8 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
 
 
-    @Query(value = "SELECT p.plant FROM product p WHERE p.meta_series = :metaSeries LIMIT 1", nativeQuery = true)
-    String getPlantByMetaSeries(@Param("metaSeries") String metaSeries);
+    @Query(value = "SELECT p.plant FROM product p WHERE p.series = :series LIMIT 1", nativeQuery = true)
+    String getPlantBySeries(@Param("series") String series);
 
 
     @Query("SELECT p FROM Product p WHERE " +
@@ -43,6 +43,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
             " AND ((:segments) IS NULL OR p.segment IN (:segments))" +
             " AND ((:brands) IS NULL OR p.brand IN (:brands))" +
+            " AND ((:truckTypes) IS NULL OR p.truckType IN (:truckTypes))" +
             " AND ((:family) IS NULL OR p.family IN (:family)) ORDER BY p.modelCode")
     List<Product> getDataByFilter(String modelCode,
                                   List<String> plants,
@@ -50,6 +51,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
                                   List<String> classes,
                                   List<String> segments,
                                   List<String> brands,
+                                  List<String> truckTypes,
                                   List<String> family,
                                   Pageable pageable
     );
@@ -76,13 +78,13 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT p FROM Product p WHERE p.modelCode = ?1")
     Optional<Product> findByModelCode(String modelCode);
 
-    @Query("SELECT DISTINCT p.brand FROM Product p WHERE p.brand IS NOT NULL")
+    @Query("SELECT DISTINCT p.brand FROM Product p WHERE p.brand IS NOT NULL AND p.brand <> ''")
     List<String> getAllBrands();
 
-    @Query("SELECT DISTINCT p.family FROM Product p WHERE p.family IS NOT NULL")
+    @Query("SELECT DISTINCT p.family FROM Product p WHERE p.family IS NOT NULL AND p.family <> ''")
     List<String> getAllFamily();
 
-    @Query("SELECT DISTINCT p.truckType FROM Product p WHERE p.truckType IS NOT NULL")
+    @Query("SELECT DISTINCT p.truckType FROM Product p WHERE p.truckType IS NOT NULL AND p.truckType <> ''")
     List<String> getAllTruckType();
 
     @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode")

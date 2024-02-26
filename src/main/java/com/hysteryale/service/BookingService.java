@@ -894,5 +894,14 @@ public class BookingService extends BasedService {
         return false;
     }
 
+    public Booking getBookingByOrderNo(List<Booking> bookings, String orderNo) {
+        for (Booking booking : bookings) {
+            if (booking.getOrderNo().equals(orderNo)) {
+                return booking;
+            }
+        }
+        return null;
+    }
+
 
 }

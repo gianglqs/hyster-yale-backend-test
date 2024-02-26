@@ -139,7 +139,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
                     @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge);
 
 
-    @Query("SELECT DISTINCT c.series FROM CompetitorPricing c")
+    @Query("SELECT DISTINCT c.series FROM CompetitorPricing c WHERE c.series != '' AND c.series IS NOT NULL")
     List<String> getDistinctSeries();
 
     @Query("SELECT DISTINCT c.category FROM CompetitorPricing c")

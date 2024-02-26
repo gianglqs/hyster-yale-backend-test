@@ -4,133 +4,110 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet author="hoangnhan" id="loadData-3" context="!prod">
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/_role_.csv"
-                onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
-                separator=","
                 tableName="role">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/_user_.csv"
-                onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
-                separator=","
                 tableName="user">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/currency.csv"
-                onlyUpdate="false"
                 primaryKey="currency"
                 quotchar="'"
-                separator=","
                 tableName="currency">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/exchange_rate.csv"
-                onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
-                separator=","
                 tableName="exchange_rate">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/region.csv"
-                onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
-                separator=","
                 tableName="region">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/country.csv"
-                onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
-                separator=","
                 tableName="country">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/dealer.csv"
-                onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
-                separator=","
                 tableName="dealer">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/aopmargin.csv"
-                onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
-                separator=","
                 tableName="aopmargin">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/product.csv"
-                onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
-                separator=","
                 tableName="product">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/booking.csv"
-                onlyUpdate="false"
                 primaryKey="order_no"
                 quotchar="'"
-                separator=","
                 tableName="booking">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/competitor_color.csv"
-                onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
-                separator=","
                 tableName="competitor_color">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/competitor_pricing.csv"
-                onlyUpdate="false"
                 primaryKey="id"
                 quotchar="'"
-                separator=","
                 tableName="competitor_pricing">
         </loadUpdateData>
 
         <loadUpdateData
-                encoding="UTF-8"
                 file="classpath:db/database/shipment.csv"
-                onlyUpdate="false"
                 primaryKey="order_no"
                 quotchar="'"
-                separator=","
                 tableName="shipment">
+        </loadUpdateData>
+
+
+        <loadUpdateData
+                file="classpath:db/database/margin_analyst_macro.csv"
+                primaryKey="id"
+                quotchar="'"
+                tableName="margin_analyst_macro">
+        </loadUpdateData>
+
+
+        <loadUpdateData
+                file="classpath:db/database/marginanalysisaoprate.csv"
+                primaryKey="id"
+                quotchar="'"
+                tableName="marginanalysisaoprate">
         </loadUpdateData>
 
     </changeSet>
