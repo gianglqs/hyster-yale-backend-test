@@ -221,7 +221,7 @@ public class ExchangeRateServiceTest {
     }
 
     @Test
-    public void testCompareExchangeRate() throws InvalidPropertiesFormatException {
+    public void testCompareExchangeRate() {
         String currency1 = "USD";
         String currency2 = "JPY";
         String currency3 = "VND";
