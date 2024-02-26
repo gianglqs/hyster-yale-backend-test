@@ -17,6 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -31,6 +32,7 @@ import java.util.regex.Pattern;
 
 @Service
 @Slf4j
+@SuppressWarnings("unchecked")
 public class ExchangeRateService extends BasedService {
     @Resource
     ExchangeRateRepository exchangeRateRepository;
@@ -152,16 +154,15 @@ public class ExchangeRateService extends BasedService {
 
     public ExchangeRate getNearestExchangeRate(String fromCurrency, String toCurrency) {
         Optional<ExchangeRate> optionalExchangeRate = exchangeRateRepository.getNearestExchangeRateByFromToCurrency(fromCurrency, toCurrency);
-        if(optionalExchangeRate.isPresent())
-            return optionalExchangeRate.get();
-        else
-            return null;
+        return optionalExchangeRate.orElse(null);
     }
 
     /**
      * Compare Currencies for reporting in Reports page
      */
-    public Map<String, Object> compareCurrency(CompareCurrencyRequest request) {
+    public Map<String, Object> compareCurrency(CompareCurrencyRequest request)  {
+        RestTemplate template = new RestTemplate();
+
         String currentCurrency = request.getCurrentCurrency();
         List<String> comparisonCurrencies = request.getComparisonCurrencies();
 
@@ -170,11 +171,48 @@ public class ExchangeRateService extends BasedService {
         List<String> weakerCurrencies = new ArrayList<>();
         List<String> strongerCurrencies = new ArrayList<>();
 
+        // Get latest Exchange Rate from API if User choose to get the Real-time one
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> conversionRates = new HashMap<>();
+        if(request.isFromRealTime()) {
+            try {
+                String basedURL = "https://v6.exchangerate-api.com/v6/" + EnvironmentUtils.getEnvironmentValue("exchange_rate_api_key") + "/latest/" + currentCurrency;
+                response =  (Map<String, Object>) template.getForObject(basedURL, Map.class);
+                assert response != null;
+                conversionRates = (Map<String, Object>) response.get("conversion_rates");
+            } catch (Exception e) {
+                String errorMessage = "Unexpected error";
+                if(e.getMessage().contains("404"))
+                    errorMessage = "Unsupported currency: " + currentCurrency;
+                if(e.getMessage().contains("403"))
+                    errorMessage = "Inactive API Keys. Please check API Keys expired date.";
+                log.info(e.getMessage());
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, errorMessage);
+            }
+        }
+
         for(String currency : comparisonCurrencies) {
             List<ExchangeRate> exchangeRateList = exchangeRateRepository.getCurrentExchangeRate(currentCurrency, currency);
-
             if(exchangeRateList.isEmpty())
                 continue;
+
+            // Parse Exchange Rate and Date values
+            if(request.isFromRealTime()) {
+                double latestExchangeRate =  Double.parseDouble(conversionRates.get(currency).toString());
+                LocalDate lastUpdatedDate = parseCurrentDate(response.get("time_last_update_utc").toString());
+
+                // Replace Exchange Rate value if the Real-time date equals to latest ExchangeRate imported by Excel in DB
+                // else append to the List, then use it to calculate
+                LocalDate nearestExchangeRateDate = exchangeRateList.get(0).getDate();
+                if(nearestExchangeRateDate.getYear() == lastUpdatedDate.getYear() && nearestExchangeRateDate.getMonthValue() == lastUpdatedDate.getMonthValue()) {
+                    exchangeRateList.set(0, new ExchangeRate(new Currency(currentCurrency), new Currency(currency), latestExchangeRate, lastUpdatedDate));
+                } else {
+                    exchangeRateList.add(0, new ExchangeRate(new Currency(currentCurrency), new Currency(currency), latestExchangeRate, lastUpdatedDate));
+                    exchangeRateList.remove(exchangeRateList.size() - 1);
+                }
+            }
+
+            // Calculate the value difference between the nearest and the farthest Exchange Rates
             double nearestRate = exchangeRateList.get(0).getRate();
             double farthestRate = exchangeRateList.get(exchangeRateList.size() - 1).getRate();
             double differentRate = nearestRate - farthestRate;
@@ -182,12 +220,12 @@ public class ExchangeRateService extends BasedService {
 
             if(Math.abs(differentRatePercentage) > 5) {
                 StringBuilder sb = formatNumericValue(differentRate);
-
                 if(differentRatePercentage < 0) weakerCurrencies.add(currency + " by " + sb + " (" + differentRatePercentage + "%)");
                 else strongerCurrencies.add(currency + " by +" + sb + " (+" + differentRatePercentage + "%)");
             }
             else stableCurrencies.add(currency);
             data.put(currency, new CompareCurrencyResponse(exchangeRateList, differentRate, differentRatePercentage));
+            data.put("lastUpdated", exchangeRateList.get(0).getDate());
         }
 
         data.put("stable", stableCurrencies);
@@ -196,6 +234,9 @@ public class ExchangeRateService extends BasedService {
         return data;
     }
 
+    /**
+     * Format numeric value up to 7 decimal number
+     */
     private StringBuilder formatNumericValue(double differentRate) {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb);
@@ -259,5 +300,23 @@ public class ExchangeRateService extends BasedService {
         exchangeRateRepository.saveAll(exchangeRatesList);
         log.info("ExchangeRate are newly saved or updated: " + exchangeRatesList.size());
         exchangeRatesList.clear();
+    }
+
+    /**
+     * Parse time_last_update_utc in JSON format when getting real_time Exchange Rate from API
+     */
+    private LocalDate parseCurrentDate(String latestUpdatedTime) {
+        int year;
+        String month;
+        int date;
+        Pattern pattern = Pattern.compile("\\w{3}, (\\d{2}) (\\w{3}) (\\d{4}) .*");
+        Matcher matcher = pattern.matcher(latestUpdatedTime);
+        if(matcher.find()) {
+            year = Integer.parseInt(matcher.group(3));
+            month = matcher.group(2);
+            date = Integer.parseInt(matcher.group(1));
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"time_last_update_utc does not return in appropriate format");
+        return LocalDate.of(year, DateUtils.getMonth(month), date);
     }
 }

@@ -221,14 +221,15 @@ public class ExchangeRateServiceTest {
     }
 
     @Test
-    public void testCompareExchangeRate() {
+    public void testCompareExchangeRate() throws InvalidPropertiesFormatException {
         String currency1 = "USD";
         String currency2 = "JPY";
         String currency3 = "VND";
 
         CompareCurrencyRequest request = new CompareCurrencyRequest(
                 "EUR",
-                List.of(currency1, currency2, currency3)
+                List.of(currency1, currency2, currency3),
+                false
         );
         Map<String, Object> result = exchangeRateService.compareCurrency(request);
         Assertions.assertNotNull(result.get(currency1));
