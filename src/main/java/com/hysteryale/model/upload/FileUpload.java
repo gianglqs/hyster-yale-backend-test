@@ -30,4 +30,10 @@ public class FileUpload {
 
     @Column(name = "uploaded_time")
     private LocalDateTime uploadedTime;
+
+    @Column(name = "model_type")
+    private String modelType;
+
+    @Column(name = "success")
+    private boolean success;
 }
