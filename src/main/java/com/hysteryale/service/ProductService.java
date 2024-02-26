@@ -1,11 +1,13 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.ModelUtil;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -48,46 +51,54 @@ public class ProductService extends BasedService {
         }
     }
 
-    public Product mapExcelSheetToProductDimension(Row row) {
+    public Product mapExcelSheetToProductDimension(Row row) throws MissingColumnException {
         Product product = new Product();
 
-        // brand
-        String brand = row.getCell(COLUMNS.get("Brand")).getStringCellValue();
-        product.setBrand(brand);
-
         // metaseries
-        String metaSeries = row.getCell(COLUMNS.get("Metaseries")).getStringCellValue();
-        product.setSeries(metaSeries);
+        if (row.getCell(COLUMNS.get("Metaseries")) != null) {
+            String metaSeries = row.getCell(COLUMNS.get("Metaseries")).getStringCellValue();
+            product.setSeries(metaSeries);
+        } else {
+            throw new MissingColumnException("Not found column 'Metaseries'");
+        }
 
-        // plant
-        String plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
-        product.setPlant(plant);
-
-        // Class
-        String clazz = row.getCell(COLUMNS.get("Class_wBT")).getStringCellValue();
-        product.setClazz(clazz);
+        // modelCode
+        if (row.getCell(COLUMNS.get("Model")) != null) {
+            String modelCode = row.getCell(COLUMNS.get("Model")).getStringCellValue();
+            product.setModelCode(modelCode);
+        } else {
+            throw new MissingColumnException("Not found column 'Model'");
+        }
 
         //Segment
-        String segment = row.getCell(COLUMNS.get("Segment")).getStringCellValue();
-        product.setSegment(segment);
-
-        // modeCode
-        String modelCode = row.getCell(COLUMNS.get("Model")).getStringCellValue();
-        product.setModelCode(modelCode);
+        if (row.getCell(COLUMNS.get("Segment")) != null) {
+            String segment = row.getCell(COLUMNS.get("Segment")).getStringCellValue();
+            product.setSegment(segment);
+        } else {
+            throw new MissingColumnException("Not found column 'Segment'");
+        }
 
         // family
-        String family = row.getCell(COLUMNS.get("Family_Name")).getStringCellValue();
-        product.setFamily(family);
+        if (row.getCell(COLUMNS.get("Family_Name")) != null) {
+            String family = row.getCell(COLUMNS.get("Family_Name")).getStringCellValue();
+            product.setFamily(family);
+        } else {
+            throw new MissingColumnException("Not found column 'Family_Name'");
+        }
 
         // truckType
-        String truckType = row.getCell(COLUMNS.get("Truck_Type")).getStringCellValue();
-        product.setTruckType(truckType);
+        if (row.getCell(COLUMNS.get("Truck_Type")) != null) {
+            String truckType = row.getCell(COLUMNS.get("Truck_Type")).getStringCellValue();
+            product.setTruckType(truckType);
+        } else {
+            throw new MissingColumnException("Not found column 'Truck_Type'");
+        }
 
         return product;
     }
 
 
-    public void importProductDimension() throws IOException, IllegalAccessException {
+    public void importProductDimension() throws IOException,  MissingColumnException {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.product-dimension");
         String fileName = "Product Fcst dimension 2023_02_24.xlsx";
@@ -107,15 +118,7 @@ public class ProductService extends BasedService {
 
     }
 
-    public void importProduct(String path) throws IOException, IllegalAccessException {
-        InputStream is = new FileInputStream(path);
-        XSSFWorkbook workbook = new XSSFWorkbook(is);
-
-        Sheet sheet = workbook.getSheet("Data");
-        importProduct(sheet);
-    }
-
-    private void importProduct(Sheet sheet) {
+    private void importProduct(Sheet sheet) throws MissingColumnException {
         for (Row row : sheet) {
             if (row.getRowNum() == 1)
                 assignColumnNames(row);
@@ -193,7 +196,6 @@ public class ProductService extends BasedService {
 
         return segmentMap;
     }
-
 
 
     public Map<String, Object> getDataByFilter(FilterModel filters) throws ParseException {
@@ -319,21 +321,43 @@ public class ProductService extends BasedService {
     }
 
 
-    public List<Product> mappedFromAPACFile(Row row) {
+    public List<Product> mappedFromAPACFile(Row row) throws MissingColumnException {
         List<Product> listProduct = new ArrayList<>();
 
-        String plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
-        String clazz = row.getCell(COLUMNS.get("Class")).getStringCellValue();
+        String plant;
+        if (row.getCell(COLUMNS.get("Plant")) != null) {
+            plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
+        } else {
+            throw new MissingColumnException("Not found column 'Plant'");
+        }
+
+        String clazz;
+        if (row.getCell(COLUMNS.get("Class")) != null) {
+            clazz = row.getCell(COLUMNS.get("Class")).getStringCellValue();
+        } else {
+            throw new MissingColumnException("Not found column 'Class'");
+        }
 
         // Hyster
         Product hysterProduct = new Product();
-        Cell hysterSeriesCell = row.getCell(COLUMNS.get("Hyster"));
-        Cell hysterModelCell = row.getCell(COLUMNS.get("Model"));
+        Cell hysterSeriesCell;
+        if (row.getCell(COLUMNS.get("Hyster")) != null) {
+            hysterSeriesCell = row.getCell(COLUMNS.get("Hyster"));
+        } else {
+            throw new MissingColumnException("Not found column 'Hyster'");
+        }
+
+        Cell hysterModelCell;
+        if (row.getCell(COLUMNS.get("Model")) != null) {
+            hysterModelCell = row.getCell(COLUMNS.get("Model"));
+        } else {
+            throw new MissingColumnException("Not found column 'Model' of Hyster");
+        }
+
 
         if (hysterSeriesCell.getCellType() == CellType.STRING && hysterModelCell.getCellType() == CellType.STRING) {
             String hysterSeries = hysterSeriesCell.getStringCellValue();
             String hysterModel = getValidModelCodeFromModelCell(hysterModelCell);
-
 
             if (!hysterModel.equals("NA") && !hysterSeries.equals("NA")) {
                 hysterProduct.setModelCode(hysterModel);
@@ -347,8 +371,19 @@ public class ProductService extends BasedService {
 
         // Yale
         Product yaleProduct = new Product();
-        Cell yaleSeriesCell = row.getCell(COLUMNS.get("Yale"));
-        Cell yaleModelCell = row.getCell(COLUMNS.get("Model_Y"));
+        Cell yaleSeriesCell;
+        if (row.getCell(COLUMNS.get("Yale")) != null) {
+            yaleSeriesCell = row.getCell(COLUMNS.get("Yale"));
+        } else {
+            throw new MissingColumnException("Not found column 'Yale'");
+        }
+
+        Cell yaleModelCell;
+        if (row.getCell(COLUMNS.get("Model_Y")) != null) {
+            yaleModelCell = row.getCell(COLUMNS.get("Model_Y"));
+        } else {
+            throw new MissingColumnException("Not found column 'Model' of Yale");
+        }
 
         if (yaleSeriesCell.getCellType() == CellType.STRING && yaleModelCell.getCellType() == CellType.STRING) {
             String yaleSeries = yaleSeriesCell.getStringCellValue();
@@ -369,7 +404,7 @@ public class ProductService extends BasedService {
         return listProduct;
     }
 
-    private String getValidModelCodeFromModelCell(Cell modelCell){
+    private String getValidModelCodeFromModelCell(Cell modelCell) {
         String modelCode = modelCell.getStringCellValue();
         return modelCode.split("_| -")[0];
     }
@@ -377,23 +412,30 @@ public class ProductService extends BasedService {
     public void importProduct(List<MultipartFile> fileList, Authentication authentication) throws Exception {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        String modelType = ModelUtil.PRODUCT;
         for (MultipartFile file : fileList) {
-            String pathFileUploaded = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
-            try {
-                if (file.getOriginalFilename().contains("APAC")) {
-                    importBaseProduct(pathFileUploaded);
-                }
-                if (file.getOriginalFilename().contains("dimension")) {
-                    importDimensionProduct(pathFileUploaded);
-                }
-            } catch (Exception e) {
-                fileUploadService.deleteFileInDisk(pathFileUploaded);
+            String savedFileNameUploaded = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, modelType);
+            String pathFileUploaded = baseFolder + "/" + savedFileNameUploaded;
+            boolean checkValidFileName = false;
+            if (file.getOriginalFilename().contains("APAC")) {
+                importBaseProduct(pathFileUploaded);
+                checkValidFileName = true;
             }
+            if (file.getOriginalFilename().contains("dimension")) {
+                importDimensionProduct(pathFileUploaded);
+                checkValidFileName = true;
+            }
+
+            if( !checkValidFileName){
+                throw new FileNotFoundException("File name is invalid");
+            }
+
+            fileUploadService.updateUploadedSuccessfully(savedFileNameUploaded);
         }
     }
 
     // brand, segment, family, truckType
-    private void importDimensionProduct(String pathFile) throws IOException {
+    private void importDimensionProduct(String pathFile) throws IOException, MissingColumnException {
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
@@ -412,7 +454,7 @@ public class ProductService extends BasedService {
     }
 
 
-    private void importBaseProduct(String pathFile) throws IOException {
+    private void importBaseProduct(String pathFile) throws IOException, MissingColumnException {
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 

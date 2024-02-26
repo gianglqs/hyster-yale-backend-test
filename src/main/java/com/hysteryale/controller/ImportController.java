@@ -72,7 +72,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importProductDimension")
-    void importProductDimension() throws IOException, IllegalAccessException {
+    void importProductDimension() throws IOException, MissingColumnException {
         productService.importProductDimension();
     }
 

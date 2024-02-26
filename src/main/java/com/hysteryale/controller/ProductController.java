@@ -7,6 +7,7 @@ import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ProductService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.ModelUtil;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,20 +51,18 @@ public class ProductController {
         if (modelCode == null)
             throw new InvalidPropertiesFormatException("ModelCode was not found!");
 
-        String imageName = null;
+        String savedImageName = null;
+        String saveFilePath = null;
         if (image != null) {
             String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
             String targetFolder = EnvironmentUtils.getEnvironmentValue("image-folder.product");
             String saveImageFolder = baseFolder + targetFolder;
 
-            String savedImageName = fileUploadService.upLoadImage(image, targetFolder);
-            String saveFilePath = saveImageFolder + savedImageName;
-
-            if (FileUtils.isImageFile(saveFilePath)) {
-                imageName = targetFolder + savedImageName;
-            }
+            savedImageName = fileUploadService.upLoadImage(image, targetFolder, authentication, ModelUtil.PRODUCT);
+            saveFilePath = saveImageFolder + savedImageName;
         }
-        productService.updateImageAndDescription(modelCode, imageName, description);
+        productService.updateImageAndDescription(modelCode, saveFilePath, description);
+        fileUploadService.updateUploadedSuccessfully(savedImageName);
     }
 
     @GetMapping("/getProductDetail")
