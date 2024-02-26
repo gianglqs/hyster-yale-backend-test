@@ -145,4 +145,10 @@ public class Booking {
         this.totalCost = totalCost;
     }
 
+    public Booking(String orderNo, double dealerNetAfterSurcharge, double marginAfterSurcharge){
+        this.orderNo = orderNo;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
+        this.marginAfterSurcharge = marginAfterSurcharge;
+    }
+
 }

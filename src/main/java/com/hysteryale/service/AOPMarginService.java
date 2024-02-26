@@ -91,7 +91,7 @@ public class AOPMarginService extends BasedService {
         }
 
         if (AOP_MARGIN_COLUMNS.get("Description") != null) {
-            if (row.getCell(AOP_MARGIN_COLUMNS.get("Description"))!= null)
+            if (row.getCell(AOP_MARGIN_COLUMNS.get("Description")) != null)
                 aopMargin.setDescription(row.getCell(AOP_MARGIN_COLUMNS.get("Description")).getStringCellValue());
         } else {
             throw new MissingColumnException("Missing column 'Description'!");
@@ -152,10 +152,22 @@ public class AOPMarginService extends BasedService {
         }
     }
 
-    public AOPMargin getAOPMargin( Region region,String series, String plant, LocalDate date) {
+    public AOPMargin getAOPMargin(Region region, String series, String plant, LocalDate date) {
         int year = date.getYear();
-        Optional<AOPMargin> aopMarginOptional = aopMarginRepository.findByRegionSeriesPlantAndYear(  region,series.substring(1), plant,year);
+        Optional<AOPMargin> aopMarginOptional = aopMarginRepository.findByRegionSeriesPlantAndYear(region, series.substring(1), plant, year);
         return aopMarginOptional.orElse(null);
+    }
+
+    public AOPMargin getAOPMargin(List<AOPMargin> aopMargins, Region region, String series, String plant, LocalDate date) {
+        int year = date.getYear();
+        for (AOPMargin aopMargin : aopMargins) {
+            if (aopMargin.getPlant().equals(plant) && aopMargin.getMetaSeries().equals(series.substring(1))
+                    && aopMargin.getYear() == year && aopMargin.getRegion().getRegionShortName().equals(region.getRegionShortName())) {
+                return aopMargin;
+            }
+        }
+        log.error("Not found AOPMargin with region: " + region.getRegionShortName() + ", metaSeries: " + series.substring(1) + ", plant: " + plant + ", year: " + year);
+        return null;
     }
 
 }

@@ -1,0 +1,83 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="delete-constrain-booking-shipment" author="songiang">
+        <dropForeignKeyConstraint baseTableName="shipment" constraintName="constraint_booking_and_shipment"/>
+    </changeSet>
+
+    <changeSet id="addColumns-in-shipment" author="songiang">
+        <addColumn tableName="shipment">
+            <column name="booking_margin_after_surcharge" type="DOUBLE"/>
+            <column name="booking_dealer_net_after_surcharge" type="DOUBLE"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="adjust-table-country" author="songiang">
+        <addColumn tableName="country">
+            <column name="code" type="VARCHAR(5)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="update-data-country" author="songiang">
+        <sql>
+            UPDATE country
+            SET code = 'KR'
+            WHERE country_name = 'South Korea'
+        </sql>
+
+        <sql>
+            UPDATE country
+            SET code = 'SG'
+            WHERE country_name = 'Singapore'
+        </sql>
+
+        <sql>
+            UPDATE country
+            SET code = 'PH'
+            WHERE country_name = 'Philippines'
+        </sql>
+
+        <sql>
+            UPDATE country
+            SET code = 'ID'
+            WHERE country_name = 'Indonesia'
+        </sql>
+
+        <sql>
+            UPDATE country
+            SET code = 'MY'
+            WHERE country_name = 'Malaysia'
+        </sql>
+
+        <sql>
+            UPDATE country
+            SET code = 'VN'
+            WHERE country_name = 'Vietnam'
+        </sql>
+
+        <sql>
+            UPDATE country
+            SET code = 'TH'
+            WHERE country_name = 'Thailand'
+        </sql>
+    </changeSet>
+
+    <changeSet id="insert-data-into-country" author="songiang">
+        <sql>
+            INSERT INTO country(id, country_name, region_id, code)
+            VALUES (336, 'Papua New Guinea', 5, 'PG'),
+                   (337, 'Australia', 5, 'AU'),
+                   (338, 'New Zealand', 5, 'NZ'),
+                   (339, 'French Polynesia', 5, 'PF'),
+                   (340, 'New Caledonia', 5, 'NC'),
+                   (341, 'India', 1, 'IN'),
+                   (342, 'Taiwan', 1, 'TW'),
+                   (343, 'Sri Lanka', 1, 'LK')
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>

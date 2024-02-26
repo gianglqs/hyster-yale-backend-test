@@ -64,14 +64,20 @@ public class Shipment {
     @Column(name = "margin_percentage_after_surcharge")
     private double marginPercentageAfterSurcharge;
 
-    @Column(name = "booking_margin_percentage_after_surcharge")
-    private double bookingMarginPercentageAfterSurcharge;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "aopmargin")
     private AOPMargin AOPMargin;
 
-    public Shipment(String id, Currency currency, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue, double marginAfterSurcharge, double marginPercentageAfterSurcharge, double bookingMargin) {
+    @Column(name = "booking_margin_percentage_after_surcharge")
+    private Double bookingMarginPercentageAfterSurcharge;
+
+    @Column(name = "booking_margin_after_surcharge")
+    private Double bookingMarginAfterSurcharge;
+
+    @Column(name = "booking_dealer_net_after_surcharge")
+    private Double bookingDealerNetAfterSurcharge;
+
+    public Shipment(String id, Currency currency, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue, double marginAfterSurcharge, double marginPercentageAfterSurcharge, Double bookingMargin) {
         this.orderNo = id;
         this.currency = currency;
         this.dealerNet = dealerNet;
@@ -84,12 +90,14 @@ public class Shipment {
         this.bookingMarginPercentageAfterSurcharge = bookingMargin;
     }
 
-    public Shipment(String orderNo, Currency currency, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue) {
+    public Shipment(String orderNo, Currency currency, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue, Double bookingDealerNetAfterSurcharge, Double bookingMarginAfterSurcharge) {
         this.orderNo = orderNo;
         this.currency = currency;
         this.netRevenue = netRevenue;
         this.totalCost = totalCost;
         this.dealerNet = dealerNet;
         this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
+        this.bookingDealerNetAfterSurcharge = bookingDealerNetAfterSurcharge;
+        this.bookingMarginAfterSurcharge = bookingMarginAfterSurcharge;
     }
 }

@@ -5,5 +5,6 @@
 
 
     <include file="classpath:db/changelog/liquibase-modify-table-product.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/liquibase-modify-table-shipment.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

@@ -82,7 +82,7 @@ public class UserControllerTest {
     @Test
     @WithMockUser(authorities = "ADMIN")
     public void testAddUser() throws Exception {
-        User user = new User("admin", "weortuoewrtiu@gmail.com", "12345678", new Role(1, "USER"));
+        User user = new User("admin1", "weortuoewrtiu@gmail.com", "12345678", new Role(1, "USER"));
         MvcResult result =
                 mockMvc
                         .perform(post("/users").content(parseUserToJSONString(user)).contentType(MediaType.APPLICATION_JSON))
