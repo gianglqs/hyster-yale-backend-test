@@ -479,4 +479,12 @@ public class ProductService extends BasedService {
         productRepository.saveAll(list);
 
     }
+
+    public Product findProductByModelCodeAndSeries(List<Product> products, String modelCode, String series){
+        for(Product product : products){
+            if(product.getModelCode().equals(modelCode) && product.getSeries().equals(series))
+                return product;
+        }
+        return null;
+    }
 }
