@@ -434,7 +434,7 @@ public class ImportService extends BasedService {
     }
 
 
-    public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException, CannotExtractDateException {
+    public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         HashMap<String, Integer> SHIPMENT_COLUMNS_NAME = new HashMap<>();
         XSSFSheet shipmentSheet = workbook.getSheet("Sheet1");

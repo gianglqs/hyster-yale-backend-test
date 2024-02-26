@@ -143,7 +143,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             @Param("dealerName") List<String> dealerName,
             @Param("year") int year);
 
-    @Query("SELECT new Shipment(c.orderNo, c.currency, c.dealerNet, c.dealerNetAfterSurcharge, c.totalCost, c.netRevenue) FROM Shipment c WHERE " +
+    @Query("SELECT new Shipment(c.orderNo, c.currency, c.dealerNet, c.dealerNetAfterSurcharge, c.totalCost, c.netRevenue, c.bookingDealerNetAfterSurcharge, c.bookingMarginAfterSurcharge) FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +

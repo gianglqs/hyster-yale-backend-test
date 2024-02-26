@@ -90,12 +90,14 @@ public class Shipment {
         this.bookingMarginPercentageAfterSurcharge = bookingMargin;
     }
 
-    public Shipment(String orderNo, Currency currency, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue) {
+    public Shipment(String orderNo, Currency currency, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue, Double bookingDealerNetAfterSurcharge, Double bookingMarginAfterSurcharge) {
         this.orderNo = orderNo;
         this.currency = currency;
         this.netRevenue = netRevenue;
         this.totalCost = totalCost;
         this.dealerNet = dealerNet;
         this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
+        this.bookingDealerNetAfterSurcharge = bookingDealerNetAfterSurcharge;
+        this.bookingMarginAfterSurcharge = bookingMarginAfterSurcharge;
     }
 }

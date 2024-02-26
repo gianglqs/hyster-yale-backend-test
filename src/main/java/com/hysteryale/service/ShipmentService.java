@@ -102,8 +102,10 @@ public class ShipmentService extends BasedService {
             dealerNetAfterSurcharge += shipment.getDealerNetAfterSurcharge();
             totalCost += shipment.getTotalCost();
             netRevenue += shipment.getNetRevenue();
-            dealerNetAfterSurchargeBooking += shipment.getBookingDealerNetAfterSurcharge();
-            marginAfterSurchargeBooking += shipment.getBookingMarginAfterSurcharge();
+            if (shipment.getBookingDealerNetAfterSurcharge() != null)
+                dealerNetAfterSurchargeBooking += shipment.getBookingDealerNetAfterSurcharge();
+            if (shipment.getBookingMarginAfterSurcharge() != null)
+                marginAfterSurchargeBooking += shipment.getBookingMarginAfterSurcharge();
         }
         marginAfterSurcharge = dealerNetAfterSurcharge - totalCost;
 
