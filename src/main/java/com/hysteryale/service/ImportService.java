@@ -83,6 +83,12 @@ public class ImportService extends BasedService {
     @Resource
     DealerService dealerService;
 
+    @Resource
+    AOPMarginService aopMarginService;
+
+    @Resource
+    CountryRepository countryRepository;
+
     public void getOrderColumnsName(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) {
         for (int i = 0; i < 50; i++) {
             if (row.getCell(i) != null) {
@@ -447,10 +453,10 @@ public class ImportService extends BasedService {
         //prepare data for import
         List<Product> prepareProducts = productRepository.findAll();
         List<Dealer> prepareDealers = dealerRepository.findAll();
-        List<Region> prepareRegions = regionRepository.findAll();
         List<AOPMargin> prepareAOPMargin = aopMarginRepository.findAll();
-        List<Currency> prepareCurrencies = currencyRepository.findAll();
+        Currency prepareCurrency = currencyRepository.findByCurrency("USD");
         List<Booking> prepareBookings = bookingRepository.findAll();
+        List<Country> prepareCountries = countryRepository.findAll();
 
 
         for (Row row : shipmentSheet) {
@@ -458,7 +464,8 @@ public class ImportService extends BasedService {
                 getOrderColumnsName(row, SHIPMENT_COLUMNS_NAME);
                 CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(SHIPMENT_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.SHIPMENT_REQUIRED_COLUMN);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
-                Shipment newShipment = mapExcelDataIntoShipmentObject(row, SHIPMENT_COLUMNS_NAME, prepareProducts, prepareAOPMargin, prepareDealers, prepareRegions, prepareCurrencies, prepareBookings);
+                Shipment newShipment = mapExcelDataIntoShipmentObject(
+                        row, SHIPMENT_COLUMNS_NAME, prepareProducts, prepareAOPMargin, prepareDealers, prepareCurrency, prepareBookings, prepareCountries);
 
                 // check it has BookingOrder
                 if (newShipment == null)
@@ -539,8 +546,8 @@ public class ImportService extends BasedService {
 
     private Shipment mapExcelDataIntoShipmentObject(Row row, HashMap<String, Integer> shipmentColumnsName,
                                                     List<Product> prepareProducts, List<AOPMargin> prepareAOPMargins,
-                                                    List<Dealer> prepareDealers, List<Region> prepareRegions,
-                                                    List<Currency> prepareCurrencies, List<Booking> prepareBookings) {
+                                                    List<Dealer> prepareDealers, Currency USDCurrency,
+                                                    List<Booking> prepareBookings, List<Country> prepareCountries) {
         Shipment shipment = new Shipment();
 
         // Set orderNo
@@ -605,10 +612,6 @@ public class ImportService extends BasedService {
         double marginPercentageAfterSurcharge = marginAfterSurcharge / dealerNetAfterSurcharge;
         shipment.setMarginPercentageAfterSurcharge(marginPercentageAfterSurcharge);
 
-        // country code
-        String country = row.getCell(shipmentColumnsName.get("Ship-to Country Code")).getStringCellValue();
-        shipment.setCtryCode(country);
-
         // date
         Date date = row.getCell(shipmentColumnsName.get("Created On")).getDateCellValue();
         LocalDate calendar = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -625,22 +628,30 @@ public class ImportService extends BasedService {
         //Dealer
         String dealerName = row.getCell(shipmentColumnsName.get("End Customer Name")).getStringCellValue();
         Dealer dealer = dealerService.getDealerByName(prepareDealers, dealerName);
-        if (dealer == null)
+        if (dealer == null) {
+            log.error("Not found Dealer with dealerName: " + dealerName);
             return null;
-
+        }
         shipment.setDealer(dealer);
 
-        //TODO: region, currency, AOPMargin-year
-        //fake data
-        Region region = prepareRegions.get(0);
-        Currency currency = prepareCurrencies.get(0);
-        AOPMargin aopMargin = prepareAOPMargins.get(0);
+        // region
+        String ctryCode = row.getCell(shipmentColumnsName.get("Ship-to Country Code")).getStringCellValue();
+        Country country = countryService.findByCountryCode(prepareCountries, ctryCode);
+        if (country == null) {
+            log.error("Not found Country with countryCode: " + ctryCode);
+            return null;
+        }
+        shipment.setRegion(country.getRegion());
 
-        shipment.setRegion(region);
-        shipment.setCurrency(currency);
+        // currency
+        shipment.setCurrency(USDCurrency);
+
+        AOPMargin aopMargin = aopMarginService.getAOPMargin(prepareAOPMargins, shipment.getRegion(), shipment.getSeries(), shipment.getProduct().getPlant(), shipment.getDate());
+        if (aopMargin == null) {
+            log.error("Not found AOPMargin with orderNo: " + orderNo);
+            return null;
+        }
         shipment.setAOPMargin(aopMargin);
-        shipment.setDealer(dealer);
-
 
         return shipment;
     }
