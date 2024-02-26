@@ -80,6 +80,9 @@ public class ImportService extends BasedService {
     @Resource
     BookingRepository bookingRepository;
 
+    @Resource
+    DealerService dealerService;
+
     public void getOrderColumnsName(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) {
         for (int i = 0; i < 50; i++) {
             if (row.getCell(i) != null) {
@@ -618,12 +621,20 @@ public class ImportService extends BasedService {
             shipment.setBookingMarginAfterSurcharge(booking.getMarginAfterSurcharge());
             shipment.setBookingDealerNetAfterSurcharge(booking.getDealerNetAfterSurcharge());
         }
+
+        //Dealer
+        String dealerName = row.getCell(shipmentColumnsName.get("End Customer Name")).getStringCellValue();
+        Dealer dealer = dealerService.getDealerByName(prepareDealers, dealerName);
+        if (dealer == null)
+            return null;
+
+        shipment.setDealer(dealer);
+
         //TODO: region, currency, AOPMargin-year
         //fake data
         Region region = prepareRegions.get(0);
         Currency currency = prepareCurrencies.get(0);
         AOPMargin aopMargin = prepareAOPMargins.get(0);
-        Dealer dealer = prepareDealers.get(0);
 
         shipment.setRegion(region);
         shipment.setCurrency(currency);
