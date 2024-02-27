@@ -14,4 +14,5 @@ import java.util.List;
 public class CompareCurrencyRequest {
     private String currentCurrency;
     private List<String> comparisonCurrencies;
+    private boolean fromRealTime;
 }
