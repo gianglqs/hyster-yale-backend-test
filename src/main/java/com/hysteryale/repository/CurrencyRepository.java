@@ -19,4 +19,6 @@ public interface CurrencyRepository extends JpaRepository<Currency, Integer> {
             "ORDER BY e.from.currency")
     List<String> getExistingCurrencies();
 
+    @Query("SELECT c FROM Currency c WHERE c.currency = :currency")
+    Currency findByCurrency(String currency);
 }

@@ -1,13 +1,14 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.CannotExtractDateException;
 import com.hysteryale.exception.MissingColumnException;
+import com.hysteryale.model.Currency;
 import com.hysteryale.model.*;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.competitor.ForeCastValue;
-import com.hysteryale.repository.CompetitorPricingRepository;
-import com.hysteryale.repository.ShipmentRepository;
-import com.hysteryale.repository.BookingRepository;
+import com.hysteryale.repository.*;
+import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -50,13 +51,43 @@ public class ImportService extends BasedService {
     ShipmentRepository shipmentRepository;
 
     @Resource
-    BookingRepository bookingRepository;
-
-    @Resource
     IndicatorService indicatorService;
 
     @Resource
     CountryService countryService;
+
+    @Resource
+    ProductService productService;
+
+    @Resource
+    ProductRepository productRepository;
+
+    @Resource
+    DealerRepository dealerRepository;
+
+    @Resource
+    RegionRepository regionRepository;
+
+    @Resource
+    AOPMarginRepository aopMarginRepository;
+
+    @Resource
+    CurrencyRepository currencyRepository;
+
+    @Resource
+    BookingService bookingService;
+
+    @Resource
+    BookingRepository bookingRepository;
+
+    @Resource
+    DealerService dealerService;
+
+    @Resource
+    AOPMarginService aopMarginService;
+
+    @Resource
+    CountryRepository countryRepository;
 
     public void getOrderColumnsName(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) {
         for (int i = 0; i < 50; i++) {
@@ -411,16 +442,30 @@ public class ImportService extends BasedService {
         }
     }
 
+
     public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         HashMap<String, Integer> SHIPMENT_COLUMNS_NAME = new HashMap<>();
         XSSFSheet shipmentSheet = workbook.getSheet("Sheet1");
         logInfo("import shipment");
         List<Shipment> shipmentList = new ArrayList<>();
+
+        //prepare data for import
+        List<Product> prepareProducts = productRepository.findAll();
+        List<Dealer> prepareDealers = dealerRepository.findAll();
+        List<AOPMargin> prepareAOPMargin = aopMarginRepository.findAll();
+        Currency prepareCurrency = currencyRepository.findByCurrency("USD");
+        List<Booking> prepareBookings = bookingRepository.findAll();
+        List<Country> prepareCountries = countryRepository.findAll();
+
+
         for (Row row : shipmentSheet) {
-            if (row.getRowNum() == 0) getOrderColumnsName(row, SHIPMENT_COLUMNS_NAME);
-            else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
-                Shipment newShipment = mapExcelDataIntoShipmentObject(row, SHIPMENT_COLUMNS_NAME);
+            if (row.getRowNum() == 0) {
+                getOrderColumnsName(row, SHIPMENT_COLUMNS_NAME);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(SHIPMENT_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.SHIPMENT_REQUIRED_COLUMN);
+            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
+                Shipment newShipment = mapExcelDataIntoShipmentObject(
+                        row, SHIPMENT_COLUMNS_NAME, prepareProducts, prepareAOPMargin, prepareDealers, prepareCurrency, prepareBookings, prepareCountries);
 
                 // check it has BookingOrder
                 if (newShipment == null)
@@ -449,6 +494,7 @@ public class ImportService extends BasedService {
         logInfo("import shipment successfully");
     }
 
+
     private Shipment checkExistOrderNo(List<Shipment> list, String orderNo) {
         for (Shipment s : list) {
             if (s.getOrderNo().equals(orderNo))
@@ -457,7 +503,7 @@ public class ImportService extends BasedService {
         return null;
     }
 
-    public void importShipment() throws IOException, MissingColumnException {
+    public void importShipment() throws IOException, MissingColumnException, CannotExtractDateException {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.shipment");
 
@@ -485,6 +531,8 @@ public class ImportService extends BasedService {
      * reset revenue, totalCost, Margin$, Margin%
      */
     private Shipment updateShipment(Shipment s1, Shipment s2) {
+        s1.setDealerNet(s1.getDealerNet() + s2.getDealerNet());
+        s1.setDealerNetAfterSurcharge(s1.getDealerNetAfterSurcharge() + s2.getDealerNetAfterSurcharge());
         s1.setNetRevenue(s1.getNetRevenue() + s2.getNetRevenue());
         s1.setTotalCost(s1.getTotalCost() + s2.getTotalCost());
         Double margin = s1.getDealerNetAfterSurcharge() - s1.getTotalCost();
@@ -496,132 +544,114 @@ public class ImportService extends BasedService {
     }
 
 
-    private Shipment mapExcelDataIntoShipmentObject(Row row, HashMap<String, Integer> shipmentColumnsName) throws MissingColumnException {
+    private Shipment mapExcelDataIntoShipmentObject(Row row, HashMap<String, Integer> shipmentColumnsName,
+                                                    List<Product> prepareProducts, List<AOPMargin> prepareAOPMargins,
+                                                    List<Dealer> prepareDealers, Currency USDCurrency,
+                                                    List<Booking> prepareBookings, List<Country> prepareCountries) {
         Shipment shipment = new Shipment();
 
         // Set orderNo
-        String orderNo;
-        if (shipmentColumnsName.get("Order number") != null) {
-            orderNo = row.getCell(shipmentColumnsName.get("Order number")).getStringCellValue();
-            shipment.setOrderNo(orderNo);
-        } else {
-            throw new MissingColumnException("Missing column 'Order number'!");
-        }
-
-        // get data from BookingOrder
-        Optional<Booking> bookingOrderOptional = bookingRepository.getBookingOrderByOrderNo(orderNo);
-        if (bookingOrderOptional.isPresent()) {
-            Booking booking = bookingOrderOptional.get();
-            // productDimension
-            shipment.setProduct(booking.getProduct());
-
-            // set Region
-            shipment.setRegion(booking.getRegion());
-
-            // currency
-            shipment.setCurrency(booking.getCurrency());
-
-            // DN
-            shipment.setDealerNet(booking.getDealerNet());
-
-            // Dealer
-            shipment.setDealer(booking.getDealer());
-
-            //DN AfterSurcharge  <- booking
-            double dealerNetAfterSurcharge = booking.getDealerNetAfterSurcharge();
-            shipment.setDealerNetAfterSurcharge(dealerNetAfterSurcharge);
-
-            // set Booking margin percentage
-            shipment.setBookingMarginPercentageAfterSurcharge(booking.getMarginPercentageAfterSurcharge());
-
-            // AOP Margin %
-            shipment.setAOPMargin(booking.getAOPMargin());
-
-        } else {
-            logWarning("Not found BookingOrder with OrderNo:  " + orderNo);
+        String orderNo = row.getCell(shipmentColumnsName.get("Order number")).getStringCellValue();
+        if (orderNo.isEmpty())
             return null;
-        }
-
-        // Set serialNUmber
-        if (shipmentColumnsName.get("Serial Number") != null) {
-            String serialNumber = row.getCell(shipmentColumnsName.get("Serial Number")).getStringCellValue();
-            shipment.setSerialNumber(serialNumber);
-        } else {
-            throw new MissingColumnException("Missing column 'Serial Number'!");
-        }
-
-        // netRevenue
-        double revenue, discount;
-        if (shipmentColumnsName.get("Revenue") != null) {
-            revenue = row.getCell(shipmentColumnsName.get("Revenue")).getNumericCellValue();
-        } else {
-            throw new MissingColumnException("Missing column 'Revenue'!");
-        }
-
-        if (shipmentColumnsName.get("Discounts") != null) {
-            discount = row.getCell(shipmentColumnsName.get("Discounts")).getNumericCellValue();
-        } else {
-            throw new MissingColumnException("Missing column 'Discounts'!");
-        }
-        double netRevenue = revenue - discount;
-        shipment.setNetRevenue(netRevenue);
-
-        // country
-        if (shipmentColumnsName.get("Ship-to Country Code") != null) {
-            String country = row.getCell(shipmentColumnsName.get("Ship-to Country Code")).getStringCellValue();
-            shipment.setCtryCode(country);
-        } else {
-            throw new MissingColumnException("Missing column 'Ship-to Country Code'!");
-        }
-
-        // date
-        if (shipmentColumnsName.get("Created On") != null) {
-            Date date = row.getCell(shipmentColumnsName.get("Created On")).getDateCellValue();
-            LocalDate calendar = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            shipment.setDate(calendar);
-        } else {
-            throw new MissingColumnException("Missing column 'Created On'!");
-        }
-
-        //totalCost
-        double costOfSales, warranty;
-        if (shipmentColumnsName.get("Cost of Sales") != null) {
-            costOfSales = row.getCell(shipmentColumnsName.get("Cost of Sales")).getNumericCellValue();
-        } else {
-            throw new MissingColumnException("Missing column 'Cost of Sales'!");
-        }
-        if (shipmentColumnsName.get("Warranty") != null) {
-            warranty = row.getCell(shipmentColumnsName.get("Warranty")).getNumericCellValue();
-        } else {
-            throw new MissingColumnException("Missing column 'Warranty'!");
-        }
-        double totalCost = costOfSales - warranty;
-        shipment.setTotalCost(totalCost);
-
-        //quantity
-        if (shipmentColumnsName.get("Quantity") != null) {
-            int quantity = (int) row.getCell(shipmentColumnsName.get("Quantity")).getNumericCellValue();
-            shipment.setQuantity(quantity);
-        } else {
-            throw new MissingColumnException("Missing column 'Quantity'!");
-        }
+        shipment.setOrderNo(orderNo);
 
         // series
-        if (shipmentColumnsName.get("Series") != null) {
-            String series = row.getCell(shipmentColumnsName.get("Series")).getStringCellValue();
-            shipment.setSeries(series);
-        } else {
-            throw new MissingColumnException("Missing column 'Series'!");
-        }
+        String series = row.getCell(shipmentColumnsName.get("Series")).getStringCellValue();
+        shipment.setSeries(series);
 
-        double marginAfterSurcharge = shipment.getDealerNetAfterSurcharge() - totalCost;
-        double marginPercentageAfterSurcharge = marginAfterSurcharge / shipment.getDealerNetAfterSurcharge();
+        //modelCode
+        String modelCode = row.getCell(shipmentColumnsName.get("Model")).getStringCellValue();
 
-        // set Margin Percentage After surcharge
+        //product
+        Product product = productService.findProductByModelCodeAndSeries(prepareProducts, modelCode, series);
+        if (product == null)
+            return null;
+        shipment.setProduct(product);
+
+        // Set serialNUmber
+        String serialNumber = row.getCell(shipmentColumnsName.get("Serial Number")).getStringCellValue();
+        shipment.setSerialNumber(serialNumber);
+
+        //quantity
+        int quantity = (int) row.getCell(shipmentColumnsName.get("Quantity")).getNumericCellValue();
+        shipment.setQuantity(quantity);
+
+        // dealerNet = 'Revenue' + 'Revenue - Other'
+        double revenue = row.getCell(shipmentColumnsName.get("Revenue")).getNumericCellValue();
+        double revenueOther = row.getCell(shipmentColumnsName.get("Revenue - Other")).getNumericCellValue();
+        double dealerNet = revenue + revenueOther;
+        shipment.setDealerNet(dealerNet);
+
+        // surcharge
+        double discounts = row.getCell(shipmentColumnsName.get("Discounts")).getNumericCellValue();
+        double additionalDiscounts = row.getCell(shipmentColumnsName.get("Additional Discounts")).getNumericCellValue();
+        double cashDiscounts = row.getCell(shipmentColumnsName.get("Cash Discounts")).getNumericCellValue();
+        double surcharge = discounts + additionalDiscounts + cashDiscounts;
+
+        //dealerNetAfterSurcharge
+        double dealerNetAfterSurcharge = dealerNet - surcharge;
+        shipment.setDealerNetAfterSurcharge(dealerNetAfterSurcharge);
+
+        // totalCost
+        double costOfSales = row.getCell(shipmentColumnsName.get("Cost of Sales")).getNumericCellValue();
+        double dealerCommisions = row.getCell(shipmentColumnsName.get("Dealer Commisions")).getNumericCellValue();
+        double warranty = row.getCell(shipmentColumnsName.get("Warranty")).getNumericCellValue();
+        double COSOther = row.getCell(shipmentColumnsName.get("COS - Other")).getNumericCellValue();
+        double totalCost = costOfSales + dealerCommisions + warranty + COSOther;
+        shipment.setTotalCost(totalCost);
+
+        // MarginAfterSurcharge = dealerNetAfterSurcharge - totalCost
+        double marginAfterSurcharge = dealerNetAfterSurcharge - totalCost;
+        shipment.setMarginAfterSurcharge(marginAfterSurcharge);
+
+        // NetRevenue
+        shipment.setNetRevenue(marginAfterSurcharge);
+
+        // MarginPercentageAfterSurcharge
+        double marginPercentageAfterSurcharge = marginAfterSurcharge / dealerNetAfterSurcharge;
         shipment.setMarginPercentageAfterSurcharge(marginPercentageAfterSurcharge);
 
-        // Set Margin after surcharge
-        shipment.setMarginAfterSurcharge(marginAfterSurcharge);
+        // date
+        Date date = row.getCell(shipmentColumnsName.get("Created On")).getDateCellValue();
+        LocalDate calendar = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        shipment.setDate(calendar);
+
+        // booking
+        Booking booking = bookingService.getBookingByOrderNo(prepareBookings, orderNo);
+        if (booking != null) {
+            shipment.setBookingMarginPercentageAfterSurcharge(booking.getMarginPercentageAfterSurcharge());
+            shipment.setBookingMarginAfterSurcharge(booking.getMarginAfterSurcharge());
+            shipment.setBookingDealerNetAfterSurcharge(booking.getDealerNetAfterSurcharge());
+        }
+
+        //Dealer
+        String dealerName = row.getCell(shipmentColumnsName.get("End Customer Name")).getStringCellValue();
+        Dealer dealer = dealerService.getDealerByName(prepareDealers, dealerName);
+        if (dealer == null) {
+            log.error("Not found Dealer with dealerName: " + dealerName);
+            return null;
+        }
+        shipment.setDealer(dealer);
+
+        // region
+        String ctryCode = row.getCell(shipmentColumnsName.get("Ship-to Country Code")).getStringCellValue();
+        Country country = countryService.findByCountryCode(prepareCountries, ctryCode);
+        if (country == null) {
+            log.error("Not found Country with countryCode: " + ctryCode);
+            return null;
+        }
+        shipment.setRegion(country.getRegion());
+
+        // currency
+        shipment.setCurrency(USDCurrency);
+
+        AOPMargin aopMargin = aopMarginService.getAOPMargin(prepareAOPMargins, shipment.getRegion(), shipment.getSeries(), shipment.getProduct().getPlant(), shipment.getDate());
+        if (aopMargin == null) {
+            log.error("Not found AOPMargin with orderNo: " + orderNo);
+            return null;
+        }
+        shipment.setAOPMargin(aopMargin);
 
         return shipment;
     }

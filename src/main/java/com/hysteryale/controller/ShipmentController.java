@@ -8,6 +8,7 @@ import com.hysteryale.service.ImportService;
 import com.hysteryale.service.ShipmentService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.ModelUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -58,17 +59,17 @@ public class ShipmentController {
 
         try {
             InputStream is = file.getInputStream();
-
+            String modelType = ModelUtil.SHIPMENT;
             if (FileUtils.isExcelFile(is)) {
                 // save file in folder tmp/UploadFiles
                 String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
                 String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-               String pathFile =  fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension);
-                // open file to import
+                String fileName = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, modelType);
 
-                InputStream inputStream = new FileInputStream(pathFile);
-
+                InputStream inputStream = new FileInputStream(baseFolder + "/" + fileName);
                 importService.importShipmentFileOneByOne(inputStream);
+
+                fileUploadService.updateUploadedSuccessfully(fileName);
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Uploaded file is not an Excel file", null));
