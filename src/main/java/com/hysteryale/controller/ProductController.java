@@ -5,6 +5,7 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ProductService;
+import com.hysteryale.service.UpdateHistoryService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.ModelUtil;
@@ -32,6 +33,9 @@ public class ProductController {
     @Resource
     private FileUploadService fileUploadService;
 
+    @Resource
+    private UpdateHistoryService updateHistoryService;
+
     @PostMapping("/getData")
     public Map<String, Object> getDataByFilter(@RequestBody FilterModel filters,
                                                @RequestParam(defaultValue = "1") int pageNo,
@@ -44,12 +48,16 @@ public class ProductController {
     @PutMapping(path = "/updateProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
     public void updateProduct(@RequestParam("modelCode") String modelCode,
+                              @RequestParam("series") String series,
                               @RequestParam(name = "image", required = false) MultipartFile image,
                               @RequestParam(name = "description", required = false) String description,
                               Authentication authentication) throws Exception {
 
         if (modelCode == null)
             throw new InvalidPropertiesFormatException("ModelCode was not found!");
+        if (series == null)
+            throw new InvalidPropertiesFormatException("Series was not found!");
+
 
         String savedImageName = null;
         String saveFilePath = null;
@@ -61,8 +69,8 @@ public class ProductController {
             savedImageName = fileUploadService.upLoadImage(image, targetFolder, authentication, ModelUtil.PRODUCT);
             saveFilePath = saveImageFolder + savedImageName;
         }
-        productService.updateImageAndDescription(modelCode, saveFilePath, description);
-        fileUploadService.updateUploadedSuccessfully(savedImageName);
+        productService.updateImageAndDescription(modelCode,series, saveFilePath, description);
+        updateHistoryService.handleUpdatedSuccessfully(savedImageName, ModelUtil.PRODUCT, authentication);
     }
 
     @GetMapping("/getProductDetail")

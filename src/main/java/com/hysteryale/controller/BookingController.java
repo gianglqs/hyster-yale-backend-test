@@ -4,6 +4,7 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.BookingService;
 import com.hysteryale.service.FileUploadService;
+import com.hysteryale.service.UpdateHistoryService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.ModelUtil;
@@ -34,6 +35,9 @@ public class BookingController {
     FileUploadService fileUploadService;
 
     private FilterModel filters;
+
+    @Resource
+    private UpdateHistoryService updateHistoryService;
 
 
     /**
@@ -82,12 +86,12 @@ public class BookingController {
             // import
             if (!fileNameBooking.isEmpty()) {
                 bookingService.importNewBookingFileByFile(baseFolder + "/" + fileNameBooking);
-                fileUploadService.updateUploadedSuccessfully(fileNameBooking);
+                updateHistoryService.handleUpdatedSuccessfully(fileNameBooking, ModelUtil.BOOKING, authentication);
                 invalid = true;
             }
             if (!fileNameCostData.isEmpty()) {
                 bookingService.importCostData(baseFolder + "/" + fileNameCostData);
-                fileUploadService.updateUploadedSuccessfully(fileNameCostData);
+                updateHistoryService.handleUpdatedSuccessfully(fileNameCostData, ModelUtil.BOOKING, authentication);
                 invalid = true;
             }
             if (!invalid)

@@ -35,6 +35,9 @@ public class ProductService extends BasedService {
     @Resource
     FileUploadService fileUploadService;
 
+    @Resource
+    UpdateHistoryService updateHistoryService;
+
     private final HashMap<String, Integer> COLUMNS = new HashMap<>();
 
     public void assignColumnNames(Row row) {
@@ -98,7 +101,7 @@ public class ProductService extends BasedService {
     }
 
 
-    public void importProductDimension() throws IOException,  MissingColumnException {
+    public void importProductDimension() throws IOException, MissingColumnException {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.product-dimension");
         String fileName = "Product Fcst dimension 2023_02_24.xlsx";
@@ -223,8 +226,8 @@ public class ProductService extends BasedService {
 
     }
 
-    public void updateImageAndDescription(String modelCode, String imagePath, String description) throws NotFoundException {
-        Optional<Product> productOptional = productRepository.findByModelCode(modelCode);
+    public void updateImageAndDescription(String modelCode, String series, String imagePath, String description) throws NotFoundException {
+        Optional<Product> productOptional = productRepository.findByModelCodeAndSeries(modelCode, series);
         if (productOptional.isEmpty())
             throw new NotFoundException("No product found with modelCode: " + modelCode);
 
@@ -426,11 +429,11 @@ public class ProductService extends BasedService {
                 checkValidFileName = true;
             }
 
-            if( !checkValidFileName){
+            if (!checkValidFileName) {
                 throw new FileNotFoundException("File name is invalid");
             }
 
-            fileUploadService.updateUploadedSuccessfully(savedFileNameUploaded);
+            updateHistoryService.handleUpdatedSuccessfully(savedFileNameUploaded, ModelUtil.PRODUCT, authentication);
         }
     }
 
@@ -523,9 +526,9 @@ public class ProductService extends BasedService {
 
     }
 
-    public Product findProductByModelCodeAndSeries(List<Product> products, String modelCode, String series){
-        for(Product product : products){
-            if(product.getModelCode().equals(modelCode) && product.getSeries().equals(series))
+    public Product findProductByModelCodeAndSeries(List<Product> products, String modelCode, String series) {
+        for (Product product : products) {
+            if (product.getModelCode().equals(modelCode) && product.getSeries().equals(series))
                 return product;
         }
         return null;

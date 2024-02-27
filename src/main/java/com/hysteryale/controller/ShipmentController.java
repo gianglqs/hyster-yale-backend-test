@@ -1,18 +1,17 @@
 package com.hysteryale.controller;
 
-import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ImportService;
 import com.hysteryale.service.ShipmentService;
+import com.hysteryale.service.UpdateHistoryService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.ModelUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Map;
@@ -38,7 +36,9 @@ public class ShipmentController {
     ImportService importService;
     @Resource
     FileUploadService fileUploadService;
-    private FilterModel filters;
+
+    @Resource
+    UpdateHistoryService updateHistoryService;
 
     @PostMapping("/getShipmentData")
     public Map<String, Object> getDataFinancialShipment(@RequestBody FilterModel filters,
@@ -47,7 +47,6 @@ public class ShipmentController {
         filters.setPageNo(pageNo);
         filters.setPerPage(perPage);
 
-        this.filters = filters;
 
         return shipmentService.getShipmentByFilter(filters);
 
@@ -69,7 +68,7 @@ public class ShipmentController {
                 InputStream inputStream = new FileInputStream(baseFolder + "/" + fileName);
                 importService.importShipmentFileOneByOne(inputStream);
 
-                fileUploadService.updateUploadedSuccessfully(fileName);
+                updateHistoryService.handleUpdatedSuccessfully(fileName, ModelUtil.SHIPMENT, authentication);
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Uploaded file is not an Excel file", null));
