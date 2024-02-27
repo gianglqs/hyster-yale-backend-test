@@ -228,7 +228,8 @@ public class ExchangeRateServiceTest {
 
         CompareCurrencyRequest request = new CompareCurrencyRequest(
                 "EUR",
-                List.of(currency1, currency2, currency3)
+                List.of(currency1, currency2, currency3),
+                false
         );
         Map<String, Object> result = exchangeRateService.compareCurrency(request);
         Assertions.assertNotNull(result.get(currency1));

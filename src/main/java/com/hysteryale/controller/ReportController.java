@@ -4,7 +4,10 @@ import com.hysteryale.model.reports.CompareCurrencyRequest;
 import com.hysteryale.service.ExchangeRateService;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -28,5 +31,4 @@ public class ReportController {
                 "message", "Upload successfully"
         );
     }
-
 }

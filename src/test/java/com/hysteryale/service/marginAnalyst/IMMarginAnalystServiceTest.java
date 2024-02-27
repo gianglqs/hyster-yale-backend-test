@@ -224,7 +224,7 @@ public class IMMarginAnalystServiceTest {
     public void testCalculateMarginAnalystSummary() throws IOException {
         String modelCode = "H2.5UT";
         String strCurrency = "USD";
-        String fileUUID = "UUID Get Margin Data";
+        String fileUUID = "UUID Get Margin Data 2";
         String orderNumber = "H82381";
         Integer type = 1;
         String series = "A3C1";
