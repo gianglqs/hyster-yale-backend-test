@@ -3,16 +3,12 @@
                    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
                    xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <changeSet id="add-column-modelType-in-table-upload_file" author="songiang">
-        <addColumn tableName="product">
-            <column name="model_type" type="varchar(50)"/>
-        </addColumn>
+
+
+    <changeSet id="delete-column-update_file" author="songiang">
+        <dropColumn tableName="file_upload" columnName="success" />
+        <dropColumn tableName="file_upload" columnName="model_type" />
     </changeSet>
 
-    <changeSet id="add-column-is_success-in-table-upload_file" author="songiang">
-        <addColumn tableName="product">
-            <column name="success" type="BOOLEAN"/>
-        </addColumn>
-    </changeSet>
 
 </databaseChangeLog>
