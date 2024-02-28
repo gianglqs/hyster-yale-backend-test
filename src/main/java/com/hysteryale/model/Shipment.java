@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "shipment")
-public class Shipment {
+public class Shipment extends BaseModel{
     @Id
     @Column(name = "order_no")
     private String orderNo;
