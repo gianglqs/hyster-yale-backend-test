@@ -30,6 +30,7 @@ public interface IMMarginAnalystDataRepository extends JpaRepository<IMMarginAna
     @Query("SELECT m from IMMarginAnalystData m " +
             "WHERE m.modelCode = ?1 " +
             "AND m.optionCode = ?2 " +
-            "AND m.type = ?3")
-    Optional<IMMarginAnalystData> getIMMarginAnalystDataForTesting(String modelCode, String partNumber, int type);
+            "AND m.type = ?3 " +
+            "AND m.fileUUID = ?4")
+    Optional<IMMarginAnalystData> getIMMarginAnalystDataForTesting(String modelCode, String partNumber, int type, String fileUUID);
 }

@@ -10,6 +10,7 @@ import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.repository_h2.IMMarginAnalystDataRepository;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -62,15 +63,15 @@ public class IMMarginAnalystServiceTest {
         double exchangeRate = 0.2;
 
         // Test case EXISTING Manufacturing Cost
-        double result = marginAnalystDataService.getManufacturingCost(modelCode, partNumber, currency, plant, monthYear, dealerNet, exchangeRate);
+        double result = marginAnalystDataService.getManufacturingCost(modelCode, partNumber, currency, plant, dealerNet, exchangeRate);
         Assertions.assertEquals(manufacturingCost, result);
 
         // Test case NON-EXISTING Manufacturing Cost with PLANT = 'SN'
-        double notFoundResultSN = marginAnalystDataService.getManufacturingCost(modelCode, partNumber, currency, "SN", monthYear, dealerNet, exchangeRate);
+        double notFoundResultSN = marginAnalystDataService.getManufacturingCost(modelCode, partNumber, currency, "SN", dealerNet, exchangeRate);
         Assertions.assertEquals(dealerNet * 0.9, notFoundResultSN);
 
         // Test case NON-EXISTING Manufacturing Cost with PLANT = 'HYM' (~ Maximal, Ruyi, Staxx ~)
-        double notFoundResultHYM = marginAnalystDataService.getManufacturingCost(modelCode, "NOT FOUND PART", currency, "HYM", monthYear, dealerNet, exchangeRate);
+        double notFoundResultHYM = marginAnalystDataService.getManufacturingCost(modelCode, "NOT FOUND PART", currency, "HYM", dealerNet, exchangeRate);
         Assertions.assertEquals((dealerNet / 0.2) * 0.9, notFoundResultHYM);
     }
 
@@ -123,9 +124,9 @@ public class IMMarginAnalystServiceTest {
 
     private Map<String, Integer> getColumnName(Row row) {
         Map<String, Integer> COLUMN_NAME = new HashMap<>();
-        for(int i = 0; i < 23; i++) {
-            String columnName = row.getCell(i).getStringCellValue();
-            COLUMN_NAME.put(columnName, i);
+        for(Cell cell : row) {
+            String columnName = cell.getStringCellValue();
+            COLUMN_NAME.put(columnName, cell.getColumnIndex());
         }
         return COLUMN_NAME;
     }
@@ -145,9 +146,9 @@ public class IMMarginAnalystServiceTest {
     public void testCalculateMarginAnalysisData() throws IOException {
         FileUpload fileUpload = new FileUpload();
         fileUpload.setFileName("import_files/novo/SN_AUD.xlsx");
-        fileUpload.setUuid("UUID");
+        fileUpload.setUuid("UUID For Calculating Margin Data");
         fileUploadRepository.save(fileUpload);
-        marginAnalystDataService.calculateMarginAnalysisData("UUID", "AUD");
+        marginAnalystDataService.calculateMarginAnalysisData("UUID For Calculating Margin Data", "AUD");
 
         FileInputStream is = new FileInputStream("import_files/novo/SN_AUD.xlsx");
         XSSFWorkbook workbook = new XSSFWorkbook(is);
@@ -166,7 +167,7 @@ public class IMMarginAnalystServiceTest {
             double listPrice = row.getCell(columns.get("List Price")).getNumericCellValue();
             double dealerNet = row.getCell(columns.get("Net Price Each")).getNumericCellValue();
 
-            Optional<IMMarginAnalystData> optional = marginAnalystDataRepository.getIMMarginAnalystDataForTesting(modelCode, partNumber, type);
+            Optional<IMMarginAnalystData> optional = marginAnalystDataRepository.getIMMarginAnalystDataForTesting(modelCode, partNumber, type, "UUID For Calculating Margin Data");
             if(optional.isPresent()) {
                 IMMarginAnalystData dbData = optional.get();
 
@@ -205,7 +206,7 @@ public class IMMarginAnalystServiceTest {
 
             Double manufacturingCost = marginAnalystMacroRepository.getManufacturingCost(
                     modelCode, data.getOptionCode(), strCurrency,
-                    new ArrayList<>(List.of("Maximal")), LocalDate.of(2023, Month.DECEMBER, 1)
+                    new ArrayList<>(List.of("Maximal"))
             );
             double exchangeRate = 0.1436; // Exchange Rate in 2023 Decembers
             if(manufacturingCost == null)
@@ -242,11 +243,11 @@ public class IMMarginAnalystServiceTest {
         IMMarginAnalystSummary monthlyResult = (IMMarginAnalystSummary) result.get("MarginAnalystSummaryMonthly");
         IMMarginAnalystSummary annuallyResult = (IMMarginAnalystSummary) result.get("MarginAnalystSummaryAnnually");
 
-        assertMarginAnalystSummary(monthlyResult, dataList, modelCode, true);
-        assertMarginAnalystSummary(annuallyResult, dataList, modelCode, false);
+        assertMarginAnalystSummary(monthlyResult, dataList, series, true);
+        assertMarginAnalystSummary(annuallyResult, dataList, series, false);
     }
 
-    private void assertMarginAnalystSummary(IMMarginAnalystSummary result, List<IMMarginAnalystData> dataList, String modelCode, boolean isMonthly) {
+    private void assertMarginAnalystSummary(IMMarginAnalystSummary result, List<IMMarginAnalystData> dataList, String series, boolean isMonthly) {
         LocalDate monthYear = LocalDate.of(2023, Month.DECEMBER, 1);
         double totalListPrice = 0, totalManufacturingCost = 0, totalDealerNet = 0;
         for(IMMarginAnalystData data : dataList) {
@@ -256,7 +257,7 @@ public class IMMarginAnalystServiceTest {
         }
 
         double costUplift = 0.0, surcharge = 0.015, aopRate = isMonthly ? 0.1401 : 0.1436;
-        String clazz = marginAnalystMacroService.getClassByModelCode(modelCode);
+        String clazz = marginAnalystMacroService.getClassBySeries(series);
         double warranty = marginAnalystMacroService.getWarrantyValue(clazz, monthYear);
         double duty = clazz != null
                         ? clazz.equals("Class 5 BT") ? 0.05 : 0.0
