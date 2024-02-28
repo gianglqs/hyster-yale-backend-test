@@ -12,4 +12,9 @@ public interface FreightRepository extends JpaRepository<Freight, Integer> {
     @Query("SELECT f FROM Freight f WHERE f.metaSeries = ?1 AND f.monthYear = ?2")
     Optional<Freight> getFreight(String metaSeries, LocalDate monthYear);
 
+    @Query("SELECT f FROM Freight f " +
+            "WHERE f.metaSeries = ?1 " +
+            "AND f.monthYear = (SELECT MAX(f2.monthYear) FROM Freight f2)")
+    Optional<Freight> getLatestFreight(String metaSeries);
+
 }

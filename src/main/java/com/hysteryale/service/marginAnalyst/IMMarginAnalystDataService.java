@@ -11,8 +11,8 @@ import com.hysteryale.service.BookingService;
 import com.hysteryale.service.ExchangeRateService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.CurrencyFormatUtils;
-import com.hysteryale.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -26,8 +26,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -50,26 +48,24 @@ public class IMMarginAnalystDataService {
     static HashMap<String, Integer> COLUMN_NAME = new HashMap<>();
 
     void getColumnName(Row row) {
-        for(int i = 0; i < 23; i++) {
-            String columnName = row.getCell(i).getStringCellValue();
-            COLUMN_NAME.put(columnName, i);
+        for(Cell cell : row) {
+            String columnName = cell.getStringCellValue();
+            COLUMN_NAME.put(columnName, cell.getColumnIndex());
         }
         log.info("Column Name: " + COLUMN_NAME);
     }
 
     /**
      * Get ManufacturingCost value based on plant
-     * if plant == HYM or SN -> then find manufacturingCost(or CostRMB) in Macro
+     * if plant == HYM or SN -> then find the latest manufacturingCost(or CostRMB) in Macro
      * else plant == [EU_Plant] -> then getting from BookingOrder (Cost_Data file)
      */
-    double getManufacturingCost(String modelCode, String partNumber, String strCurrency, String plant, LocalDate monthYear, double dealerNet, double exchangeRate) {
-
-
+    double getManufacturingCost(String modelCode, String partNumber, String strCurrency, String plant, double dealerNet, double exchangeRate) {
         //HYM can be Ruyi, Staxx or Maximal
         List<String> plantList = !plant.equals("SN")
                 ? new ArrayList<>(List.of("HYM", "Ruyi", "Staxx", "Maximal"))
                 : new ArrayList<>(List.of("SN"));
-        Double manufacturingCost = marginAnalystMacroService.getManufacturingCost(modelCode, partNumber, strCurrency, plantList, monthYear);
+        Double manufacturingCost = marginAnalystMacroService.getManufacturingCost(modelCode, partNumber, strCurrency, plantList);
 
         // if manufacturingCost is null -> it will equal 90% of DealerNet
         return Objects.requireNonNullElseGet(manufacturingCost, () -> plant.equals("HYM")
@@ -80,26 +76,18 @@ public class IMMarginAnalystDataService {
     /**
      * Mapping the data from uploaded files / template files as SN_AUD ... into a model
      */
-    private IMMarginAnalystData mapIMMarginAnalystData(Row row, String plant, String strCurrency, LocalDate monthYear) {
+    private IMMarginAnalystData mapIMMarginAnalystData(Row row, String plant, String strCurrency) {
         // Initialize variables
         double aopRate = 1;
         double costUplift = 0.0;
-        double surcharge = 0.015;
-        double duty = 0.0;
-        double freight = 0;
-        double warranty = 0;
 
         // Assign value for variables if existed
         String queryPlant = plant.equals("SN") ? "SN" : "HYM";
-        Optional<MarginAnalysisAOPRate> optionalMarginAnalysisAOPRate = getMarginAnalysisAOPRate(strCurrency, monthYear, queryPlant, "annually");
+        Optional<MarginAnalysisAOPRate> optionalMarginAnalysisAOPRate = getLatestMarginAnalysisAOPRate(strCurrency, queryPlant, "annually");
         if(optionalMarginAnalysisAOPRate.isPresent()) {
             MarginAnalysisAOPRate marginAnalysisAOPRate = optionalMarginAnalysisAOPRate.get();
             aopRate = marginAnalysisAOPRate.getAopRate();
             costUplift = marginAnalysisAOPRate.getCostUplift();
-            warranty = marginAnalysisAOPRate.getAddWarranty();
-            surcharge = marginAnalysisAOPRate.getSurcharge();
-            duty = marginAnalysisAOPRate.getDuty();
-            freight = marginAnalysisAOPRate.getFreight();
         }
 
         String modelCode = row.getCell(COLUMN_NAME.get("Model Code")).getStringCellValue();
@@ -114,7 +102,7 @@ public class IMMarginAnalystDataService {
                 new IMMarginAnalystData(
                         plant, modelCode, partNumber, description,
                         CurrencyFormatUtils.formatDoubleValue(listPrice, CurrencyFormatUtils.decimalFormatFourDigits),
-                        monthYear, strCurrency,
+                        strCurrency,
                         CurrencyFormatUtils.formatDoubleValue(netPrice, CurrencyFormatUtils.decimalFormatFourDigits),
                         series
                 );
@@ -125,56 +113,50 @@ public class IMMarginAnalystDataService {
 
         // ManufacturingCost must be multiplied by aopRate (to exchange the currency)
         // ManufacturingCost can be in RMB(CNY), USD or AUD -> then it must be exchanged to be the same as the currency of DealerNet
-        double manufacturingCost = getManufacturingCost(modelCode, partNumber, strCurrency, queryPlant, monthYear, netPrice, aopRate);
+        double manufacturingCost = getManufacturingCost(modelCode, partNumber, strCurrency, queryPlant, netPrice, aopRate);
         boolean isSPED = false;
         if(description.contains("SPED")) {
             isSPED = true;
             manufacturingCost = manufacturingCost * aopRate * (1 + costUplift) + 0.9 * netPrice;
         }
 
-        // calculate marginAOP (consider to remove cuz not needed)
-        double marginAOP;
-        if(manufacturingCost == 0.0)
-            marginAOP =  netPrice * 0.1;
-        else {
-            if(isSPED)
-                marginAOP = (netPrice - manufacturingCost * (1 + warranty + surcharge + duty)) - freight;
-            else
-                marginAOP = (netPrice - manufacturingCost * (1 + costUplift) * (1 + warranty + surcharge + duty) * aopRate) - freight;
-        }
-
         // after finishing calculation => exchange manufacturingCost back to based currency (for HYM is RMB; for SN is USD)
         manufacturingCost = isSPED ? (manufacturingCost / aopRate) : manufacturingCost;
 
         imMarginAnalystData.setManufacturingCost(CurrencyFormatUtils.formatDoubleValue(manufacturingCost, CurrencyFormatUtils.decimalFormatFourDigits));
-        imMarginAnalystData.setMargin_aop(CurrencyFormatUtils.formatDoubleValue(marginAOP, CurrencyFormatUtils.decimalFormatFourDigits));
         imMarginAnalystData.setType(type);
-
         return imMarginAnalystData;
+    }
+
+    /**
+     * Get Duty value by class, if class is "Class 5 BT" then value = 0.05 or else = 0.0
+     */
+    private double getDutyValueByClass(String clazz) {
+        if(clazz == null)
+            return 0.0;
+        else
+            return clazz.equals("Class 5 BT") ? 0.05 : 0.0;
     }
 
     /**
      * Calculate MarginAnalystSummary and save into In-memory database
      */
-    public IMMarginAnalystSummary calculateNonUSMarginAnalystSummary(String fileUUID, String plant, String strCurrency, String durationUnit, Integer type, String series, String modelCode, String orderNumber) {
-
-        // calculate the total of List Price, Manufacturing Cost, Dealer Net of all Model Codes in a Series Code
-        double totalListPrice = 0, totalManufacturingCost = 0, dealerNet = 0;
-        LocalDate monthYear = LocalDate.now();
-
+    public IMMarginAnalystSummary calculateNonUSMarginAnalystSummary(String fileUUID, String plant, String strCurrency, String durationUnit, Integer type, String series, String modelCode) {
+        // Prepare Model Code for calculation if Model Code is null then --> use Series to find List of Mode Codes in a file with FileUUID
         List<String> modelCodeList = Collections.singletonList(modelCode);
-        if(modelCode == null)
-            modelCodeList = imMarginAnalystDataRepository.getModelCodesBySeries(fileUUID, series);
+        if(modelCode == null) modelCodeList = imMarginAnalystDataRepository.getModelCodesBySeries(fileUUID, series);
+
         log.info("Calculating " + durationUnit + " summary");
         log.info("List of Model Codes in a summary: " + modelCodeList);
+
+        double totalListPrice = 0, totalManufacturingCost = 0, dealerNet = 0;
         for(String mc : modelCodeList) {
             List<IMMarginAnalystData> imMarginAnalystDataList =
-                    imMarginAnalystDataRepository.getIMMarginAnalystData(
-                            mc, orderNumber, strCurrency, type, fileUUID, series
-                    );
-            if(imMarginAnalystDataList.isEmpty())
-                continue;
-            monthYear = imMarginAnalystDataList.get(0).getMonthYear();
+                    imMarginAnalystDataRepository.getIMMarginAnalystData(mc, null, strCurrency, type, fileUUID, series);
+
+            // If the Model Code does not have any Margin Analysis Data then ignore it.
+            if(imMarginAnalystDataList.isEmpty()) continue;
+
             for(IMMarginAnalystData data : imMarginAnalystDataList) {
                 totalListPrice += data.getListPrice();
                 totalManufacturingCost += data.getManufacturingCost();
@@ -184,19 +166,16 @@ public class IMMarginAnalystDataService {
         double costUplift = 0.0, surcharge = 0.015, aopRate = 1;
         boolean liIonIncluded = false;
 
+        // Get the latest Exchange Rate value
         String queryPlant = plant.equals("SN") ? "SN" : "HYM";
-        Optional<MarginAnalysisAOPRate> optionalMarginAnalysisAOPRate = getMarginAnalysisAOPRate(strCurrency, monthYear, queryPlant, durationUnit);
+        Optional<MarginAnalysisAOPRate> optionalMarginAnalysisAOPRate = getLatestMarginAnalysisAOPRate(strCurrency, queryPlant, durationUnit);
         if(optionalMarginAnalysisAOPRate.isPresent())
             aopRate = optionalMarginAnalysisAOPRate.get().getAopRate();
 
-        String clazz = marginAnalystMacroService.getClassByModelCode(modelCode);
-        double warranty = marginAnalystMacroService.getWarrantyValue(clazz, monthYear);
-        double duty = clazz != null
-                        ? clazz.equals("Class 5 BT")
-                            ? 0.05
-                            : 0.0
-                        : 0.0;
-        double freight = marginAnalystMacroService.getFreightValue(series.substring(1), monthYear);
+        String clazz = marginAnalystMacroService.getClassBySeries(series);
+        double warranty = marginAnalystMacroService.getLatestWarrantyValue(clazz);
+        double duty = getDutyValueByClass(clazz);
+        double freight = marginAnalystMacroService.getLatestFreightValue(series.substring(1));
 
         double totalCost = totalManufacturingCost * (1 + costUplift) * (1 + warranty + surcharge + duty);
         double blendedDiscount = 1 - (dealerNet / totalListPrice);
@@ -215,14 +194,13 @@ public class IMMarginAnalystDataService {
         double totalCostWithoutFreight = manufacturingCostUSD + warrantyCost + surchargeCost + dutyCost;
         double totalCostWithFreight = 0;
 
+        // If the currency is AUD then the Cost in including Freight (AUD only)
         if(strCurrency.equals("AUD")) {
-            fullCostAOPRate = (totalCost * aopRate) + freight;       // AUD only
+            fullCostAOPRate = (totalCost * aopRate) + freight;
             totalCostWithFreight = totalCostWithoutFreight + freight * aopRate;
         }
 
         double margin = dealerNet - fullCostAOPRate;
-
-        // check whether dealerNet == 0 or not
         double marginPercentAopRate = dealerNet == 0 ? 0 : margin / dealerNet;
 
         IMMarginAnalystSummary imMarginAnalystSummary = new IMMarginAnalystSummary
@@ -240,27 +218,25 @@ public class IMMarginAnalystDataService {
                         warrantyCost, surchargeCost, dutyCost, totalCostWithoutFreight, totalCostWithFreight, fileUUID, plant
                 );
         imMarginAnalystSummary.setType(type == null ? 0 : type);
+        imMarginAnalystSummary.setDurationUnit(durationUnit);
         if(durationUnit.equals("monthly")) {
-            imMarginAnalystSummary.setDurationUnit(durationUnit);
             // monthly valued
             imMarginAnalystSummary.setFullMonthlyRate(CurrencyFormatUtils.formatDoubleValue(fullCostAOPRate, CurrencyFormatUtils.decimalFormatFourDigits));
             imMarginAnalystSummary.setMarginPercentMonthlyRate(CurrencyFormatUtils.formatDoubleValue(marginPercentAopRate, CurrencyFormatUtils.decimalFormatFourDigits));
         }
         else {
-            imMarginAnalystSummary.setDurationUnit(durationUnit);
             // annually valued
             imMarginAnalystSummary.setFullCostAopRate(CurrencyFormatUtils.formatDoubleValue(fullCostAOPRate, CurrencyFormatUtils.decimalFormatFourDigits));
             imMarginAnalystSummary.setMarginPercentAopRate(CurrencyFormatUtils.formatDoubleValue(marginPercentAopRate, CurrencyFormatUtils.decimalFormatFourDigits));
         }
         return imMarginAnalystSummary;
     }
-    private Optional<MarginAnalysisAOPRate> getMarginAnalysisAOPRate(String currency, LocalDate monthYear, String plant, String durationUnit) {
-        return marginAnalysisAOPRateRepository.getMarginAnalysisAOPRate(plant, currency, monthYear, durationUnit);
+    private Optional<MarginAnalysisAOPRate> getLatestMarginAnalysisAOPRate(String currency, String plant, String durationUnit) {
+        return marginAnalysisAOPRateRepository.getLatestMarginAnalysisAOPRate(plant, currency, durationUnit);
     }
 
     /**
-     * Get the In-memory Data which has already been calculated in the uploaded file if the plant is non-US
-     * Calculate new MarginData (by getting Parts from DB) if the plant is US plant
+     * Get the In-memory Data which has already been calculated in the uploaded file
      */
     public List<IMMarginAnalystData> getIMMarginAnalystData(String modelCode, String strCurrency, String fileUUID, String orderNumber, Integer type, String series) {
         return imMarginAnalystDataRepository.getIMMarginAnalystData(modelCode, orderNumber, strCurrency, type, fileUUID, series);
@@ -280,13 +256,9 @@ public class IMMarginAnalystDataService {
         double costUplift = 0.0, surcharge = 0.015;
         boolean liIonIncluded = false; // NO
 
-        String clazz = marginAnalystMacroService.getClassByModelCode(modelCode);
+        String clazz = marginAnalystMacroService.getClassBySeries(series);
         double warranty = marginAnalystMacroService.getWarrantyValue(clazz, monthYear);
-        double duty = clazz != null
-                    ? clazz.equals("Class 5 BT")
-                        ? 0.05
-                        : 0.0
-                    : 0.0;
+        double duty = getDutyValueByClass(clazz);
         double freight = marginAnalystMacroService.getFreightValue(series.substring(1), monthYear);
 
         // ExchangeRate from strCurrency to USD
@@ -295,14 +267,15 @@ public class IMMarginAnalystDataService {
                 ? 1
                 : exchangeRateService.getExchangeRate(strCurrency, "USD", monthYear).getRate();     // considered as the ExchangeRate
 
-        double totalListPrice = 0.0, dealerNet = 0.0, totalManufacturingCost = defMFGCost;
 
         List<String> modelCodeList = Collections.singletonList(modelCode);
-        if(modelCode == null)
-            modelCodeList = imMarginAnalystDataRepository.getModelCodesBySeries(fileUUID, series);
+        if(modelCode == null) modelCodeList = imMarginAnalystDataRepository.getModelCodesBySeries(fileUUID, series);
+
         // calculate total of List Price, Manufacturing Cost and Dealer Net of Model Codes in a Series Code
+        double totalListPrice = 0.0, dealerNet = 0.0, totalManufacturingCost = defMFGCost;
         for(String mc : modelCodeList) {
-            List<IMMarginAnalystData> imMarginAnalystDataList = imMarginAnalystDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series);
+            List<IMMarginAnalystData> imMarginAnalystDataList =
+                    imMarginAnalystDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series);
             for(IMMarginAnalystData data : imMarginAnalystDataList) {
                 totalListPrice += data.getListPrice();
                 dealerNet += data.getDealerNet();
@@ -350,36 +323,19 @@ public class IMMarginAnalystDataService {
         imMarginAnalystSummary.setOrderNumber(orderNumber);
         imMarginAnalystSummary.setType(type == null ? 0 : type);
         imMarginAnalystSummary.setFileUUID(fileUUID);
+        imMarginAnalystSummary.setDurationUnit(durationUnit);
 
         if(durationUnit.equals("monthly")) {
-            imMarginAnalystSummary.setDurationUnit(durationUnit);
             // monthly valued
             imMarginAnalystSummary.setFullMonthlyRate(CurrencyFormatUtils.formatDoubleValue(fullCostAOPRate, CurrencyFormatUtils.decimalFormatFourDigits));
             imMarginAnalystSummary.setMarginPercentMonthlyRate(CurrencyFormatUtils.formatDoubleValue(marginPercentAopRate, CurrencyFormatUtils.decimalFormatFourDigits));
         }
         else {
-            imMarginAnalystSummary.setDurationUnit(durationUnit);
             // annually valued
             imMarginAnalystSummary.setFullCostAopRate(CurrencyFormatUtils.formatDoubleValue(fullCostAOPRate, CurrencyFormatUtils.decimalFormatFourDigits));
             imMarginAnalystSummary.setMarginPercentAopRate(CurrencyFormatUtils.formatDoubleValue(marginPercentAopRate, CurrencyFormatUtils.decimalFormatFourDigits));
         }
         return imMarginAnalystSummary;
-    }
-
-    /**
-     * Extract MonthYear from uploaded file with pattern 'mmm dd yyyy' as  'Dec 27 2023'
-     */
-    private LocalDate extractMonthYear(String monthYear) {
-        Pattern pattern = Pattern.compile("(\\w{3}) (\\d{2}) (\\d{4})"); // mmm dd yyyy
-        Matcher matcher = pattern.matcher(monthYear);
-
-        if(matcher.find()) {
-            String strMonth = matcher.group(1);
-            int year = Integer.parseInt(matcher.group(3));
-            return LocalDate.of(year, DateUtils.getMonth(strMonth), 1);
-        }
-        else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order Booked Date in file does not in appropriate form");
     }
 
     public void calculateMarginAnalysisData(String fileUUID, String currency) throws IOException {
@@ -390,7 +346,6 @@ public class IMMarginAnalystDataService {
         List<IMMarginAnalystData> imMarginAnalystDataList = new ArrayList<>();
 
         String orderNumber = "";
-        String strMonthYear = "";
         for(Row row : sheet) {
             if(row.getRowNum() == 0)
                 getColumnName(row);
@@ -399,32 +354,31 @@ public class IMMarginAnalystDataService {
                 if(row.getCell(COLUMN_NAME.get("Part Number"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().equals("Commission"))
                     continue;
 
-                // Get the value of Order number from file.
-                String orderIDCellValue = row.getCell(COLUMN_NAME.get("Order ID"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                if(!orderIDCellValue.isEmpty()) orderNumber = orderIDCellValue;
+                // Check if the file contains "Order ID" column
+                // if not then not read Order ID value
+                if(COLUMN_NAME.containsKey("Order ID")) {
+                    // Get the value of Order Number from file.
+                    String orderIDCellValue = row.getCell(COLUMN_NAME.get("Order ID"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    if(!orderIDCellValue.isEmpty()) orderNumber = orderIDCellValue;
+                }
 
-                //Check plant of Model Code
+                // Check plant of Model Code
+                // If the Model Code cannot be found (which means plant is null) then ignore it
                 String modelCode = row.getCell(COLUMN_NAME.get("Model Code")).getStringCellValue();
                 String plant = productRepository.getPlantByModelCode(modelCode);
-                if(plant == null)
-                    continue;
-
-                //Extract MonthYear from file
-                String monthYearCell = row.getCell(COLUMN_NAME.get("Order Booked Date")).getStringCellValue();
-                if(!monthYearCell.isEmpty()) strMonthYear = monthYearCell;
-                LocalDate monthYear = extractMonthYear(strMonthYear);
+                if(plant == null) continue;
 
                 IMMarginAnalystData imMarginAnalystData;
                 if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
                     // calculate non US plant Margin Analysis Data
-                    imMarginAnalystData = mapIMMarginAnalystData(row, plant, currency, monthYear);
+                    imMarginAnalystData = mapIMMarginAnalystData(row, plant, currency);
                 }
                 else {
                     // calculate US plant Margin Analysis Data
                     Optional<Booking> optionalBookingOrder = bookingService.getBookingOrderByOrderNumber(orderNumber);
                     if(optionalBookingOrder.isEmpty()) continue;
                     double manufacturingCost = optionalBookingOrder.get().getTotalCost();
-                    imMarginAnalystData = mapUSPlantMarginAnalysisData(row, manufacturingCost, currency, monthYear, orderNumber, plant);
+                    imMarginAnalystData = mapUSPlantMarginAnalysisData(row, manufacturingCost, currency, orderNumber, plant);
                 }
                 imMarginAnalystData.setOrderNumber(orderNumber);
                 imMarginAnalystData.setFileUUID(fileUUID);
@@ -438,12 +392,14 @@ public class IMMarginAnalystDataService {
 
     public Map<String, Object> calculateMarginAnalysisSummary(String fileUUID, Integer type, String modelCode, String series, String orderNumber, String currency) {
         String plant = productRepository.getPlantBySeries(series);
+        if(plant == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Series not found: " + series);
 
         IMMarginAnalystSummary monthly;
         IMMarginAnalystSummary annually;
         if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
-            monthly = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "monthly", type, series, modelCode, orderNumber);
-            annually = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "annually", type, series, modelCode, orderNumber);
+            monthly = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "monthly", type, series, modelCode);
+            annually = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "annually", type, series, modelCode);
         }
         else {
             monthly = calculateUSPlantMarginSummary(modelCode, series, currency, "monthly", orderNumber, type, fileUUID);
@@ -455,7 +411,7 @@ public class IMMarginAnalystDataService {
         );
     }
 
-    public IMMarginAnalystData mapUSPlantMarginAnalysisData(Row row, double manufacturingCost, String strCurrency, LocalDate monthYear, String orderNumber, String plant) {
+    public IMMarginAnalystData mapUSPlantMarginAnalysisData(Row row, double manufacturingCost, String strCurrency, String orderNumber, String plant) {
         String modelCode = row.getCell(COLUMN_NAME.get("Model Code")).getStringCellValue();
         String partNumber = row.getCell(COLUMN_NAME.get("Part Number")).getStringCellValue();
         double listPrice = row.getCell(COLUMN_NAME.get("List Price")).getNumericCellValue();
@@ -476,7 +432,7 @@ public class IMMarginAnalystDataService {
         IMMarginAnalystData imMarginAnalystData = new IMMarginAnalystData(
                 plant, modelCode, partNumber, partDescription,
                 CurrencyFormatUtils.formatDoubleValue(listPrice, CurrencyFormatUtils.decimalFormatFourDigits),
-                monthYear, strCurrency,
+                strCurrency,
                 CurrencyFormatUtils.formatDoubleValue(netPrice, CurrencyFormatUtils.decimalFormatFourDigits),
                 series
         );

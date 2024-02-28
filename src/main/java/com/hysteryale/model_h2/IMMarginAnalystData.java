@@ -52,13 +52,12 @@ public class IMMarginAnalystData {
     private int type;
     private String series;
 
-    public IMMarginAnalystData(String plant, String modelCode, String optionCode, String description, double listPrice, LocalDate monthYear, String currency, double dealerNet, String series) {
+    public IMMarginAnalystData(String plant, String modelCode, String optionCode, String description, double listPrice, String currency, double dealerNet, String series) {
         this.plant = plant;
         this.modelCode = modelCode;
         this.optionCode = optionCode;
         this.description = description;
         this.listPrice = listPrice;
-        this.monthYear = monthYear;
         this.currency = currency;
         this.dealerNet = dealerNet;
         this.series = series;

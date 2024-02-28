@@ -412,8 +412,8 @@ public class MarginAnalystMacroService {
         return marginAnalystMacroRepository.getMarginAnalystMacroByMonthYear(modelCode, partNumber, strCurrency, monthYear);
     }
 
-    public Double getManufacturingCost(String modelCode, String partNumber, String strCurrency, List<String> plants, LocalDate monthYear) {
-        return marginAnalystMacroRepository.getManufacturingCost(modelCode, partNumber, strCurrency, plants, monthYear);
+    public Double getManufacturingCost(String modelCode, String partNumber, String strCurrency, List<String> plants) {
+        return marginAnalystMacroRepository.getManufacturingCost(modelCode, partNumber, strCurrency, plants);
     }
 
     public List<MarginAnalystMacro> getMarginAnalystMacroByPlantAndListPartNumber(String modelCode, List<String> partNumber, String strCurrency, String plant, LocalDate monthYear) {
@@ -431,11 +431,21 @@ public class MarginAnalystMacroService {
         return optionalFreight.map(Freight::getFreight).orElse(0.0);
     }
 
+    public double getLatestFreightValue(String metaSeries) {
+        Optional<Freight> optionalFreight = freightRepository.getLatestFreight(metaSeries);
+        return optionalFreight.map(Freight::getFreight).orElse(0.0);
+    }
+
     /**
      * Get Warranty value if existed else return 0
      */
     public double getWarrantyValue(String clazz, LocalDate monthYear) {
         Optional<Warranty> optionalWarranty = warrantyRepository.getWarranty(clazz, monthYear);
+        return optionalWarranty.map(Warranty::getWarranty).orElse(0.0);
+    }
+
+    public double getLatestWarrantyValue(String clazz) {
+        Optional<Warranty> optionalWarranty = warrantyRepository.getLatestWarranty(clazz);
         return optionalWarranty.map(Warranty::getWarranty).orElse(0.0);
     }
 
@@ -447,10 +457,15 @@ public class MarginAnalystMacroService {
         return optionalTargetMargin.map(TargetMargin::getStdMarginPercentage).orElse(0.0);
     }
 
+    public double getLatestTargetMarginValue(String region, String metaSeries) {
+        Optional<TargetMargin> optionalTargetMargin = targetMarginRepository.getLatestTargetMarginValue(region, metaSeries);
+        return optionalTargetMargin.map(TargetMargin::getStdMarginPercentage).orElse(0.0);
+    }
+
     /**
      * Get class of the Model Code
      */
-    public String getClassByModelCode(String modelCode) {
-        return marginAnalystMacroRepository.getClassByModelCode(modelCode);
+    public String getClassBySeries(String series) {
+        return marginAnalystMacroRepository.getClassBySeries(series);
     }
 }

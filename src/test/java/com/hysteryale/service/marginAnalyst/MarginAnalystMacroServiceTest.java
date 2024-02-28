@@ -198,14 +198,14 @@ public class MarginAnalystMacroServiceTest {
     @Test
     public void testGetClassByModelCode() {
         String clazz = "Class Test";
-        String modelCode = "Model Code Test";
+        String series = "Series To Test";
 
         MarginAnalystMacro macro = new MarginAnalystMacro();
-        macro.setModelCode(modelCode);
+        macro.setSeriesCode(series);
         macro.setClazz(clazz);
         marginAnalystMacroRepository.save(macro);
 
-        String result = marginAnalystMacroService.getClassByModelCode(modelCode);
+        String result = marginAnalystMacroService.getClassBySeries(series);
         Assertions.assertEquals(clazz, result);
     }
 }

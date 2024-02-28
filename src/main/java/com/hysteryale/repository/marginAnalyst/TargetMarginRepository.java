@@ -18,4 +18,12 @@ public interface TargetMarginRepository extends JpaRepository<TargetMargin, Inte
             "LIMIT 1", nativeQuery = true)
     Optional<TargetMargin> getTargetMargin(@Param("region") String region, @Param("meta_series") String metaSeries, @Param("month_year") LocalDate monthYear);
 
+    @Query(value = "SELECT t.id, t.meta_series, t.month_year, t.region_id, t.std_margin_percentage " +
+            "FROM target_margin t join region r on t.region_id = r.id " +
+            "WHERE r.region_name = :region " +
+            "AND t.meta_series = :meta_series " +
+            "AND t.month_year = (SELECT MAX(t2.month_year) FROM target_margin t2) " +
+            "LIMIT 1", nativeQuery = true)
+    Optional<TargetMargin> getLatestTargetMarginValue(@Param("region") String region, @Param("meta_series") String metaSeries);
+
 }

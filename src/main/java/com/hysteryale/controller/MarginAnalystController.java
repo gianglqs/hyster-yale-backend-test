@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -59,17 +58,14 @@ public class MarginAnalystController {
         if(orderNumber.isEmpty())
             orderNumber = null;
 
-        if(!IMMarginAnalystDataService.isFileCalculated(fileUUID, currency)) {
+        if(!IMMarginAnalystDataService.isFileCalculated(fileUUID, currency))
             IMMarginAnalystDataService.calculateMarginAnalysisData(fileUUID, currency);
-        }
 
         List<IMMarginAnalystData> imMarginAnalystDataList = IMMarginAnalystDataService.getIMMarginAnalystData(modelCode, currency, fileUUID, orderNumber, type, series);
 
         double targetMargin = 0.0;
-        if(!imMarginAnalystDataList.isEmpty() && series != null) {
-            LocalDate monthYear = imMarginAnalystDataList.get(0).getMonthYear();
-            targetMargin = marginAnalystMacroService.getTargetMarginValue(region, series.substring(1), monthYear);
-        }
+        if(!imMarginAnalystDataList.isEmpty() && series != null)
+            targetMargin = marginAnalystMacroService.getLatestTargetMarginValue(region, series.substring(1));
 
         assert series != null;
         return Map.of(

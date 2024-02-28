@@ -10,4 +10,11 @@ import java.util.Optional;
 public interface MarginAnalysisAOPRateRepository extends JpaRepository<MarginAnalysisAOPRate, Integer> {
     @Query("SELECT m FROM MarginAnalysisAOPRate m WHERE m.plant = ?1 AND m.currency.currency = ?2 AND m.monthYear = ?3 AND m.durationUnit = ?4")
     Optional<MarginAnalysisAOPRate> getMarginAnalysisAOPRate(String plant, String strCurrency, LocalDate monthYear, String durationUnit);
+
+    @Query("SELECT m FROM MarginAnalysisAOPRate m " +
+            "WHERE m.plant = ?1 " +
+            "AND m.currency.currency = ?2 " +
+            "AND m.monthYear = (SELECT MAX(monthYear) FROM MarginAnalysisAOPRate) " +
+            "AND m.durationUnit = ?3")
+    Optional<MarginAnalysisAOPRate> getLatestMarginAnalysisAOPRate(String plant, String strCurrency, String durationUnit);
 }
