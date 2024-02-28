@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -159,5 +160,8 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
             "c.series = ?4 AND c.competitorName = ?5 AND c.model = ?6")
     Optional<CompetitorPricing> getCompetitorPricing(String country, String clazz, String category,
                                                      String series, String competitorName, String model);
+
+    @Query(value = "SELECT m.latest_modified_at FROM competitor_pricing m WHERE m.latest_modified_at is not null ORDER BY m.latest_modified_at DESC LIMIT 1", nativeQuery = true)
+    Optional<LocalDateTime> getLatestUpdatedTime();
 
 }

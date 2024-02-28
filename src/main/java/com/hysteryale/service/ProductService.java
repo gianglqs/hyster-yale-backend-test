@@ -4,10 +4,7 @@ import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ProductRepository;
-import com.hysteryale.utils.ConvertDataFilterUtil;
-import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.FileUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.utils.*;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -23,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -221,7 +219,15 @@ public class ProductService extends BasedService {
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
                 (List<String>) filterMap.get("truckTypeFilter"), (List<String>) filterMap.get("familyFilter"));
         result.put("totalItems", countAll);
+        // get latest updated time
+        Optional<LocalDateTime> latestUpdatedTimeOptional = productRepository.getLatestUpdatedTime();
+        String latestUpdatedTime = null;
+        if (latestUpdatedTimeOptional.isPresent()) {
+            latestUpdatedTime = DateUtils.convertLocalDateTimeToString(latestUpdatedTimeOptional.get());
+        }
 
+        result.put("latestUpdatedTime",latestUpdatedTime);
+        result.put("serverTimeZone", TimeZone.getDefault().getID());
         return result;
 
     }

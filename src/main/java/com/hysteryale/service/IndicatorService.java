@@ -8,6 +8,7 @@ import com.hysteryale.model.filters.SwotFilters;
 import com.hysteryale.repository.CompetitorColorRepository;
 import com.hysteryale.repository.CompetitorPricingRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
+import com.hysteryale.utils.DateUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -77,6 +79,16 @@ public class IndicatorService extends BasedService {
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((String)((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((Double)((List) filterMap.get("marginPercentageFilter")).get(1)));
         result.put("total", getTotal);
+
+        // get latest updated time
+        Optional<LocalDateTime> latestUpdatedTimeOptional = competitorPricingRepository.getLatestUpdatedTime();
+        String latestUpdatedTime = null;
+        if (latestUpdatedTimeOptional.isPresent()) {
+            latestUpdatedTime = DateUtils.convertLocalDateTimeToString(latestUpdatedTimeOptional.get());
+        }
+
+        result.put("latestUpdatedTime",latestUpdatedTime);
+        result.put("serverTimeZone", TimeZone.getDefault().getID());
 
         return result;
     }

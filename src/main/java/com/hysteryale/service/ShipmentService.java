@@ -8,6 +8,7 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.BookingRepository;
 import com.hysteryale.repository.ShipmentRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
+import com.hysteryale.utils.DateUtils;
 import com.hysteryale.utils.TargetCurrency;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -117,6 +119,14 @@ public class ShipmentService extends BasedService {
         Shipment shipment = new Shipment("Total", new Currency("USD"), quantity, dealerNet, dealerNetAfterSurcharge, totalCost, netRevenue, marginAfterSurcharge, marginPercentageAfterSurcharge, marginPercentageAfterSurchargeBooking);
         result.put("total", List.of(shipment));
 
+        Optional<LocalDateTime> latestUpdatedTimeOptional = shipmentRepository.getLatestUpdatedTime();
+        String latestUpdatedTime = null;
+        if (latestUpdatedTimeOptional.isPresent()) {
+            latestUpdatedTime = DateUtils.convertLocalDateTimeToString(latestUpdatedTimeOptional.get());
+        }
+
+        result.put("latestUpdatedTime",latestUpdatedTime);
+        result.put("serverTimeZone", TimeZone.getDefault().getID());
         return result;
     }
 
