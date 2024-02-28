@@ -1,5 +1,6 @@
 package com.hysteryale.model.competitor;
 
+import com.hysteryale.model.BaseModel;
 import com.hysteryale.model.Country;
 import com.hysteryale.model.Region;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "competitor_pricing")
-public class CompetitorPricing {
+public class CompetitorPricing extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -826,10 +826,10 @@ public class BookingService extends BasedService {
         result.put("total", List.of(totalBooking));
 
         // get latest updated time
-        Optional<LocalDateTime> latestUpdatedTimeOptional = updateHistoryRepository.getLatestUpdatedTimeByModelType(ModelUtil.BOOKING);
+        Optional<LocalDateTime> latestUpdatedTimeOptional = bookingRepository.getLatestUpdatedTime();
         String latestUpdatedTime = null;
         if (latestUpdatedTimeOptional.isPresent()) {
-            latestUpdatedTime = latestUpdatedTimeOptional.get().format(DateTimeFormatter.ISO_DATE_TIME);
+            latestUpdatedTime = DateUtils.convertLocalDateTimeToString(latestUpdatedTimeOptional.get());
         }
 
         result.put("latestUpdatedTime",latestUpdatedTime);
