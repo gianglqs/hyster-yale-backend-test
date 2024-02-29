@@ -55,4 +55,7 @@ public interface MarginAnalystMacroRepository extends JpaRepository<MarginAnalys
     @Query("SELECT m FROM MarginAnalystMacro m WHERE m.plant != 'SN' AND m.currency.currency = ?1 AND monthYear = ?2")
     List<MarginAnalystMacro> loadListHYMMacroData(String currency, LocalDate monthYear);
 
+    @Query(value = "SELECT m.plant FROM margin_analyst_macro m WHERE m.series_code = :series LIMIT 1", nativeQuery = true)
+    String getPlantBySeries(@Param("series") String series);
+
 }
