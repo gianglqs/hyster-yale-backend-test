@@ -364,8 +364,8 @@ public class IMMarginAnalystDataService {
 
                 // Check plant of Model Code
                 // If the Model Code cannot be found (which means plant is null) then ignore it
-                String modelCode = row.getCell(COLUMN_NAME.get("Model Code")).getStringCellValue();
-                String plant = productRepository.getPlantByModelCode(modelCode);
+                String series = row.getCell(COLUMN_NAME.get("Series Code")).getStringCellValue();
+                String plant = productRepository.getPlantBySeries(series);
                 if(plant == null) continue;
 
                 IMMarginAnalystData imMarginAnalystData;
