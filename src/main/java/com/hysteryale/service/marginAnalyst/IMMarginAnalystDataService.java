@@ -141,7 +141,7 @@ public class IMMarginAnalystDataService {
     /**
      * Calculate MarginAnalystSummary and save into In-memory database
      */
-    public IMMarginAnalystSummary calculateNonUSMarginAnalystSummary(String fileUUID, String plant, String strCurrency, String durationUnit, Integer type, String series, String modelCode) {
+    public IMMarginAnalystSummary calculateNonUSMarginAnalystSummary(String fileUUID, String plant, String strCurrency, String durationUnit, Integer type, String series, String modelCode, String orderNumber) {
         // Prepare Model Code for calculation if Model Code is null then --> use Series to find List of Mode Codes in a file with FileUUID
         List<String> modelCodeList = Collections.singletonList(modelCode);
         if(modelCode == null) modelCodeList = imMarginAnalystDataRepository.getModelCodesBySeries(fileUUID, series);
@@ -152,8 +152,9 @@ public class IMMarginAnalystDataService {
         double totalListPrice = 0, totalManufacturingCost = 0, dealerNet = 0;
         for(String mc : modelCodeList) {
             List<IMMarginAnalystData> imMarginAnalystDataList =
-                    imMarginAnalystDataRepository.getIMMarginAnalystData(mc, null, strCurrency, type, fileUUID, series);
+                    imMarginAnalystDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series);
 
+            log.info("Data in a Summary: " + imMarginAnalystDataList.size());
             // If the Model Code does not have any Margin Analysis Data then ignore it.
             if(imMarginAnalystDataList.isEmpty()) continue;
 
@@ -365,8 +366,12 @@ public class IMMarginAnalystDataService {
                 // Check plant of Model Code
                 // If the Model Code cannot be found (which means plant is null) then ignore it
                 String series = row.getCell(COLUMN_NAME.get("Series Code")).getStringCellValue();
-                String plant = productRepository.getPlantBySeries(series);
-                if(plant == null) continue;
+                String plant = marginAnalystMacroService.getPlantBySeries(series);
+                if(plant == null) {
+                    plant = productRepository.getPlantBySeries(series);
+                    if(plant == null)
+                        continue;
+                }
 
                 IMMarginAnalystData imMarginAnalystData;
                 if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
@@ -391,15 +396,18 @@ public class IMMarginAnalystDataService {
     }
 
     public Map<String, Object> calculateMarginAnalysisSummary(String fileUUID, Integer type, String modelCode, String series, String orderNumber, String currency) {
-        String plant = productRepository.getPlantBySeries(series);
-        if(plant == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Series not found: " + series);
+        String plant = marginAnalystMacroService.getPlantBySeries(series);
+        if(plant == null) {
+            plant = productRepository.getPlantBySeries(series);
+            if(plant == null)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Series not found: " + series);
+        }
 
         IMMarginAnalystSummary monthly;
         IMMarginAnalystSummary annually;
         if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
-            monthly = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "monthly", type, series, modelCode);
-            annually = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "annually", type, series, modelCode);
+            monthly = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "monthly", type, series, modelCode, orderNumber);
+            annually = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "annually", type, series, modelCode, orderNumber);
         }
         else {
             monthly = calculateUSPlantMarginSummary(modelCode, series, currency, "monthly", orderNumber, type, fileUUID);
