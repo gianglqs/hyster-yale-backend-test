@@ -1,0 +1,86 @@
+name: Deploy QA Hyster-yale-backend
+
+on:
+  push:
+    branches:
+      - 'qa-deploy'
+
+jobs:
+  build-qa-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/phoenix-software-development/hyster-yale-backend
+          flavor: latest=true
+          tags: |
+            type=raw,value={{branch}}-{{sha}}
+      - name: Login to image repository
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+      - name: Build
+        id: docker_build
+        uses: docker/build-push-action@v4
+        with:
+          context: ./
+          file: Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            "VERSION_TAG=${{ steps.meta.outputs.tags }}"
+
+  deploy:
+    needs: [build-qa-image]
+    runs-on: [self-hosted]
+    permissions:
+      packages: read
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/phoenix-software-development/hyster-yale-backend
+          flavor: latest=true
+          tags: |
+            type=raw,value={{branch}}-{{sha}}
+
+      - name: Login to image repository
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Pull latest image
+        shell: bash
+        run: |
+          CONTAINER_NAME=hysteryale-be
+          # delete old images
+          docker rmi -f ghcr.io/phoenix-software-development/hyster-yale-backend:latest || true
+          
+          # pull 
+          docker pull ghcr.io/phoenix-software-development/hyster-yale-backend:latest
+          
+          # if container is running, stop it
+          if docker ps -a --format '{{.Names}}' | grep -Eq "^$CONTAINER_NAME$"; then
+             docker stop $CONTAINER_NAME || true
+          fi
+          
+          # remove image and containers old
+          docker rm $CONTAINER_NAME || true
+          
+          # run
+          docker run -p 8080:8080 -d --name=hysteryale-be --network=host --restart unless-stopped ghcr.io/phoenix-software-development/hyster-yale-backend:latest
+

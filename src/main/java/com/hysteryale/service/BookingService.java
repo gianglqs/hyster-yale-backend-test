@@ -7,6 +7,7 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.repository.*;
 import com.hysteryale.repository.upload.FileUploadRepository;
+import com.hysteryale.repository.upload.UpdateHistoryRepository;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +79,9 @@ public class BookingService extends BasedService {
 
     @Resource
     FileUploadRepository fileUploadRepository;
+
+    @Resource
+    UpdateHistoryRepository updateHistoryRepository;
 
     /**
      * Get Columns' name in Booking Excel file, then store them (columns' name) respectively with the index into HashMap
@@ -822,13 +826,13 @@ public class BookingService extends BasedService {
         result.put("total", List.of(totalBooking));
 
         // get latest updated time
-        Optional<LocalDateTime> latestUpdatedTimeOptional = fileUploadRepository.getLatestUpdatedTimeByModelType(ModelUtil.BOOKING);
-        LocalDateTime latestUpdatedTime = null;
+        Optional<LocalDateTime> latestUpdatedTimeOptional = bookingRepository.getLatestUpdatedTime();
+        String latestUpdatedTime = null;
         if (latestUpdatedTimeOptional.isPresent()) {
-            latestUpdatedTime = latestUpdatedTimeOptional.get();
+            latestUpdatedTime = DateUtils.convertLocalDateTimeToString(latestUpdatedTimeOptional.get());
         }
 
-        result.put("latestUpdatedTime", latestUpdatedTime.format(DateTimeFormatter.ISO_DATE_TIME));
+        result.put("latestUpdatedTime",latestUpdatedTime);
         result.put("serverTimeZone", TimeZone.getDefault().getID());
         return result;
     }

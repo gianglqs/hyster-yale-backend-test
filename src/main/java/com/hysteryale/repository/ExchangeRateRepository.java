@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,7 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Inte
             "ORDER BY e.date DESC " +
             "LIMIT 12 ", nativeQuery = true)
     List<ExchangeRate> getCurrentExchangeRate(@Param("from_currency") String fromCurrency, @Param("to_currency") String toCurrency);
+
+    @Query(value = "SELECT m.latest_modified_at FROM booking m WHERE m.latest_modified_at is not null ORDER BY m.latest_modified_at DESC LIMIT 1", nativeQuery = true)
+    Optional<LocalDateTime> getLatestUpdatedTime();
 }

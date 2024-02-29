@@ -4,10 +4,7 @@ import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ProductRepository;
-import com.hysteryale.utils.ConvertDataFilterUtil;
-import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.FileUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.utils.*;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -23,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -34,6 +32,9 @@ public class ProductService extends BasedService {
 
     @Resource
     FileUploadService fileUploadService;
+
+    @Resource
+    UpdateHistoryService updateHistoryService;
 
     private final HashMap<String, Integer> COLUMNS = new HashMap<>();
 
@@ -98,7 +99,7 @@ public class ProductService extends BasedService {
     }
 
 
-    public void importProductDimension() throws IOException,  MissingColumnException {
+    public void importProductDimension() throws IOException, MissingColumnException {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.product-dimension");
         String fileName = "Product Fcst dimension 2023_02_24.xlsx";
@@ -218,13 +219,21 @@ public class ProductService extends BasedService {
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("brandFilter"),
                 (List<String>) filterMap.get("truckTypeFilter"), (List<String>) filterMap.get("familyFilter"));
         result.put("totalItems", countAll);
+        // get latest updated time
+        Optional<LocalDateTime> latestUpdatedTimeOptional = productRepository.getLatestUpdatedTime();
+        String latestUpdatedTime = null;
+        if (latestUpdatedTimeOptional.isPresent()) {
+            latestUpdatedTime = DateUtils.convertLocalDateTimeToString(latestUpdatedTimeOptional.get());
+        }
 
+        result.put("latestUpdatedTime",latestUpdatedTime);
+        result.put("serverTimeZone", TimeZone.getDefault().getID());
         return result;
 
     }
 
-    public void updateImageAndDescription(String modelCode, String imagePath, String description) throws NotFoundException {
-        Optional<Product> productOptional = productRepository.findByModelCode(modelCode);
+    public void updateImageAndDescription(String modelCode, String series, String imagePath, String description) throws NotFoundException {
+        Optional<Product> productOptional = productRepository.findByModelCodeAndSeries(modelCode, series);
         if (productOptional.isEmpty())
             throw new NotFoundException("No product found with modelCode: " + modelCode);
 
@@ -426,11 +435,11 @@ public class ProductService extends BasedService {
                 checkValidFileName = true;
             }
 
-            if( !checkValidFileName){
+            if (!checkValidFileName) {
                 throw new FileNotFoundException("File name is invalid");
             }
 
-            fileUploadService.updateUploadedSuccessfully(savedFileNameUploaded);
+            updateHistoryService.handleUpdatedSuccessfully(savedFileNameUploaded, ModelUtil.PRODUCT, authentication);
         }
     }
 
@@ -523,9 +532,9 @@ public class ProductService extends BasedService {
 
     }
 
-    public Product findProductByModelCodeAndSeries(List<Product> products, String modelCode, String series){
-        for(Product product : products){
-            if(product.getModelCode().equals(modelCode) && product.getSeries().equals(series))
+    public Product findProductByModelCodeAndSeries(List<Product> products, String modelCode, String series) {
+        for (Product product : products) {
+            if (product.getModelCode().equals(modelCode) && product.getSeries().equals(series))
                 return product;
         }
         return null;

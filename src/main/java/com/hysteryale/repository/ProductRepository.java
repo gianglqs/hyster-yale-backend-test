@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,4 +102,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode AND substring(p.series, 2, 4) = :metaSeries")
     List<Product> findByModelCodeAndMetaSeries(String modelCode, String metaSeries);
+
+    @Query(value = "SELECT m.latest_modified_at FROM product m WHERE m.latest_modified_at is not null ORDER BY m.latest_modified_at DESC LIMIT 1", nativeQuery = true)
+    Optional<LocalDateTime> getLatestUpdatedTime();
 }

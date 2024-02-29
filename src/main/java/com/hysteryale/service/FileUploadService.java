@@ -1,20 +1,19 @@
 package com.hysteryale.service;
 
-import com.hysteryale.exception.CanNotUpdateException;
 import com.hysteryale.model.User;
 import com.hysteryale.model.upload.FileUpload;
+import com.hysteryale.model.upload.UpdateHistory;
 import com.hysteryale.repository.upload.FileUploadRepository;
+import com.hysteryale.repository.upload.UpdateHistoryRepository;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -33,6 +32,9 @@ public class FileUploadService {
     FileUploadRepository fileUploadRepository;
     @Resource
     UserService userService;
+
+    @Resource
+    UpdateHistoryRepository updateHistoryRepository;
 
     /**
      * Save uploaded excel into disk and file information into db
@@ -148,13 +150,18 @@ public class FileUploadService {
             fileUpload.setUploadedBy(uploadedBy);
             fileUpload.setUploadedTime(LocalDateTime.now());
 
-            fileUpload.setModelType(modelType);
-
             // append suffix into fileName
             fileUpload.setFileName(encodeFileName);
 
             // save information to db
             fileUploadRepository.save(fileUpload);
+
+            UpdateHistory updateHistory = new UpdateHistory();
+            updateHistory.setFileUpload(fileUpload);
+            updateHistory.setTime(LocalDateTime.now());
+            updateHistory.setUser(uploadedBy);
+            updateHistory.setModelType(modelType);
+            updateHistoryRepository.save(updateHistory);
 
             return fileUpload.getUuid();
         } else
@@ -182,13 +189,5 @@ public class FileUploadService {
         return fileName;
     }
 
-    public void updateUploadedSuccessfully(String fileName) throws CanNotUpdateException {
-        Optional<FileUpload> fileUploadOptional = fileUploadRepository.getFileUploadByFileName(fileName);
-        if (fileUploadOptional.isEmpty())
-            throw new CanNotUpdateException("Can not update time updated data");
-        FileUpload fileUpload = fileUploadOptional.get();
-        fileUpload.setUploadedTime(LocalDateTime.now());
-        fileUpload.setSuccess(true);
-        fileUploadRepository.save(fileUpload);
-    }
+
 }

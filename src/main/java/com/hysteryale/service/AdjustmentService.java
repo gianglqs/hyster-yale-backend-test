@@ -6,11 +6,13 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.payLoad.AdjustmentPayLoad;
 import com.hysteryale.repository.BookingRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
+import com.hysteryale.utils.DateUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -90,7 +92,15 @@ public class AdjustmentService extends BasedService {
         //       System.out.println(getTotalAdjustment.size());
         // result.put("totalItems", countAll.size());
 
+        // get latest updated time
+        Optional<LocalDateTime> latestUpdatedTimeOptional = bookingRepository.getLatestUpdatedTime();
+        String latestUpdatedTime = null;
+        if (latestUpdatedTimeOptional.isPresent()) {
+            latestUpdatedTime = DateUtils.convertLocalDateTimeToString(latestUpdatedTimeOptional.get());
+        }
 
+        result.put("latestUpdatedTime",latestUpdatedTime);
+        result.put("serverTimeZone", TimeZone.getDefault().getID());
         return result;
     }
 

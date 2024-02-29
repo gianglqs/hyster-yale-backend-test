@@ -3,6 +3,7 @@ package com.hysteryale.utils;
 import com.hysteryale.exception.CannotExtractDateException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -125,6 +126,10 @@ public class DateUtils {
             return Integer.parseInt(m.group());
         }
         throw new CannotExtractDateException("Can not extract Year from file name: '" + fileName + "'");
+    }
+
+    public static String convertLocalDateTimeToString(LocalDateTime localDateTime) {
+        return localDateTime.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
 }
