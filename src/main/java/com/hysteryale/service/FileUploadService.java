@@ -115,7 +115,7 @@ public class FileUploadService {
 
         Date uploadedTime = new Date();
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
-        String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + "png";
+        String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + FileUtils.IMAGE_FILE_EXTENSION;
         String fileUploadedPath = uploadFolder + encodedFileName;
         File file = new File(fileUploadedPath);
         if (file.createNewFile()) {
