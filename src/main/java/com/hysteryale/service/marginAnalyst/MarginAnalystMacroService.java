@@ -468,4 +468,5 @@ public class MarginAnalystMacroService {
     public String getClassBySeries(String series) {
         return marginAnalystMacroRepository.getClassBySeries(series);
     }
+    public String getPlantBySeries(String series) { return marginAnalystMacroRepository.getPlantBySeries(series); }
 }
