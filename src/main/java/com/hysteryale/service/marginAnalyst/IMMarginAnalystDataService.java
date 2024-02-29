@@ -131,7 +131,9 @@ public class IMMarginAnalystDataService {
     /**
      * Get Duty value by class, if class is "Class 5 BT" then value = 0.05 or else = 0.0
      */
-    private double getDutyValueByClass(String clazz) {
+    private double getDutyValueByClass(String clazz, String strCurrency) {
+        if(!strCurrency.equals("AUD"))
+            return 0.0;
         if(clazz == null)
             return 0.0;
         else
@@ -175,7 +177,7 @@ public class IMMarginAnalystDataService {
 
         String clazz = marginAnalystMacroService.getClassBySeries(series);
         double warranty = marginAnalystMacroService.getLatestWarrantyValue(clazz);
-        double duty = getDutyValueByClass(clazz);
+        double duty = getDutyValueByClass(clazz, strCurrency);
         double freight = marginAnalystMacroService.getLatestFreightValue(series.substring(1));
 
         double totalCost = totalManufacturingCost * (1 + costUplift) * (1 + warranty + surcharge + duty);
@@ -259,7 +261,7 @@ public class IMMarginAnalystDataService {
 
         String clazz = marginAnalystMacroService.getClassBySeries(series);
         double warranty = marginAnalystMacroService.getWarrantyValue(clazz, monthYear);
-        double duty = getDutyValueByClass(clazz);
+        double duty = getDutyValueByClass(clazz, strCurrency);
         double freight = marginAnalystMacroService.getFreightValue(series.substring(1), monthYear);
 
         // ExchangeRate from strCurrency to USD
