@@ -1,10 +1,10 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.CanNotUpdateException;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.BookingService;
 import com.hysteryale.service.FileUploadService;
-import com.hysteryale.service.UpdateHistoryService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.ModelUtil;
@@ -36,8 +36,6 @@ public class BookingController {
 
     private FilterModel filters;
 
-    @Resource
-    private UpdateHistoryService updateHistoryService;
 
 
     /**
@@ -67,38 +65,50 @@ public class BookingController {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
 
         boolean invalid = false;
-        String modelType = ModelUtil.BOOKING;
         try {
             for (MultipartFile file : fileList) {
 
                 //save file on disk
                 if (FileUtils.isExcelFile(file.getInputStream())) {
                     String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+                    String fileNameSaved = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, ModelUtil.BOOKING);
                     // save file to disk
                     if (FileUtils.checkFileNameValid(file, "booked") || FileUtils.checkFileNameValid(file, "booking")) {
-                        fileNameBooking = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, modelType);
+                        fileNameBooking = fileNameSaved;
                     } else if (FileUtils.checkFileNameValid(file, "cost_data")) {
-                        fileNameCostData = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, modelType);
+                        fileNameCostData = fileNameSaved;
                     }
                 }
 
             }
             // import
-            if (!fileNameBooking.isEmpty()) {
-                bookingService.importNewBookingFileByFile(baseFolder + "/" + fileNameBooking);
-                updateHistoryService.handleUpdatedSuccessfully(fileNameBooking, ModelUtil.BOOKING, authentication);
-                invalid = true;
-            }
-            if (!fileNameCostData.isEmpty()) {
-                bookingService.importCostData(baseFolder + "/" + fileNameCostData);
-                updateHistoryService.handleUpdatedSuccessfully(fileNameCostData, ModelUtil.BOOKING, authentication);
-                invalid = true;
-            }
-            if (!invalid)
-                throw new Exception("No valid file found");
 
+            if (!fileNameBooking.isEmpty()) {
+                try {
+                    bookingService.importNewBookingFileByFile(baseFolder + "/" + fileNameBooking);
+                    fileUploadService.handleUpdatedSuccessfully(fileNameBooking);
+                    invalid = true;
+                } catch (CanNotUpdateException e) {
+                    fileUploadService.handleUpdatedFailure(fileNameBooking, e.getMessage());
+                }
+            }
+
+            if (!fileNameCostData.isEmpty()) {
+                try {
+                    bookingService.importCostData(baseFolder + "/" + fileNameCostData);
+                    fileUploadService.handleUpdatedSuccessfully(fileNameCostData);
+                    invalid = true;
+                } catch (CanNotUpdateException e) {
+                    fileUploadService.handleUpdatedFailure(fileNameCostData, e.getMessage());
+                }
+            }
+            if (!invalid) {
+
+                throw new Exception("No valid file found");
+            }
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import successfully!", null));
         } catch (Exception e) {
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject(e.getMessage(), null));
         }
     }

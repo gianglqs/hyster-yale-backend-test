@@ -1,14 +1,19 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.CanNotUpdateException;
 import com.hysteryale.model.User;
+import com.hysteryale.model.filters.AdminFilter;
 import com.hysteryale.model.upload.FileUpload;
-import com.hysteryale.model.upload.UpdateHistory;
 import com.hysteryale.repository.upload.FileUploadRepository;
-import com.hysteryale.repository.upload.UpdateHistoryRepository;
+import com.hysteryale.response.ResponseObject;
+import com.hysteryale.utils.DateUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -19,10 +24,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -32,9 +34,6 @@ public class FileUploadService {
     FileUploadRepository fileUploadRepository;
     @Resource
     UserService userService;
-
-    @Resource
-    UpdateHistoryRepository updateHistoryRepository;
 
     /**
      * Save uploaded excel into disk and file information into db
@@ -91,8 +90,7 @@ public class FileUploadService {
     }
 
     // TODO: check path file
-    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication, String baseFolder, String extensionFile, String modelType) throws Exception {
-
+    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication, String baseFolder, String extensionFile, String screen) throws Exception {
         Date uploadedTime = new Date();
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
         String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + extensionFile;
@@ -101,7 +99,7 @@ public class FileUploadService {
         if (file.createNewFile()) {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
-            saveFileUpLoadIntoDB(authentication, encodedFileName, modelType);
+            saveFileUpLoadIntoDB(authentication, encodedFileName, screen);
             return encodedFileName;
         } else {
             log.info("Can not create new file: " + encodedFileName);
@@ -109,7 +107,7 @@ public class FileUploadService {
         }
     }
 
-    public String upLoadImage(MultipartFile multipartFile, String targetFolder, Authentication authentication, String modelType) throws Exception {
+    public String upLoadImage(MultipartFile multipartFile, String targetFolder, Authentication authentication, String screen) throws Exception {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String uploadFolder = baseFolder + targetFolder;
 
@@ -122,7 +120,7 @@ public class FileUploadService {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
 
-            saveFileUpLoadIntoDB(authentication, encodedFileName, modelType);
+            saveFileUpLoadIntoDB(authentication, encodedFileName, screen);
 
             // check the file is an image
             if (!FileUtils.isImageFile(fileUploadedPath)) {
@@ -137,7 +135,7 @@ public class FileUploadService {
 
     }
 
-    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName, String modelType) {
+    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName, String screen) {
         String uploadedByEmail = authentication.getName();
         Optional<User> optionalUploadedBy = userService.getActiveUserByEmail(uploadedByEmail);
 
@@ -152,16 +150,9 @@ public class FileUploadService {
 
             // append suffix into fileName
             fileUpload.setFileName(encodeFileName);
-
+            fileUpload.setScreen(screen);
             // save information to db
             fileUploadRepository.save(fileUpload);
-
-            UpdateHistory updateHistory = new UpdateHistory();
-            updateHistory.setFileUpload(fileUpload);
-            updateHistory.setTime(LocalDateTime.now());
-            updateHistory.setUser(uploadedBy);
-            updateHistory.setModelType(modelType);
-            updateHistoryRepository.save(updateHistory);
 
             return fileUpload.getUuid();
         } else
@@ -189,5 +180,64 @@ public class FileUploadService {
         return fileName;
     }
 
+    public void handleUpdatedSuccessfully(String fileName) throws CanNotUpdateException {
+        if (fileName != null) {
+            Optional<FileUpload> fileUploadOptional = fileUploadRepository.getFileUploadByFileName(fileName);
+            if (fileUploadOptional.isEmpty())
+                throw new CanNotUpdateException("Can not update status of file uploaded");
+
+            FileUpload fileUpload = fileUploadOptional.get();
+            fileUpload.setUploadedTime(LocalDateTime.now());
+            fileUpload.setSuccess(true);
+
+            fileUploadRepository.save(fileUpload);
+        }
+    }
+
+    public void handleUpdatedFailure(String fileName, String message) throws CanNotUpdateException {
+        if (fileName != null) {
+            Optional<FileUpload> fileUploadOptional = fileUploadRepository.getFileUploadByFileName(fileName);
+            if (fileUploadOptional.isEmpty())
+                throw new CanNotUpdateException("Can not update status of file uploaded");
+
+            FileUpload fileUpload = fileUploadOptional.get();
+            fileUpload.setMessage(message);
+            fileUploadRepository.save(fileUpload);
+        }
+    }
+
+
+    public Map<String, Object> getDataForTable(AdminFilter filter, int pageNo, int perPage) {
+        Map<String, Object> result = new HashMap<>();
+
+        Pageable pageable = PageRequest.of(pageNo == 0 ? pageNo : pageNo - 1, perPage == 0 ? 100 : perPage);
+
+        List<FileUpload> getFileUploadByFilter = fileUploadRepository.getFileUploadByFilter(convertFilter(filter.getFilter()), pageable);
+
+        for (FileUpload fileUpload : getFileUploadByFilter) {
+            fileUpload.getUploadedBy().setPassword(null);
+            fileUpload.getUploadedBy().setLastLogin(null);
+            fileUpload.setFileName(decodeFileName(fileUpload.getFileName()));
+            //  fileUpload.getUploadedBy().setRole(null);
+        }
+
+        int countAll = fileUploadRepository.countAll(convertFilter(filter.getFilter()));
+
+        result.put("listFileUploaded", getFileUploadByFilter);
+        result.put("serverTimeZone", TimeZone.getDefault().getID());
+        result.put("totalItems", countAll);
+        return result;
+    }
+
+    private String convertFilter(String filter) {
+        if (filter == null || filter.trim().equals(""))
+            return null;
+        return filter;
+    }
+
+    public String decodeFileName(String fileName) {
+        String fileNameEncode = fileName.split("_")[0];
+        return new String(Base64.getDecoder().decode(fileNameEncode));
+    }
 
 }

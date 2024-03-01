@@ -91,7 +91,7 @@ public class FileUploadServiceTest {
                 fileResource.getInputStream()
         );
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String filePath = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, "testing");
+        String filePath = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension,"Test");
         String encodedFileName = FileUtils.encoding(file.getOriginalFilename());
 
         Assertions.assertTrue(filePath.contains(encodedFileName));

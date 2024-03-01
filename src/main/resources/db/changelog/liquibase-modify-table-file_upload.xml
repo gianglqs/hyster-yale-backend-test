@@ -6,9 +6,28 @@
 
 
     <changeSet id="delete-column-update_file" author="songiang">
-        <dropColumn tableName="file_upload" columnName="success" />
-        <dropColumn tableName="file_upload" columnName="model_type" />
+        <dropColumn tableName="file_upload" columnName="success"/>
+        <dropColumn tableName="file_upload" columnName="model_type"/>
     </changeSet>
 
+    <changeSet id="addColumn-success-in-file_upload" author="songiang">
+        <addColumn tableName="file_upload">
+            <column name="success" type="BOOLEAN"/>
+            <column name="message" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
 
+    <changeSet id="delete-row-invalid-in-file_upload" author="songiang">
+        <sql>
+            delete
+            from file_upload f
+            where f.file_name like '%/%'
+        </sql>
+    </changeSet>
+
+    <changeSet id="addColumn-screen-in-file_upload" author="songiang">
+        <addColumn tableName="file_upload">
+            <column name="screen" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
