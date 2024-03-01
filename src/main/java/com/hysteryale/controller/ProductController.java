@@ -61,15 +61,16 @@ public class ProductController {
 
         String savedImageName = null;
         String saveFilePath = null;
+        String targetFolder = null;
         if (image != null) {
             String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
-            String targetFolder = EnvironmentUtils.getEnvironmentValue("image-folder.product");
+            targetFolder = EnvironmentUtils.getEnvironmentValue("image-folder.product");
             String saveImageFolder = baseFolder + targetFolder;
 
             savedImageName = fileUploadService.upLoadImage(image, targetFolder, authentication, ModelUtil.PRODUCT);
             saveFilePath = saveImageFolder + savedImageName;
         }
-        productService.updateImageAndDescription(modelCode,series, saveFilePath, description);
+        productService.updateImageAndDescription(modelCode, series, targetFolder +savedImageName, description);
         updateHistoryService.handleUpdatedSuccessfully(savedImageName, ModelUtil.PRODUCT, authentication);
     }
 
