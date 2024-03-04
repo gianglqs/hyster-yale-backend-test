@@ -7,7 +7,6 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.repository.*;
 import com.hysteryale.repository.upload.FileUploadRepository;
-import com.hysteryale.repository.upload.UpdateHistoryRepository;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,6 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,8 +78,6 @@ public class BookingService extends BasedService {
     @Resource
     FileUploadRepository fileUploadRepository;
 
-    @Resource
-    UpdateHistoryRepository updateHistoryRepository;
 
     /**
      * Get Columns' name in Booking Excel file, then store them (columns' name) respectively with the index into HashMap
