@@ -204,7 +204,6 @@ public class ExchangeRateService extends BasedService {
                     exchangeRateList.set(0, new ExchangeRate(new Currency(currentCurrency), new Currency(currency), latestExchangeRate, lastUpdatedDate));
                 } else {
                     exchangeRateList.add(0, new ExchangeRate(new Currency(currentCurrency), new Currency(currency), latestExchangeRate, lastUpdatedDate));
-                    exchangeRateList.remove(exchangeRateList.size() - 1);
                 }
             }
 
