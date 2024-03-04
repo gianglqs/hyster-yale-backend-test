@@ -31,4 +31,11 @@ public class FileUpload {
     @Column(name = "uploaded_time")
     private LocalDateTime uploadedTime;
 
+    @Column
+    private boolean success;
+
+    @Column
+    private String message;
+
+    private String screen;
 }
