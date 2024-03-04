@@ -1,7 +1,7 @@
 package com.hysteryale.controller;
 
-import com.hysteryale.exception.CannotExtractDateException;
 import com.hysteryale.exception.MissingColumnException;
+import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.service.*;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +38,7 @@ public class ImportController {
     ImportService importService;
 
     @PostMapping(path = "/importAllData")
-    void importAllData() throws IOException, IllegalAccessException, MissingColumnException, CannotExtractDateException {
+    void importAllData() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException {
         importApicDealer();
         importCurrencies();
         importPart();
@@ -103,7 +103,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importShipment")
-    void importShipment() throws IOException, MissingColumnException, CannotExtractDateException {
+    void importShipment() throws IOException, MissingColumnException, MissingSheetException {
         importService.importShipment();
     }
 
