@@ -30,7 +30,7 @@ public class AdjustmentService extends BasedService {
 
         // '000 USD -> USD to calculate
         calculatorModel.setFreightAdj(calculatorModel.getFreightAdj() * 1000);
-        calculatorModel.setFxAdj(calculatorModel.getFxAdj() * 1000);
+        calculatorModel.setFxAdj(calculatorModel.getFxAdj());
 
         logInfo(filterMap.toString());
         //TODO : set Margin after Adj for filter
@@ -99,7 +99,7 @@ public class AdjustmentService extends BasedService {
             latestUpdatedTime = DateUtils.convertLocalDateTimeToString(latestUpdatedTimeOptional.get());
         }
 
-        result.put("latestUpdatedTime",latestUpdatedTime);
+        result.put("latestUpdatedTime", latestUpdatedTime);
         result.put("serverTimeZone", TimeZone.getDefault().getID());
         return result;
     }
@@ -157,7 +157,6 @@ public class AdjustmentService extends BasedService {
         }
 
 
-
         adjustmentPayLoad.setNoOfOrder(booking.getQuantity());
 
         adjustmentPayLoad.setOriginalDN(booking.getDealerNetAfterSurcharge());
@@ -176,11 +175,12 @@ public class AdjustmentService extends BasedService {
         //Manual Freight Adj (‘000 USD) = get from the Adjustment Controller  (2) - (rename to Adjusted Freight)
         adjustmentPayLoad.setManualAdjFreight(calculatorModel.getFreightAdj());
 
-        //Manual FX Adj (‘000 USD) = get from the Adjustment Controller (3) - (rename to Adjusted FX)
-        adjustmentPayLoad.setManualAdjFX(calculatorModel.getFxAdj());
+        //Manual FX Adj (%) = get from the Adjustment Controller (3) - (rename to Adjusted FX)
+        adjustmentPayLoad.setManualAdjFX(calculatorModel.getFxAdj() / 100);
 
-        //Total Manual Adj Cost = (1) + (2) + (3) (4)
-        adjustmentPayLoad.setTotalManualAdjCost(adjustmentPayLoad.getManualAdjCost() + adjustmentPayLoad.getManualAdjFreight() + adjustmentPayLoad.getManualAdjFX());
+        //Total Manual Adj Cost = ((1) + (2) ) * (3) (4)
+        adjustmentPayLoad.setTotalManualAdjCost((adjustmentPayLoad.getManualAdjCost() + adjustmentPayLoad.getManualAdjFreight()) * (1 + adjustmentPayLoad.getManualAdjFX()));
+
 
         //New DN (‘000 USD) - After manual Adj = Original DN * DN Adj % (rename to Adjusted Dealer Net) (5)
         adjustmentPayLoad.setNewDN(booking.getDealerNetAfterSurcharge() * (1 + calculatorModel.getDnAdjPercentage() / 100));
