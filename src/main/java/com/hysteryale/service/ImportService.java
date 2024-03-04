@@ -1,7 +1,7 @@
 package com.hysteryale.service;
 
-import com.hysteryale.exception.CannotExtractDateException;
 import com.hysteryale.exception.MissingColumnException;
+import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.*;
 import com.hysteryale.model.competitor.CompetitorColor;
@@ -443,10 +443,13 @@ public class ImportService extends BasedService {
     }
 
 
-    public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException {
+    public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException, MissingSheetException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         HashMap<String, Integer> SHIPMENT_COLUMNS_NAME = new HashMap<>();
         XSSFSheet shipmentSheet = workbook.getSheet("Sheet1");
+        if(shipmentSheet==null)
+            throw new MissingSheetException("Not found sheet 'Sheet1'");
+
         logInfo("import shipment");
         List<Shipment> shipmentList = new ArrayList<>();
 
@@ -503,7 +506,7 @@ public class ImportService extends BasedService {
         return null;
     }
 
-    public void importShipment() throws IOException, MissingColumnException, CannotExtractDateException {
+    public void importShipment() throws IOException, MissingColumnException, MissingSheetException {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.shipment");
 

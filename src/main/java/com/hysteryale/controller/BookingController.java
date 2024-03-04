@@ -1,6 +1,5 @@
 package com.hysteryale.controller;
 
-import com.hysteryale.exception.CanNotUpdateException;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.BookingService;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,7 +33,6 @@ public class BookingController {
     FileUploadService fileUploadService;
 
     private FilterModel filters;
-
 
 
     /**
@@ -59,58 +56,37 @@ public class BookingController {
 
     @PostMapping(path = "/importNewBooking", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> importNewDataBooking(@RequestParam("files") List<MultipartFile> fileList, Authentication authentication) {
-        String fileNameBooking = "";
-        String fileNameCostData = "";
+    public ResponseEntity<ResponseObject> importNewDataBooking(@RequestParam("file") MultipartFile file, Authentication authentication) throws Exception {
+
         String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
 
-        boolean invalid = false;
+        //save file on disk
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        String fileNameSaved = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, ModelUtil.BOOKING);
+        String filePath = baseFolder + "/" + fileNameSaved;
+
+        if (!FileUtils.isExcelFile(filePath)) {
+            fileUploadService.handleUpdatedFailure(fileNameSaved, "File is not EXCEL");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("File is not EXCEL", null));
+        }
+
         try {
-            for (MultipartFile file : fileList) {
-
-                //save file on disk
-                if (FileUtils.isExcelFile(file.getInputStream())) {
-                    String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-                    String fileNameSaved = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, ModelUtil.BOOKING);
-                    // save file to disk
-                    if (FileUtils.checkFileNameValid(file, "booked") || FileUtils.checkFileNameValid(file, "booking")) {
-                        fileNameBooking = fileNameSaved;
-                    } else if (FileUtils.checkFileNameValid(file, "cost_data")) {
-                        fileNameCostData = fileNameSaved;
-                    }
-                }
-
+            if (FileUtils.checkFileNameValid(file, "booked") || FileUtils.checkFileNameValid(file, "booking")) {
+                bookingService.importNewBookingFileByFile(filePath);
+                fileUploadService.handleUpdatedSuccessfully(fileNameSaved);
+            } else if (FileUtils.checkFileNameValid(file, "cost_data")) {
+                bookingService.importCostData(filePath);
+                fileUploadService.handleUpdatedSuccessfully(fileNameSaved);
+            } else {
+                fileUploadService.handleUpdatedFailure(fileNameSaved, "File name is invalid");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("File name is invalid", null));
             }
-            // import
-
-            if (!fileNameBooking.isEmpty()) {
-                try {
-                    bookingService.importNewBookingFileByFile(baseFolder + "/" + fileNameBooking);
-                    fileUploadService.handleUpdatedSuccessfully(fileNameBooking);
-                    invalid = true;
-                } catch (CanNotUpdateException e) {
-                    fileUploadService.handleUpdatedFailure(fileNameBooking, e.getMessage());
-                }
-            }
-
-            if (!fileNameCostData.isEmpty()) {
-                try {
-                    bookingService.importCostData(baseFolder + "/" + fileNameCostData);
-                    fileUploadService.handleUpdatedSuccessfully(fileNameCostData);
-                    invalid = true;
-                } catch (CanNotUpdateException e) {
-                    fileUploadService.handleUpdatedFailure(fileNameCostData, e.getMessage());
-                }
-            }
-            if (!invalid) {
-
-                throw new Exception("No valid file found");
-            }
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import successfully!", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import successfully", null));
         } catch (Exception e) {
-
+            fileUploadService.handleUpdatedFailure(fileNameSaved, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject(e.getMessage(), null));
         }
     }
+
 
 }
