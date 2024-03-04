@@ -1,13 +1,14 @@
 name: Deploy QA Hyster-yale-backend
 
 on:
-  push:
-    branches:
-      - 'qa-deploy'
+  release:
+    types:
+      - created
 
 jobs:
   build-qa-image:
     runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.release.target_commitish == 'qa-deploy'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
