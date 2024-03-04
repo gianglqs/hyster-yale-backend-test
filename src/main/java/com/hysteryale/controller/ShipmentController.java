@@ -70,6 +70,7 @@ public class ShipmentController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject(e.getMessage(), null));
             }
         } else {
+            fileUploadService.handleUpdatedFailure(fileName,"Uploaded file is not an Excel file");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Uploaded file is not an Excel file", null));
         }
     }
