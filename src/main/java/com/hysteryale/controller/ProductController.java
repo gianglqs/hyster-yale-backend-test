@@ -67,7 +67,7 @@ public class ProductController {
                 savedImageName = fileUploadService.upLoadImage(image, targetFolder, authentication, ModelUtil.PRODUCT);
                 saveFilePath = saveImageFolder + savedImageName;
             }
-            productService.updateImageAndDescription(modelCode, series, saveFilePath, description);
+            productService.updateImageAndDescription(modelCode, series, savedImageName, description);
         } catch (Exception e) {
             fileUploadService.handleUpdatedFailure(savedImageName, e.getMessage());
             throw e;
