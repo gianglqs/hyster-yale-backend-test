@@ -83,5 +83,7 @@ jobs:
           docker rm $CONTAINER_NAME || true
           
           # run
-          docker run -p 8080:8080 -d --name=hysteryale-be --network=host --restart unless-stopped ghcr.io/phoenix-software-development/hyster-yale-backend:latest
+          export timezone_hy=$(cat /etc/timezone)
+          
+          docker run -p 8080:8080 -d --name=hysteryale-be --network=host -e TZ=$timezone_hy  --restart unless-stopped ghcr.io/phoenix-software-development/hyster-yale-backend:latest
 
