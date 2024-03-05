@@ -75,7 +75,7 @@ public interface PartRepository extends JpaRepository<Part, String> {
 
     @Query(value = "SELECT COUNT(distinct (p.part_number, p.image, p.currency_currency, p.list_price, p.description)) FROM Part p WHERE " +
             "   p.model_code = :modelCode " +
-            "   AND SUBSTRING(p.series,2,4) = :metaSeries" +
+            "   AND p.series = :series" +
             "   AND ((:orderNumbers) IS NULL OR p.order_number in (:orderNumbers))", nativeQuery = true)
-    long countAllForProductDetail(String modelCode, String metaSeries, List<String> orderNumbers);
+    long countAllForProductDetail(String modelCode, String series, List<String> orderNumbers);
 }

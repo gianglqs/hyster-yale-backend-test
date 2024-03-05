@@ -33,9 +33,6 @@ public class ProductService extends BasedService {
     @Resource
     FileUploadService fileUploadService;
 
-    @Resource
-    UpdateHistoryService updateHistoryService;
-
     private final HashMap<String, Integer> COLUMNS = new HashMap<>();
 
     public void assignColumnNames(Row row) {
@@ -226,7 +223,7 @@ public class ProductService extends BasedService {
             latestUpdatedTime = DateUtils.convertLocalDateTimeToString(latestUpdatedTimeOptional.get());
         }
 
-        result.put("latestUpdatedTime",latestUpdatedTime);
+        result.put("latestUpdatedTime", latestUpdatedTime);
         result.put("serverTimeZone", TimeZone.getDefault().getID());
         return result;
 
@@ -423,23 +420,28 @@ public class ProductService extends BasedService {
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         String modelType = ModelUtil.PRODUCT;
         for (MultipartFile file : fileList) {
-            String savedFileNameUploaded = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, modelType);
+            String savedFileNameUploaded = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, ModelUtil.PRODUCT);
             String pathFileUploaded = baseFolder + "/" + savedFileNameUploaded;
             boolean checkValidFileName = false;
-            if (file.getOriginalFilename().contains("APAC")) {
-                importBaseProduct(pathFileUploaded);
-                checkValidFileName = true;
-            }
-            if (file.getOriginalFilename().contains("dimension")) {
-                importDimensionProduct(pathFileUploaded);
-                checkValidFileName = true;
+            try {
+                if (file.getOriginalFilename().contains("APAC")) {
+                    importBaseProduct(pathFileUploaded);
+                    checkValidFileName = true;
+                }
+                if (file.getOriginalFilename().contains("dimension")) {
+                    importDimensionProduct(pathFileUploaded);
+                    checkValidFileName = true;
+                }
+
+                if (!checkValidFileName) {
+                    throw new FileNotFoundException("File name is invalid");
+                }
+            } catch (Exception e) {
+                fileUploadService.handleUpdatedFailure(savedFileNameUploaded, e.getMessage());
+                throw e;
             }
 
-            if (!checkValidFileName) {
-                throw new FileNotFoundException("File name is invalid");
-            }
-
-            updateHistoryService.handleUpdatedSuccessfully(savedFileNameUploaded, ModelUtil.PRODUCT, authentication);
+            fileUploadService.handleUpdatedSuccessfully(savedFileNameUploaded);
         }
     }
 
