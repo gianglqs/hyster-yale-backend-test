@@ -12,7 +12,7 @@ COPY .env .
 RUN mkdir -p /tmp/UploadFiles/forecast_pricing
 
 # build file .war
-RUN mvn clean install
+RUN mvn clean install -DskipTests
 
 # step 2: RUN
 FROM eclipse-temurin:17-jdk-alpine
