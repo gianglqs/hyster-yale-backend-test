@@ -30,4 +30,30 @@
             <column name="screen" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="addColumn-targetFolder" author="songiang">
+        <addColumn tableName="file_upload">
+            <column name="target_folder" type="VARCHAR(100)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="changDataType-of-targetFolderColumn" author="songiang">
+        <modifyDataType tableName="file_upload" columnName="target_folder" newDataType="VARCHAR(500)"/>
+    </changeSet>
+
+    <changeSet id="renameColumn-targetFolder" author="songiang">
+        <renameColumn tableName="file_upload" oldColumnName="target_folder" newColumnName="path"/>
+    </changeSet>
+
+    <changeSet id="add-column-loading" author="songiang">
+        <addColumn tableName="file_upload">
+            <column name="loading" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="set-column-loading-is-false" author="">
+        <sql>
+            UPDATE file_upload SET loading = false
+        </sql>
+    </changeSet>
 </databaseChangeLog>

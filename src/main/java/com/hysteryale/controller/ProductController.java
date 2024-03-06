@@ -82,14 +82,9 @@ public class ProductController {
 
     @PostMapping(path = "/importData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> importProduct(@RequestParam("files") List<MultipartFile> fileList, Authentication authentication) throws Exception {
-        // check 2 files is EXCEL
-        for (MultipartFile file : fileList) {
-            if (!FileUtils.isExcelFile(file.getInputStream()))
-                throw new InvalidPropertiesFormatException(file.getOriginalFilename() + " is not Excel file");
-        }
+    public ResponseEntity<ResponseObject> importProduct(@RequestParam("file") MultipartFile file, Authentication authentication) throws Exception {
 
-        productService.importProduct(fileList, authentication);
+        productService.importProduct(file, authentication);
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));
     }

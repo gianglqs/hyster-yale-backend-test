@@ -1,13 +1,14 @@
 name: Deploy QA Hyster-yale-backend
 
 on:
-  push:
-    branches:
-      - 'qa-deploy'
+  release:
+    types:
+      - created
 
 jobs:
   build-qa-image:
     runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.release.target_commitish == 'qa-deploy'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -20,7 +21,7 @@ jobs:
           images: ghcr.io/phoenix-software-development/hyster-yale-backend
           flavor: latest=true
           tags: |
-            type=raw,value={{branch}}-{{sha}}
+            type=raw,value=qa-deploy-{{sha}}
       - name: Login to image repository
         uses: docker/login-action@v2
         with:
@@ -54,7 +55,7 @@ jobs:
           images: ghcr.io/phoenix-software-development/hyster-yale-backend
           flavor: latest=true
           tags: |
-            type=raw,value={{branch}}-{{sha}}
+            type=raw,value=qa-deploy-{{sha}}
 
       - name: Login to image repository
         uses: docker/login-action@v2
@@ -82,5 +83,7 @@ jobs:
           docker rm $CONTAINER_NAME || true
           
           # run
-          docker run -p 8080:8080 -d --name=hysteryale-be --network=host --restart unless-stopped ghcr.io/phoenix-software-development/hyster-yale-backend:latest
+          export timezone_hy=$(cat /etc/timezone)
+          
+          docker run -p 8080:8080 -d --name=hysteryale-be --network=host -v /opt/hysteryale:/opt/hysteryale -e TZ=$timezone_hy  --restart unless-stopped ghcr.io/phoenix-software-development/hyster-yale-backend:latest
 
