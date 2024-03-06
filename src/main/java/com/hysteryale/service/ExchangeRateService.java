@@ -251,17 +251,27 @@ public class ExchangeRateService extends BasedService {
     }
 
     public void importExchangeRateFromFile(MultipartFile file, Authentication authentication) throws Exception {
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String modelType = ModelUtil.EXCHANGE_RATE;
+
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.exchange_rate");
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.EXCHANGE_RATE);
+
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+
+
         // Verify file's type
-        if (!FileUtils.isExcelFile(file.getInputStream()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File is not an Excel file");
+        if (!FileUtils.isExcelFile(filePath)) {
+            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is not an Excel file");
+        }
 
         // Verify whether file's name is null or not
         String originalFileName = file.getOriginalFilename();
-        if (originalFileName == null)
+        if (originalFileName == null) {
+            fileUploadService.handleUpdatedFailure(fileName, "File's name is not in appropriate format");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File's name is not in appropriate format");
-
+        }
         //Pattern for getting date from fileName
         Pattern pattern = Pattern.compile("^\\w{3}(\\w{3})(\\d{4}).");
         Matcher matcher = pattern.matcher(originalFileName);
@@ -272,28 +282,35 @@ public class ExchangeRateService extends BasedService {
             month = month.charAt(0) + month.substring(1).toLowerCase();
             int year = Integer.parseInt(matcher.group(2));
             date = LocalDate.of(year, DateUtils.getMonth(month), 1);
-        } else
+        } else {
+            fileUploadService.handleUpdatedFailure(fileName, "File's name is not in appropriate format");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File's name is not in appropriate format");
-
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, baseFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.EXCHANGE_RATE);
-
-        InputStream is = new FileInputStream(baseFolder + "/" + fileName);
-        XSSFWorkbook workbook = new XSSFWorkbook(is);
-
-        Sheet sheet = workbook.getSheet("Summary Current Interlocking");
-        List<ExchangeRate> exchangeRatesList = new ArrayList<>();
-
-        for (int i = 3; i <= 34; i++) {
-            Row row = sheet.getRow(i);
-            if (i == 3)
-                fromCurrenciesTitle = getFromCurrencyTitle(row);
-            else
-                exchangeRatesList.addAll(mapExcelDataToExchangeRate(row, date));
         }
 
-        exchangeRateRepository.saveAll(exchangeRatesList);
-        log.info("ExchangeRate are newly saved or updated: " + exchangeRatesList.size());
-        exchangeRatesList.clear();
+        try {
+            InputStream is = new FileInputStream(filePath);
+            XSSFWorkbook workbook = new XSSFWorkbook(is);
+
+            Sheet sheet = workbook.getSheet("Summary Current Interlocking");
+            List<ExchangeRate> exchangeRatesList = new ArrayList<>();
+
+            for (int i = 3; i <= 34; i++) {
+                Row row = sheet.getRow(i);
+                if (i == 3)
+                    fromCurrenciesTitle = getFromCurrencyTitle(row);
+                else
+                    exchangeRatesList.addAll(mapExcelDataToExchangeRate(row, date));
+            }
+
+            exchangeRateRepository.saveAll(exchangeRatesList);
+            log.info("ExchangeRate are newly saved or updated: " + exchangeRatesList.size());
+            exchangeRatesList.clear();
+            fileUploadService.handleUpdatedSuccessfully(fileName);
+        } catch (Exception e) {
+            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            throw e;
+        }
+
     }
 
     /**

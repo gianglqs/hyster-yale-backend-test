@@ -415,34 +415,38 @@ public class ProductService extends BasedService {
         return modelCode.split("_| -")[0];
     }
 
-    public void importProduct(List<MultipartFile> fileList, Authentication authentication) throws Exception {
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String modelType = ModelUtil.PRODUCT;
-        for (MultipartFile file : fileList) {
-            String savedFileNameUploaded = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, ModelUtil.PRODUCT);
-            String pathFileUploaded = baseFolder + "/" + savedFileNameUploaded;
-            boolean checkValidFileName = false;
-            try {
-                if (file.getOriginalFilename().contains("APAC")) {
-                    importBaseProduct(pathFileUploaded);
-                    checkValidFileName = true;
-                }
-                if (file.getOriginalFilename().contains("dimension")) {
-                    importDimensionProduct(pathFileUploaded);
-                    checkValidFileName = true;
-                }
+    public void importProduct(MultipartFile file, Authentication authentication) throws Exception {
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product");
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.PRODUCT);
 
-                if (!checkValidFileName) {
-                    throw new FileNotFoundException("File name is invalid");
-                }
-            } catch (Exception e) {
-                fileUploadService.handleUpdatedFailure(savedFileNameUploaded, e.getMessage());
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+
+        if (!FileUtils.isExcelFile(filePath)) {
+            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+            throw new Exception("Imported file is not Excel");
+        }
+
+        try {
+            if (file.getOriginalFilename().toLowerCase().contains("apac")) {
+                importBaseProduct(filePath);
+            } else if (file.getOriginalFilename().toLowerCase().contains("dimension")) {
+                importDimensionProduct(filePath);
+            } else {
+                fileUploadService.handleUpdatedFailure(fileName, "File name is invalid");
+                throw new FileNotFoundException("File name is invalid");
+            }
+        } catch (Exception e) {
+            if (e instanceof FileNotFoundException) {
                 throw e;
             }
-
-            fileUploadService.handleUpdatedSuccessfully(savedFileNameUploaded);
+            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            throw e;
         }
+
+        fileUploadService.handleUpdatedSuccessfully(fileName);
+
     }
 
     // brand, segment, family, truckType

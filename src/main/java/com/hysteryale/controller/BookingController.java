@@ -57,16 +57,17 @@ public class BookingController {
     @PostMapping(path = "/importNewBooking", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> importNewDataBooking(@RequestParam("file") MultipartFile file, Authentication authentication) throws Exception {
-
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.booked");
 
         //save file on disk
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String fileNameSaved = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, ModelUtil.BOOKING);
-        String filePath = baseFolder + "/" + fileNameSaved;
+        String fileNameSaved = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.BOOKING);
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileNameSaved;
 
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileNameSaved, "File is not EXCEL");
+            fileUploadService.handleUpdatedFailure(fileNameSaved, "Uploaded file is not an Excel file");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("File is not EXCEL", null));
         }
 

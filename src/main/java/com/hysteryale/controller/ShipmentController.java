@@ -51,15 +51,16 @@ public class ShipmentController {
     @PostMapping(path = "/importNewShipment", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseObject> importNewDataShipment(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
-        // save file in folder tmp/UploadFiles
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.shipment");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, ModelUtil.SHIPMENT);
-        String pathFile = baseFolder + "/" + fileName;
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.SHIPMENT);
+        String pathFile = baseFolder + baseFolderUploaded + targetFolder + fileName;
 
         if (FileUtils.isExcelFile(pathFile)) {
             try {
-                InputStream inputStream = new FileInputStream(baseFolder + "/" + fileName);
+                InputStream inputStream = new FileInputStream(pathFile);
                 importService.importShipmentFileOneByOne(inputStream);
 
                 fileUploadService.handleUpdatedSuccessfully(fileName);
@@ -70,7 +71,7 @@ public class ShipmentController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject(e.getMessage(), null));
             }
         } else {
-            fileUploadService.handleUpdatedFailure(fileName,"Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Uploaded file is not an Excel file", null));
         }
     }

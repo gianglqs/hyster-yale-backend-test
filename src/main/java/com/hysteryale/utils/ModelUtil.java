@@ -7,5 +7,7 @@ public class ModelUtil {
     public static final String PRODUCT = "product";
     public static final String EXCHANGE_RATE = "exchange_rate";
     public static final String INDICATOR = "indicator";
+    public static final String PART = "part";
+    public static final String MACRO = "marco";
 
 }

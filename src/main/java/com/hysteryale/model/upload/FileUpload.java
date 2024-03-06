@@ -38,4 +38,9 @@ public class FileUpload {
     private String message;
 
     private String screen;
+
+    @Column(name = "path")
+    private String path;
+
+    private boolean loading;
 }
