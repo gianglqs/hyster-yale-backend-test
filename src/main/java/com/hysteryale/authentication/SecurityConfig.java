@@ -86,6 +86,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/oauth/refreshToken").permitAll()
                 .antMatchers("/images/**").permitAll()
                 .antMatchers("/web-scraping/scrape-data").permitAll()
+                .antMatchers("/uploadFiles/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/author/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/users/resetPassword").permitAll()
                 // Our private endpoints

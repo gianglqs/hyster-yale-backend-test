@@ -6,7 +6,9 @@ import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.PartService;
 import com.hysteryale.service.marginAnalyst.IMMarginAnalystDataService;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
+import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.ModelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,20 +53,20 @@ public class MarginAnalystController {
         String modelCode = marginData.getModelCode();
         String series = marginData.getSeries();
 
-        if(type == 0)
+        if (type == 0)
             type = null;
-        if(modelCode.isEmpty())
+        if (modelCode.isEmpty())
             modelCode = null;
-        if(orderNumber.isEmpty())
+        if (orderNumber.isEmpty())
             orderNumber = null;
 
-        if(!IMMarginAnalystDataService.isFileCalculated(fileUUID, currency))
+        if (!IMMarginAnalystDataService.isFileCalculated(fileUUID, currency))
             IMMarginAnalystDataService.calculateMarginAnalysisData(fileUUID, currency);
 
         List<IMMarginAnalystData> imMarginAnalystDataList = IMMarginAnalystDataService.getIMMarginAnalystData(modelCode, currency, fileUUID, orderNumber, type, series);
 
         double targetMargin = 0.0;
-        if(!imMarginAnalystDataList.isEmpty() && series != null)
+        if (!imMarginAnalystDataList.isEmpty() && series != null)
             targetMargin = marginAnalystMacroService.getLatestTargetMarginValue(region, series.substring(1));
 
         assert series != null;
@@ -101,39 +103,59 @@ public class MarginAnalystController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public void importMacroFile(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
 
-        String filePath = fileUploadService.saveFileUploadToDisk(file);
+
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.macro");
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.MACRO);
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+
 
         // Verify the Excel file
-        if (FileUtils.isExcelFile(filePath)) {
-            String originalFileName = file.getOriginalFilename();
-            String fileUUID = fileUploadService.saveFileUpload(filePath, authentication);
-
-            log.info("Saved " + fileUUID + " - type: " + file.getContentType());
-            marginAnalystMacroService.importMarginAnalystMacroFromFile(originalFileName, filePath);
-
-        } else {
-            fileUploadService.deleteFileInDisk(filePath);
+        if (!FileUtils.isExcelFile(filePath)) {
+            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is not an Excel file");
         }
+
+        try {
+            marginAnalystMacroService.importMarginAnalystMacroFromFile(file.getOriginalFilename(), filePath);
+
+            fileUploadService.handleUpdatedSuccessfully(fileName);
+        } catch (Exception e) {
+            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+
+
     }
 
     @PostMapping(path = "/importPowerBiFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
     public void importPowerBiFile(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
-        String filePath = fileUploadService.saveFileUploadToDisk(file);
+
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.shipment");
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.PART);
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
 
         // Verify the Excel file
-        if (FileUtils.isExcelFile(filePath)) {
-            String originalFileName = file.getOriginalFilename();
-            String fileUUID = fileUploadService.saveFileUpload(filePath, authentication);
-
-            log.info("Saved " + fileUUID + " - type: " + file.getContentType());
-            partService.importPartFromFile(originalFileName, filePath);
-
-        } else {
-            fileUploadService.deleteFileInDisk(filePath);
+        if (!FileUtils.isExcelFile(filePath)) {
+            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is not an Excel file");
         }
+
+        try {
+            partService.importPartFromFile(file.getOriginalFilename(), filePath);
+            fileUploadService.handleUpdatedSuccessfully(fileName);
+        } catch (Exception e) {
+            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+
+
     }
 }
 

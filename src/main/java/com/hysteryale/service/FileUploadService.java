@@ -5,15 +5,12 @@ import com.hysteryale.model.User;
 import com.hysteryale.model.filters.AdminFilter;
 import com.hysteryale.model.upload.FileUpload;
 import com.hysteryale.repository.upload.FileUploadRepository;
-import com.hysteryale.response.ResponseObject;
-import com.hysteryale.utils.DateUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -89,17 +86,28 @@ public class FileUploadService {
         }
     }
 
-    // TODO: check path file
-    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication, String baseFolder, String extensionFile, String screen) throws Exception {
+    /**
+     * @param multipartFile
+     * @param authentication baseFolderUpload : /uploadFiles
+     * @param targetFolder   :  /booked, /shipment, ....
+     * @param extensionFile  : XLSX,...
+     * @param screen         : booked, shipment,....
+     * @return
+     * @throws Exception
+     */
+    public String saveFileUploaded(MultipartFile multipartFile, Authentication authentication, String targetFolder, String extensionFile, String screen) throws Exception {
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUpload = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String savedFolder = baseFolderUpload + targetFolder;
         Date uploadedTime = new Date();
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
         String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + extensionFile;
 
-        File file = new File(baseFolder + "/" + encodedFileName);
+        File file = new File(baseFolder + savedFolder + encodedFileName);
         if (file.createNewFile()) {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
-            saveFileUpLoadIntoDB(authentication, encodedFileName, screen);
+            saveFileUpLoadIntoDB(authentication, encodedFileName, screen, savedFolder + encodedFileName);
             return encodedFileName;
         } else {
             log.info("Can not create new file: " + encodedFileName);
@@ -120,7 +128,7 @@ public class FileUploadService {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
 
-            saveFileUpLoadIntoDB(authentication, encodedFileName, screen);
+            saveFileUpLoadIntoDB(authentication, encodedFileName, screen, targetFolder + encodedFileName);
 
             // check the file is an image
             if (!FileUtils.isImageFile(fileUploadedPath)) {
@@ -135,7 +143,7 @@ public class FileUploadService {
 
     }
 
-    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName, String screen) {
+    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName, String screen, String path) {
         String uploadedByEmail = authentication.getName();
         Optional<User> optionalUploadedBy = userService.getActiveUserByEmail(uploadedByEmail);
 
@@ -151,6 +159,8 @@ public class FileUploadService {
             // append suffix into fileName
             fileUpload.setFileName(encodeFileName);
             fileUpload.setScreen(screen);
+            fileUpload.setPath(path);
+            fileUpload.setLoading(true);
             // save information to db
             fileUploadRepository.save(fileUpload);
 
@@ -189,6 +199,7 @@ public class FileUploadService {
             FileUpload fileUpload = fileUploadOptional.get();
             fileUpload.setUploadedTime(LocalDateTime.now());
             fileUpload.setSuccess(true);
+            fileUpload.setLoading(false);
 
             fileUploadRepository.save(fileUpload);
         }
@@ -202,6 +213,7 @@ public class FileUploadService {
 
             FileUpload fileUpload = fileUploadOptional.get();
             fileUpload.setMessage(message);
+            fileUpload.setLoading(false);
             fileUploadRepository.save(fileUpload);
         }
     }
