@@ -85,6 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/oauth/login").permitAll()
                 .antMatchers("/oauth/refreshToken").permitAll()
                 .antMatchers("/images/**").permitAll()
+                .antMatchers("/web-scraping/scrape-data").permitAll()
                 .antMatchers("/uploadFiles/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/author/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/users/resetPassword").permitAll()
@@ -108,6 +109,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // TODO: set origin when production server
         config.setAllowedOriginPatterns(Collections.singletonList("*"));
         config.addAllowedHeader("*");
+        config.addExposedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
