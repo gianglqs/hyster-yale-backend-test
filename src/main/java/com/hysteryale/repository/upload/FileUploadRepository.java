@@ -34,4 +34,6 @@ public interface FileUploadRepository extends JpaRepository<FileUpload, Integer>
     int countAll(String filter);
 
 
+    @Query("SELECT f.uuid FROM FileUpload f WHERE f.fileName = :fileName")
+    String getUUIDByName(String fileName);
 }

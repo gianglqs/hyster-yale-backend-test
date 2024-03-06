@@ -9,5 +9,6 @@ public class ModelUtil {
     public static final String INDICATOR = "indicator";
     public static final String PART = "part";
     public static final String MACRO = "marco";
+    public static final String NOVO = "novo";
 
 }
