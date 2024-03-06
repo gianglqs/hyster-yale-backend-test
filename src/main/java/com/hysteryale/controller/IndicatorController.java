@@ -4,13 +4,16 @@ import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
+import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.IndicatorService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.ModelUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,20 +97,34 @@ public class IndicatorController {
 
     @PostMapping("/importIndicatorsFile")
     public void importIndicatorsFile(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
-        String filePath = fileUploadService.saveFileUploadToDisk(file);
 
-        // Verify the Excel file
-        if (FileUtils.isExcelFile(filePath)) {
-            indicatorService.importIndicatorsFromFile(filePath);
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.competitor");
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.COMPETITOR);
+        String pathFile = baseFolder + baseFolderUploaded + targetFolder + fileName;
 
-        } else {
-            fileUploadService.deleteFileInDisk(filePath);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is not an Excel file");
+        if (!FileUtils.isExcelFile(pathFile)) {
+            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+            throw new Exception("Uploaded file is not an Excel file");
+        }
+
+        try {
+            indicatorService.importIndicatorsFromFile(pathFile);
+            fileUploadService.handleUpdatedSuccessfully(fileName);
+        } catch (Exception e) {
+            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            throw e;
         }
     }
 
     @PostMapping("/uploadForecastFile")
     public void uploadForecastFile(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
-        indicatorService.uploadForecastFile(file, authentication);
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.FORECAST_PRICING);
+
+        fileUploadService.handleUpdatedSuccessfully(fileName);
     }
 }
