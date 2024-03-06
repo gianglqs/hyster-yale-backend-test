@@ -301,8 +301,9 @@ public class ImportService extends BasedService {
 
     public List<ForeCastValue> loadForecastForCompetitorPricingFromFile() throws IOException {
 
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.forecast-pricing");
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String folderPath = baseFolder + baseFolderUploaded + EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
         List<String> fileList = getAllFilesInFolder(folderPath, -1);
         if (fileList.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Forecast Dynamic Pricing Excel file");
@@ -447,7 +448,7 @@ public class ImportService extends BasedService {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         HashMap<String, Integer> SHIPMENT_COLUMNS_NAME = new HashMap<>();
         XSSFSheet shipmentSheet = workbook.getSheet("Sheet1");
-        if(shipmentSheet==null)
+        if (shipmentSheet == null)
             throw new MissingSheetException("Not found sheet 'Sheet1'");
 
         logInfo("import shipment");
