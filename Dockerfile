@@ -23,6 +23,14 @@ EXPOSE 8080
 
 # create folder to save file when import file excel
 RUN mkdir -p /opt/hysteryale/uploadFiles/forecast_pricing
+RUN mkdir -p /opt/hysteryale/uploadFiles/booked
+RUN mkdir -p /opt/hysteryale/uploadFiles/shipment
+RUN mkdir -p /opt/hysteryale/uploadFiles/marcro
+RUN mkdir -p /opt/hysteryale/uploadFiles/part
+RUN mkdir -p /opt/hysteryale/uploadFiles/competitor
+RUN mkdir -p /opt/hysteryale/uploadFiles/product
+RUN mkdir -p /opt/hysteryale/uploadFiles/exchange_rate
+
 RUN mkdir -p /opt/hysteryale/images/product/
 RUN mkdir -p /opt/hysteryale/images/part/
 # run

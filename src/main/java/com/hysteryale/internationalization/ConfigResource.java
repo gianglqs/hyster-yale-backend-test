@@ -13,5 +13,9 @@ public class ConfigResource implements WebMvcConfigurer {
         registry
                 .addResourceHandler("/images/**")
                 .addResourceLocations("file:/opt/hysteryale/images/");
+
+        registry
+                .addResourceHandler("/uploadFiles/**")
+                .addResourceLocations("file:/opt/hysteryale/uploadFiles/");
     }
 }
