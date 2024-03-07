@@ -11,6 +11,7 @@ import com.hysteryale.service.BookingService;
 import com.hysteryale.service.ExchangeRateService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.CurrencyFormatUtils;
+import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -343,7 +344,11 @@ public class IMMarginAnalystDataService {
 
     public void calculateMarginAnalysisData(String fileUUID, String currency) throws IOException {
         String fileName = fileUploadService.getFileNameByUUID(fileUUID); // fileName has been hashed
-        FileInputStream is = new FileInputStream(fileName);
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.novo");
+        String filePath = baseFolder + baseFolderUploaded + targetFolder+ fileName;
+        FileInputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         Sheet sheet = workbook.getSheetAt(0);
         List<IMMarginAnalystData> imMarginAnalystDataList = new ArrayList<>();
@@ -457,10 +462,9 @@ public class IMMarginAnalystDataService {
     /**
      * Read NOVO file and create populating values for showing on Dropdown box in Margin Screen
      */
-    public Map<String, Object> populateMarginFilters(String fileUUID) throws IOException {
-        String fileName = fileUploadService.getFileNameByUUID(fileUUID); // fileName has been hashed
+    public Map<String, Object> populateMarginFilters(String filePath) throws IOException {
 
-        FileInputStream is = new FileInputStream(fileName);
+        FileInputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         HashMap<String, Integer> modelCodeMap = new HashMap<>();

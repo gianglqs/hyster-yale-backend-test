@@ -2,6 +2,7 @@ package com.hysteryale.controller;
 
 import com.hysteryale.model.marginAnalyst.CalculatedMargin;
 import com.hysteryale.model_h2.IMMarginAnalystData;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.PartService;
 import com.hysteryale.service.marginAnalyst.IMMarginAnalystDataService;
@@ -36,6 +37,9 @@ public class MarginAnalystController {
     MarginAnalystMacroService marginAnalystMacroService;
     @Resource
     PartService partService;
+
+    @Resource
+    FileUploadRepository fileUploadRepository;
 
     /**
      * Calculate MarginAnalystData and MarginAnalystSummary based on user's uploaded file
@@ -82,21 +86,33 @@ public class MarginAnalystController {
      */
     @PostMapping(path = "/marginData/readNOVOFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Map<String, Object> readNOVOFile(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
-        String filePath = fileUploadService.saveFileUploadToDisk(file);
+
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.novo");
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.NOVO);
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
 
         // Verify the Excel file
-        if (FileUtils.isExcelFile(filePath)) {
-            String fileUUID = fileUploadService.saveFileUpload(filePath, authentication);
-            Map<String, Object> marginFilters = IMMarginAnalystDataService.populateMarginFilters(fileUUID);
-
-            return Map.of(
-                    "marginFilters", marginFilters,
-                    "fileUUID", fileUUID
-            );
-        } else {
-            fileUploadService.deleteFileInDisk(filePath);
+        if (!FileUtils.isExcelFile(filePath)) {
+            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is not an Excel file");
         }
+
+        try {
+            Map<String, Object> marginFilters = IMMarginAnalystDataService.populateMarginFilters(filePath);
+            fileUploadService.handleUpdatedSuccessfully(fileName);
+            String uuid = fileUploadRepository.getUUIDByName(fileName);
+            return Map.of(
+                    "marginFilters", marginFilters,
+                    "fileUUID", uuid
+            );
+        } catch (Exception e) {
+            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            throw e;
+        }
+
     }
 
     @PostMapping(path = "/importMacroFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -158,4 +174,6 @@ public class MarginAnalystController {
 
     }
 }
+
+
 
