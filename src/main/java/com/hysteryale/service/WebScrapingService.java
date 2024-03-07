@@ -1,6 +1,5 @@
 package com.hysteryale.service;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
 import com.hysteryale.model.competitor.ScrapedProduct;
