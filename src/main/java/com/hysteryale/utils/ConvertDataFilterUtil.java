@@ -35,7 +35,7 @@ public class ConvertDataFilterUtil {
         List<String> brandFilter = checkListData(filterModel.getBrands());
         List<String> familyFilter = checkListData(filterModel.getFamily());
         List<String> truckTypeFilter = checkListData(filterModel.getTruckType());
-        List<String> orderNumberListFilter = checkListData(filterModel.getOrderNumbers());
+        List<String> orderNumberListFilter = checkListDataHaveNoneElement(filterModel.getOrderNumbers());
         String metaseriesFilter = checkStringData(filterModel.getMetaSeriez());
 
         LocalDate calendar = LocalDate.now();
@@ -73,6 +73,10 @@ public class ConvertDataFilterUtil {
 
     private static List<String> checkListData(List<String> data) {
         return data == null || data.isEmpty() ? null : data;
+    }
+
+    private static List<String> checkListDataHaveNoneElement(List<String> data) {
+        return data == null || data.isEmpty() || (data.size() == 1 && data.get(0)==null) ? null : data;
     }
 
     private static String checkStringData(String data) {
