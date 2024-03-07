@@ -1,114 +1,94 @@
 package com.hysteryale.service;
 
-import com.hysteryale.utils.EnvironmentUtils;
-import com.microsoft.playwright.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.*;
+import com.hysteryale.model.competitor.ScrapedProduct;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.time.LocalDateTime;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
 public class WebScrapingService {
+    private static final String API_KEY = "7e28fe836c6e4584beab41f0f4d0c62a";
 
-    /**
-     * Simple demo for scraping data with Playwright
-     */
-    public String scrapData(String url) {
-        try (Playwright playwright = Playwright.create()) {
-            try(Browser browser = playwright.chromium().launch()) {
-                BrowserContext context = browser.newContext();
-                Page page = context.newPage();
-                page.navigate(url);
+    public List<ScrapedProduct> scrapeData(String url) {
+        Map<String, Object> parameters =
+                ImmutableMap.of(
+                        "url", url,
+                        "httpResponseBody", true,
+                        "productList", true,
+                        "productListOptions", ImmutableMap.of("extractFrom","httpResponseBody")
+                );
+        String requestBody = new Gson().toJson(parameters);
 
-                boolean isStop = false;
-                while(!isStop) {
-                    try {
-                        page.locator(".cps-block-content_btn-showmore").first().locator("a").first().click();
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                        isStop = true;
-                    }
+        HttpPost request = new HttpPost("https://api.zyte.com/v1/extract");
+        request.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON);
+        request.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate");
+        request.setHeader(HttpHeaders.AUTHORIZATION, buildAuthHeader());
+        request.setEntity(new StringEntity(requestBody));
+
+        List<ScrapedProduct> productArrayList = new ArrayList<>();
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            try (CloseableHttpResponse response = client.execute(request)) {
+                HttpEntity entity = response.getEntity();
+                String apiResponse = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+                JsonObject jsonObject = JsonParser.parseString(apiResponse).getAsJsonObject();
+                JsonArray productList = jsonObject.get("productList").getAsJsonObject().get("products").getAsJsonArray();
+                int i = 0;
+
+                for(JsonElement product : productList) {
+                    i++;
+                    String productName = product.getAsJsonObject().get("name") != null
+                            ? trimSpecialCharacters(product.getAsJsonObject().get("name").toString())
+                            : "";
+                    double price = product.getAsJsonObject().get("price") !=null
+                            ? Double.parseDouble(trimSpecialCharacters(product.getAsJsonObject().get("price").toString()))
+                            : 0.0;
+                    String currency = product.getAsJsonObject().get("currency") != null
+                            ? trimSpecialCharacters(product.getAsJsonObject().get("currency").toString())
+                            : "";
+                    String image = product.getAsJsonObject().get("mainImage") != null
+                            ? trimSpecialCharacters(product.getAsJsonObject().get("mainImage").getAsJsonObject().get("url").toString())
+                            : "";
+
+                    ScrapedProduct sp = new ScrapedProduct(i, productName, image, currency, price);
+                    productArrayList.add(sp);
                 }
-                Locator productList = page.locator(".product-info");
-                String fileLocation = writeToExcel(productList.all());
-                context.close();
-                return fileLocation;
             }
-        }
-    }
-
-    private String writeToExcel(List<Locator> productList) {
-        try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Product");
-
-            // Create Headers and Set Column width for 2 columns
-            Row header = sheet.createRow(0);
-            sheet.setColumnWidth(0, 20000);
-            sheet.setColumnWidth(1, 4000);
-
-            // Create and set Headers style
-            CellStyle headerStyle = workbook.createCellStyle();
-            headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
-            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-            XSSFFont font = (XSSFFont) workbook.createFont();
-            font.setFontName("Arial");
-            font.setFontHeightInPoints((short) 16);
-            font.setBold(true);
-            headerStyle.setFont(font);
-
-            // Create Headers and set Header's name
-            Cell headerCell = header.createCell(0);
-            headerCell.setCellValue("Product Name");
-            headerCell.setCellStyle(headerStyle);
-
-            headerCell = header.createCell(1);
-            headerCell.setCellValue("Price");
-            headerCell.setCellStyle(headerStyle);
-
-            // Write value into Workbook
-            int i = 1;
-            for(Locator productItem : productList) {
-                String productName = productItem.locator("h3").innerText();
-                String productPrice = productItem.locator("p.product__price--show").innerText();
-                log.info(productName + " --- " + productPrice);
-
-                Row row = sheet.createRow(i);
-                Cell cell = row.createCell(0);
-                cell.setCellValue(productName);
-
-                cell = row.createCell(1);
-                cell.setCellValue(productPrice);
-                i++;
-            }
-
-            // Export to Excel file
-            String folderPath = EnvironmentUtils.getEnvironmentValue("BASE_FOLDER_UPLOAD");
-            LocalDateTime localDate = LocalDateTime.now();
-            String fileName = "scrap-data-"
-                    + localDate.getDayOfMonth()
-                    + localDate.getMonth()
-                    + localDate.getYear()
-                    + "-" + localDate.getHour()
-                    + "-" + localDate.getMinute()
-                    + "-" + localDate.getSecond();
-
-            File outputFile = new File(folderPath + "/" + fileName + ".xlsx");
-            String path = outputFile.getAbsolutePath();
-
-            FileOutputStream outputStream = new FileOutputStream(path);
-            workbook.write(outputStream);
-            return path;
         } catch (Exception e) {
             log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on scraping data");
         }
-        return null;
+        return productArrayList;
+    }
+
+    /**
+     * Trim the character " out of String value
+     */
+    private String trimSpecialCharacters(String originalString) {
+        return originalString.replaceAll("\"", "");
+    }
+
+    private static String buildAuthHeader() {
+        String auth = API_KEY + ":";
+        String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+        return "Basic " + encodedAuth;
     }
 }
