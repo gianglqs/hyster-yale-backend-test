@@ -35,7 +35,8 @@ public class Part {
     private String orderNumber;
 
     private String series;
-    private String clazz;
+    @ManyToOne
+    private Clazz clazz;
     private String region;
 
     @Column(name = "part_number")
@@ -80,7 +81,7 @@ public class Part {
     private boolean isSPED;
 
 
-    public Part(String quoteId, int quantity, String orderNumber, String modelCode, String series, String partNumber, double listPrice, double discount, double discountPercentage, String billTo, double netPriceEach, double customerPrice, double extendedCustomerPrice, Currency currency, String clazz, String region, boolean isSPED) {
+    public Part(String quoteId, int quantity, String orderNumber, String modelCode, String series, String partNumber, double listPrice, double discount, double discountPercentage, String billTo, double netPriceEach, double customerPrice, double extendedCustomerPrice, Currency currency, Clazz clazz, String region, boolean isSPED) {
         this.quoteId = quoteId;
         this.quantity = quantity;
         this.modelCode = modelCode;
