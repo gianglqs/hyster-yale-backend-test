@@ -76,7 +76,7 @@ public class Booking extends BaseModel{
     @JoinColumn(name = "aopmargin")
     private AOPMargin AOPMargin;
 
-    public Booking(String region, String plant, String clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge) {
+    public Booking(String region, String plant, Clazz clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge) {
 
         Product p = new Product(plant, clazz, model);
         this.region = new Region(region);
