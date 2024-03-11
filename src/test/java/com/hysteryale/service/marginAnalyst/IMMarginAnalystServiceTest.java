@@ -145,7 +145,7 @@ public class IMMarginAnalystServiceTest {
     @Test
     public void testCalculateMarginAnalysisData() throws IOException {
         FileUpload fileUpload = new FileUpload();
-        fileUpload.setFileName("import_files/novo/SN_AUD.xlsx");
+        fileUpload.setFileName("SN_AUD.xlsx");
         fileUpload.setUuid("UUID For Calculating Margin Data");
         fileUploadRepository.save(fileUpload);
         marginAnalystDataService.calculateMarginAnalysisData("UUID For Calculating Margin Data", "AUD");
@@ -188,7 +188,7 @@ public class IMMarginAnalystServiceTest {
         String series = "A3C1";
 
         FileUpload fileUpload = new FileUpload();
-        fileUpload.setFileName("import_files/novo/example 1_HYM.xlsx");
+        fileUpload.setFileName("example 1_HYM.xlsx");
         fileUpload.setUuid(fileUUID);
         fileUploadRepository.save(fileUpload);
         marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency);
@@ -231,7 +231,7 @@ public class IMMarginAnalystServiceTest {
         String series = "A3C1";
 
         FileUpload fileUpload = new FileUpload();
-        fileUpload.setFileName("import_files/novo/example 1_HYM.xlsx");
+        fileUpload.setFileName("example 1_HYM.xlsx");
         fileUpload.setUuid(fileUUID);
         fileUploadRepository.save(fileUpload);
         marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency);

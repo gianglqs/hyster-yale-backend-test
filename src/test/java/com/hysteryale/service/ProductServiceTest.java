@@ -2,6 +2,7 @@ package com.hysteryale.service;
 
 import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import org.junit.jupiter.api.Assertions;
@@ -20,6 +21,8 @@ public class ProductServiceTest {
     ProductService productService;
     @Resource
     ProductRepository productRepository;
+    @Resource
+    ClazzRepository clazzRepository;
 
     @Test
     public void testGetAllMetaSeries() {
@@ -34,15 +37,6 @@ public class ProductServiceTest {
     public void testGetAllPlants() {
         int expectedSize = productRepository.getPlants().size();
         List<Map<String, String>> result = productService.getAllPlants();
-
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(expectedSize, result.size());
-    }
-
-    @Test
-    public void testGetAllClasses() {
-        int expectedSize = productRepository.getAllClass().size();
-        List<Map<String, String>> result = productService.getAllClasses();
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(expectedSize, result.size());
