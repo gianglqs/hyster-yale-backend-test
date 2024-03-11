@@ -1,5 +1,6 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.service.CountryService;
 import com.hysteryale.service.FilterService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +15,17 @@ import java.util.Map;
 public class FilterController {
     @Resource
     FilterService filterService;
+    @Resource
+    CountryService countryService;
 
     @GetMapping("/competitorPricing")
     public Map<String, Object> getCompetitorPricingFilters() {
         return filterService.getCompetitorPricingFilter();
+    }
+
+    @GetMapping("/competitorPricing/get-country-name")
+    public Map<String, Object> getCountryByRegion(@RequestParam String region) {
+        return Map.of("country", countryService.getListCountryNameByRegion(region));
     }
 
     @GetMapping("/shipment")
