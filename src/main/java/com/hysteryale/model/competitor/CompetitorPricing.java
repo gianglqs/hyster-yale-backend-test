@@ -1,6 +1,7 @@
 package com.hysteryale.model.competitor;
 
 import com.hysteryale.model.BaseModel;
+import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Country;
 import com.hysteryale.model.Region;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,8 @@ public class CompetitorPricing extends BaseModel {
 
     @Column(name = "competitor_name")
     private String competitorName;
-    private String clazz;
+    @ManyToOne
+    private Clazz clazz;
     private String category;
     private String series;
 
