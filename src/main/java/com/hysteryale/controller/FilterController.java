@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,7 +26,9 @@ public class FilterController {
 
     @GetMapping("/competitorPricing/get-country-name")
     public Map<String, Object> getCountryByRegion(@RequestParam String region) {
-        return Map.of("country", countryService.getListCountryNameByRegion(region));
+        List<String> countryList = countryService.getListCountryNameByRegion(region);
+        countryList.removeIf(String::isEmpty);
+        return Map.of("country", countryList);
     }
 
     @GetMapping("/shipment")
