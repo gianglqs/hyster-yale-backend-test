@@ -26,9 +26,6 @@ public class FilterService {
     RegionRepository regionRepository;
 
     @Resource
-    ShipmentRepository shipmentRepository;
-
-    @Resource
     BookingRepository bookingRepository;
     @Resource
     CountryRepository countryRepository;
@@ -303,21 +300,6 @@ public class FilterService {
 
         return result;
     }
-
-    private List<Map<String, String>> getTCForCompetitorPricing() {
-        List<Map<String, String>> result = new ArrayList<>();
-
-        Map<String, String> on = new HashMap<>();
-        on.put("value", "On");
-        result.add(on);
-
-        Map<String, String> off = new HashMap<>();
-        off.put("value", "Off");
-        result.add(off);
-
-        return result;
-    }
-
 
     private List<Map<String, String>> getAllRegions() {
         List<Map<String, String>> listRegion = new ArrayList<>();
