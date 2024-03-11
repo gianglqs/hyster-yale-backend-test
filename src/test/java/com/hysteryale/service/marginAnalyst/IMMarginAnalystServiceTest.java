@@ -105,7 +105,7 @@ public class IMMarginAnalystServiceTest {
                 typeMap.put((int) row.getCell(columns.get("#")).getNumericCellValue(), 1);
             }
         }
-        Map<String, Object> result = marginAnalystDataService.populateMarginFilters("UUID populate Margin Filters");
+        Map<String, Object> result = marginAnalystDataService.populateMarginFilters("import_files/novo/SN_AUD.xlsx");
         Assertions.assertNotNull(result.get("modelCodes"));
         Assertions.assertNotNull(result.get("series"));
         Assertions.assertNotNull(result.get("orderNumbers"));

@@ -284,7 +284,7 @@ public class IndicatorsControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = "USER")
+    @WithMockUser(username = "user1@gmail.com", authorities = "ADMIN")
     public void testImportIndicatorsFile_notExcelFile() throws Exception {
         MockMultipartFile file =
                 new MockMultipartFile(
@@ -305,7 +305,7 @@ public class IndicatorsControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = "USER")
+    @WithMockUser(username = "admin@gmail.com", authorities = "USER")
     public void testImportIndicatorsFile_missingForecastFile() throws Exception {
         org.springframework.core.io.Resource fileResource = new ClassPathResource("/import_files/competitor_pricing/Competitor Pricing Database.xlsx");
         Assertions.assertNotNull(fileResource);

@@ -76,11 +76,11 @@ public class MarginAnalystControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = "USER")
+    @WithMockUser(username = "admin@gmail.com", authorities = "ADMIN")
     public void testReadNOVOFile_notExcelFile() throws Exception {
         MockMultipartFile file = new MockMultipartFile(
                 "file",
-                "mockfile.txt",
+                "mockfile_novo.txt",
                 MediaType.MULTIPART_FORM_DATA_VALUE,
                 "123".getBytes()
         );
@@ -121,7 +121,7 @@ public class MarginAnalystControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = "ADMIN")
+    @WithMockUser(username = "admin@gmail.com", authorities = "ADMIN")
     public void testImportMacroFile_notExcelFile() throws Exception {
         MockMultipartFile file = new MockMultipartFile(
                 "file",
