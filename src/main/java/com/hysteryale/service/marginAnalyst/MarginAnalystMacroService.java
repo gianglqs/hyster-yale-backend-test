@@ -1,9 +1,11 @@
 package com.hysteryale.service.marginAnalyst;
 
+import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.Region;
 import com.hysteryale.model.marginAnalyst.*;
+import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.marginAnalyst.*;
 import com.hysteryale.service.CurrencyService;
 import com.hysteryale.service.ExchangeRateService;
@@ -46,6 +48,8 @@ public class MarginAnalystMacroService {
     ExchangeRateService exchangeRateService;
     @Resource
     RegionService regionService;
+    @Resource
+    ClazzRepository clazzRepository;
 
     static HashMap<String, String> MACRO_COLUMNS = new HashMap<>();
     static List<MarginAnalystMacro> listMarginData = new ArrayList<>();
@@ -269,11 +273,14 @@ public class MarginAnalystMacroService {
 
             // Getting Warranty values
             for (int i = 7; i <= 12; i++) {
-                String clazz = sheet.getRow(i).getCell("A").getValue();
+                String strClazz = sheet.getRow(i).getCell("A").getValue();
                 double warrantyValue = sheet.getRow(i).getCell("B").getNumericCellValue();
 
-                Warranty warranty = new Warranty(clazz, monthYear, warrantyValue);
-                Optional<Warranty> optionalWarranty = warrantyRepository.getWarranty(clazz, monthYear);
+                Optional<Clazz> optionalClazz = clazzRepository.getClazzByClazzName(strClazz);
+                if(optionalClazz.isEmpty())
+                    continue;
+                Warranty warranty = new Warranty(optionalClazz.get(), monthYear, warrantyValue);
+                Optional<Warranty> optionalWarranty = warrantyRepository.getWarranty(optionalClazz.get().getClazzName(), monthYear);
                 optionalWarranty.ifPresent(value -> warranty.setId(value.getId()));
 
                 warrantyRepository.save(warranty);
