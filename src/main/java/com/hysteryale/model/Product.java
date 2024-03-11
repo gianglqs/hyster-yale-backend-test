@@ -31,20 +31,22 @@ public class Product extends BaseModel{
 
     private String brand;
     private String plant;
-    private String clazz;
+
+    @ManyToOne
+    private Clazz clazz;
     private String segment;
     private String family;
     private String truckType;
     private String image;
     private String description;
 
-    public Product(String plant, String clazz, String modelCode) {
+    public Product(String plant, Clazz clazz, String modelCode) {
         this.plant = plant;
         this.clazz = clazz;
         this.modelCode = modelCode;
     }
 
-    public Product(String modelCode, String series, String brand, String plant, String clazz, String segment, String family, String truckType, String image, String description) {
+    public Product(String modelCode, String series, String brand, String plant, Clazz clazz, String segment, String family, String truckType, String image, String description) {
         this.modelCode = modelCode;
         this.series = series;
         this.brand = brand;

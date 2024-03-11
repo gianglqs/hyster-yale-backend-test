@@ -1,8 +1,10 @@
 package com.hysteryale.service;
 
 import com.hysteryale.exception.MissingColumnException;
+import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.utils.*;
 import javassist.NotFoundException;
@@ -32,6 +34,8 @@ public class ProductService extends BasedService {
 
     @Resource
     FileUploadService fileUploadService;
+    @Resource
+    ClazzRepository clazzRepository;
 
     private final HashMap<String, Integer> COLUMNS = new HashMap<>();
 
@@ -132,9 +136,7 @@ public class ProductService extends BasedService {
 
     public boolean checkExist(Product product) {
         Optional<Product> productDimensionOptional = productRepository.findByModelCodeAndSeries(product.getModelCode(), product.getSeries());
-        if (productDimensionOptional.isPresent())
-            return true;
-        return false;
+        return productDimensionOptional.isPresent();
     }
 
     /**
@@ -167,19 +169,6 @@ public class ProductService extends BasedService {
             plantListMap.add(pMap);
         }
         return plantListMap;
-    }
-
-
-    public List<Map<String, String>> getAllClasses() {
-        List<Map<String, String>> classMap = new ArrayList<>();
-        List<String> classes = productRepository.getAllClass();
-        classes.sort(String::compareTo);
-        for (String m : classes) {
-            Map<String, String> mMap = new HashMap<>();
-            mMap.put("value", m);
-            classMap.add(mMap);
-        }
-        return classMap;
     }
 
     public List<Map<String, String>> getAllSegments() {
@@ -326,6 +315,10 @@ public class ProductService extends BasedService {
         productRepository.saveAll(productForSaving);
     }
 
+    public Clazz getClazzByClazzName(String clazzName) {
+        Optional<Clazz> optionalClazz = clazzRepository.getClazzByClazzName(clazzName);
+        return optionalClazz.orElse(null);
+    }
 
     public List<Product> mappedFromAPACFile(Row row) throws MissingColumnException {
         List<Product> listProduct = new ArrayList<>();
@@ -337,9 +330,10 @@ public class ProductService extends BasedService {
             throw new MissingColumnException("Not found column 'Plant'");
         }
 
-        String clazz;
+        Clazz clazz;
         if (row.getCell(COLUMNS.get("Class")) != null) {
-            clazz = row.getCell(COLUMNS.get("Class")).getStringCellValue();
+            String strClazz = row.getCell(COLUMNS.get("Class")).getStringCellValue();
+            clazz = getClazzByClazzName(strClazz);
         } else {
             throw new MissingColumnException("Not found column 'Class'");
         }
