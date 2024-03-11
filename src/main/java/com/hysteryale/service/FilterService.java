@@ -34,6 +34,8 @@ public class FilterService {
 
     @Resource
     DealerRepository dealerRepository;
+    @Resource
+    ClazzRepository clazzRepository;
 
     public Map<String, Object> getCompetitorPricingFilter() {
 
@@ -173,11 +175,8 @@ public class FilterService {
 
     private List<Map<String, String>> getAllClassesForIndicators() {
         List<Map<String, String>> classMap = new ArrayList<>();
-        List<String> classes = productRepository.getAllClass();
-        classes.sort(String::compareTo);
+        List<String> classes = clazzRepository.getAllClasses();
         for (String m : classes) {
-            if (m.equals("Class 5 not BT"))
-                m = "Class 5 non BT";
             Map<String, String> mMap = new HashMap<>();
             mMap.put("value", m);
             classMap.add(mMap);
@@ -187,8 +186,7 @@ public class FilterService {
 
     private List<Map<String, String>> getAllClasses() {
         List<Map<String, String>> classMap = new ArrayList<>();
-        List<String> classes = productRepository.getAllClass();
-        classes.sort(String::compareTo);
+        List<String> classes = clazzRepository.getAllClasses();
         for (String m : classes) {
             Map<String, String> mMap = new HashMap<>();
             mMap.put("value", m);
