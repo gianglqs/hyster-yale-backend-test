@@ -64,30 +64,6 @@ public class FileUploadService {
     }
 
     /**
-     * Save the excelFile into disk
-     *
-     * @return absolute filePath of multipartFile
-     */
-    public String saveFileUploadToDisk(MultipartFile multipartFile) throws Exception {
-
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-
-        Date uploadedTime = new Date();
-        String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmssSSS").format(uploadedTime));
-        String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + ".xlsx";
-
-        File file = new File("/" + baseFolder + "/" + encodedFileName);
-        if (file.createNewFile()) {
-            log.info("File " + encodedFileName + " created");
-            multipartFile.transferTo(file);
-            return "/"+baseFolder + "/" + encodedFileName;
-        } else {
-            log.info("Can not create new file: " + encodedFileName);
-            throw new Exception("Can not create new file: " + encodedFileName);
-        }
-    }
-
-    /**
      * @param multipartFile
      * @param authentication baseFolderUpload : /uploadFiles
      * @param targetFolder   :  /booked, /shipment, ....
@@ -104,6 +80,7 @@ public class FileUploadService {
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
         String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + extensionFile;
 
+        log.info(baseFolder + savedFolder + encodedFileName);
         File file = new File(baseFolder + savedFolder + encodedFileName);
         if (file.createNewFile()) {
             log.info("File " + encodedFileName + " created");
