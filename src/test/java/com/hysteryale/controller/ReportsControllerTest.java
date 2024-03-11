@@ -44,7 +44,7 @@ public class ReportsControllerTest {
     @Test
     @WithMockUser(authorities = "USER")
     public void testCompareCurrency() throws Exception {
-        CompareCurrencyRequest request = new CompareCurrencyRequest("USD", List.of("EUR", "JPY"), false);
+        CompareCurrencyRequest request = new CompareCurrencyRequest("USD", List.of("EUR", "JPY"), false, "", "");
 
         MvcResult result =
                 mockMvc

@@ -15,4 +15,6 @@ public class CompareCurrencyRequest {
     private String currentCurrency;
     private List<String> comparisonCurrencies;
     private boolean fromRealTime;
+    private String fromDate;
+    private String toDate;
 }
