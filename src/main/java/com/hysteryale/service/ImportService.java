@@ -149,7 +149,7 @@ public class ImportService extends BasedService {
         boolean isChineseBrand = competitorName.contains("Heli") || competitorName.contains("HeLi") || competitorName.contains("Hangcha") || competitorName.contains("Hang Cha");
         Cell cellClass = row.getCell(ORDER_COLUMNS_NAME.get("Class"));
         String strClazz = cellClass.getStringCellValue();
-        Optional<Clazz> optionalClazz = clazzRepository.getClazzByClazzName(strClazz);
+        Optional<Clazz> optionalClazz = clazzRepository.getClazzByClazzName(strClazz.equals("Class 5 non BT") ? "Class 5 NOT BT" : strClazz);
         if(optionalClazz.isEmpty())
             return competitorPricingList;
         Clazz clazz = optionalClazz.get();
