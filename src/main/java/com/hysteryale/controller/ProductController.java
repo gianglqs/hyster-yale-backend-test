@@ -91,12 +91,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "/uploadImage")
-    public void uploadImage() throws Exception {
-        Optional<User> optionalUser = userRepository.getUserByEmail("admin@gmail.com");
-        if (optionalUser.isEmpty())
-            throw new Exception("Could not find User admin");
-        User user = optionalUser.get();
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
+    public void uploadImage(Authentication authentication) throws Exception {
 
         productService.uploadImage(authentication);
     }
