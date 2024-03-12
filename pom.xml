@@ -182,6 +182,12 @@
             <version>1.41.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.19</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -223,7 +229,6 @@
                     </execution>
                 </executions>
             </plugin>
-
 
 
         </plugins>
