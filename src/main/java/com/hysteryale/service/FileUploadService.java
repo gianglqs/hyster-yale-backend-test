@@ -139,6 +139,7 @@ public class FileUploadService {
             // check the file is an image
             if (!FileUtils.isImageFile(fileUploadedPath)) {
                 log.info("File is not an image: " + encodedFileName);
+                handleUpdatedFailure(encodedFileName, "File is not an image");
                 throw new Exception("File is not an image: " + multipartFile.getOriginalFilename());
             }
             return encodedFileName;

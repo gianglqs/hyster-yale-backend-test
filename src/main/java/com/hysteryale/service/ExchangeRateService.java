@@ -161,6 +161,9 @@ public class ExchangeRateService extends BasedService {
 
         String currentCurrency = request.getCurrentCurrency();
         List<String> comparisonCurrencies = request.getComparisonCurrencies();
+        LocalDate fromDate = parseDateFromRequest(request.getFromDate());
+        LocalDate toDate = parseDateFromRequest(request.getToDate());
+        int limit = fromDate == null || toDate == null ? 12 : 60;
 
         Map<String, Object> data = new HashMap<>();
         List<String> stableCurrencies = new ArrayList<>();
@@ -188,7 +191,7 @@ public class ExchangeRateService extends BasedService {
         }
 
         for (String currency : comparisonCurrencies) {
-            List<ExchangeRate> exchangeRateList = exchangeRateRepository.getCurrentExchangeRate(currentCurrency, currency);
+            List<ExchangeRate> exchangeRateList = exchangeRateRepository.getCurrentExchangeRate(currentCurrency, currency, fromDate, toDate, limit);
             if (exchangeRateList.isEmpty())
                 continue;
 
@@ -329,5 +332,16 @@ public class ExchangeRateService extends BasedService {
         } else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "time_last_update_utc does not return in appropriate format");
         return LocalDate.of(year, DateUtils.getMonth(month), date);
+    }
+
+    private LocalDate parseDateFromRequest(String dateFromRequest) {
+        Pattern pattern = Pattern.compile("(\\d{4})-(\\d{2})");
+        Matcher matcher = pattern.matcher(dateFromRequest);
+        if(matcher.find()) {
+            int year = Integer.parseInt(matcher.group(1));
+            int month = Integer.parseInt(matcher.group(2));
+            return LocalDate.of(year, month, 1);
+        } else
+            return null;
     }
 }
