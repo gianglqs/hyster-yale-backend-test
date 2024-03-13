@@ -539,7 +539,7 @@ public class ProductService extends BasedService {
     }
 
     public void uploadImage(Authentication authentication) throws Exception {
-        String folderPath = "/home/oem/Downloads/Product Photos";
+        String folderPath = EnvironmentUtils.getEnvironmentValue("import-images.productImages");
         List<String> listImage = new ArrayList<>();
         getAllImage(folderPath, listImage);
 
@@ -611,11 +611,13 @@ public class ProductService extends BasedService {
             List<Product> mappingProducts = new ArrayList<>();
 
             // step 1: extract by space ' '
-            List<String> fileNameSplitBySpaceChars = List.of(fileName.split(" "));
+//            List<String> fileNameSplitBySpaceChars = List.of(fileName.split(" "));
+//
+//            for (String stringModelCodeAndSeries : fileNameSplitBySpaceChars) {
+//                mappingProducts.addAll(getMappingProductFileName(stringModelCodeAndSeries, products, imagePath));
+//            }
 
-            for (String stringModelCodeAndSeries : fileNameSplitBySpaceChars) {
-                mappingProducts.addAll(getMappingProductFileName(stringModelCodeAndSeries, products, imagePath));
-            }
+            mappingProducts.addAll(getMappingProductFileName(fileName, products, imagePath));
 
             // update product if it is mapped
 
