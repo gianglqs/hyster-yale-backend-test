@@ -70,7 +70,9 @@ public class AuthenticationService {
                     refreshToken,
                     userDB.get().getName(),
                     userDB.get().getEmail(),
-                    userDB.get().getRole().getRoleName());
+                    userDB.get().getRole().getRoleName(),
+                    userDB.get().getDefaultLocale(),
+                    userDB.get().getId());
 
             userService.setNewLastLogin(userDB.get());
 
