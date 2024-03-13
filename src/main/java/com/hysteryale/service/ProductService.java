@@ -9,6 +9,7 @@ import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.utils.*;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -538,5 +536,166 @@ public class ProductService extends BasedService {
                 return product;
         }
         return null;
+    }
+
+    public void uploadImage(Authentication authentication) throws Exception {
+        String folderPath = "/home/oem/Downloads/Product Photos";
+        List<String> listImage = new ArrayList<>();
+        getAllImage(folderPath, listImage);
+
+        // get All product
+        List<Product> getAllProduct = productRepository.findAll();
+
+        // mapping image
+        getMappingProductFileName(listImage, getAllProduct, authentication);
+
+    }
+
+    private List<Product> getMappingProductFileName(String stringModelCodeAndSeries, List<Product> products, String imagePath) {
+        List<String> listModelCodeOrSeries = List.of(stringModelCodeAndSeries.split("_"));
+        List<String> listSeries = new ArrayList<>();
+        List<String> listModelCode = new ArrayList<>();
+        List<Product> foundProduct = new ArrayList<>();
+
+        // Distinguish between modelCode and Series
+        for (String modelCodeOrSeries : listModelCodeOrSeries) {
+            if (StringUtils.isSeries(modelCodeOrSeries)) {
+                listSeries.add(modelCodeOrSeries);
+            } else {
+                listModelCode.add(modelCodeOrSeries);
+            }
+        }
+
+        // if there is only series
+        if (!listSeries.isEmpty() && listModelCode.isEmpty()) {
+            for (String series : listSeries) {
+                List<Product> listProductFoundBySeries = getProductBySeries(products, series);
+                foundProduct.addAll(listProductFoundBySeries);
+            }
+        }
+        products.removeAll(foundProduct);
+
+        // if there is only modelCode
+        if (listSeries.isEmpty() && !listModelCode.isEmpty()) {
+            for (String modelCode : listModelCode) {
+                List<Product> listProductFoundByModelCode = getProductByModelCode(products, modelCode);
+                foundProduct.addAll(listProductFoundByModelCode);
+            }
+        }
+        products.removeAll(foundProduct);
+
+        // has both ModelCode and Series
+        for (String modelCode : listModelCode) {
+            for (String series : listSeries) {
+                Product product = getProductByModelCodeAndSeries(products, modelCode, series);
+                foundProduct.add(product);
+            }
+        }
+        foundProduct.removeAll(Collections.singleton(null));
+
+        return foundProduct;
+
+    }
+
+    private void getMappingProductFileName(List<String> imagePaths, List<Product> products, Authentication authentication) throws Exception {
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("image-folder.product");
+        List<Product> mappedProduct = new ArrayList<>();
+
+        for (String imagePath : imagePaths) {
+            File file = new File(imagePath);
+            String fileName = FilenameUtils.removeExtension(file.getName());
+
+            // save image in disk and DB
+            String savedImageName = fileUploadService.upLoadImage(imagePath, targetFolder, authentication, ModelUtil.PRODUCT);
+
+            List<Product> mappingProducts = new ArrayList<>();
+
+            // step 1: extract by space ' '
+            List<String> fileNameSplitBySpaceChars = List.of(fileName.split(" "));
+
+            for (String stringModelCodeAndSeries : fileNameSplitBySpaceChars) {
+                mappingProducts.addAll(getMappingProductFileName(stringModelCodeAndSeries, products, imagePath));
+            }
+
+            // update product if it is mapped
+
+            if(mappingProducts.isEmpty()){
+                fileUploadService.handleUpdatedFailure(savedImageName, "No suitable product found for mapping");
+                continue;
+            }
+
+            for(Product product: mappingProducts){
+                product.setImage(savedImageName);
+            }
+
+            fileUploadService.handleUpdatedSuccessfully(savedImageName);
+            mappedProduct.addAll(mappingProducts);
+        }
+
+        // update product
+        if(!mappedProduct.isEmpty())
+            productRepository.saveAll(mappedProduct);
+    }
+
+    private static void getAllImage(String folderPath, List<String> listImage) throws FileNotFoundException {
+        File file = new File(folderPath);
+
+        if (!file.exists())
+            throw new FileNotFoundException("Could not find any Image");
+
+        if (file.isFile() && FileUtils.isImageFile(file.getAbsolutePath())) {
+            listImage.add(file.getAbsolutePath());
+            return;
+        }
+
+        if (file.isDirectory()) {
+            File[] listFile = file.listFiles();
+            assert listFile != null;
+            for (File f : listFile) {
+                getAllImage(f.getAbsolutePath(), listImage);
+            }
+        }
+    }
+
+    public static List<Product> getProductBySeries(List<Product> products, String series) {
+        List<Product> result = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getSeries().equals(series))
+                result.add(product);
+        }
+        return result;
+    }
+
+    public static List<Product> getProductByModelCode(List<Product> products, String modelCode) {
+        List<Product> result = new ArrayList<>();
+        for (Product product : products) {
+            if (StringUtils.compareString(modelCode, product.getModelCode()))
+                result.add(product);
+        }
+        return result;
+    }
+
+    public static Product getProductByModelCodeAndSeries(List<Product> products, String modelCode, String series) {
+        for (Product product : products) {
+            if (StringUtils.compareString(modelCode, product.getModelCode()) && product.getSeries().equals(series))
+                return product;
+        }
+        return null;
+    }
+
+
+    public static void main(String[] args) throws FileNotFoundException {
+       Product p = new Product();
+
+       List<Product> list = new ArrayList<>();
+       list.add(p);
+       list.add(null);
+       list.add(null);
+       list.add(null);
+
+        list.removeAll(Collections.singleton(null));
+
+        System.out.println(list);
+        //   mappingImage(s, null);
     }
 }

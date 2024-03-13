@@ -122,7 +122,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 
 
     @Query("SELECT COUNT(c) FROM Booking c WHERE " +
-            "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
+            "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
@@ -158,7 +158,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
                  @Param("toDate") LocalDate toDate);
 
     @Query("SELECT c FROM Booking c WHERE " +
-            "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
+            "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
@@ -336,7 +336,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     );
 
     @Query("SELECT c FROM Booking c WHERE " +
-            "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
+            "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +

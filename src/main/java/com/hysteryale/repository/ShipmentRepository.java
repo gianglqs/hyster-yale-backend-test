@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface ShipmentRepository extends JpaRepository<Shipment, String> {
 
     @Query("SELECT c FROM Shipment c WHERE " +
-            "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
+            "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
             " AND ((:regions) IS Null OR c.region IS NULL OR COALESCE(c.region.regionName, NULL) IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
@@ -53,7 +53,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
 
 
     @Query("SELECT COUNT(c) FROM Shipment c WHERE " +
-            "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
+            "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
@@ -145,7 +145,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             @Param("year") int year);
 
     @Query("SELECT new Shipment(c.orderNo, c.currency, c.dealerNet, c.dealerNetAfterSurcharge, c.totalCost, c.netRevenue, c.bookingDealerNetAfterSurcharge, c.bookingMarginAfterSurcharge) FROM Shipment c WHERE " +
-            "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
+            "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +

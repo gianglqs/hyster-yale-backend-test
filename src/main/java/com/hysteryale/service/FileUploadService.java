@@ -8,6 +8,7 @@ import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -64,6 +69,30 @@ public class FileUploadService {
     }
 
     /**
+     * Save the excelFile into disk
+     *
+     * @return absolute filePath of multipartFile
+     */
+    public String saveFileUploadToDisk(MultipartFile multipartFile) throws Exception {
+
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+
+        Date uploadedTime = new Date();
+        String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmssSSS").format(uploadedTime));
+        String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + ".xlsx";
+
+        File file = new File("/" + baseFolder + "/" + encodedFileName);
+        if (file.createNewFile()) {
+            log.info("File " + encodedFileName + " created");
+            multipartFile.transferTo(file);
+            return "/" + baseFolder + "/" + encodedFileName;
+        } else {
+            log.info("Can not create new file: " + encodedFileName);
+            throw new Exception("Can not create new file: " + encodedFileName);
+        }
+    }
+
+    /**
      * @param multipartFile
      * @param authentication baseFolderUpload : /uploadFiles
      * @param targetFolder   :  /booked, /shipment, ....
@@ -80,7 +109,6 @@ public class FileUploadService {
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
         String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + extensionFile;
 
-        log.info(baseFolder + savedFolder + encodedFileName);
         File file = new File(baseFolder + savedFolder + encodedFileName);
         if (file.createNewFile()) {
             log.info("File " + encodedFileName + " created");
@@ -121,6 +149,84 @@ public class FileUploadService {
         }
 
     }
+
+    public String upLoadImage(String filePath, String targetFolder, Authentication authentication, String screen) throws Exception {
+
+        File imageFile = new File(filePath);
+        if (!imageFile.exists())
+            throw new FileNotFoundException("Could not found Image with path: " + filePath);
+
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String uploadFolder = baseFolder + targetFolder;
+
+        Date uploadedTime = new Date();
+        String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
+        String encodedFileName = FileUtils.encoding(imageFile.getName()) + "_" + strUploadedTime + FileUtils.IMAGE_FILE_EXTENSION;
+        String fileUploadedPath = uploadFolder + encodedFileName;
+        File file = new File(fileUploadedPath);
+        if (file.createNewFile()) {
+            log.info("File " + encodedFileName + " created");
+
+            compressedImage(imageFile, fileUploadedPath);
+            saveFileUpLoadIntoDB(authentication, encodedFileName, screen, targetFolder + encodedFileName);
+
+            // check the file is an image
+            if (!FileUtils.isImageFile(fileUploadedPath)) {
+                log.info("File is not an image: " + encodedFileName);
+                throw new Exception("File is not an image: " + imageFile.getName());
+            }
+            return encodedFileName;
+        } else {
+            log.info("Can not create new file: " + encodedFileName);
+            throw new Exception("Can not save file: " + imageFile.getName());
+        }
+
+    }
+
+
+
+//    public static void main(String[] args) throws IOException {
+//
+////        Tinify.setKey("L7MczDTDq2NMGwDgHJxcXL76S02JWgv6");
+////
+////        for (int i = 2; i < 10; i++) {
+////            Tinify.fromFile("/home/oem/Documents/" + i + ".png").toFile("/home/oem/Documents/" + (i + 1) + ".png");
+////        }
+//        File file = new File("/home/oem/Downloads/Product Photos/Class 2/R1.25-1.8EX(W)2_C915_R2.00-3.00EX2_B925.jpg");
+//
+//        compressedFile(file, "/home/oem/Downloads/test-compressed-image/1.png", 1f);
+//    }
+
+
+    private  void compressedImage(File input, String des) throws IOException {
+        File fileCompressed = new File(des);
+        BufferedImage bimg = ImageIO.read(input);
+        int width = bimg.getWidth();
+        int height = bimg.getHeight();
+        int maxWidth = 800;
+        int maxHeight = 800;
+
+        if (width >= height) {
+            double rate = width / maxWidth;
+            if (rate > 1) {
+                width = maxWidth;
+                height = (int) (height * (1 / rate));
+            }
+        } else {
+            double rate = height / maxHeight;
+            if (rate > 1) {
+                height = maxHeight;
+                width = (int) (width * (1 / rate));
+            }
+        }
+
+        Thumbnails.of(input)
+                .outputQuality(0.5)
+                .size(width, height)
+                .toFile(fileCompressed);
+
+    }
+
 
     private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName, String screen, String path) {
         String uploadedByEmail = authentication.getName();

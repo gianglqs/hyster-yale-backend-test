@@ -38,7 +38,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
 
     @Query("SELECT p FROM Product p WHERE " +
-            "((:modelCode) IS Null OR p.modelCode = :modelCode )" +
+            "((:modelCode) IS Null OR LOWER(p.modelCode) LIKE LOWER(CONCAT('%', :modelCode, '%')))" +
             " AND ((:plants) IS NULL OR p.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(p.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
@@ -58,7 +58,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     );
 
     @Query("SELECT COUNT(p) FROM Product p WHERE " +
-            "((:modelCode) IS Null OR p.modelCode = :modelCode )" +
+            "((:modelCode) IS Null OR LOWER(p.modelCode) LIKE LOWER(CONCAT('%', :modelCode, '%')))" +
             " AND ((:plants) IS NULL OR p.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(p.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
