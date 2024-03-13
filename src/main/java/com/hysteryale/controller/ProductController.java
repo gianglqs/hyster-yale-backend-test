@@ -1,26 +1,28 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.model.Product;
+import com.hysteryale.model.User;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.repository.UserRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ProductService;
 import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.ModelUtil;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.InvalidPropertiesFormatException;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController()
 @RequestMapping("product")
@@ -31,6 +33,9 @@ public class ProductController {
 
     @Resource
     private FileUploadService fileUploadService;
+
+    @Resource
+    private UserRepository userRepository;
 
 
     @PostMapping("/getData")
@@ -57,15 +62,11 @@ public class ProductController {
 
 
         String savedImageName = null;
-        String saveFilePath = null;
 
         try {
             if (image != null) {
-                String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
                 String targetFolder = EnvironmentUtils.getEnvironmentValue("image-folder.product");
-                String saveImageFolder = baseFolder + targetFolder;
                 savedImageName = fileUploadService.upLoadImage(image, targetFolder, authentication, ModelUtil.PRODUCT);
-                saveFilePath = saveImageFolder + savedImageName;
             }
             productService.updateImageAndDescription(modelCode, series, savedImageName, description);
         } catch (Exception e) {
@@ -87,5 +88,11 @@ public class ProductController {
         productService.importProduct(file, authentication);
 
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));
+    }
+
+    @GetMapping(path = "/uploadImage")
+    public void uploadImage(Authentication authentication) throws Exception {
+
+        productService.uploadImage(authentication);
     }
 }
