@@ -6,8 +6,7 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
 import com.hysteryale.repository.CompetitorColorRepository;
 import com.hysteryale.repository.CompetitorPricingRepository;
-import com.hysteryale.utils.ConvertDataFilterUtil;
-import com.hysteryale.utils.CurrencyFormatUtils;
+import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -54,6 +53,8 @@ public class IndicatorServiceTest {
     CompetitorColorRepository competitorColorRepository;
     @Resource
     AuthenticationManager authenticationManager;
+    @Resource
+    FileUploadService fileUploadService;
 
     FilterModel filters;
     SwotFilters swotFilters;
@@ -295,7 +296,7 @@ public class IndicatorServiceTest {
         double averageDealerNetTotal = 0.0;
 
         for (CompetitorPricing cp : competitorPricingList) {
-            Assertions.assertEquals(expectedClass, cp.getClazz());
+            Assertions.assertEquals(expectedClass, cp.getClazz().getClazzName());
 
             actualTotal += cp.getActual();
             AOPFTotal += cp.getAOPF();
@@ -421,7 +422,7 @@ public class IndicatorServiceTest {
         for (CompetitorPricing cp : competitorPricingList) {
             Assertions.assertEquals(expectedRegion, cp.getCountry().getRegion().getRegionName());
             Assertions.assertEquals(expectedPlant, cp.getPlant());
-            Assertions.assertEquals(expectedClass, cp.getClazz());
+            Assertions.assertEquals(expectedClass, cp.getClazz().getClazzName());
 
             actualTotal += cp.getActual();
             AOPFTotal += cp.getAOPF();
@@ -670,8 +671,10 @@ public class IndicatorServiceTest {
                 fileResource.getInputStream()
         );
 
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         // Assertions
-        Assertions.assertDoesNotThrow(() -> indicatorService.uploadForecastFile(file, authentication));
+        Assertions.assertDoesNotThrow(() -> fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.FORECAST_PRICING));
     }
 
     @Test
@@ -737,7 +740,7 @@ public class IndicatorServiceTest {
        Assertions.assertEquals(competitorName, cp.getCompetitorName());
        Assertions.assertEquals(group, cp.getColor().getGroupName());
        Assertions.assertEquals(region, cp.getCountry().getRegion().getRegionName());
-       Assertions.assertEquals(clazz, cp.getClazz());
+       Assertions.assertEquals(clazz, cp.getClazz().getClazzName());
        Assertions.assertEquals(marketShare, cp.getMarketShare());
        Assertions.assertEquals(price, cp.getCompetitorPricing());
        Assertions.assertEquals(leadTime, cp.getCompetitorLeadTime());

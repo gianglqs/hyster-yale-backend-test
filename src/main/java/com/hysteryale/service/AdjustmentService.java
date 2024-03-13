@@ -149,7 +149,7 @@ public class AdjustmentService extends BasedService {
         }
         if (booking.getProduct() != null) {
             adjustmentPayLoad.setPlant(booking.getProduct().getPlant());
-            adjustmentPayLoad.setClazz(booking.getProduct().getClazz());
+            adjustmentPayLoad.setClazz(booking.getProduct().getClazz().getClazzName());
             adjustmentPayLoad.setModel(booking.getProduct().getModelCode());
             adjustmentPayLoad.setMetaSeries(booking.getProduct().getSeries());
             if (booking.getSeries() != null)

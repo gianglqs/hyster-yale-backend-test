@@ -47,7 +47,7 @@ public interface PartRepository extends JpaRepository<Part, String> {
     @Query("SELECT DISTINCT p FROM Part p WHERE p.partNumber IN ?1 ")
     public Set<Part> getPartsByPartNumbers(List<String> partNumbers, LocalDate date, String series);
 
-    @Query("SELECT AVG(p.netPriceEach) FROM Part p WHERE p.region = ?1 AND p.clazz = ?2 AND p.series = ?3")
+    @Query("SELECT AVG(p.netPriceEach) FROM Part p WHERE p.region = ?1 AND p.clazz.clazzName = ?2 AND p.series = ?3")
     Double getAverageDealerNet(String region, String clazz, String series);
 
     @Query("SELECT p.partNumber FROM Part p WHERE p.orderNumber = ?1 ")

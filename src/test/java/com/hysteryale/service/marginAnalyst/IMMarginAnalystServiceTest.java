@@ -105,7 +105,7 @@ public class IMMarginAnalystServiceTest {
                 typeMap.put((int) row.getCell(columns.get("#")).getNumericCellValue(), 1);
             }
         }
-        Map<String, Object> result = marginAnalystDataService.populateMarginFilters("UUID populate Margin Filters");
+        Map<String, Object> result = marginAnalystDataService.populateMarginFilters("import_files/novo/SN_AUD.xlsx");
         Assertions.assertNotNull(result.get("modelCodes"));
         Assertions.assertNotNull(result.get("series"));
         Assertions.assertNotNull(result.get("orderNumbers"));
@@ -145,7 +145,7 @@ public class IMMarginAnalystServiceTest {
     @Test
     public void testCalculateMarginAnalysisData() throws IOException {
         FileUpload fileUpload = new FileUpload();
-        fileUpload.setFileName("import_files/novo/SN_AUD.xlsx");
+        fileUpload.setFileName("SN_AUD.xlsx");
         fileUpload.setUuid("UUID For Calculating Margin Data");
         fileUploadRepository.save(fileUpload);
         marginAnalystDataService.calculateMarginAnalysisData("UUID For Calculating Margin Data", "AUD");
@@ -188,7 +188,7 @@ public class IMMarginAnalystServiceTest {
         String series = "A3C1";
 
         FileUpload fileUpload = new FileUpload();
-        fileUpload.setFileName("import_files/novo/example 1_HYM.xlsx");
+        fileUpload.setFileName("example 1_HYM.xlsx");
         fileUpload.setUuid(fileUUID);
         fileUploadRepository.save(fileUpload);
         marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency);
@@ -231,7 +231,7 @@ public class IMMarginAnalystServiceTest {
         String series = "A3C1";
 
         FileUpload fileUpload = new FileUpload();
-        fileUpload.setFileName("import_files/novo/example 1_HYM.xlsx");
+        fileUpload.setFileName("example 1_HYM.xlsx");
         fileUpload.setUuid(fileUUID);
         fileUploadRepository.save(fileUpload);
         marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency);

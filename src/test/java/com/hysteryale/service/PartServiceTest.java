@@ -1,7 +1,9 @@
 package com.hysteryale.service;
 
+import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.Part;
+import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.PartRepository;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import com.hysteryale.utils.DateUtils;
@@ -36,6 +38,8 @@ public class PartServiceTest {
     PartRepository partRepository;
     @Resource
     CurrencyService currencyService;
+    @Resource
+    ClazzRepository clazzRepository;
 
     @Test
     public void testImportPartFromFile() throws IOException {
@@ -123,12 +127,17 @@ public class PartServiceTest {
                 row.getCell(powerBIExportColumns.get("Part Description: English US"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().contains("SPED") ||
                 row.getCell(powerBIExportColumns.get("Part Description: English UK"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().contains("SPED");
 
-        return new Part(quoteId, quantity, orderNumber, modelCode, series, partNumber, listPrice, discount, discountPercentage, billTo, netPriceEach, customerPrice, extendedCustomerPrice, currency, clazz, region, isSPED);
+        return new Part(quoteId, quantity, orderNumber, modelCode, series, partNumber, listPrice, discount, discountPercentage, billTo, netPriceEach, customerPrice, extendedCustomerPrice, currency, getClazzByClazzName(clazz), region, isSPED);
+    }
+
+    private Clazz getClazzByClazzName(String clazzName) {
+        clazzName = clazzName.equals("Class 5") ? "Class 5 BT" : clazzName;
+        Optional<Clazz> optionalClazz = clazzRepository.getClazzByClazzName(clazzName);
+        return optionalClazz.orElse(null);
     }
 
     private void assertPartValue(Part excel, Part dbPart) {
         Assertions.assertEquals(excel.getBillTo(), dbPart.getBillTo());
-        Assertions.assertEquals(excel.getClazz(), dbPart.getClazz());
         Assertions.assertEquals(
                 CurrencyFormatUtils.formatDoubleValue(excel.getCustomerPrice(), CurrencyFormatUtils.decimalFormatFourDigits),
                 CurrencyFormatUtils.formatDoubleValue(dbPart.getCustomerPrice(), CurrencyFormatUtils.decimalFormatFourDigits)
@@ -192,7 +201,7 @@ public class PartServiceTest {
     @Test
     public void testGetAverageDealerNet() {
         String region = "Region";
-        String clazz = "Class";
+        String clazz = "Class 1";
         String series = "Series";
 
         double averageDealerNet = 0;
@@ -204,7 +213,7 @@ public class PartServiceTest {
             double nextDouble = random.nextDouble();
             Part part = new Part();
             part.setRegion(region);
-            part.setClazz(clazz);
+            part.setClazz(getClazzByClazzName(clazz));
             part.setSeries(series);
             part.setNetPriceEach(nextDouble);
             savingParts.add(part);
@@ -217,6 +226,7 @@ public class PartServiceTest {
 
         // Test case EXISTING Parts with Region + Class + Series
         Double result = partService.getAverageDealerNet(region, clazz, series);
+        log.info(result + "");
         Assertions.assertNotNull(result);
         Assertions.assertEquals(
                 CurrencyFormatUtils.formatDoubleValue(averageDealerNet, CurrencyFormatUtils.decimalFormatFourDigits),

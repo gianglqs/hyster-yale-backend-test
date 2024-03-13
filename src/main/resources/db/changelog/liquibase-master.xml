@@ -8,5 +8,7 @@
     <include file="classpath:db/changelog/liquibase-modify-table-shipment.xml" relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/liquibase-modify-table-file_upload.xml" relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/liquibase-adjust-region.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/liquibase-refactor-class-value.xml" relativeToChangelogFile="false"/>
+
 
 </databaseChangeLog>

@@ -187,7 +187,7 @@ public class ExchangeRateServiceTest {
                 () -> exchangeRateService.importExchangeRateFromFile(file1, authentication)
         );
         Assertions.assertEquals(400, exception1.getStatus().value());
-        Assertions.assertEquals("File is not an Excel file", exception1.getReason());
+        Assertions.assertEquals("Uploaded file is not an Excel file", exception1.getReason());
 
 
         // Test case: Uploaded file's name is not in appropriate format

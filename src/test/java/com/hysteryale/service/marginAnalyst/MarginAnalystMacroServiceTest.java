@@ -1,10 +1,12 @@
 package com.hysteryale.service.marginAnalyst;
 
+import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Region;
 import com.hysteryale.model.marginAnalyst.Freight;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.model.marginAnalyst.TargetMargin;
 import com.hysteryale.model.marginAnalyst.Warranty;
+import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.marginAnalyst.FreightRepository;
 import com.hysteryale.repository.marginAnalyst.MarginAnalystMacroRepository;
 import com.hysteryale.repository.marginAnalyst.TargetMarginRepository;
@@ -46,6 +48,8 @@ public class MarginAnalystMacroServiceTest {
     TargetMarginRepository targetMarginRepository;
     @Resource
     MarginAnalystMacroRepository marginAnalystMacroRepository;
+    @Resource
+    ClazzRepository clazzRepository;
     HashMap<String, String> MACRO_COLUMNS = new HashMap<>();
 
     @Test
@@ -164,12 +168,15 @@ public class MarginAnalystMacroServiceTest {
 
     @Test
     public void testGetWarranty() {
-        String clazz = "Class Test";
+        String clazz = "Class 1";
         LocalDate monthYear = LocalDate.of(2024, Month.JANUARY, 1);
         double expectedWarranty = 123;
 
+        Optional<Clazz> optional = clazzRepository.getClazzByClazzName(clazz);
+        Assertions.assertTrue(optional.isPresent());
+
         // Test case Warranty is existed
-        warrantyRepository.save(new Warranty(clazz, monthYear, expectedWarranty));
+        warrantyRepository.save(new Warranty(optional.get(), monthYear, expectedWarranty));
         double result = marginAnalystMacroService.getWarrantyValue(clazz, monthYear);
         Assertions.assertEquals(expectedWarranty, result);
 

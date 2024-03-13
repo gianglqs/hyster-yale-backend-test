@@ -64,9 +64,8 @@ public class ImportService extends BasedService {
 
     @Resource
     DealerRepository dealerRepository;
-
     @Resource
-    RegionRepository regionRepository;
+    ClazzRepository clazzRepository;
 
     @Resource
     AOPMarginRepository aopMarginRepository;
@@ -149,7 +148,11 @@ public class ImportService extends BasedService {
 
         boolean isChineseBrand = competitorName.contains("Heli") || competitorName.contains("HeLi") || competitorName.contains("Hangcha") || competitorName.contains("Hang Cha");
         Cell cellClass = row.getCell(ORDER_COLUMNS_NAME.get("Class"));
-        String clazz = cellClass.getStringCellValue();
+        String strClazz = cellClass.getStringCellValue();
+        Optional<Clazz> optionalClazz = clazzRepository.getClazzByClazzName(strClazz.equals("Class 5 non BT") ? "Class 5 NOT BT" : strClazz);
+        if(optionalClazz.isEmpty())
+            return competitorPricingList;
+        Clazz clazz = optionalClazz.get();
 
         Double leadTime = null;
         Cell cellLeadTime = row.getCell(ORDER_COLUMNS_NAME.get("Lead Time"));
@@ -207,7 +210,7 @@ public class ImportService extends BasedService {
                 cp1.setCountry(country);
                 cp1.setClazz(clazz);
                 cp1.setCompetitorLeadTime(leadTime);
-                cp1.setDealerNet(partService.getAverageDealerNet(strRegion, clazz, series));
+                cp1.setDealerNet(partService.getAverageDealerNet(strRegion, clazz.getClazzName(), series));
                 cp1.setChineseBrand(isChineseBrand);
 
                 cp1.setCompetitorPricing(competitorPricing);

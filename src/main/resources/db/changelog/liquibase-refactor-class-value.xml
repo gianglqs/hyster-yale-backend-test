@@ -1,0 +1,87 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="create-table-class" author="hoangnhan">
+        <createTable tableName="clazz">
+            <column name="clazz_name" type="VARCHAR(255)"/>
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="clazz_primary_key_contraint"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="hoangnhan" id="create-clazz-sequence">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="clazz_seq" startValue="7"/>
+    </changeSet>
+
+    <changeSet id="add-value-for-clazz" author="hoangnhan">
+        <sql>
+            INSERT INTO clazz (id, clazz_name)
+            VALUES
+            (1, 'Class 1'),
+            (2, 'Class 2'),
+            (3, 'Class 3'),
+            (4, 'Class 4'),
+            (5, 'Class 5 BT'),
+            (6, 'Class 5 NOT BT')
+        </sql>
+    </changeSet>
+
+    <changeSet id="refactor-clazz-in-warranty" author="hoangnhan">
+        <sql>
+            UPDATE warranty
+            SET clazz = (SELECT id FROM clazz c WHERE c.clazz_name = clazz);
+        </sql>
+        <modifyDataType tableName="warranty" columnName="clazz" newDataType="int"/>
+        <renameColumn tableName="warranty" oldColumnName="clazz" newColumnName="clazz_id"/>
+    </changeSet>
+
+    <changeSet id="refactor-clazz-in-competitor-pricing" author="hoangnhan">
+        <sql>
+            UPDATE competitor_pricing
+            SET clazz = 'Class 5 NOT BT'
+            WHERE clazz = 'Class 5 non BT';
+
+            UPDATE competitor_pricing
+            SET clazz = (SELECT id FROM clazz c WHERE c.clazz_name = clazz);
+        </sql>
+        <modifyDataType tableName="competitor_pricing" columnName="clazz" newDataType="int"/>
+        <renameColumn tableName="competitor_pricing" oldColumnName="clazz" newColumnName="clazz_id"/>
+    </changeSet>
+
+    <changeSet id="refactor-clazz-in-part" author="hoangnhan">
+        <sql>
+            UPDATE part
+            SET clazz = (SELECT id FROM clazz c WHERE c.clazz_name = clazz);
+        </sql>
+        <modifyDataType tableName="part" columnName="clazz" newDataType="int"/>
+        <renameColumn tableName="part" oldColumnName="clazz" newColumnName="clazz_id"/>
+    </changeSet>
+
+    <changeSet id="update-class-5-value-in-part" author="hoangnhan">
+        <sql>
+            UPDATE part
+            SET clazz_id = 5
+            WHERE clazz_id IS NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet id="add-a-null-value-clazz" author="hoangnhan">
+        <sql>
+            INSERT INTO clazz (id, clazz_name)
+            VALUES
+            (7, '');
+        </sql>
+    </changeSet>
+
+    <changeSet id="refactor-clazz-in-product" author="hoangnhan">
+        <sql>
+            UPDATE product
+            SET clazz = (SELECT id FROM clazz c WHERE c.clazz_name = clazz);
+        </sql>
+        <modifyDataType tableName="product" columnName="clazz" newDataType="int"/>
+        <renameColumn tableName="product" oldColumnName="clazz" newColumnName="clazz_id"/>
+    </changeSet>
+
+</databaseChangeLog>
