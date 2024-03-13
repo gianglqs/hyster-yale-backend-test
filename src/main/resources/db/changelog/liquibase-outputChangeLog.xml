@@ -401,6 +401,12 @@
     <changeSet id="change-target-margin-region-dtype" author="hoangnhan">
         <modifyDataType tableName="target_margin" columnName="region_id" newDataType="int"/>
     </changeSet>
+
+    <changeSet id="update-locale-value" author="hoangnhan">
+        <sql>
+            UPDATE "user" SET default_locale = 'en' WHERE default_locale = 'us'
+        </sql>
+    </changeSet>
     
 
 </databaseChangeLog>
