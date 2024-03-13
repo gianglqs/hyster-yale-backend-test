@@ -73,17 +73,17 @@
         </sql>
     </changeSet>
 
-    <changeSet id="upload-new-data-product" author="songiang">
-        <loadUpdateData
-                encoding="UTF-8"
-                file="classpath:db/database/product.csv"
-                onlyUpdate="false"
-                primaryKey="id"
-                quotchar="'"
-                separator=","
-                tableName="product">
-        </loadUpdateData>
-    </changeSet>
+<!--    <changeSet id="upload-new-data-product" author="songiang">-->
+<!--        <loadUpdateData-->
+<!--                encoding="UTF-8"-->
+<!--                file="classpath:db/database/product.csv"-->
+<!--                onlyUpdate="false"-->
+<!--                primaryKey="id"-->
+<!--                quotchar="'"-->
+<!--                separator=","-->
+<!--                tableName="product">-->
+<!--        </loadUpdateData>-->
+<!--    </changeSet>-->
 
     <changeSet id="update-data-product-in-booking-2" author="songiang">
         <sql>

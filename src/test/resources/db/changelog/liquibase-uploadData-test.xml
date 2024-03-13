@@ -32,6 +32,13 @@
         </loadUpdateData>
 
         <loadUpdateData
+                file="classpath:db/database/clazz.csv"
+                primaryKey="id"
+                quotchar="'"
+                tableName="clazz">
+        </loadUpdateData>
+
+        <loadUpdateData
                 file="classpath:db/database/region.csv"
                 primaryKey="id"
                 quotchar="'"

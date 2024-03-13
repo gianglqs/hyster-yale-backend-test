@@ -12,10 +12,10 @@ import java.util.Optional;
 
 public interface CompetitorPricingRepository extends JpaRepository<CompetitorPricing, Integer> {
 
-    @Query("SELECT c.country.countryName, c.clazz, c.category, c.series FROM CompetitorPricing c GROUP BY c.country.countryName, c.clazz, c.category, c.series")
+    @Query("SELECT c.country.countryName, c.clazz.clazzName, c.category, c.series FROM CompetitorPricing c GROUP BY c.country.countryName, c.clazz.clazzName, c.category, c.series")
     List<String[]> getCompetitorGroup();
 
-    @Query("SELECT c FROM CompetitorPricing c WHERE c.country.countryName = ?1 AND c.clazz = ?2 AND c.category = ?3 AND c.series = ?4")
+    @Query("SELECT c FROM CompetitorPricing c WHERE c.country.countryName = ?1 AND c.clazz.clazzName = ?2 AND c.category = ?3 AND c.series = ?4")
     List<CompetitorPricing> getListOfCompetitorInGroup(String country, String clazz, String category, String series);
 
     @Query("SELECT new com.hysteryale.model.competitor.CompetitorPricing(c.country.region.regionName, SUM(c.actual), SUM(c.AOPF), SUM(c.LRFF))" +
@@ -24,7 +24,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
             " AND ((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR c.clazz.clazzName IN (:classes))" +
             " AND ((:models) IS NULL OR c.model IN (:models))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
             "   (:comparator = '<=' AND c.dealerPricingPremiumPercentage <= :marginPercentageAfterSurCharge) OR" +
@@ -49,7 +49,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
             " AND ((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR c.clazz.clazzName IN (:classes))" +
             " AND ((:models) IS NULL OR c.model IN (:models))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
             "   (:comparator = '<=' AND c.dealerPricingPremiumPercentage <= :marginPercentageAfterSurCharge) OR" +
@@ -72,7 +72,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
             "((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR c.clazz.clazzName IN (:classes))" +
             " AND ((:models) IS NULL OR c.model IN (:models))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
             "   (:comparator = '<=' AND c.dealerPricingPremiumPercentage <= :marginPercentageAfterSurCharge) OR" +
@@ -99,7 +99,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
             "((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR c.clazz.clazzName IN (:classes))" +
             " AND ((:models) IS NULL OR c.model IN (:models))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
             "   (:comparator = '<=' AND c.dealerPricingPremiumPercentage <= :marginPercentageAfterSurCharge) OR" +
@@ -121,7 +121,7 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
             "((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR c.clazz.clazzName IN (:classes))" +
             " AND ((:models) IS NULL OR c.model IN (:models))" +
             " AND ((:marginPercentageAfterSurCharge) IS NULL OR " +
             "   (:comparator = '<=' AND c.dealerPricingPremiumPercentage <= :marginPercentageAfterSurCharge) OR" +
@@ -149,14 +149,14 @@ public interface CompetitorPricingRepository extends JpaRepository<CompetitorPri
     @Query("SELECT new CompetitorPricing (AVG(c.competitorLeadTime), AVG(c.competitorPricing), AVG(c.marketShare), c.color) FROM CompetitorPricing c " +
             "WHERE ((:regions) IS NULL OR c.country.region.regionName IN (:regions)) " +
             "AND ((:countries) IS NULL OR c.country.countryName IN (:countries)) " +
-            "AND ((:classes) IS NULL OR c.clazz IN (:classes)) " +
+            "AND ((:classes) IS NULL OR c.clazz.clazzName IN (:classes)) " +
             "AND ((:category) IS NULL OR c.category IN (:category)) " +
             "AND ((:series) IS NULL OR c.series IN (:series)) GROUP BY c.color ORDER BY AVG(c.marketShare)")
     List<CompetitorPricing> getDataForBubbleChart(@Param("regions") List<String> regions, @Param("countries") List<String> countries,
                                                   @Param("classes") List<String> classes, @Param("category") List<String> categories,
                                                   @Param("series") List<String> series);
 
-    @Query("SELECT c FROM CompetitorPricing c WHERE c.country.countryName = ?1 AND c.clazz = ?2 AND c.category = ?3 AND " +
+    @Query("SELECT c FROM CompetitorPricing c WHERE c.country.countryName = ?1 AND c.clazz.clazzName = ?2 AND c.category = ?3 AND " +
             "c.series = ?4 AND c.competitorName = ?5 AND c.model = ?6")
     Optional<CompetitorPricing> getCompetitorPricing(String country, String clazz, String category,
                                                      String series, String competitorName, String model);

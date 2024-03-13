@@ -187,7 +187,7 @@ public class ExchangeRateServiceTest {
                 () -> exchangeRateService.importExchangeRateFromFile(file1, authentication)
         );
         Assertions.assertEquals(400, exception1.getStatus().value());
-        Assertions.assertEquals("File is not an Excel file", exception1.getReason());
+        Assertions.assertEquals("Uploaded file is not an Excel file", exception1.getReason());
 
 
         // Test case: Uploaded file's name is not in appropriate format
@@ -229,8 +229,11 @@ public class ExchangeRateServiceTest {
         CompareCurrencyRequest request = new CompareCurrencyRequest(
                 "EUR",
                 List.of(currency1, currency2, currency3),
-                false
+                false,
+                "",
+                ""
         );
+        int limit = request.getFromDate().isEmpty() || request.getToDate().isEmpty() ? 12 : 60;
         Map<String, Object> result = exchangeRateService.compareCurrency(request);
         Assertions.assertNotNull(result.get(currency1));
         Assertions.assertNotNull(result.get(currency2));
@@ -244,7 +247,11 @@ public class ExchangeRateServiceTest {
         int strongerCurrencies = 0;
 
         for(String currency : request.getComparisonCurrencies()) {
-            List<ExchangeRate> exchangeRateList = exchangeRateRepository.getCurrentExchangeRate(request.getCurrentCurrency(), currency);
+            List<ExchangeRate> exchangeRateList = exchangeRateRepository.getCurrentExchangeRate(
+                    request.getCurrentCurrency(), currency,
+                    parseDateFromRequest(request.getFromDate()), parseDateFromRequest(request.getToDate()),
+                    limit
+            );
 
             if(exchangeRateList.isEmpty())
                 continue;
@@ -263,6 +270,16 @@ public class ExchangeRateServiceTest {
         Assertions.assertEquals(stableCurrencies, ((List<String>) result.get("stable")).size());
         Assertions.assertEquals(weakerCurrencies, ((List<String>) result.get("weakening")).size());
         Assertions.assertEquals(strongerCurrencies, ((List<String>) result.get("strengthening")).size());
+    }
+
+    private LocalDate parseDateFromRequest(String dateFromRequest) {
+        Pattern pattern = Pattern.compile("(\\d{4})-(\\d{2})");
+        Matcher matcher = pattern.matcher(dateFromRequest);
+        if(matcher.find()) {
+            int year = Integer.parseInt(matcher.group(1));
+            int month = Integer.parseInt(matcher.group(2));
+            return LocalDate.of(year, month, 1);
+        } else return null;
     }
 
 

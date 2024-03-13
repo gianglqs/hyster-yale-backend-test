@@ -1,10 +1,11 @@
 package com.hysteryale.service;
 
+import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.Part;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.PartRepository;
-import com.hysteryale.response.ResponseObject;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.DateUtils;
 import com.hysteryale.utils.EnvironmentUtils;
@@ -17,7 +18,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -38,6 +38,8 @@ public class PartService extends BasedService {
     PartRepository partRepository;
     @Resource
     CurrencyService currencyService;
+    @Resource
+    ClazzRepository clazzRepository;
 
     private static final HashMap<String, Integer> powerBIExportColumns = new HashMap<>();
 
@@ -46,6 +48,12 @@ public class PartService extends BasedService {
             String columnsName = cell.getStringCellValue();
             powerBIExportColumns.put(columnsName, cell.getColumnIndex());
         }
+    }
+
+    private Clazz getClazzByClazzName(String clazzName) {
+        clazzName = clazzName.equals("Class 5") ? "Class 5 BT" : clazzName;
+        Optional<Clazz> optionalClazz = clazzRepository.getClazzByClazzName(clazzName);
+        return optionalClazz.orElse(null);
     }
 
     public Part mapExcelDataToPart(Row row) {
@@ -100,7 +108,7 @@ public class PartService extends BasedService {
 
         //optionType, orderBookedDate, orderRequestDate
 
-        return new Part(quoteId, quantity, orderNumber, modelCode, series, partNumber, listPrice, discount, discountPercentage, billTo, netPriceEach, customerPrice, extendedCustomerPrice, currency, clazz, region, isSPED);
+        return new Part(quoteId, quantity, orderNumber, modelCode, series, partNumber, listPrice, discount, discountPercentage, billTo, netPriceEach, customerPrice, extendedCustomerPrice, currency, getClazzByClazzName(clazz), region, isSPED);
     }
 
     /**

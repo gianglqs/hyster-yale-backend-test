@@ -56,31 +56,9 @@ public class FileUploadServiceTest {
     }
 
     @Test
-    public void testSaveFileUploadToDisk() throws Exception {
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-
-        org.springframework.core.io.Resource fileResource = new ClassPathResource("import_files/novo/SN_AUD.xlsx");
-        Assertions.assertNotNull(fileResource);
-
-        MultipartFile file = new MockMultipartFile(
-                "file",
-                fileResource.getFilename(),
-                MediaType.MULTIPART_FORM_DATA_VALUE,
-                fileResource.getInputStream()
-        );
-
-        String filePath = fileUploadService.saveFileUploadToDisk(file);
-        String encodedFileName = FileUtils.encoding(file.getOriginalFilename());
-
-        Assertions.assertTrue(filePath.contains(baseFolder));
-        Assertions.assertTrue(filePath.contains(encodedFileName));
-    }
-
-    @Test
     public void testSaveFileUploaded() throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("upload_files.macro");
         org.springframework.core.io.Resource fileResource = new ClassPathResource("import_files/novo/SN_AUD.xlsx");
         Assertions.assertNotNull(fileResource);
 

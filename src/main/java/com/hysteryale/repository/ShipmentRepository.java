@@ -15,11 +15,11 @@ import java.util.Optional;
 public interface ShipmentRepository extends JpaRepository<Shipment, String> {
 
     @Query("SELECT c FROM Shipment c WHERE " +
-            "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
+            "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
             " AND ((:regions) IS Null OR c.region IS NULL OR COALESCE(c.region.regionName, NULL) IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.product.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR c.product.clazz.clazzName IN (:classes))" +
             " AND ((:models) IS NULL OR c.product.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
@@ -53,11 +53,11 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
 
 
     @Query("SELECT COUNT(c) FROM Shipment c WHERE " +
-            "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
+            "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.product.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR c.product.clazz.clazzName IN (:classes))" +
             " AND ((:models) IS NULL OR c.product.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
@@ -98,7 +98,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR b.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR b.product.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR b.product.clazz.clazzName IN (:classes))" +
             " AND ((:models) IS NULL OR b.product.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR b.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR b.dealer.name IN (:dealerName)) " +
@@ -124,7 +124,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR b.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR b.product.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR b.product.clazz.clazzName IN (:classes))" +
             " AND ((:models) IS NULL OR b.product.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR b.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR b.dealer.name IN (:dealerName)) " +
@@ -145,11 +145,11 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             @Param("year") int year);
 
     @Query("SELECT new Shipment(c.orderNo, c.currency, c.dealerNet, c.dealerNetAfterSurcharge, c.totalCost, c.netRevenue, c.bookingDealerNetAfterSurcharge, c.bookingMarginAfterSurcharge) FROM Shipment c WHERE " +
-            "((:orderNo) IS Null OR c.orderNo = :orderNo )" +
+            "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
             " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR c.product.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR c.product.clazz.clazzName IN (:classes))" +
             " AND ((:models) IS NULL OR c.product.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +

@@ -20,10 +20,15 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Inte
     @Query(value = "SELECT * from exchange_rate e " +
             "WHERE e.from_currency = :from_currency " +
             "AND e.to_currency = :to_currency " +
+            "AND (cast(:to_date as date) IS NULL OR e.date <= (:to_date)) " +
+            "AND (cast(:from_date as date) IS NULL OR e.date >= (:from_date)) " +
             "ORDER BY e.date DESC " +
-            "LIMIT 12 ", nativeQuery = true)
-    List<ExchangeRate> getCurrentExchangeRate(@Param("from_currency") String fromCurrency, @Param("to_currency") String toCurrency);
+            "LIMIT :limit", nativeQuery = true)
+    List<ExchangeRate> getCurrentExchangeRate(@Param("from_currency") String fromCurrency, @Param("to_currency") String toCurrency,
+                                              @Param("from_date") LocalDate fromDate, @Param("to_date") LocalDate toDate, @Param("limit") int limit);
 
     @Query(value = "SELECT m.latest_modified_at FROM booking m WHERE m.latest_modified_at is not null ORDER BY m.latest_modified_at DESC LIMIT 1", nativeQuery = true)
     Optional<LocalDateTime> getLatestUpdatedTime();
+
+
 }

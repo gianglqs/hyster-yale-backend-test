@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="refactor-region-in-table" author="hoangnhan">
+        <sql>
+            UPDATE target_margin
+            SET region_id = 4 WHERE region_id = 6;
+
+            UPDATE target_margin
+            SET region_id = 2 WHERE region_id = 7;
+
+            UPDATE aopmargin
+            SET region = 4 WHERE region = 6;
+
+            UPDATE aopmargin
+            SET region = 2 WHERE region = 7;
+        </sql>
+    </changeSet>
+
+    <changeSet id="delete-duplicate-regions" author="hoangnhan">
+        <sql>
+            DELETE FROM region WHERE id = 6 or id = 7;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
