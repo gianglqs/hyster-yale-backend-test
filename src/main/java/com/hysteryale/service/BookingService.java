@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.BlankSheetException;
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Currency;
@@ -268,7 +269,7 @@ public class BookingService extends BasedService {
     /**
      * new
      */
-    public void importOrder() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException {
+    public void importOrder() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException, BlankSheetException {
 
         // Folder contains Excel file of Booking Order
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
@@ -314,7 +315,7 @@ public class BookingService extends BasedService {
         }
     }
 
-    private void importNewBookingFileByFile(String filePath, InputStream isListCostData) throws IOException, MissingColumnException, MissingSheetException {
+    private void importNewBookingFileByFile(String filePath, InputStream isListCostData) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         List<Booking> bookingList = new LinkedList<>();
@@ -369,7 +370,7 @@ public class BookingService extends BasedService {
 
     }
 
-    public void importNewBookingFileByFile(String filePath) throws IOException, MissingColumnException, MissingSheetException {
+    public void importNewBookingFileByFile(String filePath) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
 
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
@@ -382,6 +383,8 @@ public class BookingService extends BasedService {
         if (orderSheet == null)
             throw new MissingSheetException("Missing sheet '" + sheetName + "'");
 
+        if (orderSheet.getLastRowNum() <= 0)
+            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
 
         // prepare data for import
         List<Product> products = productRepository.findAll();
@@ -567,7 +570,7 @@ public class BookingService extends BasedService {
         return null;
     }
 
-    private List<CostDataFile> getListCostDataByMonthAndYear(InputStream is) throws IOException, MissingColumnException, MissingSheetException {
+    private List<CostDataFile> getListCostDataByMonthAndYear(InputStream is) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         List<CostDataFile> result = new ArrayList<>();
 
         XSSFWorkbook workbook = new XSSFWorkbook(is);
@@ -577,6 +580,9 @@ public class BookingService extends BasedService {
         Sheet sheet = workbook.getSheet(sheetName);
         if (sheet == null)
             throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+
+        if (sheet.getLastRowNum() <= 0)
+            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
 
         HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
         for (Row row : sheet) {
@@ -659,7 +665,7 @@ public class BookingService extends BasedService {
         return result;
     }
 
-    public void importCostData(String filePath) throws IOException, MissingColumnException, MissingSheetException {
+    public void importCostData(String filePath) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         InputStream is = new FileInputStream(filePath);
         List<CostDataFile> costDataList = getListCostDataByMonthAndYear(is);
         List<String> listOrderNo = new ArrayList<>();

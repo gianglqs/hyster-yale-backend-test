@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.BlankSheetException;
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Clazz;
@@ -392,13 +393,16 @@ public class ProductService extends BasedService {
     }
 
     // brand, segment, family, truckType
-    private void importDimensionProduct(String pathFile) throws IOException, MissingColumnException, MissingSheetException {
+    private void importDimensionProduct(String pathFile) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         String sheetName = CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_SHEET;
         Sheet sheet = workbook.getSheet(sheetName);
         if (sheet == null)
             throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+
+        if (sheet.getLastRowNum() <= 0)
+            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
 
         Set<Product> listDimensionProduct = new HashSet<>();
 
@@ -415,7 +419,7 @@ public class ProductService extends BasedService {
     }
 
 
-    private void importBaseProduct(String pathFile) throws IOException, MissingColumnException, MissingSheetException {
+    private void importBaseProduct(String pathFile) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
@@ -423,6 +427,9 @@ public class ProductService extends BasedService {
         Sheet sheet = workbook.getSheet(sheetName);
         if (sheet == null)
             throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+
+        if (sheet.getLastRowNum() <= 0)
+            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
 
         Set<Product> listProduct = new HashSet<>();
 
