@@ -88,6 +88,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/web-scraping/scrape-data").permitAll()
                 .antMatchers("/uploadFiles/**").permitAll()
                 .antMatchers("/product/uploadImage").permitAll()
+                .antMatchers("/fileUpload/updateColumnSize").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/author/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/users/resetPassword").permitAll()
                 // Our private endpoints

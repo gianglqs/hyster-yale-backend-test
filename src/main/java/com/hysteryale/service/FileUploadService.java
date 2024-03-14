@@ -187,7 +187,6 @@ public class FileUploadService {
     }
 
 
-
 //    public static void main(String[] args) throws IOException {
 //
 ////        Tinify.setKey("L7MczDTDq2NMGwDgHJxcXL76S02JWgv6");
@@ -201,7 +200,7 @@ public class FileUploadService {
 //    }
 
 
-    private  void compressedImage(File input, String des) throws IOException {
+    private void compressedImage(File input, String des) throws IOException {
         File fileCompressed = new File(des);
         BufferedImage bimg = ImageIO.read(input);
         int width = bimg.getWidth();
@@ -342,4 +341,19 @@ public class FileUploadService {
     }
 
 
+    public void updateColumnSize() {
+        List<FileUpload> fileUploads = fileUploadRepository.findAll();
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+
+        for (FileUpload fileUpload : fileUploads) {
+            if (fileUpload.getPath() == null)
+                continue;
+            String filePath = baseFolder + fileUpload.getPath();
+            File file = new File(filePath);
+            if (!file.exists())
+                continue;
+            fileUpload.setSize(file.length());
+        }
+        fileUploadRepository.saveAll(fileUploads);
+    }
 }
