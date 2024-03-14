@@ -78,7 +78,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importOrder")
-    void importOrder() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException {
+    void importOrder() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException, BlankSheetException {
         bookingService.importOrder();
     }
 
