@@ -1,6 +1,7 @@
 package com.hysteryale.service;
 
 import com.hysteryale.exception.MissingColumnException;
+import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
@@ -51,48 +52,28 @@ public class ProductService extends BasedService {
         }
     }
 
-    public Product mapExcelSheetToProductDimension(Row row) throws MissingColumnException {
+    public Product mapExcelSheetToProductDimension(Row row) {
         Product product = new Product();
 
         // metaseries
-        if (row.getCell(COLUMNS.get("Metaseries")) != null) {
-            String metaSeries = row.getCell(COLUMNS.get("Metaseries")).getStringCellValue();
-            product.setSeries(metaSeries);
-        } else {
-            throw new MissingColumnException("Not found column 'Metaseries'");
-        }
+        String metaSeries = row.getCell(COLUMNS.get("Metaseries")).getStringCellValue();
+        product.setSeries(metaSeries);
 
         // modelCode
-        if (row.getCell(COLUMNS.get("Model")) != null) {
-            String modelCode = row.getCell(COLUMNS.get("Model")).getStringCellValue();
-            product.setModelCode(modelCode);
-        } else {
-            throw new MissingColumnException("Not found column 'Model'");
-        }
+        String modelCode = row.getCell(COLUMNS.get("Model")).getStringCellValue();
+        product.setModelCode(modelCode);
 
         //Segment
-        if (row.getCell(COLUMNS.get("Segment")) != null) {
-            String segment = row.getCell(COLUMNS.get("Segment")).getStringCellValue();
-            product.setSegment(segment);
-        } else {
-            throw new MissingColumnException("Not found column 'Segment'");
-        }
+        String segment = row.getCell(COLUMNS.get("Segment")).getStringCellValue();
+        product.setSegment(segment);
 
         // family
-        if (row.getCell(COLUMNS.get("Family_Name")) != null) {
-            String family = row.getCell(COLUMNS.get("Family_Name")).getStringCellValue();
-            product.setFamily(family);
-        } else {
-            throw new MissingColumnException("Not found column 'Family_Name'");
-        }
+        String family = row.getCell(COLUMNS.get("Family_Name")).getStringCellValue();
+        product.setFamily(family);
 
         // truckType
-        if (row.getCell(COLUMNS.get("Truck_Type")) != null) {
-            String truckType = row.getCell(COLUMNS.get("Truck_Type")).getStringCellValue();
-            product.setTruckType(truckType);
-        } else {
-            throw new MissingColumnException("Not found column 'Truck_Type'");
-        }
+        String truckType = row.getCell(COLUMNS.get("Truck_Type")).getStringCellValue();
+        product.setTruckType(truckType);
 
         return product;
     }
@@ -120,11 +101,11 @@ public class ProductService extends BasedService {
 
     private void importProduct(Sheet sheet) throws MissingColumnException {
         for (Row row : sheet) {
-            if (row.getRowNum() == 1)
+            if (row.getRowNum() == 1) {
                 assignColumnNames(row);
-            else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_COLUMN);
+            } else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 2) {
-
                 Product newProduct = mapExcelSheetToProductDimension(row);
                 if (!checkExist(newProduct))
                     productRepository.save(newProduct);
@@ -318,40 +299,21 @@ public class ProductService extends BasedService {
         return optionalClazz.orElse(null);
     }
 
-    public List<Product> mappedFromAPACFile(Row row) throws MissingColumnException {
+    public List<Product> mappedFromAPACFile(Row row) {
         List<Product> listProduct = new ArrayList<>();
 
-        String plant;
-        if (row.getCell(COLUMNS.get("Plant")) != null) {
-            plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
-        } else {
-            throw new MissingColumnException("Not found column 'Plant'");
-        }
+        String plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
 
-        Clazz clazz;
-        if (row.getCell(COLUMNS.get("Class")) != null) {
-            String strClazz = row.getCell(COLUMNS.get("Class")).getStringCellValue();
-            clazz = getClazzByClazzName(strClazz);
-        } else {
-            throw new MissingColumnException("Not found column 'Class'");
-        }
+        String strClazz = row.getCell(COLUMNS.get("Class")).getStringCellValue();
+        Clazz clazz = getClazzByClazzName(strClazz);
 
         // Hyster
         Product hysterProduct = new Product();
         Cell hysterSeriesCell;
-        if (row.getCell(COLUMNS.get("Hyster")) != null) {
-            hysterSeriesCell = row.getCell(COLUMNS.get("Hyster"));
-        } else {
-            throw new MissingColumnException("Not found column 'Hyster'");
-        }
+        hysterSeriesCell = row.getCell(COLUMNS.get("Hyster"));
 
         Cell hysterModelCell;
-        if (row.getCell(COLUMNS.get("Model")) != null) {
-            hysterModelCell = row.getCell(COLUMNS.get("Model"));
-        } else {
-            throw new MissingColumnException("Not found column 'Model' of Hyster");
-        }
-
+        hysterModelCell = row.getCell(COLUMNS.get("Model"));
 
         if (hysterSeriesCell.getCellType() == CellType.STRING && hysterModelCell.getCellType() == CellType.STRING) {
             String hysterSeries = hysterSeriesCell.getStringCellValue();
@@ -369,24 +331,13 @@ public class ProductService extends BasedService {
 
         // Yale
         Product yaleProduct = new Product();
-        Cell yaleSeriesCell;
-        if (row.getCell(COLUMNS.get("Yale")) != null) {
-            yaleSeriesCell = row.getCell(COLUMNS.get("Yale"));
-        } else {
-            throw new MissingColumnException("Not found column 'Yale'");
-        }
+        Cell yaleSeriesCell = row.getCell(COLUMNS.get("Yale"));
 
-        Cell yaleModelCell;
-        if (row.getCell(COLUMNS.get("Model_Y")) != null) {
-            yaleModelCell = row.getCell(COLUMNS.get("Model_Y"));
-        } else {
-            throw new MissingColumnException("Not found column 'Model' of Yale");
-        }
+        Cell yaleModelCell = row.getCell(COLUMNS.get("Model_Y"));
 
         if (yaleSeriesCell.getCellType() == CellType.STRING && yaleModelCell.getCellType() == CellType.STRING) {
             String yaleSeries = yaleSeriesCell.getStringCellValue();
             String yaleModel = getValidModelCodeFromModelCell(yaleModelCell);
-
 
             if (!yaleModel.equals("NA") && !yaleSeries.equals("NA")) {
                 yaleProduct.setModelCode(yaleModel);
@@ -397,7 +348,6 @@ public class ProductService extends BasedService {
                 listProduct.add(yaleProduct);
             }
         }
-
 
         return listProduct;
     }
@@ -442,17 +392,21 @@ public class ProductService extends BasedService {
     }
 
     // brand, segment, family, truckType
-    private void importDimensionProduct(String pathFile) throws IOException, MissingColumnException {
+    private void importDimensionProduct(String pathFile) throws IOException, MissingColumnException, MissingSheetException {
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
+        String sheetName = CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_SHEET;
+        Sheet sheet = workbook.getSheet(sheetName);
+        if (sheet == null)
+            throw new MissingSheetException("Missing sheet '" + sheetName + "'");
 
-        Sheet sheet = workbook.getSheet("Data");
         Set<Product> listDimensionProduct = new HashSet<>();
 
         for (Row row : sheet) {
-            if (row.getRowNum() == 1)
+            if (row.getRowNum() == 1) {
                 assignColumnNames(row);
-            else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_COLUMN);
+            } else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 2) {
                 listDimensionProduct.add(mapExcelSheetToProductDimension(row));
             }
@@ -461,17 +415,22 @@ public class ProductService extends BasedService {
     }
 
 
-    private void importBaseProduct(String pathFile) throws IOException, MissingColumnException {
+    private void importBaseProduct(String pathFile) throws IOException, MissingColumnException, MissingSheetException {
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
-        Sheet sheet = workbook.getSheet("Master Summary");
+        String sheetName = CheckRequiredColumnUtils.PRODUCT_APAC_SERIAL_REQUIRED_SHEET;
+        Sheet sheet = workbook.getSheet(sheetName);
+        if (sheet == null)
+            throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+
         Set<Product> listProduct = new HashSet<>();
 
         for (Row row : sheet) {
-            if (row.getRowNum() == 0)
+            if (row.getRowNum() == 0) {
                 assignColumnNames(row);
-            else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_APAC_SERIAL_COLUMN);
+            } else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 1) {
                 listProduct.addAll(mappedFromAPACFile(row));
             }
@@ -619,12 +578,12 @@ public class ProductService extends BasedService {
 
             // update product if it is mapped
 
-            if(mappingProducts.isEmpty()){
+            if (mappingProducts.isEmpty()) {
                 fileUploadService.handleUpdatedFailure(savedImageName, "No suitable product found for mapping");
                 continue;
             }
 
-            for(Product product: mappingProducts){
+            for (Product product : mappingProducts) {
                 product.setImage(savedImageName);
             }
 
@@ -633,7 +592,7 @@ public class ProductService extends BasedService {
         }
 
         // update product
-        if(!mappedProduct.isEmpty())
+        if (!mappedProduct.isEmpty())
             productRepository.saveAll(mappedProduct);
     }
 
@@ -683,19 +642,4 @@ public class ProductService extends BasedService {
         return null;
     }
 
-
-    public static void main(String[] args) throws FileNotFoundException {
-       Product p = new Product();
-
-       List<Product> list = new ArrayList<>();
-       list.add(p);
-       list.add(null);
-       list.add(null);
-       list.add(null);
-
-        list.removeAll(Collections.singleton(null));
-
-        System.out.println(list);
-        //   mappingImage(s, null);
-    }
 }
