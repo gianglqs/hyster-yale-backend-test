@@ -45,7 +45,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             " AND ((:segments) IS NULL OR p.segment IN (:segments))" +
             " AND ((:brands) IS NULL OR p.brand IN (:brands))" +
             " AND ((:truckTypes) IS NULL OR p.truckType IN (:truckTypes))" +
-            " AND ((:family) IS NULL OR p.family IN (:family)) ORDER BY p.modelCode")
+            " AND ((:family) IS NULL OR p.family IN (:family)) ORDER BY similarity(p.modelCode, :modelCode) DESC ")
     List<Product> getDataByFilter(String modelCode,
                                   List<String> plants,
                                   List<String> metaSeries,

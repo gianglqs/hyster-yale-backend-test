@@ -177,7 +177,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
             " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND (cast(:fromDate as date ) IS NULL OR c.date >= :fromDate)" +
-            " AND (cast(:toDate as date) IS NULL OR c.date <= :toDate) ORDER BY c.orderNo"
+            " AND (cast(:toDate as date) IS NULL OR c.date <= :toDate) ORDER BY similarity(c.orderNo, :orderNo) DESC "
     )
     List<Booking> selectAllForBookingOrder(
             @Param("orderNo") String orderNo,

@@ -34,7 +34,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
             " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND (cast(:fromDate as date ) IS NULL OR c.date >= :fromDate)" +
-            " AND (cast(:toDate as date) IS NULL OR c.date <= :toDate) ORDER BY c.orderNo"
+            " AND (cast(:toDate as date) IS NULL OR c.date <= :toDate) ORDER BY  similarity(c.orderNo, :orderNo) DESC "
     )
     List<Shipment> findShipmentByFilterForTable(@Param("orderNo") String orderNo,
                                                 @Param("regions") List<String> regions,
