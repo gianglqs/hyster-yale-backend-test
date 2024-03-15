@@ -45,6 +45,7 @@ public class EnvironmentUtils implements EnvironmentAware {
         System.setProperty("BASE_FOLDER_UPLOAD", dotenv().get("BASE_FOLDER_UPLOAD"));
         System.setProperty("PUBLIC_FOLDER", dotenv().get("PUBLIC_FOLDER"));
         System.setProperty("EXCHANGE_RATE_API_KEY", dotenv().get("EXCHANGE_RATE_API_KEY"));
+        System.setProperty("FOLDER_PRODUCT_IMAGES", dotenv().get("FOLDER_PRODUCT_IMAGES"));
     }
 
 }
