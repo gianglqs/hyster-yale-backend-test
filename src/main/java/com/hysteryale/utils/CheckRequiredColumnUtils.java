@@ -20,6 +20,9 @@ public class CheckRequiredColumnUtils {
     public static final List<String> BOOKING_REQUIRED_COLUMN = List.of("ORDERNO", "SERIES", "BILLTO", "MODEL", "REGION", "DATE", "DEALERNAME", "CTRYCODE", "TRUCKCLASS", "ORDERTYPE", "DEALERPO");
     public static final List<String> BOOKING_COST_DATA_REQUIRED_COLUMN = List.of("Order", "TOTAL MFG COST Going-To");
     public static final List<String> PRODUCT_DIMENSION_REQUIRED_COLUMN = List.of("Metaseries", "Model", "Segment", "Family_Name", "Truck_Type");
+    public static final List<String> AOP_MARGIN_REQUIRED_COLUMN = List.of("MetaSeries", "Plant", "Region", "std,margin,%");
+
+
 
     // REQUIRED SHEET
     public static final String BOOKING_REQUIRED_SHEET = "NOPLDTA.NOPORDP,NOPLDTA.>Sheet1";
@@ -28,11 +31,14 @@ public class CheckRequiredColumnUtils {
     public static final String PRODUCT_APAC_SERIAL_REQUIRED_SHEET = "Master Summary";
     public static final String PRODUCT_DIMENSION_REQUIRED_SHEET = "Data";
     public static final String PART_REQUIRED_SHEET = "Export";
+    public static final String AOP_MARGIN_REQUIRED_SHEET = "aop,dn,margin,%";
 
 
     public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns) throws MissingColumnException {
         List<String> listMissingColumn = new ArrayList<>();
         for (String requiredColumn : requiredColumns) {
+            if(requiredColumn.contains(","))
+                continue; // it is regex -> it will handle in each department
             if (!currentColumns.contains(requiredColumn)) {
                 listMissingColumn.add(requiredColumn);
             }

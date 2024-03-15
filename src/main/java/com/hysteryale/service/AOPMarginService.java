@@ -4,25 +4,24 @@ import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.model.AOPMargin;
 import com.hysteryale.model.Region;
 import com.hysteryale.repository.AOPMarginRepository;
-import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.repository.RegionRepository;
+import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.InvalidPropertiesFormatException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,10 +33,16 @@ public class AOPMarginService extends BasedService {
     private final HashMap<String, Integer> AOP_MARGIN_COLUMNS = new HashMap<>();
 
     @Resource
+    private FileUploadService fileUploadService;
+
+    @Resource
     private RegionService regionService;
 
+    @Resource
+    private RegionRepository regionRepository;
+
     public void getAOPMarginColumns(Row row) {
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < 20; i++) {
             String columnName = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
             AOP_MARGIN_COLUMNS.put(columnName, i);
         }
@@ -139,6 +144,157 @@ public class AOPMarginService extends BasedService {
             }
         }
         updateStateImportFile(pathFile);
+    }
+
+    public void importAOPMargin(MultipartFile file, Authentication authentication) throws Exception {
+        // b1 take out the first 10 rows
+        // b2 check rows are header, conditions: cellType only STRING or BLANK
+        // b3 Map column name with column index
+        // b4 use regex to get required column and compare ->  throws Exception if missing column
+        // b5 read body
+
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product");
+        String fileNameEncoded = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.AOP_MARGIN);
+
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileNameEncoded;
+        if (!FileUtils.isExcelFile(filePath)) {
+            fileUploadService.handleUpdatedFailure(fileNameEncoded, "Uploaded file is not an Excel file");
+            throw new Exception("Imported file is not Excel");
+        }
+
+
+        try {
+            String fileName = file.getOriginalFilename();
+            int year = DateUtils.extractYear(fileName);
+            InputStream is = new FileInputStream(filePath);
+            importAOPMarginFromGUM(is, year);
+
+        } catch (Exception e) {
+            fileUploadService.handleUpdatedFailure(fileNameEncoded, e.getMessage());
+            throw e;
+        }
+
+        fileUploadService.handleUpdatedSuccessfully(fileNameEncoded);
+    }
+
+    private void importAOPMarginFromGUM(InputStream is, int year) throws IOException, MissingColumnException {
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+
+        List<AOPMargin> aopMarginListInDB = aopMarginRepository.findAll();
+        for (Sheet sheet : workbook) {
+            if (sheet.getSheetName().toLowerCase().contains("aop") &&
+                    sheet.getSheetName().toLowerCase().contains("dn") &&
+                    sheet.getSheetName().toLowerCase().contains("margin") &&
+                    sheet.getSheetName().toLowerCase().contains("%") &&
+                    sheet.getSheetName().toLowerCase().contains(String.valueOf(year))) {
+
+                List<AOPMargin> newAOPMarginList = new ArrayList<>();
+                int startIndexBodyRow = getStartIndexBodyRow(sheet);
+
+                List<String> listCurrentColumn = new ArrayList<>(AOP_MARGIN_COLUMNS.keySet());
+                // check required columns
+                CheckRequiredColumnUtils.checkRequiredColumn(listCurrentColumn, CheckRequiredColumnUtils.AOP_MARGIN_REQUIRED_COLUMN);
+
+                //check column 'STD Margin %'
+                boolean hasMarginSTD = false;
+                for (String columnName : listCurrentColumn) {
+                    if (columnName.toLowerCase().contains("std")
+                            && columnName.toLowerCase().contains("margin")
+                            && columnName.toLowerCase().contains("%")) {
+                        hasMarginSTD = true;
+                        break;
+                    }
+                }
+                if (!hasMarginSTD)
+                    throw new MissingColumnException("Missing column 'Margin STD %");
+
+
+                for (Row row : sheet) {
+                    if (row.getRowNum() >= startIndexBodyRow) {
+                        AOPMargin aopMargin = mapExcelGUMToAOPMargin(row);
+                        if (aopMargin == null)
+                            continue;
+
+                        aopMargin.setYear(year);
+                        newAOPMarginList.add(aopMargin);
+                    }
+                }
+
+                // save or update
+                saveOrUpdateAOPMargin(aopMarginListInDB, newAOPMarginList);
+            }
+        }
+    }
+
+    private void saveOrUpdateAOPMargin(List<AOPMargin> aopMarginListInDB, List<AOPMargin> newAOPMarginList) {
+        List<AOPMargin> newAOPMarginNotInDB = new ArrayList<>();
+        for (AOPMargin newAOPMargin : newAOPMarginList) {
+            for (AOPMargin aopMarginInDB : aopMarginListInDB) {
+                if (newAOPMargin.equals(aopMarginInDB)) {
+                    //update
+                    aopMarginInDB.setMarginSTD(aopMarginInDB.getMarginSTD());
+                    continue;
+                }
+                newAOPMarginNotInDB.add(newAOPMargin);
+            }
+        }
+        aopMarginRepository.saveAllAndFlush(aopMarginListInDB);
+        aopMarginRepository.saveAllAndFlush(newAOPMarginNotInDB);
+    }
+
+    private AOPMargin mapExcelGUMToAOPMargin(Row row) {
+        AOPMargin aopMargin = new AOPMargin();
+
+        // region
+        String regionName = row.getCell(AOP_MARGIN_COLUMNS.get("Region")).getStringCellValue();
+        Region region = regionRepository.getRegionByName(regionName);
+        if (region == null) {
+            log.error("Could not find Region with region name: " + regionName);
+            return null;
+        }
+        aopMargin.setRegion(region);
+
+        //series
+        Cell seriesCell = row.getCell(AOP_MARGIN_COLUMNS.get("Region"));
+        if (seriesCell.getCellType() != CellType.STRING) {
+            log.error("Series is not STRING at row " + row.getRowNum());
+            return null;
+        }
+        aopMargin.setMetaSeries(seriesCell.getStringCellValue());
+
+        //series
+        Cell plantCell = row.getCell(AOP_MARGIN_COLUMNS.get("Plant"));
+        if (plantCell.getCellType() != CellType.STRING) {
+            log.error("Series is not STRING at row " + row.getRowNum());
+            return null;
+        }
+        aopMargin.setPlant(plantCell.getStringCellValue());
+
+        // margin STD
+        for (String columnName : AOP_MARGIN_COLUMNS.keySet()) {
+            if (columnName.toLowerCase().contains("margin") && columnName.contains("%") && columnName.toLowerCase().contains("std")) {
+                aopMargin.setMarginSTD(row.getCell(AOP_MARGIN_COLUMNS.get(columnName)).getNumericCellValue());
+                break;
+            }
+        }
+
+        return aopMargin;
+    }
+
+    private int getStartIndexBodyRow(Sheet sheet) {
+        int totalHeaderRow = 0;
+        loopRow:
+        for (Row row : sheet) {
+            for (Cell cell : row) {
+                if (cell.getCellType() == CellType.NUMERIC)
+                    continue loopRow;
+            }
+            totalHeaderRow++;
+            getAOPMarginColumns(row);
+        }
+        return totalHeaderRow;
     }
 
     private int getYearFromFileName(String fileName) throws InvalidPropertiesFormatException {
