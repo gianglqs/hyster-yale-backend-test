@@ -35,4 +35,5 @@ RUN mkdir -p /opt/hysteryale/uploadFiles/exchange_rate
 RUN mkdir -p /opt/hysteryale/images/product/
 RUN mkdir -p /opt/hysteryale/images/part/
 # run
-ENTRYPOINT ["java","-jar","target/hysteryale.war"]
+#ENTRYPOINT ["java","-jar","target/hysteryale.war"]
+CMD java -Xmx12000m -Dspring.profiles.active=dev -jar target/hysteryale.war
