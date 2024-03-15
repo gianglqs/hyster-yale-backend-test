@@ -63,6 +63,29 @@ Before you begin, ensure you have the following:
 mkdir hysteryale
 cd hysteryale
 ```
+### create root folder for upload files
+```
+mkdir -p /opt/hysteryale/uploadFiles/forecast_pricing
+mkdir -p /opt/hysteryale/uploadFiles/booked
+mkdir -p /opt/hysteryale/uploadFiles/shipment
+mkdir -p /opt/hysteryale/uploadFiles/macro
+mkdir -p /opt/hysteryale/uploadFiles/part
+mkdir -p /opt/hysteryale/uploadFiles/novo
+mkdir -p /opt/hysteryale/uploadFiles/competitor
+mkdir -p /opt/hysteryale/uploadFiles/product
+mkdir -p /opt/hysteryale/uploadFiles/exchange_rate
+
+
+mkdir -p /opt/hysteryale/images/product/
+mkdir -p /opt/hysteryale/images/part/
+```
+
+### set permission
+
+```angular2html
+sudo chown -R 777 /opt/hysteryale/images
+sudo chown -R 777 /opt/hysteryale/uploadFiles
+```
 
 ### Update Github Deployment Key
 
@@ -89,13 +112,12 @@ spring.datasource.password=your_password`
 #### Build the application
 `mvn clean install`
 
-#### Package the application
-`mvn package`
-
 ## Step 7: Run the Spring Boot Application
 
 #### Run the application
-`java -jar target/hysteryale.jar`
+```
+nohup java -Xmx12000m -Dspring.profiles.active=dev -jar hysteryale.war > log.txt 2>&1 & disown
+```
 
 ## Step 8: Access the Application
 
