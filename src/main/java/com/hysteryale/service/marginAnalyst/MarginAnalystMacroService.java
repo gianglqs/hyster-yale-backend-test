@@ -126,7 +126,12 @@ public class MarginAnalystMacroService {
         log.info("Reading " + fileName);
         XLSBWorkbook workbook = new XLSBWorkbook();
 
-        String[] macroSheets = {"AUD HYM Ruyi Staxx", "USD HYM Ruyi Staxx", "SN USD Asia Template", "SN USD Pacific Template", "SN AUD Template"};
+        String[] macroSheets = {
+                "USD HYM Ruyi Staxx",
+                "SN USD Asia Template", "SN USD Pacific Template",
+                "AUD HYM Ruyi Staxx", "AUD DDP HYM Ruyi Staxx",
+                "SN AUD Template", "SN DDP AUD Template"
+        };
         for(String macroSheet : macroSheets) {
             log.info("Importing " + macroSheet);
 
