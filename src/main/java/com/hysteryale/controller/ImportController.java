@@ -1,5 +1,6 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.BlankSheetException;
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.service.*;
@@ -38,7 +39,7 @@ public class ImportController {
     ImportService importService;
 
     @PostMapping(path = "/importAllData")
-    void importAllData() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException {
+    void importAllData() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException, BlankSheetException {
         importApicDealer();
         importCurrencies();
         importPart();
@@ -62,7 +63,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importPart")
-    void importPart() throws IOException {
+    void importPart() throws IOException, MissingColumnException, MissingSheetException {
         partService.importPart();
     }
 
@@ -77,7 +78,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importOrder")
-    void importOrder() throws IOException, IllegalAccessException, MissingColumnException {
+    void importOrder() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException, BlankSheetException {
         bookingService.importOrder();
     }
 
@@ -103,7 +104,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importShipment")
-    void importShipment() throws IOException, MissingColumnException, MissingSheetException {
+    void importShipment() throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         importService.importShipment();
     }
 
