@@ -23,10 +23,10 @@ public class ExchangeRate {
     private Currency from;
     @ManyToOne(fetch = FetchType.EAGER)
     private Currency to;
-    private double rate;
+    private Double rate;
     private LocalDate date;
 
-    public ExchangeRate (Currency fromCurrency, Currency toCurrency, double rate, LocalDate date) {
+    public ExchangeRate (Currency fromCurrency, Currency toCurrency, Double rate, LocalDate date) {
         this.from = fromCurrency;
         this.to = toCurrency;
         this.rate = rate;

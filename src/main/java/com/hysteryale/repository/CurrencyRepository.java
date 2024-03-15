@@ -14,9 +14,9 @@ public interface CurrencyRepository extends JpaRepository<Currency, Integer> {
     @Query("SELECT c FROM Currency c WHERE  c.currency = ?1")
     Optional<Currency> findById(String currencyName);
 
-    @Query("SELECT DISTINCT (e.from.currency) FROM ExchangeRate e " +
-            "WHERE e.date = (SELECT MAX(e.date) FROM ExchangeRate e) " +
-            "ORDER BY e.from.currency")
+    @Query("SELECT c.currency FROM Currency c " +
+            "WHERE c.currency IN (SELECT DISTINCT (e.from.currency) FROM ExchangeRate e) " +
+            "ORDER BY c.currency")
     List<String> getExistingCurrencies();
 
     @Query("SELECT c FROM Currency c WHERE c.currency = :currency")

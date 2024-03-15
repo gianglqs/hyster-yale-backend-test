@@ -157,72 +157,65 @@ public class ExchangeRateService extends BasedService {
      * Compare Currencies for reporting in Reports page
      */
     public Map<String, Object> compareCurrency(CompareCurrencyRequest request) {
-        RestTemplate template = new RestTemplate();
-
-        String currentCurrency = request.getCurrentCurrency();
+        Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
         List<String> comparisonCurrencies = request.getComparisonCurrencies();
         LocalDate fromDate = parseDateFromRequest(request.getFromDate());
         LocalDate toDate = parseDateFromRequest(request.getToDate());
+
+        // if fromDate and toDate is not set then limit will be 12
+        // if toDate is not set => set current month & year
+        // fromDate will be: toDate - limit (limit can be 12 or 60)
         int limit = fromDate == null || toDate == null ? 12 : 60;
+        if(toDate == null) toDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 1);
+        if(fromDate == null) fromDate = toDate.minusMonths(limit);
 
         Map<String, Object> data = new HashMap<>();
         List<String> stableCurrencies = new ArrayList<>();
         List<String> weakerCurrencies = new ArrayList<>();
         List<String> strongerCurrencies = new ArrayList<>();
 
-        // Get latest Exchange Rate from API if User choose to get the Real-time one
-        Map<String, Object> response = new HashMap<>();
-        Map<String, Object> conversionRates = new HashMap<>();
-        if (request.isFromRealTime()) {
-            try {
-                String basedURL = "https://v6.exchangerate-api.com/v6/" + EnvironmentUtils.getEnvironmentValue("exchange_rate_api_key") + "/latest/" + currentCurrency;
-                response = (Map<String, Object>) template.getForObject(basedURL, Map.class);
-                assert response != null;
-                conversionRates = (Map<String, Object>) response.get("conversion_rates");
-            } catch (Exception e) {
-                String errorMessage = "Unexpected error";
-                if (e.getMessage().contains("404"))
-                    errorMessage = "Unsupported currency: " + currentCurrency;
-                if (e.getMessage().contains("403"))
-                    errorMessage = "Inactive API Keys. Please check API Keys expired date.";
-                log.info(e.getMessage());
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, errorMessage);
-            }
-        }
+        for (String strCurrency : comparisonCurrencies) {
+            Currency currency = currencyService.getCurrenciesByName(strCurrency);
+            List<ExchangeRate> exchangeRateList = new ArrayList<>();
+            LocalDate queryDate = toDate;
 
-        for (String currency : comparisonCurrencies) {
-            List<ExchangeRate> exchangeRateList = exchangeRateRepository.getCurrentExchangeRate(currentCurrency, currency, fromDate, toDate, limit);
-            if (exchangeRateList.isEmpty())
-                continue;
+            double nearestRate = 0;
+            double farthestRate = 0;
+            int numberOfMonths = 1;
+            boolean isSetNearestRate = false;
 
-            // Parse Exchange Rate and Date values
-            if (request.isFromRealTime()) {
-                double latestExchangeRate = Double.parseDouble(conversionRates.get(currency).toString());
-                LocalDate lastUpdatedDate = parseCurrentDate(response.get("time_last_update_utc").toString());
+            while(queryDate.isAfter(fromDate) && numberOfMonths <= limit) {
+                Optional<ExchangeRate> optional = exchangeRateRepository.getExchangeRateByFromToCurrencyAndDate(currentCurrency.getCurrency(), strCurrency, queryDate);
 
-                // Replace Exchange Rate value if the Real-time date equals to latest ExchangeRate imported by Excel in DB
-                // else append to the List, then use it to calculate
-                LocalDate nearestExchangeRateDate = exchangeRateList.get(0).getDate();
-                if (nearestExchangeRateDate.getYear() == lastUpdatedDate.getYear() && nearestExchangeRateDate.getMonthValue() == lastUpdatedDate.getMonthValue()) {
-                    exchangeRateList.set(0, new ExchangeRate(new Currency(currentCurrency), new Currency(currency), latestExchangeRate, lastUpdatedDate));
-                } else {
-                    exchangeRateList.add(0, new ExchangeRate(new Currency(currentCurrency), new Currency(currency), latestExchangeRate, lastUpdatedDate));
+                // if Exchange Rate in the month & year does not exist then the RATE value will be null
+                if (optional.isEmpty()) exchangeRateList.add(new ExchangeRate(currentCurrency, currency, null, queryDate));
+                else exchangeRateList.add(optional.get());
+
+                // Set the nearest and farthest Exchange Rates to calculate difference
+                if(optional.isPresent()) {
+                    if(!isSetNearestRate) {
+                        nearestRate = optional.get().getRate();
+                        isSetNearestRate = true;
+                    }
+                    farthestRate = optional.get().getRate();
                 }
+
+                // update looping condition
+                queryDate = queryDate.minusMonths(1);
+                numberOfMonths++;
             }
 
             // Calculate the value difference between the nearest and the farthest Exchange Rates
-            double nearestRate = exchangeRateList.get(0).getRate();
-            double farthestRate = exchangeRateList.get(exchangeRateList.size() - 1).getRate();
             double differentRate = nearestRate - farthestRate;
             double differentRatePercentage = CurrencyFormatUtils.formatDoubleValue((differentRate / farthestRate) * 100, CurrencyFormatUtils.decimalFormatTwoDigits);
 
             if (Math.abs(differentRatePercentage) > 5) {
                 StringBuilder sb = formatNumericValue(differentRate);
                 if (differentRatePercentage < 0)
-                    weakerCurrencies.add(currency + " by " + sb + " (" + differentRatePercentage + "%)");
-                else strongerCurrencies.add(currency + " by +" + sb + " (+" + differentRatePercentage + "%)");
-            } else stableCurrencies.add(currency);
-            data.put(currency, new CompareCurrencyResponse(exchangeRateList, differentRate, differentRatePercentage));
+                    weakerCurrencies.add(currency.getCurrency() + ": " + sb + " (" + differentRatePercentage + "%)");
+                else strongerCurrencies.add(currency.getCurrency() + ": +" + sb + " (+" + differentRatePercentage + "%)");
+            } else stableCurrencies.add(currency.getCurrency());
+            data.put(currency.getCurrency(), new CompareCurrencyResponse(exchangeRateList));
             data.put("lastUpdated", exchangeRateList.get(0).getDate());
         }
 
