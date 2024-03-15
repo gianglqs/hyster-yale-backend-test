@@ -43,4 +43,6 @@ public class FileUpload {
     private String path;
 
     private boolean loading;
+
+    private long size;
 }

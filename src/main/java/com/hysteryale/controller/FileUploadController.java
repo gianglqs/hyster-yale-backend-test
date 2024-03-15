@@ -1,9 +1,7 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.model.filters.AdminFilter;
-import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -24,4 +22,11 @@ public class FileUploadController {
         return fileUploadService.getDataForTable(filter, pageNo, perPage);
 
     }
+
+    @GetMapping("/updateColumnSize")
+    public void updateColumnSize() {
+
+        fileUploadService.updateColumnSize();
+    }
+
 }
