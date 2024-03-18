@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -121,6 +122,7 @@ public class PartService extends BasedService {
     public void importPartFromFile(String fileName, String filePath) throws IOException, MissingColumnException, MissingSheetException {
         logInfo("==== Importing " + fileName + " ====");
         InputStream is = new FileInputStream(filePath);
+        IOUtils.setByteArrayMaxOverride(700000000);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         String sheetName = CheckRequiredColumnUtils.PART_REQUIRED_SHEET;
         Sheet sheet = workbook.getSheet(sheetName);
