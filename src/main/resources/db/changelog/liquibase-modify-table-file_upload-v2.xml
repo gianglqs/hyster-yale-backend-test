@@ -10,7 +10,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="updateColumn-size" author="songiang">
+    <changeSet id="updateColumn-size-0" author="songiang">
         <sql>UPDATE file_upload
              SET size = 0
              where size is null</sql>

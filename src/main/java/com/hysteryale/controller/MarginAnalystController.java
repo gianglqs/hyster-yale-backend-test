@@ -152,7 +152,7 @@ public class MarginAnalystController {
 
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.shipment");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.part");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.PART);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;

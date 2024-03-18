@@ -49,6 +49,13 @@ Before you begin, ensure you have the following:
 #### Grant privileges to the user on the database
 `GRANT ALL PRIVILEGES ON DATABASE hysteryale TO hysteryale;`
 
+#### add extension to search  
+```angular2html
+\c hysteryale;
+
+CREATE EXTENSION pg_trgm;
+```
+
 ## Step 4: Clone the Spring Boot Application
 
 ### Install Git
