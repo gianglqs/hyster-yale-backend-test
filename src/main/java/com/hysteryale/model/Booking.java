@@ -76,6 +76,9 @@ public class Booking extends BaseModel{
     @JoinColumn(name = "aopmargin")
     private AOPMargin AOPMargin;
 
+    @Column(name = "quote_number")
+    private String quoteNumber;
+
     public Booking(String region, String plant, Clazz clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge) {
 
         Product p = new Product(plant, clazz, model);
