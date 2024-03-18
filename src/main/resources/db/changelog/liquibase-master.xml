@@ -10,6 +10,7 @@
     <include file="classpath:db/changelog/liquibase-adjust-region.xml" relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/liquibase-refactor-class-value.xml" relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/liquibase-modify-table-file_upload-v2.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/liquibase-update-region.xml" relativeToChangelogFile="false"/>
 
 
 </databaseChangeLog>
