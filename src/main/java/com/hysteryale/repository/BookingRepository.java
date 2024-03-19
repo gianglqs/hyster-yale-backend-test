@@ -20,11 +20,11 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     @Query("SELECT b FROM Booking b WHERE b.orderNo = ?1")
     Optional<Booking> getBookingOrderByOrderNo(String orderNo);
 
-    @Query("SELECT new Booking(c.region.regionName, c.product.plant, c.product.clazz," +
+    @Query("SELECT new Booking(c.country.region.regionName, c.product.plant, c.product.clazz," +
             " c.series, c.product.modelCode, sum(c.quantity), sum(c.totalCost), sum(c.dealerNet), " +
             " sum(c.dealerNetAfterSurcharge), sum(c.marginAfterSurcharge)) " +
             " FROM Booking c WHERE " +
-            " ((:regions) IS Null OR c.region.regionName IN (:regions))" +
+            " ((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.product.clazz.clazzName IN (:classes))" +
@@ -40,8 +40,8 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))" +
             " AND c.currency IS NOT NULL " +
-            " GROUP BY c.region.regionName, c.product.plant, c.product.clazz, c.series, c.product.modelCode" +
-            " ORDER BY c.region.regionName"
+            " GROUP BY c.country.region.regionName, c.product.plant, c.product.clazz, c.series, c.product.modelCode" +
+            " ORDER BY c.country.region.regionName"
     )
     List<Booking> getOrderForOutlier(
             @Param("regions") List<String> regions,
@@ -59,7 +59,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     @Query("SELECT new Booking( COALESCE(sum(c.quantity), 0), COALESCE(sum(c.totalCost), 0), COALESCE(sum(c.dealerNet), 0), " +
             " COALESCE(sum(c.dealerNetAfterSurcharge), 0), COALESCE(sum(c.marginAfterSurcharge), 0), COALESCE(sum(c.marginAfterSurcharge) / sum(c.dealerNetAfterSurcharge), 0)) " +
             " FROM Booking c WHERE " +
-            " ((:regions) IS Null OR c.region.regionName IN (:regions))" +
+            " ((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.product.clazz.clazzName IN (:classes))" +
@@ -90,7 +90,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query("SELECT COUNT(c)" +
             " FROM Booking c WHERE " +
-            " ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
+            " ((:regions) IS Null OR c.country.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.product.clazz.clazzName IN (:classes))" +
@@ -106,7 +106,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
             " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))" +
             " AND c.currency IS NOT NULL " +
-            " GROUP BY c.region.regionName, c.product.plant, c.product.clazz, c.series, c.product.modelCode"
+            " GROUP BY c.country.region.regionName, c.product.plant, c.product.clazz, c.series, c.product.modelCode"
     )
     List<Integer> countAllForOutlier(
             @Param("regions") List<String> regions,
@@ -123,7 +123,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query("SELECT COUNT(c) FROM Booking c WHERE " +
             "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
-            " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
+            " AND ((:regions) IS Null OR c.country.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.product.clazz.clazzName IN (:classes))" +
@@ -159,7 +159,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query("SELECT c FROM Booking c WHERE " +
             "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
-            " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
+            " AND ((:regions) IS Null OR c.country.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.product.clazz.clazzName IN (:classes))" +
@@ -256,10 +256,10 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             @Param("year") int year);
 
 
-    @Query("SELECT new Booking(c.region.regionName, c.product, c.currency, " +
+    @Query("SELECT new Booking(c.country.region.regionName, c.product, c.currency, " +
             "sum(c.totalCost), sum(c.dealerNetAfterSurcharge), sum(c.marginAfterSurcharge), count(c)) " +
             " FROM Booking c WHERE " +
-            " ((:regions) IS Null OR c.region.regionName IN (:regions))" +
+            " ((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
@@ -273,7 +273,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             "   (:comparator = '>' AND c.marginPercentageAfterSurcharge > :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
             " AND c.currency IS NOT NULL " +
-            " GROUP BY c.region.regionName, c.product, c.currency " +
+            " GROUP BY c.country.region.regionName, c.product, c.currency " +
             " HAVING (:marginPercentageAfterSurChargeAfterAdj) IS NULL OR " +
             "   (:comparatorAfterAdj = '<' AND sum(c.dealerNetAfterSurcharge) <> 0 AND ((sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0))) < :marginPercentageAfterSurChargeAfterAdj) OR" +
             "   (:comparatorAfterAdj = '>=' AND sum(c.dealerNetAfterSurcharge) <> 0 AND ((sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0))) > :marginPercentageAfterSurChargeAfterAdj)"
@@ -298,7 +298,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query("SELECT COUNT(c) " +
             " FROM Booking c WHERE " +
-            " ((:regions) IS Null OR c.region.regionName IN (:regions))" +
+            " ((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
@@ -312,7 +312,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             "   (:comparator = '>' AND c.marginPercentageAfterSurcharge > :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
             " AND c.currency IS NOT NULL " +
-            " GROUP BY c.region.regionName, c.product, c.currency" +
+            " GROUP BY c.country.region.regionName, c.product, c.currency" +
             " HAVING (:marginPercentageAfterSurChargeAfterAdj) IS NULL OR " +
             "   (:comparatorAfterAdj = '<' AND sum(c.dealerNetAfterSurcharge) <> 0 AND (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0)) < :marginPercentageAfterSurChargeAfterAdj) OR" +
             "   (:comparatorAfterAdj = '>=' AND sum(c.dealerNetAfterSurcharge) <> 0 AND (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0)) >= :marginPercentageAfterSurChargeAfterAdj)"
@@ -337,7 +337,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query("SELECT c FROM Booking c WHERE " +
             "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
-            " AND ((:regions) IS Null OR c.region.regionName IN (:regions) )" +
+            " AND ((:regions) IS Null OR c.country.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.product.clazz.clazzName IN (:classes))" +
@@ -379,7 +379,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query("SELECT new Booking( sum(c.dealerNetAfterSurcharge), sum(c.totalCost), sum(c.marginAfterSurcharge), count(c)) " +
             " FROM Booking c WHERE " +
-            " ((:regions) IS Null OR c.region.regionName IN (:regions))" +
+            " ((:regions) IS Null OR c.country.region.regionName IN (:regions))" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
@@ -393,7 +393,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             "   (:comparator = '>' AND c.marginPercentageAfterSurcharge > :marginPercentageAfterSurCharge) OR" +
             "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
             " AND c.currency IS NOT NULL " +
-            " GROUP BY c.region.regionName, c.product" +
+            " GROUP BY c.country.region.regionName, c.product" +
             " HAVING (:marginPercentageAfterSurChargeAfterAdj) IS NULL OR " +
             "   (:comparatorAfterAdj = '<' AND sum(c.dealerNetAfterSurcharge) <> 0 AND (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0)) < :marginPercentageAfterSurChargeAfterAdj) OR" +
             "   (:comparatorAfterAdj = '>=' AND sum(c.dealerNetAfterSurcharge) <> 0 AND (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0) - (sum(c.totalCost) * (1 + :costAdjPercentage/100.0) - :freightAdj - :fxAdj)) / (sum(c.dealerNetAfterSurcharge) * (1 + :dnAdjPercentage / 100.0)) >= :marginPercentageAfterSurChargeAfterAdj)"

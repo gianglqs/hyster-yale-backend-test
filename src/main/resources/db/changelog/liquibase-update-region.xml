@@ -1,0 +1,99 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="update-region-in-country" author=" songiang">
+        <sql>UPDATE country
+             SET region_id = 2
+             WHERE region_id = 5</sql>
+    </changeSet>
+
+    <changeSet id="update-region-in-shipment" author=" songiang">
+        <sql>UPDATE shipment
+             SET region = 2
+             WHERE region = 5</sql>
+    </changeSet>
+
+    <changeSet id="update-region-in-booking" author=" songiang">
+        <sql>UPDATE booking
+             SET region = 2
+             WHERE region = 5</sql>
+    </changeSet>
+
+    <changeSet id="update-region-in-aopmargin" author=" songiang">
+        <sql>UPDATE aopmargin
+             SET region = 2
+             WHERE region = 5</sql>
+    </changeSet>
+
+    <changeSet id="update-region-in-target_margin" author=" songiang">
+        <sql>UPDATE target_margin
+             SET region_id = 2
+             WHERE region_id = 5</sql>
+    </changeSet>
+
+    <changeSet id="delete-column-old-region" author="songiang">
+        <dropColumn tableName="aopmargin" columnName="region_old"/>
+    </changeSet>
+
+    <changeSet id="delete-region-australia" author="songiang">
+        <sql>DELETE
+             FROM region
+             WHERE id = 5 </sql>
+    </changeSet>
+
+    <changeSet id="delete-region-china" author="songiang">
+        <sql>DELETE
+             FROM region
+             WHERE id = 3 </sql>
+    </changeSet>
+
+    <changeSet id="change-India-to-ISC" author="songiang">
+        <sql>UPDATE region
+             SET region_name = 'ISC'
+             WHERE region_name = 'India'</sql>
+    </changeSet>
+
+    <changeSet id="addColumn-country-in-booking" author="songiang">
+        <addColumn tableName="booking">
+            <column type="INT" name="country"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="insert-country" author="songiang">
+        <sql>
+            INSERT INTO country(id, country_name, region_id, code)
+            VALUES (344, 'Bangladesh', 1, 'BD'),
+                   (345, 'Guam', 2, 'GU')
+        </sql>
+    </changeSet>
+
+    <changeSet id="update-data-country-in-booking" author="songiang">
+        <sql>
+            UPDATE booking b
+            SET country = (SELECT id
+                           FROM country c
+                           WHERE b.ctry_code = c.code)
+        </sql>
+    </changeSet>
+
+    <changeSet id="addColumn-country-in-shipment" author="songiang">
+        <addColumn tableName="shipment">
+            <column type="INT" name="country"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="update-data-country-shipment" author="songiang">
+        <sql>
+            UPDATE shipment b
+            SET country = (SELECT id
+                           FROM country c
+                           WHERE b.ctry_code = c.code)
+        </sql>
+    </changeSet>
+
+<!--    delete column region, -->
+
+</databaseChangeLog>

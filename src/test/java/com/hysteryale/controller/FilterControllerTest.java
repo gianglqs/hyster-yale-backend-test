@@ -137,4 +137,17 @@ public class FilterControllerTest {
 
         Assertions.assertEquals(200, result.getResponse().getStatus());
     }
+
+    @Test
+    @WithMockUser(authorities = "USER")
+    public void testGetSegmentFilters() throws Exception {
+        MvcResult result =
+                mockMvc
+                        .perform(get("/filters/segments"))
+                        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.segments").isArray())
+                        .andReturn();
+
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
 }

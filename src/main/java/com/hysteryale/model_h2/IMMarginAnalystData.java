@@ -51,6 +51,7 @@ public class IMMarginAnalystData {
 
     private int type;
     private String series;
+    private String quoteNumber;
 
     public IMMarginAnalystData(String plant, String modelCode, String optionCode, String description, double listPrice, String currency, double dealerNet, String series) {
         this.plant = plant;
