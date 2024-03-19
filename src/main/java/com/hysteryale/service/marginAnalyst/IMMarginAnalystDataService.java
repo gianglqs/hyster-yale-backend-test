@@ -98,6 +98,7 @@ public class IMMarginAnalystDataService {
         double netPrice = row.getCell(COLUMN_NAME.get("Net Price Each")).getNumericCellValue();
         int type = (int) row.getCell(COLUMN_NAME.get("#")).getNumericCellValue();
         String series = row.getCell(COLUMN_NAME.get("Series Code"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+        String quoteNumber = row.getCell(COLUMN_NAME.get("Quote Number:")).getStringCellValue();
 
         IMMarginAnalystData imMarginAnalystData =
                 new IMMarginAnalystData(
@@ -107,6 +108,7 @@ public class IMMarginAnalystDataService {
                         CurrencyFormatUtils.formatDoubleValue(netPrice, CurrencyFormatUtils.decimalFormatFourDigits),
                         series
                 );
+        imMarginAnalystData.setQuoteNumber(quoteNumber);
 
         // Assign ManufacturingCost
         // if Part is marked as SPED then
