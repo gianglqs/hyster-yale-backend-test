@@ -244,7 +244,7 @@ public class FilterService {
         return result;
     }
 
-    private List<Map<String, String>> getAllSegments() {
+    public List<Map<String, String>> getAllSegments() {
         List<Map<String, String>> segmentMap = new ArrayList<>();
         List<String> segments = productRepository.getAllSegments();
         segments.sort(String::compareTo);

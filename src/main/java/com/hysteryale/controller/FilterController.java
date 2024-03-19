@@ -64,5 +64,12 @@ public class FilterController {
         );
     }
 
+    @GetMapping("/segments")
+    public Map<String, Object> getSegmentFilters() {
+        return Map.of(
+                "segments", filterService.getAllSegments()
+        );
+    }
+
 }
 
