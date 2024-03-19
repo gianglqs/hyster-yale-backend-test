@@ -77,6 +77,9 @@ public class Shipment extends BaseModel{
     @Column(name = "booking_dealer_net_after_surcharge")
     private Double bookingDealerNetAfterSurcharge;
 
+    @Column(name = "quote_number")
+    private String quoteNumber;
+
     public Shipment(String id, Currency currency, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue, double marginAfterSurcharge, double marginPercentageAfterSurcharge, Double bookingMargin) {
         this.orderNo = id;
         this.currency = currency;

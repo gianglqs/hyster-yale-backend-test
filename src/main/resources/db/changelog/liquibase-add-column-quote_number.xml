@@ -1,0 +1,39 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="addColumn-quote_number-booking" author="songiang">
+        <addColumn tableName="booking">
+            <column name="quote_number" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="update-column-quote_number-booking" author="songiang">
+        <sql>
+            update
+                booking b
+            set quote_number = (select distinct p.quote_id
+                                from part p
+                                where p.order_number = b.order_no)
+        </sql>
+    </changeSet>
+
+    <changeSet id="addColumn-quote_number-shipment" author="songiang">
+        <addColumn tableName="shipment">
+            <column name="quote_number" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="update-column-quote_number-shipment" author="songiang">
+        <sql>
+            update
+                shipment b
+            set quote_number = (select distinct p.quote_id
+                                from part p
+                                where p.order_number = b.order_no)
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
