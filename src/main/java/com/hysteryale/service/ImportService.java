@@ -653,6 +653,7 @@ public class ImportService extends BasedService {
             log.error("Not found Country with countryCode: " + ctryCode);
             return null;
         }
+        shipment.setCtryCode(ctryCode);
         shipment.setRegion(country.getRegion());
 
         // currency

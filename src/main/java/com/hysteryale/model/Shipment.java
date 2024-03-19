@@ -80,6 +80,10 @@ public class Shipment extends BaseModel{
     @Column(name = "quote_number")
     private String quoteNumber;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "country")
+    private Country country;
+
     public Shipment(String id, Currency currency, long quantity, double dealerNet, double dealerNetAfterSurcharge, double totalCost, double netRevenue, double marginAfterSurcharge, double marginPercentageAfterSurcharge, Double bookingMargin) {
         this.orderNo = id;
         this.currency = currency;
