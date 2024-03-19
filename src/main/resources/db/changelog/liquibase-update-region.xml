@@ -35,19 +35,65 @@
     </changeSet>
 
     <changeSet id="delete-column-old-region" author="songiang">
-       <dropColumn tableName="aopmargin" columnName="region_old"/>
+        <dropColumn tableName="aopmargin" columnName="region_old"/>
     </changeSet>
-    
+
     <changeSet id="delete-region-australia" author="songiang">
-        <sql>DELETE FROM region WHERE id=5 </sql>
+        <sql>DELETE
+             FROM region
+             WHERE id = 5 </sql>
     </changeSet>
 
     <changeSet id="delete-region-china" author="songiang">
-        <sql>DELETE FROM region WHERE id=3 </sql>
+        <sql>DELETE
+             FROM region
+             WHERE id = 3 </sql>
     </changeSet>
 
     <changeSet id="change-India-to-ISC" author="songiang">
-        <sql></sql>
+        <sql>UPDATE region
+             SET region_name = 'ISC'
+             WHERE region_name = 'India'</sql>
     </changeSet>
+
+    <changeSet id="addColumn-country-in-booking" author="songiang">
+        <addColumn tableName="booking">
+            <column type="INT" name="country"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="insert-country" author="songiang">
+        <sql>
+            INSERT INTO country(id, country_name, region_id, code)
+            VALUES (344, 'Bangladesh', 1, 'BD'),
+                   (345, 'Guam', 2, 'GU')
+        </sql>
+    </changeSet>
+
+    <changeSet id="update-data-country-in-booking" author="songiang">
+        <sql>
+            UPDATE booking b
+            SET country = (SELECT id
+                           FROM country c
+                           WHERE b.ctry_code = c.code)
+        </sql>
+    </changeSet>
+
+    <changeSet id="addColumn-country-in-shipment" author="songiang">
+        <addColumn tableName="shipment">
+            <column type="INT" name="country"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="update-data-country-shipment" author="songiang">
+        <sql>
+            UPDATE shipment b
+            SET country = (SELECT id
+                           FROM country c
+                           WHERE b.ctry_code = c.code)
+        </sql>
+    </changeSet>
+
+<!--    delete column region, -->
 
 </databaseChangeLog>

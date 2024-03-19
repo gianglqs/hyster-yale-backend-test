@@ -79,6 +79,11 @@ public class Booking extends BaseModel{
     @Column(name = "quote_number")
     private String quoteNumber;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "country")
+    private Country country;
+
+
     public Booking(String region, String plant, Clazz clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge) {
 
         Product p = new Product(plant, clazz, model);
