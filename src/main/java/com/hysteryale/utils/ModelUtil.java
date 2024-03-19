@@ -11,5 +11,6 @@ public class ModelUtil {
     public static final String MACRO = "marco";
     public static final String NOVO = "novo";
     public static final String FORECAST_PRICING = "forecast_pricing";
+    public static final String AOP_MARGIN = "aop_margin";
 
 }

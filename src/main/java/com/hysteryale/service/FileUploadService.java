@@ -113,7 +113,9 @@ public class FileUploadService {
         if (file.createNewFile()) {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
-            saveFileUpLoadIntoDB(authentication, encodedFileName, screen, savedFolder + encodedFileName);
+            long fileSize = file.length();
+
+            saveFileUpLoadIntoDB(authentication, encodedFileName, screen, savedFolder + encodedFileName, fileSize);
             return encodedFileName;
         } else {
             log.info("Can not create new file: " + encodedFileName);
@@ -133,8 +135,8 @@ public class FileUploadService {
         if (file.createNewFile()) {
             log.info("File " + encodedFileName + " created");
             multipartFile.transferTo(file);
-
-            saveFileUpLoadIntoDB(authentication, encodedFileName, screen, targetFolder + encodedFileName);
+            long fileSize = file.length();
+            saveFileUpLoadIntoDB(authentication, encodedFileName, screen, targetFolder + encodedFileName, fileSize);
 
             // check the file is an image
             if (!FileUtils.isImageFile(fileUploadedPath)) {
@@ -168,7 +170,8 @@ public class FileUploadService {
             log.info("File " + encodedFileName + " created");
 
             compressedImage(imageFile, fileUploadedPath);
-            saveFileUpLoadIntoDB(authentication, encodedFileName, screen, targetFolder + encodedFileName);
+            long fileSize = file.length();
+            saveFileUpLoadIntoDB(authentication, encodedFileName, screen, targetFolder + encodedFileName, fileSize);
 
             // check the file is an image
             if (!FileUtils.isImageFile(fileUploadedPath)) {
@@ -184,7 +187,6 @@ public class FileUploadService {
     }
 
 
-
 //    public static void main(String[] args) throws IOException {
 //
 ////        Tinify.setKey("L7MczDTDq2NMGwDgHJxcXL76S02JWgv6");
@@ -198,7 +200,7 @@ public class FileUploadService {
 //    }
 
 
-    private  void compressedImage(File input, String des) throws IOException {
+    private void compressedImage(File input, String des) throws IOException {
         File fileCompressed = new File(des);
         BufferedImage bimg = ImageIO.read(input);
         int width = bimg.getWidth();
@@ -228,7 +230,7 @@ public class FileUploadService {
     }
 
 
-    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName, String screen, String path) {
+    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName, String screen, String path, long fileSize) {
         String uploadedByEmail = authentication.getName();
         Optional<User> optionalUploadedBy = userService.getActiveUserByEmail(uploadedByEmail);
 
@@ -246,6 +248,7 @@ public class FileUploadService {
             fileUpload.setScreen(screen);
             fileUpload.setPath(path);
             fileUpload.setLoading(true);
+            fileUpload.setSize(fileSize);
             // save information to db
             fileUploadRepository.save(fileUpload);
 
@@ -338,4 +341,19 @@ public class FileUploadService {
     }
 
 
+    public void updateColumnSize() {
+        List<FileUpload> fileUploads = fileUploadRepository.findAll();
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+
+        for (FileUpload fileUpload : fileUploads) {
+            if (fileUpload.getPath() == null)
+                continue;
+            String filePath = baseFolder + fileUpload.getPath();
+            File file = new File(filePath);
+            if (!file.exists())
+                continue;
+            fileUpload.setSize(file.length());
+        }
+        fileUploadRepository.saveAll(fileUploads);
+    }
 }

@@ -1,6 +1,8 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.BlankSheetException;
 import com.hysteryale.exception.MissingColumnException;
+import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.*;
 import com.hysteryale.model.filters.FilterModel;
@@ -14,6 +16,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -125,141 +128,106 @@ public class BookingService extends BasedService {
         Booking booking = new Booking();
 
         //set OrderNo
-        if (ORDER_COLUMNS_NAME.get("ORDERNO") != null) {
-            String orderNo = row.getCell(ORDER_COLUMNS_NAME.get("ORDERNO")).getStringCellValue();
-            booking.setOrderNo(orderNo);
-        } else {
-            throw new MissingColumnException("Missing column 'ORDERNO'!");
-        }
+
+        String orderNo = row.getCell(ORDER_COLUMNS_NAME.get("ORDERNO")).getStringCellValue();
+        booking.setOrderNo(orderNo);
+
 
         // Series
         String series;
-        if (ORDER_COLUMNS_NAME.get("SERIES") != null) {
-            series = row.getCell(ORDER_COLUMNS_NAME.get("SERIES")).getStringCellValue();
-            booking.setSeries(series);
-        } else {
-            throw new MissingColumnException("Missing column 'SERIES'!");
-        }
+        series = row.getCell(ORDER_COLUMNS_NAME.get("SERIES")).getStringCellValue();
+        booking.setSeries(series);
+
 
         // set billToCost
-        if (ORDER_COLUMNS_NAME.get("BILLTO") != null) {
-            Cell billtoCell = row.getCell(ORDER_COLUMNS_NAME.get("BILLTO"));
-            booking.setBillTo(billtoCell.getStringCellValue());
-        } else {
-            throw new MissingColumnException("Missing column 'BILLTO'!");
-        }
+        Cell billtoCell = row.getCell(ORDER_COLUMNS_NAME.get("BILLTO"));
+        booking.setBillTo(billtoCell.getStringCellValue());
+
 
         //set model
-        if (ORDER_COLUMNS_NAME.get("MODEL") != null) {
-            Cell modelCell = row.getCell(ORDER_COLUMNS_NAME.get("MODEL"));
-            //set ProductDimension
-            Product product = null;
-            for (Product p : products) {
-                if (p.equals(modelCell.getStringCellValue(), series))
-                    product = p;
-            }
-            if (product == null) {
-                log.error("Not found Product with OrderNo: " + booking.getOrderNo());
-                return null;
-            }
-            booking.setProduct(product);
-        } else {
-            throw new MissingColumnException("Missing column 'MODEL'!");
+        Cell modelCell = row.getCell(ORDER_COLUMNS_NAME.get("MODEL"));
+        //set ProductDimension
+        Product product = null;
+        for (Product p : products) {
+            if (p.equals(modelCell.getStringCellValue(), series))
+                product = p;
         }
+        if (product == null) {
+            log.error("Not found Product with OrderNo: " + booking.getOrderNo());
+            return null;
+        }
+        booking.setProduct(product);
+
 
         //set region
-        if (ORDER_COLUMNS_NAME.get("REGION") != null) {
-            Cell regionCell = row.getCell(ORDER_COLUMNS_NAME.get("REGION"));
-            Region region = null;
+        Cell regionCell = row.getCell(ORDER_COLUMNS_NAME.get("REGION"));
+        Region region = null;
 
-            for (Region r : regions) {
-                if (r.getRegionShortName().equals(regionCell.getStringCellValue()))
-                    region = r;
-            }
-            if (region == null) {
-                log.error("Not found Region with OrderNo" + booking.getOrderNo());
-                return null;
-            }
-            booking.setRegion(region);
-        } else {
-            throw new MissingColumnException("Missing column 'REGION'!");
+        for (Region r : regions) {
+            if (r.getRegionShortName().equals(regionCell.getStringCellValue()))
+                region = r;
         }
+        if (region == null) {
+            log.error("Not found Region with OrderNo" + booking.getOrderNo());
+            return null;
+        }
+        booking.setRegion(region);
+
 
         //set date
-        if (ORDER_COLUMNS_NAME.get("DATE") != null) {
-            String strDate = String.valueOf(row.getCell(ORDER_COLUMNS_NAME.get("DATE")).getNumericCellValue());
-            Pattern pattern = Pattern.compile("^\\d(\\d\\d)(\\d\\d)(\\d\\d)");
-            Matcher matcher = pattern.matcher(strDate);
-            int year, month, day;
+        String strDate = String.valueOf(row.getCell(ORDER_COLUMNS_NAME.get("DATE")).getNumericCellValue());
+        Pattern pattern = Pattern.compile("^\\d(\\d\\d)(\\d\\d)(\\d\\d)");
+        Matcher matcher = pattern.matcher(strDate);
+        int year, month, day;
 
-            if (matcher.find()) {
-                year = Integer.parseInt(matcher.group(1)) + 2000;
-                month = Integer.parseInt(matcher.group(2));
-                day = Integer.parseInt(matcher.group(3));
+        if (matcher.find()) {
+            year = Integer.parseInt(matcher.group(1)) + 2000;
+            month = Integer.parseInt(matcher.group(2));
+            day = Integer.parseInt(matcher.group(3));
 
-                booking.setDate(LocalDate.of(year, DateUtils.getMonth(month), day));
-            }
-        } else {
-            throw new MissingColumnException("Missing column 'DATE'!");
+            booking.setDate(LocalDate.of(year, DateUtils.getMonth(month), day));
         }
+
 
         // dealer
-        if (ORDER_COLUMNS_NAME.get("DEALERNAME") != null) {
-            String dealerName = row.getCell(ORDER_COLUMNS_NAME.get("DEALERNAME")).getStringCellValue();
+        String dealerName = row.getCell(ORDER_COLUMNS_NAME.get("DEALERNAME")).getStringCellValue();
 
-            Dealer dealer = null;
-            for (Dealer d : dealers) {
-                if (d.equals(dealerName)) {
-                    dealer = d;
-                }
+        Dealer dealer = null;
+        for (Dealer d : dealers) {
+            if (d.equals(dealerName)) {
+                dealer = d;
             }
-            if (dealer == null) {
-                dealerRepository.save(new Dealer(dealerName));
-                Optional<Dealer> dealerOptional = dealerRepository.findByName(dealerName);
-                if (dealerOptional.isPresent()) {
-                    dealer = dealerOptional.get();
-                    dealers.add(dealer);
-                } else {
-                    log.error("Not found Dealer with OrderNo " + booking.getOrderNo());
-                    return null;
-                }
-            }
-            booking.setDealer(dealer);
-        } else {
-            throw new MissingColumnException("Missing column 'DEALERNAME'!");
         }
+        if (dealer == null) {
+            dealerRepository.save(new Dealer(dealerName));
+            Optional<Dealer> dealerOptional = dealerRepository.findByName(dealerName);
+            if (dealerOptional.isPresent()) {
+                dealer = dealerOptional.get();
+                dealers.add(dealer);
+            } else {
+                log.error("Not found Dealer with OrderNo " + booking.getOrderNo());
+                return null;
+            }
+        }
+        booking.setDealer(dealer);
+
 
         // country code
-        if (ORDER_COLUMNS_NAME.get("CTRYCODE") != null) {
-            Cell ctryCodeCell = row.getCell(ORDER_COLUMNS_NAME.get("CTRYCODE"));
-            booking.setCtryCode(ctryCodeCell.getStringCellValue());
-        } else {
-            throw new MissingColumnException("Missing column 'CTRYCODE'!");
-        }
+        Cell ctryCodeCell = row.getCell(ORDER_COLUMNS_NAME.get("CTRYCODE"));
+        booking.setCtryCode(ctryCodeCell.getStringCellValue());
 
         // truck class
-        if (ORDER_COLUMNS_NAME.get("TRUCKCLASS") != null) {
-            Cell truckClass = row.getCell(ORDER_COLUMNS_NAME.get("TRUCKCLASS"));
-            booking.setTruckClass(truckClass.getStringCellValue());
-        } else {
-            throw new MissingColumnException("Missing column 'TRUCKCLASS'!");
-        }
+        Cell truckClass = row.getCell(ORDER_COLUMNS_NAME.get("TRUCKCLASS"));
+        booking.setTruckClass(truckClass.getStringCellValue());
 
         // Order type
-        if (ORDER_COLUMNS_NAME.get("ORDERTYPE") != null) {
-            Cell orderType = row.getCell(ORDER_COLUMNS_NAME.get("ORDERTYPE"));
-            booking.setOrderType(orderType.getStringCellValue());
-        } else {
-            throw new MissingColumnException("Missing column 'ORDERTYPE'!");
-        }
+        Cell orderType = row.getCell(ORDER_COLUMNS_NAME.get("ORDERTYPE"));
+        booking.setOrderType(orderType.getStringCellValue());
+
 
         // Dealer Pro
-        if (ORDER_COLUMNS_NAME.get("DEALERPO") != null) {
-            Cell dealerPo = row.getCell(ORDER_COLUMNS_NAME.get("DEALERPO"));
-            booking.setDealerPO(dealerPo.getStringCellValue());
-        } else {
-            throw new MissingColumnException("Missing column 'DEALERPO'!");
-        }
+        Cell dealerPo = row.getCell(ORDER_COLUMNS_NAME.get("DEALERPO"));
+        booking.setDealerPO(dealerPo.getStringCellValue());
 
         // AOPMargin
         AOPMargin aopMargin = null;
@@ -301,7 +269,7 @@ public class BookingService extends BasedService {
     /**
      * new
      */
-    public void importOrder() throws IOException, IllegalAccessException, MissingColumnException {
+    public void importOrder() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException, BlankSheetException {
 
         // Folder contains Excel file of Booking Order
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
@@ -347,19 +315,21 @@ public class BookingService extends BasedService {
         }
     }
 
-    private void importNewBookingFileByFile(String filePath, InputStream isListCostData) throws IOException, MissingColumnException {
+    private void importNewBookingFileByFile(String filePath, InputStream isListCostData) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         List<Booking> bookingList = new LinkedList<>();
+
+        String sheetName = CheckRequiredColumnUtils.SHIPMENT_REQUIRED_SHEET;
+        XSSFSheet orderSheet = workbook.getSheet(sheetName);
+        if (orderSheet == null)
+            throw new MissingSheetException("Not found sheet '" + sheetName + "'");
+
+
         HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
         List<String> USPlant = PlantUtil.getUSPlant();
         List<CostDataFile> listCostDataByMonthAndYear = getListCostDataByMonthAndYear(isListCostData);
-        Sheet orderSheet = workbook.getSheet("NOPLDTA.NOPORDP,NOPLDTA.>Sheet1");
         int numRowName = 0;
-        if (orderSheet == null) {
-            orderSheet = workbook.getSheet("Input - Bookings");
-            numRowName = 1;
-        }
 
         // prepare data for import
         List<Product> products = productRepository.findAll();
@@ -370,8 +340,10 @@ public class BookingService extends BasedService {
         //get list cost data from month and year
 
         for (Row row : orderSheet) {
-            if (row.getRowNum() == numRowName) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-            else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
+            if (row.getRowNum() == numRowName) {
+                getOrderColumnsName(row, ORDER_COLUMNS_NAME);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
+            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
                 Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers);
 
                 if (newBooking == null)
@@ -398,19 +370,21 @@ public class BookingService extends BasedService {
 
     }
 
-    public void importNewBookingFileByFile(String filePath) throws IOException, MissingColumnException {
+    public void importNewBookingFileByFile(String filePath) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
 
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         List<Booking> bookingList = new LinkedList<>();
         HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
         List<String> USPlant = PlantUtil.getUSPlant();
-        Sheet orderSheet = workbook.getSheet("NOPLDTA.NOPORDP,NOPLDTA.>Sheet1");
+        String sheetName = CheckRequiredColumnUtils.BOOKING_REQUIRED_SHEET;
+        Sheet orderSheet = workbook.getSheet(sheetName);
         int numRowName = 0;
-        if (orderSheet == null) {
-            orderSheet = workbook.getSheet("Input - Bookings");
-            numRowName = 1;
-        }
+        if (orderSheet == null)
+            throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+
+        if (orderSheet.getLastRowNum() <= 0)
+            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
 
         // prepare data for import
         List<Product> products = productRepository.findAll();
@@ -419,8 +393,10 @@ public class BookingService extends BasedService {
         List<Dealer> dealers = dealerRepository.findAll();
 
         for (Row row : orderSheet) {
-            if (row.getRowNum() == numRowName) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-            else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
+            if (row.getRowNum() == numRowName) {
+                getOrderColumnsName(row, ORDER_COLUMNS_NAME);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
+            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
                 Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers);
 
                 if (newBooking == null)
@@ -486,8 +462,10 @@ public class BookingService extends BasedService {
         List<Dealer> dealers = dealerRepository.findAll();
 
         for (Row row : orderSheet) {
-            if (row.getRowNum() == 0) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-            else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 1) {
+            if (row.getRowNum() == 0) {
+                getOrderColumnsName(row, ORDER_COLUMNS_NAME);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
+            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 1) {
                 // map data from excel file
                 Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers);
 
@@ -592,17 +570,26 @@ public class BookingService extends BasedService {
         return null;
     }
 
-    private List<CostDataFile> getListCostDataByMonthAndYear(InputStream is) throws IOException {
+    private List<CostDataFile> getListCostDataByMonthAndYear(InputStream is) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         List<CostDataFile> result = new ArrayList<>();
 
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         // if old data -> colect from sheet "Wk - Margins", else -> sheet "Cost Data"
-        Sheet sheet = workbook.getSheet("Cost Data");
+
+        String sheetName = CheckRequiredColumnUtils.BOOKING_COST_DATA_REQUIRED_SHEET;
+        Sheet sheet = workbook.getSheet(sheetName);
+        if (sheet == null)
+            throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+
+        if (sheet.getLastRowNum() <= 0)
+            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
 
         HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
         for (Row row : sheet) {
-            if (row.getRowNum() == 0) getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-            else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
+            if (row.getRowNum() == 0) {
+                getOrderColumnsName(row, ORDER_COLUMNS_NAME);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_COST_DATA_REQUIRED_COLUMN);
+            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
 
                 // create CostDataFile
                 CostDataFile costDataFile = new CostDataFile();
@@ -678,7 +665,7 @@ public class BookingService extends BasedService {
         return result;
     }
 
-    public void importCostData(String filePath) throws IOException {
+    public void importCostData(String filePath) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         InputStream is = new FileInputStream(filePath);
         List<CostDataFile> costDataList = getListCostDataByMonthAndYear(is);
         List<String> listOrderNo = new ArrayList<>();
@@ -828,7 +815,7 @@ public class BookingService extends BasedService {
             latestUpdatedTime = DateUtils.convertLocalDateTimeToString(latestUpdatedTimeOptional.get());
         }
 
-        result.put("latestUpdatedTime",latestUpdatedTime);
+        result.put("latestUpdatedTime", latestUpdatedTime);
         result.put("serverTimeZone", TimeZone.getDefault().getID());
         return result;
     }

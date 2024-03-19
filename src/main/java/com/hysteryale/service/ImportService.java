@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.BlankSheetException;
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Currency;
@@ -150,7 +151,7 @@ public class ImportService extends BasedService {
         Cell cellClass = row.getCell(ORDER_COLUMNS_NAME.get("Class"));
         String strClazz = cellClass.getStringCellValue();
         Optional<Clazz> optionalClazz = clazzRepository.getClazzByClazzName(strClazz.equals("Class 5 non BT") ? "Class 5 NOT BT" : strClazz);
-        if(optionalClazz.isEmpty())
+        if (optionalClazz.isEmpty())
             return competitorPricingList;
         Clazz clazz = optionalClazz.get();
 
@@ -447,12 +448,16 @@ public class ImportService extends BasedService {
     }
 
 
-    public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException, MissingSheetException {
+    public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         HashMap<String, Integer> SHIPMENT_COLUMNS_NAME = new HashMap<>();
-        XSSFSheet shipmentSheet = workbook.getSheet("Sheet1");
+        String sheetName = CheckRequiredColumnUtils.SHIPMENT_REQUIRED_SHEET;
+        XSSFSheet shipmentSheet = workbook.getSheet(sheetName);
         if (shipmentSheet == null)
-            throw new MissingSheetException("Not found sheet 'Sheet1'");
+            throw new MissingSheetException("Not found sheet '" + sheetName + "'");
+
+        if (shipmentSheet.getLastRowNum() <= 0)
+            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
 
         logInfo("import shipment");
         List<Shipment> shipmentList = new ArrayList<>();
@@ -510,7 +515,7 @@ public class ImportService extends BasedService {
         return null;
     }
 
-    public void importShipment() throws IOException, MissingColumnException, MissingSheetException {
+    public void importShipment() throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.shipment");
 

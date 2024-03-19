@@ -1,20 +1,20 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.MissingColumnException;
+import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.Part;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.PartRepository;
-import com.hysteryale.utils.ConvertDataFilterUtil;
-import com.hysteryale.utils.DateUtils;
-import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -119,12 +119,16 @@ public class PartService extends BasedService {
         return isPartExisted == 1;
     }
 
-    public void importPartFromFile(String fileName, String filePath) throws IOException {
+    public void importPartFromFile(String fileName, String filePath) throws IOException, MissingColumnException, MissingSheetException {
         logInfo("==== Importing " + fileName + " ====");
         InputStream is = new FileInputStream(filePath);
+        IOUtils.setByteArrayMaxOverride(700000000);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
+        String sheetName = CheckRequiredColumnUtils.PART_REQUIRED_SHEET;
+        Sheet sheet = workbook.getSheet(sheetName);
+        if (sheet == null)
+            throw new MissingSheetException("Missing sheet '" + sheetName + "'");
 
-        Sheet sheet = workbook.getSheet("Export");
         List<Part> partList = new ArrayList<>();
 
         // get recordedTime for Part
@@ -141,9 +145,10 @@ public class PartService extends BasedService {
         LocalDate recordedTime = LocalDate.of(year, DateUtils.getMonth(month), 1);
 
         for (Row row : sheet) {
-            if (row.getRowNum() == 0)
+            if (row.getRowNum() == 0) {
                 getPowerBiColumnsName(row);
-            else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(powerBIExportColumns.keySet()), CheckRequiredColumnUtils.PART_REQUIRED_COLUMN);
+            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
                 String modelCode = row.getCell(powerBIExportColumns.get("Model")).getStringCellValue();
                 String partNumber = row.getCell(powerBIExportColumns.get("Part Number")).getStringCellValue();
                 String orderNumber = row.getCell(powerBIExportColumns.get("Order Number")).getStringCellValue();
@@ -165,7 +170,7 @@ public class PartService extends BasedService {
         updateStateImportFile(filePath);
     }
 
-    public void importPart() throws IOException {
+    public void importPart() throws IOException, MissingColumnException, MissingSheetException {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.bi-download");
         List<String> files = FileUtils.getAllFilesInFolder(folderPath);
