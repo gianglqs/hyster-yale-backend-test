@@ -237,13 +237,16 @@ public class IndicatorService extends BasedService {
     public boolean checkFormatFileCompetitor(Sheet sheet) {
         List<String> keysToCheck = List.of("Table Title", "Country", "Group", "Brand", "Region", "Class", "Origin", "Market Share", "Price (USD)", "Lead Time", "Normalized Market Share", "Battery&Charger", "VAT", "Model", "HYG Series", "Percentage Dealer Premium", "Handling Cost (Dealer Street pricing - (DN  + Absolute margin))", "Dealer Net", "Dealer Pricing Premium /Margin (USD) %", "Dealer Pricing Premium /Margin (USD)");
         Row headerRow = sheet.getRow(0);
-
-        if (headerRow == null) {
-            return false;
-        }
-        for (int i = 0; i < 13; i++) {
-            if (keysToCheck.contains(headerRow.getCell(i).getStringCellValue())) {
+        for (int i = 12; i < headerRow.getLastCellNum(); i++) {
+            String cell = headerRow.getCell(i).getStringCellValue();
+            if (cell == null ) {
+                return false;
+            }
+            if (keysToCheck.contains(cell)) {
                 return true;
+            }else{
+                System.out.println(cell);
+                log.info(cell);
             }
         }
         return false;
