@@ -9,6 +9,7 @@ import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.competitor.ForeCastValue;
 import com.hysteryale.repository.*;
+import com.hysteryale.utils.CheckFormatFile;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -92,7 +93,16 @@ public class ImportService extends BasedService {
     public void getOrderColumnsName(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) {
         for (int i = 0; i < 50; i++) {
             if (row.getCell(i) != null) {
-                String columnName = row.getCell(i).getStringCellValue().trim();
+                String columnName = "";
+
+                if (row.getCell(i).getCellType() == CellType.STRING) {
+                    columnName = row.getCell(i).getStringCellValue().trim();
+                } else {
+                    columnName = String.valueOf(row.getCell(i).getNumericCellValue());
+
+                }
+
+//                String columnName = row.getCell(i).getStringCellValue().trim();
                 if (ORDER_COLUMNS_NAME.containsKey(columnName))
                     continue;
                 ORDER_COLUMNS_NAME.put(columnName, i);
@@ -312,6 +322,7 @@ public class ImportService extends BasedService {
         if (fileList.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Forecast Dynamic Pricing Excel file");
 
+
         List<ForeCastValue> foreCastValues = new ArrayList<>();
 
         for (String fileName : fileList) {
@@ -327,6 +338,7 @@ public class ImportService extends BasedService {
 
             for (Sheet sheet : workbook) {
                 Region region = getRegionBySheetName(sheet.getSheetName());
+                List<String> titleColumnFileCompetitor = List.of("Series /Segments", "Description", "Plant", "Brand", "Planform", "Qty", "DN", "M % ", "Book Rev", "Book Margin $");
                 for (Row row : sheet) {
                     if (row.getRowNum() == 0) {
                         getYearsInForeCast(YEARS_COLUMN, row, years);
@@ -348,6 +360,8 @@ public class ImportService extends BasedService {
                         }
                     }
                 }
+
+
             }
         }
         log.info("Number of ForeCastValue: " + foreCastValues.size());

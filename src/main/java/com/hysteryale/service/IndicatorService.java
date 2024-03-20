@@ -7,13 +7,8 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
 import com.hysteryale.repository.CompetitorColorRepository;
 import com.hysteryale.repository.CompetitorPricingRepository;
-import com.hysteryale.response.ResponseObject;
-import com.hysteryale.utils.ConvertDataFilterUtil;
-import com.hysteryale.utils.DateUtils;
-import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -23,7 +18,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -234,23 +228,7 @@ public class IndicatorService extends BasedService {
         return competitorColumnName;
     }
 
-    public boolean checkFormatFileCompetitor(Sheet sheet) {
-        List<String> keysToCheck = List.of("Table Title", "Country", "Group", "Brand", "Region", "Class", "Origin", "Market Share", "Price (USD)", "Lead Time", "Normalized Market Share", "Battery&Charger", "VAT", "Model", "HYG Series", "Percentage Dealer Premium", "Handling Cost (Dealer Street pricing - (DN  + Absolute margin))", "Dealer Net", "Dealer Pricing Premium /Margin (USD) %", "Dealer Pricing Premium /Margin (USD)");
-        Row headerRow = sheet.getRow(0);
-        for (int i = 12; i < headerRow.getLastCellNum(); i++) {
-            String cell = headerRow.getCell(i).getStringCellValue();
-            if (cell == null ) {
-                return false;
-            }
-            if (keysToCheck.contains(cell)) {
-                return true;
-            }else{
-                System.out.println(cell);
-                log.info(cell);
-            }
-        }
-        return false;
-    }
+
 
     /**
      * Checking existed Competitor Pricing and update new data from imported file
@@ -263,7 +241,10 @@ public class IndicatorService extends BasedService {
         List<CompetitorPricing> competitorPricingList = new ArrayList<>();
         List<ForeCastValue> forecastValueList = importService.loadForecastForCompetitorPricingFromFile();
         Sheet sheet = workbook.getSheetAt(0);
-        if (checkFormatFileCompetitor(sheet)) {
+        List<String> titleColumnFileCompetitor = List.of("Table Title", "Country", "Group", "Brand", "Region", "Class", "Origin", "Market Share", "Price (USD)", "Lead Time", "Normalized Market Share","Category", "Battery&Charger","RRP", "VAT", "Model", "HYG Series", "Percentage Dealer Premium", "Handling Cost (Dealer Street pricing - (DN  + Absolute margin))", "Dealer Net", "Dealer Pricing Premium /Margin (USD) %","Dealer Pricing Premium /Margin (USD) ");
+
+        //Check format file competitor
+        if (CheckFormatFile.checkFormatFileFollowTitleColumns(sheet,titleColumnFileCompetitor,0)) {
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) {
                     competitorColumnName = getCompetitorColumnName(row);

@@ -6,7 +6,9 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
+import com.hysteryale.service.ImportService;
 import com.hysteryale.service.IndicatorService;
+import com.hysteryale.utils.CheckFormatFile;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.ModelUtil;
@@ -31,6 +33,8 @@ public class IndicatorController {
     IndicatorService indicatorService;
     @Resource
     FileUploadService fileUploadService;
+
+
 
 
     @PostMapping("/getCompetitorData")
@@ -121,10 +125,14 @@ public class IndicatorController {
 
     @PostMapping("/uploadForecastFile")
     public void uploadForecastFile(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
-        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
-        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.FORECAST_PRICING);
 
-        fileUploadService.handleUpdatedSuccessfully(fileName);
+            String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
+            String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+            String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.FORECAST_PRICING);
+
+            fileUploadService.handleUpdatedSuccessfully(fileName);
+
+
+
     }
 }
