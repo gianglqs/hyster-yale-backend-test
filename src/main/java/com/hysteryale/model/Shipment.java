@@ -19,10 +19,6 @@ public class Shipment extends BaseModel{
     @Column(name = "order_no")
     private String orderNo;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "region")
-    private Region region;
-
     @JoinColumn(name = "dealer")
     @ManyToOne(fetch = FetchType.EAGER)
     private Dealer dealer;
@@ -32,9 +28,6 @@ public class Shipment extends BaseModel{
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "currency")
     private Currency currency;
-
-    @Column(name = "ctry_code")
-    private String ctryCode;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product")
