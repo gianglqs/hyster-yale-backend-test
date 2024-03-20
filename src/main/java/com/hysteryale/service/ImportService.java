@@ -635,6 +635,9 @@ public class ImportService extends BasedService {
             shipment.setBookingMarginPercentageAfterSurcharge(booking.getMarginPercentageAfterSurcharge());
             shipment.setBookingMarginAfterSurcharge(booking.getMarginAfterSurcharge());
             shipment.setBookingDealerNetAfterSurcharge(booking.getDealerNetAfterSurcharge());
+
+            // quote number
+            shipment.setQuoteNumber(booking.getQuoteNumber());
         }
 
         //Dealer
@@ -653,13 +656,12 @@ public class ImportService extends BasedService {
             log.error("Not found Country with countryCode: " + ctryCode);
             return null;
         }
-        shipment.setCtryCode(ctryCode);
-        shipment.setRegion(country.getRegion());
+        shipment.setCountry(country);
 
         // currency
         shipment.setCurrency(USDCurrency);
 
-        AOPMargin aopMargin = aopMarginService.getAOPMargin(prepareAOPMargins, shipment.getRegion(), shipment.getSeries(), shipment.getProduct().getPlant(), shipment.getDate());
+        AOPMargin aopMargin = aopMarginService.getAOPMargin(prepareAOPMargins, shipment.getCountry().getRegion(), shipment.getSeries(), shipment.getProduct().getPlant(), shipment.getDate());
         if (aopMargin == null) {
             log.error("Not found AOPMargin with orderNo: " + orderNo);
             return null;
