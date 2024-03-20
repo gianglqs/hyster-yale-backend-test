@@ -41,7 +41,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             "((:modelCode) IS Null OR LOWER(p.modelCode) LIKE LOWER(CONCAT('%', :modelCode, '%')))" +
             " AND ((:plants) IS NULL OR p.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(p.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR p.clazz.clazzName IN (:classes))" +
             " AND ((:segments) IS NULL OR p.segment IN (:segments))" +
             " AND ((:brands) IS NULL OR p.brand IN (:brands))" +
             " AND ((:truckTypes) IS NULL OR p.truckType IN (:truckTypes))" +
@@ -61,7 +61,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             "((:modelCode) IS Null OR LOWER(p.modelCode) LIKE LOWER(CONCAT('%', :modelCode, '%')))" +
             " AND ((:plants) IS NULL OR p.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(p.series, 2,3) IN (:metaSeries))" +
-            " AND ((:classes) IS NULL OR p.clazz IN (:classes))" +
+            " AND ((:classes) IS NULL OR p.clazz.clazzName IN (:classes))" +
             " AND ((:segments) IS NULL OR p.segment IN (:segments))" +
             " AND ((:brands) IS NULL OR p.brand IN (:brands))" +
             " AND ((:truckTypes) IS NULL OR p.truckType IN (:truckTypes))" +
