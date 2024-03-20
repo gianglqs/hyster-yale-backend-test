@@ -81,6 +81,12 @@ public class BookingService extends BasedService {
     @Resource
     FileUploadRepository fileUploadRepository;
 
+    @Resource
+    CountryService countryService;
+
+
+    @Resource
+    CountryRepository countryRepository;
 
     /**
      * Get Columns' name in Booking Excel file, then store them (columns' name) respectively with the index into HashMap
@@ -124,7 +130,7 @@ public class BookingService extends BasedService {
     }
 
 
-    Booking mapExcelDataIntoOrderObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME, List<Product> products, List<Region> regions, List<AOPMargin> aopMargins, List<Dealer> dealers) throws MissingColumnException {
+    Booking mapExcelDataIntoOrderObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME, List<Product> products, List<Region> regions, List<AOPMargin> aopMargins, List<Dealer> dealers, List<Country> countries) throws MissingColumnException {
         Booking booking = new Booking();
 
         //set OrderNo
@@ -157,21 +163,6 @@ public class BookingService extends BasedService {
             return null;
         }
         booking.setProduct(product);
-
-
-        //set region
-        Cell regionCell = row.getCell(ORDER_COLUMNS_NAME.get("REGION"));
-        Region region = null;
-
-        for (Region r : regions) {
-            if (r.getRegionShortName().equals(regionCell.getStringCellValue()))
-                region = r;
-        }
-        if (region == null) {
-            log.error("Not found Region with OrderNo" + booking.getOrderNo());
-            return null;
-        }
-        booking.setRegion(region);
 
 
         //set date
@@ -211,10 +202,36 @@ public class BookingService extends BasedService {
         }
         booking.setDealer(dealer);
 
+        //set region
+        Cell regionCell = row.getCell(ORDER_COLUMNS_NAME.get("REGION"));
+        Region region = null;
 
-        // country code
+        for (Region r : regions) {
+            if (r.getRegionShortName().equals(regionCell.getStringCellValue()))
+                region = r;
+        }
+        if (region == null) {
+            log.error("Not found Region with OrderNo" + booking.getOrderNo());
+            return null;
+        }
+
+        // country
         Cell ctryCodeCell = row.getCell(ORDER_COLUMNS_NAME.get("CTRYCODE"));
-        booking.setCtryCode(ctryCodeCell.getStringCellValue());
+        String ctryCode = ctryCodeCell.getStringCellValue();
+        Country country = countryService.findByCountryCode(countries, ctryCode);
+        if (country == null) {
+            // insert new country in database and update list countries
+            Country newCountry = new Country();
+            newCountry.setCode(ctryCode);
+            newCountry.setRegion(region);
+            // TODO: admin must log into Database to update country name
+            countryRepository.save(newCountry);
+            countries.add(newCountry);
+            booking.setCountry(newCountry);
+        } else {
+            booking.setCountry(country);
+        }
+
 
         // truck class
         Cell truckClass = row.getCell(ORDER_COLUMNS_NAME.get("TRUCKCLASS"));
@@ -232,7 +249,7 @@ public class BookingService extends BasedService {
         // AOPMargin
         AOPMargin aopMargin = null;
         for (AOPMargin a : aopMargins) {
-            if (a.equals(booking.getRegion(), booking.getSeries().substring(1),
+            if (a.equals(booking.getCountry().getRegion(), booking.getSeries().substring(1),
                     booking.getProduct().getPlant(), booking.getDate().getYear()))
                 aopMargin = a;
         }
@@ -336,6 +353,7 @@ public class BookingService extends BasedService {
         List<Region> regions = regionRepository.findAll();
         List<AOPMargin> aopMargins = aopMarginRepository.findAll();
         List<Dealer> dealers = dealerRepository.findAll();
+        List<Country> countries = countryRepository.findAll();
 
         //get list cost data from month and year
 
@@ -344,7 +362,7 @@ public class BookingService extends BasedService {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
                 CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
-                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);
 
                 if (newBooking == null)
                     continue;
@@ -391,13 +409,14 @@ public class BookingService extends BasedService {
         List<Region> regions = regionRepository.findAll();
         List<AOPMargin> aopMargins = aopMarginRepository.findAll();
         List<Dealer> dealers = dealerRepository.findAll();
+        List<Country> countries = countryRepository.findAll();
 
         for (Row row : orderSheet) {
             if (row.getRowNum() == numRowName) {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
                 CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
-                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);
 
                 if (newBooking == null)
                     continue;
@@ -460,6 +479,7 @@ public class BookingService extends BasedService {
         List<Region> regions = regionRepository.findAll();
         List<AOPMargin> aopMargins = aopMarginRepository.findAll();
         List<Dealer> dealers = dealerRepository.findAll();
+        List<Country> countries = countryRepository.findAll();
 
         for (Row row : orderSheet) {
             if (row.getRowNum() == 0) {
@@ -467,7 +487,7 @@ public class BookingService extends BasedService {
                 CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 1) {
                 // map data from excel file
-                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);
 
                 if (newBooking == null)
                     continue;
@@ -714,6 +734,7 @@ public class BookingService extends BasedService {
         booking.setDealerNet(dealerNet);
         booking.setDealerNetAfterSurcharge(dealerNet - surcharge);
         booking.setCurrency(parts.get(0).getCurrency());
+        booking.setQuoteNumber(parts.get(0).getQuoteId());
         return booking;
     }
 

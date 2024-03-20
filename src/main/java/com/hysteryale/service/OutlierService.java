@@ -99,12 +99,12 @@ public class OutlierService extends BasedService {
 
         for (Booking order : listOrder) {
             ChartOutlier chartOutlier = new ChartOutlier(
-                    order.getRegion().getRegionName(),
+                    order.getCountry().getRegion().getRegionName(),
                     order.getDealerNet(),
                     order.getDealerNetAfterSurcharge() == 0 ? 0 : order.getMarginAfterSurcharge() / order.getDealerNetAfterSurcharge(),
                     order.getProduct().getModelCode()
             );
-            switch (order.getRegion().getRegionName()) {
+            switch (order.getCountry().getRegion().getRegionName()) {
                 case "Asia":
                     asiachartOutlierList.add(chartOutlier);
                     break;

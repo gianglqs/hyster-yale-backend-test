@@ -205,7 +205,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             "AVG(b.marginPercentageAfterSurcharge) as marginPercentage, " +
             "AVG(b.totalCost) as costOrDealerNet ) " +
             "FROM Booking b WHERE " +
-            " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
+            " ((:regions) IS NULL OR b.country.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR b.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR b.product.clazz.clazzName IN (:classes))" +
@@ -232,7 +232,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             "AVG(b.marginPercentageAfterSurcharge) as marginPercentage, " +
             "AVG(b.dealerNet) as costOrDealerNet ) " +
             "FROM Booking b WHERE " +
-            " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
+            " ((:regions) IS NULL OR b.country.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR b.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR b.product.clazz.clazzName IN (:classes))" +

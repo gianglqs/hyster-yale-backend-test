@@ -94,6 +94,13 @@
         </sql>
     </changeSet>
 
-<!--    delete column region, -->
+<!--    delete column region, ctry_code -->
+    <changeSet id="drop-column-in-booking-shipment" author="songiang">
+        <dropColumn tableName="booking" columnName="ctry_code"/>
+        <dropColumn tableName="booking" columnName="region"/>
+        <dropColumn tableName="shipment" columnName="ctry_code"/>
+        <dropColumn tableName="shipment" columnName="region"/>
+    </changeSet>
+
 
 </databaseChangeLog>

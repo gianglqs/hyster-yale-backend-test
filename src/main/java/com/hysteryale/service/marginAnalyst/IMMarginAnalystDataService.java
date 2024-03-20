@@ -61,12 +61,19 @@ public class IMMarginAnalystDataService {
      * if plant == HYM or SN -> then find the latest manufacturingCost(or CostRMB) in Macro
      * else plant == [EU_Plant] -> then getting from BookingOrder (Cost_Data file)
      */
-    double getManufacturingCost(String modelCode, String partNumber, String strCurrency, String plant, double dealerNet, double exchangeRate) {
-        //HYM can be Ruyi, Staxx or Maximal
-        List<String> plantList = !plant.equals("SN")
-                ? new ArrayList<>(List.of("HYM", "Ruyi", "Staxx", "Maximal"))
-                : new ArrayList<>(List.of("SN"));
-        Double manufacturingCost = marginAnalystMacroService.getManufacturingCost(modelCode, partNumber, strCurrency, plantList);
+    double getManufacturingCost(String modelCode, String partNumber, String strCurrency, String plant, double dealerNet, double exchangeRate, String region) {
+        List<String> plantList;
+        Double manufacturingCost;
+        if(plant.equals("SN")) {
+            plantList = new ArrayList<>(List.of("SN"));
+
+            // SN USD -> then use extended params REGION for getting Manufacturing Cost
+            if(strCurrency.equals("USD")) manufacturingCost = marginAnalystMacroService.getSNManufacturingCost(modelCode, partNumber, strCurrency, plantList, region);
+            else manufacturingCost = marginAnalystMacroService.getManufacturingCost(modelCode, partNumber, strCurrency, plantList);
+        } else {
+            plantList = new ArrayList<>(List.of("HYM", "Ruyi", "Staxx", "Maximal"));
+            manufacturingCost = marginAnalystMacroService.getManufacturingCost(modelCode, partNumber, strCurrency, plantList);
+        }
 
         // if manufacturingCost is null -> it will equal 90% of DealerNet
         return Objects.requireNonNullElseGet(manufacturingCost, () -> plant.equals("HYM")
@@ -77,7 +84,7 @@ public class IMMarginAnalystDataService {
     /**
      * Mapping the data from uploaded files / template files as SN_AUD ... into a model
      */
-    private IMMarginAnalystData mapIMMarginAnalystData(Row row, String plant, String strCurrency) {
+    private IMMarginAnalystData mapIMMarginAnalystData(Row row, String plant, String strCurrency, String region) {
         // Initialize variables
         double aopRate = 1;
         double costUplift = 0.0;
@@ -116,7 +123,7 @@ public class IMMarginAnalystDataService {
 
         // ManufacturingCost must be multiplied by aopRate (to exchange the currency)
         // ManufacturingCost can be in RMB(CNY), USD or AUD -> then it must be exchanged to be the same as the currency of DealerNet
-        double manufacturingCost = getManufacturingCost(modelCode, partNumber, strCurrency, queryPlant, netPrice, aopRate);
+        double manufacturingCost = getManufacturingCost(modelCode, partNumber, strCurrency, queryPlant, netPrice, aopRate, region);
         boolean isSPED = false;
         if(description.contains("SPED")) {
             isSPED = true;
@@ -128,6 +135,7 @@ public class IMMarginAnalystDataService {
 
         imMarginAnalystData.setManufacturingCost(CurrencyFormatUtils.formatDoubleValue(manufacturingCost, CurrencyFormatUtils.decimalFormatFourDigits));
         imMarginAnalystData.setType(type);
+        imMarginAnalystData.setRegion(region);
         return imMarginAnalystData;
     }
 
@@ -146,7 +154,7 @@ public class IMMarginAnalystDataService {
     /**
      * Calculate MarginAnalystSummary and save into In-memory database
      */
-    public IMMarginAnalystSummary calculateNonUSMarginAnalystSummary(String fileUUID, String plant, String strCurrency, String durationUnit, Integer type, String series, String modelCode, String orderNumber) {
+    public IMMarginAnalystSummary calculateNonUSMarginAnalystSummary(String fileUUID, String plant, String strCurrency, String durationUnit, Integer type, String series, String modelCode, String orderNumber, String region) {
         // Prepare Model Code for calculation if Model Code is null then --> use Series to find List of Mode Codes in a file with FileUUID
         List<String> modelCodeList = Collections.singletonList(modelCode);
         if(modelCode == null) modelCodeList = imMarginAnalystDataRepository.getModelCodesBySeries(fileUUID, series);
@@ -157,7 +165,7 @@ public class IMMarginAnalystDataService {
         double totalListPrice = 0, totalManufacturingCost = 0, dealerNet = 0;
         for(String mc : modelCodeList) {
             List<IMMarginAnalystData> imMarginAnalystDataList =
-                    imMarginAnalystDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series);
+                    imMarginAnalystDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series, region);
 
             log.info("Data in a Summary: " + imMarginAnalystDataList.size());
             // If the Model Code does not have any Margin Analysis Data then ignore it.
@@ -175,8 +183,10 @@ public class IMMarginAnalystDataService {
         // Get the latest Exchange Rate value
         String queryPlant = plant.equals("SN") ? "SN" : "HYM";
         Optional<MarginAnalysisAOPRate> optionalMarginAnalysisAOPRate = getLatestMarginAnalysisAOPRate(strCurrency, queryPlant, durationUnit);
-        if(optionalMarginAnalysisAOPRate.isPresent())
+        if(optionalMarginAnalysisAOPRate.isPresent()) {
             aopRate = optionalMarginAnalysisAOPRate.get().getAopRate();
+            surcharge = optionalMarginAnalysisAOPRate.get().getSurcharge();
+        }
 
         String clazz = marginAnalystMacroService.getClassBySeries(series);
         double warranty = marginAnalystMacroService.getLatestWarrantyValue(clazz);
@@ -244,8 +254,8 @@ public class IMMarginAnalystDataService {
     /**
      * Get the In-memory Data which has already been calculated in the uploaded file
      */
-    public List<IMMarginAnalystData> getIMMarginAnalystData(String modelCode, String strCurrency, String fileUUID, String orderNumber, Integer type, String series) {
-        return imMarginAnalystDataRepository.getIMMarginAnalystData(modelCode, orderNumber, strCurrency, type, fileUUID, series);
+    public List<IMMarginAnalystData> getIMMarginAnalystData(String modelCode, String strCurrency, String fileUUID, String orderNumber, Integer type, String series, String region) {
+        return imMarginAnalystDataRepository.getIMMarginAnalystData(modelCode, orderNumber, strCurrency, type, fileUUID, series, region);
     }
 
     public IMMarginAnalystSummary calculateUSPlantMarginSummary(String modelCode, String series, String strCurrency, String durationUnit, String orderNumber, Integer type, String fileUUID) {
@@ -281,7 +291,7 @@ public class IMMarginAnalystDataService {
         double totalListPrice = 0.0, dealerNet = 0.0, totalManufacturingCost = defMFGCost;
         for(String mc : modelCodeList) {
             List<IMMarginAnalystData> imMarginAnalystDataList =
-                    imMarginAnalystDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series);
+                    imMarginAnalystDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series, null);
             for(IMMarginAnalystData data : imMarginAnalystDataList) {
                 totalListPrice += data.getListPrice();
                 dealerNet += data.getDealerNet();
@@ -344,7 +354,7 @@ public class IMMarginAnalystDataService {
         return imMarginAnalystSummary;
     }
 
-    public void calculateMarginAnalysisData(String fileUUID, String currency) throws IOException {
+    public void calculateMarginAnalysisData(String fileUUID, String currency, String region) throws IOException {
         String fileName = fileUploadService.getFileNameByUUID(fileUUID); // fileName has been hashed
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
@@ -385,7 +395,7 @@ public class IMMarginAnalystDataService {
                 IMMarginAnalystData imMarginAnalystData;
                 if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
                     // calculate non US plant Margin Analysis Data
-                    imMarginAnalystData = mapIMMarginAnalystData(row, plant, currency);
+                    imMarginAnalystData = mapIMMarginAnalystData(row, plant, currency, region);
                 }
                 else {
                     // calculate US plant Margin Analysis Data
@@ -404,7 +414,7 @@ public class IMMarginAnalystDataService {
 
     }
 
-    public Map<String, Object> calculateMarginAnalysisSummary(String fileUUID, Integer type, String modelCode, String series, String orderNumber, String currency) {
+    public Map<String, Object> calculateMarginAnalysisSummary(String fileUUID, Integer type, String modelCode, String series, String orderNumber, String currency, String region) {
         String plant = marginAnalystMacroService.getPlantBySeries(series);
         if(plant == null) {
             plant = productRepository.getPlantBySeries(series);
@@ -415,8 +425,8 @@ public class IMMarginAnalystDataService {
         IMMarginAnalystSummary monthly;
         IMMarginAnalystSummary annually;
         if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
-            monthly = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "monthly", type, series, modelCode, orderNumber);
-            annually = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "annually", type, series, modelCode, orderNumber);
+            monthly = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "monthly", type, series, modelCode, orderNumber, region);
+            annually = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "annually", type, series, modelCode, orderNumber, region);
         }
         else {
             monthly = calculateUSPlantMarginSummary(modelCode, series, currency, "monthly", orderNumber, type, fileUUID);
@@ -521,7 +531,7 @@ public class IMMarginAnalystDataService {
     /**
      * Check a file which has fileUUID has already been calculated Margin Data or not
      */
-    public boolean isFileCalculated(String fileUUID, String currency) {
-        return imMarginAnalystDataRepository.isFileCalculated(fileUUID, currency);
+    public boolean isFileCalculated(String fileUUID, String currency, String region) {
+        return imMarginAnalystDataRepository.isFileCalculated(fileUUID, currency, region);
     }
 }
