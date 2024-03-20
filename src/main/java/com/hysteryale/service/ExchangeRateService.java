@@ -3,7 +3,6 @@ package com.hysteryale.service;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.reports.CompareCurrencyRequest;
-import com.hysteryale.model.reports.CompareCurrencyResponse;
 import com.hysteryale.repository.ExchangeRateRepository;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -215,14 +214,112 @@ public class ExchangeRateService extends BasedService {
                     weakerCurrencies.add(currency.getCurrency() + ": " + sb + " (" + differentRatePercentage + "%)");
                 else strongerCurrencies.add(currency.getCurrency() + ": +" + sb + " (+" + differentRatePercentage + "%)");
             } else stableCurrencies.add(currency.getCurrency());
-            data.put(currency.getCurrency(), new CompareCurrencyResponse(exchangeRateList));
-            data.put("lastUpdated", exchangeRateList.get(0).getDate());
+            data.put(currency.getCurrency(), exchangeRateList);
         }
 
         data.put("stable", stableCurrencies);
         data.put("weakening", weakerCurrencies);
         data.put("strengthening", strongerCurrencies);
         return data;
+    }
+
+    public Map<String, Object> compareCurrencyFromAPI(CompareCurrencyRequest request) {
+        Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
+        List<String> comparisonCurrencies = request.getComparisonCurrencies();
+        LocalDate fromDate = parseDateFromRequest(request.getFromDate());
+        LocalDate toDate = parseDateFromRequest(request.getToDate());
+
+        // if fromDate and toDate is not set then limit will be 12
+        // if toDate is not set => set current month & year
+        // fromDate will be: toDate - limit (limit can be 12 or 60)
+        int limit = fromDate == null || toDate == null ? 12 : 60;
+        if(toDate == null) toDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 1);
+        if(fromDate == null) fromDate = toDate.minusMonths(limit);
+
+        Map<String, Object> data = new HashMap<>();
+        for (String currency : comparisonCurrencies) {
+            data.put(currency, new ArrayList<>());
+        }
+
+        List<String> stableCurrencies = new ArrayList<>();
+        List<String> weakerCurrencies = new ArrayList<>();
+        List<String> strongerCurrencies = new ArrayList<>();
+
+        LocalDate queryDate = toDate;
+        int numberOfMonths = 1;
+        while(queryDate.isAfter(fromDate) && numberOfMonths <= limit) {
+            getExchangeRatesFromAPI(currentCurrency.getCurrency(), comparisonCurrencies, queryDate, data);
+            // update looping condition
+            queryDate = queryDate.minusMonths(1);
+            numberOfMonths++;
+        }
+
+        for (String currency : comparisonCurrencies) {
+            List<ExchangeRate> exchangeRateList = (List<ExchangeRate>) data.get(currency);
+            if(exchangeRateList.size() > 2) {
+                double nearestRate = exchangeRateList.get(exchangeRateList.size() - 1).getRate();
+                double farthestRate = exchangeRateList.get(0).getRate();
+                double differentRate = nearestRate - farthestRate;
+                double differentRatePercentage = CurrencyFormatUtils.formatDoubleValue((differentRate / farthestRate) * 100, CurrencyFormatUtils.decimalFormatTwoDigits);
+
+                if (Math.abs(differentRatePercentage) > 5) {
+                    StringBuilder sb = formatNumericValue(differentRate);
+                    if (differentRatePercentage < 0)
+                        weakerCurrencies.add(currency + ": " + sb + " (" + differentRatePercentage + "%)");
+                    else strongerCurrencies.add(currency + ": +" + sb + " (+" + differentRatePercentage + "%)");
+                } else stableCurrencies.add(currency);
+            }
+        }
+
+        data.put("stable", stableCurrencies);
+        data.put("weakening", weakerCurrencies);
+        data.put("strengthening", strongerCurrencies);
+        return data;
+    }
+
+    private void getExchangeRatesFromAPI (String currentCurrency, List<String> comparisonCurrencies, LocalDate queryDate, Map<String, Object> result) {
+        RestTemplate template = new RestTemplate();
+        String apiKey = EnvironmentUtils.getEnvironmentValue("exchange_rate_api_key");
+        String url;
+
+        LocalDate now = LocalDate.now();
+
+        int year = queryDate.getYear();
+        int month = queryDate.getMonthValue();
+        int day = month == now.getMonthValue() ? now.getDayOfMonth() : queryDate.getMonth().minLength();
+
+        Map<String, Object> response;
+        Map<String, Object> conversionRates;
+
+        try {
+            url = "https://v6.exchangerate-api.com/v6/" + apiKey + "/history/" + currentCurrency + "/" + year + "/" + month + "/" + day;
+            response = (Map<String, Object>) template.getForObject(url, Map.class);
+            assert response != null;
+            conversionRates = (Map<String, Object>) response.get("conversion_rates");
+        } catch (Exception e) {
+            String errorMessage = "Unexpected error";
+            if (e.getMessage().contains("404"))
+                errorMessage = "Unsupported currency: " + currentCurrency;
+            if (e.getMessage().contains("403"))
+                errorMessage = "Inactive API Keys. Please check API Keys expired date.";
+            if (e.getMessage().contains("401"))
+                errorMessage = "Plan updated required";
+            log.info(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, errorMessage);
+        }
+
+        for (String currency : comparisonCurrencies) {
+            Object rateObject = conversionRates.get(currency);
+            if(rateObject == null)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported currency before 31/12/2020: " + currency);
+
+            double rate = Double.parseDouble(conversionRates.get(currency).toString());
+            ExchangeRate exchangeRate = new ExchangeRate(new Currency(currentCurrency), new Currency(currency), rate, queryDate);
+
+            List<ExchangeRate> exchangeRateList = (List<ExchangeRate>) result.get(currency);
+            exchangeRateList.add(exchangeRate);
+            result.put(currency, exchangeRateList);
+        }
     }
 
     /**
