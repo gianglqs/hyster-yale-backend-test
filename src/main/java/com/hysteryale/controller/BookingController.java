@@ -68,7 +68,7 @@ public class BookingController {
 
         if (!FileUtils.isExcelFile(filePath)) {
             fileUploadService.handleUpdatedFailure(fileNameSaved, "Uploaded file is not an Excel file");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("File is not EXCEL", null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("File is not EXCEL",null));
         }
 
         try {
