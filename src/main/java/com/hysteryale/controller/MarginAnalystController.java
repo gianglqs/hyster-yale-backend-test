@@ -64,10 +64,10 @@ public class MarginAnalystController {
         if (orderNumber.isEmpty())
             orderNumber = null;
 
-        if (!IMMarginAnalystDataService.isFileCalculated(fileUUID, currency))
-            IMMarginAnalystDataService.calculateMarginAnalysisData(fileUUID, currency);
+        if (!IMMarginAnalystDataService.isFileCalculated(fileUUID, currency, region))
+            IMMarginAnalystDataService.calculateMarginAnalysisData(fileUUID, currency, region);
 
-        List<IMMarginAnalystData> imMarginAnalystDataList = IMMarginAnalystDataService.getIMMarginAnalystData(modelCode, currency, fileUUID, orderNumber, type, series);
+        List<IMMarginAnalystData> imMarginAnalystDataList = IMMarginAnalystDataService.getIMMarginAnalystData(modelCode, currency, fileUUID, orderNumber, type, series, region);
 
         double targetMargin = 0.0;
         if (!imMarginAnalystDataList.isEmpty() && series != null)
@@ -76,7 +76,7 @@ public class MarginAnalystController {
         assert series != null;
         return Map.of(
                 "MarginAnalystData", imMarginAnalystDataList,
-                "MarginAnalystSummary", IMMarginAnalystDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, currency),
+                "MarginAnalystSummary", IMMarginAnalystDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, currency, region),
                 "TargetMargin", targetMargin
         );
     }

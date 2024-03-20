@@ -365,7 +365,11 @@ public class MarginAnalystMacroService {
      */
     void saveMarginAnalysisAOPRate(Sheet sheet, String currency, LocalDate monthYear, String durationUnit) {
 
-        if(sheet.getSheetName().equals("USD HYM Ruyi Staxx") || sheet.getSheetName().equals("SN AUD Template") ||sheet.getSheetName().equals("AUD HYM Ruyi Staxx")) {
+        if(sheet.getSheetName().equals("USD HYM Ruyi Staxx")
+                || sheet.getSheetName().equals("SN AUD Template")
+                ||sheet.getSheetName().equals("AUD HYM Ruyi Staxx")
+                || sheet.getSheetName().equals("SN DDP AUD Template"))
+        {
             MarginAnalysisAOPRate marginAnalysisAOPRate = new MarginAnalysisAOPRate();
             String plant = sheet.getSheetName().contains("SN") ? "SN" : "HYM";
 
@@ -379,15 +383,13 @@ public class MarginAnalystMacroService {
             String cellIndex;
             int rowIndex;
 
-            if (sheet.getSheetName().equals("SN AUD Template")) {
+            if (sheet.getSheetName().equals("SN AUD Template") || sheet.getSheetName().equals("SN DDP AUD Template")) {
                 cellIndex = durationUnit.equals("annually") ? "AF" : "AI";
                 rowIndex = 1;
-
             }
             else {
                 cellIndex = durationUnit.equals("annually") ? "V" : "Y";
                 rowIndex = 0;
-
             }
             aopRate = sheet.getRow(rowIndex).getCell(cellIndex).getNumericCellValue();
             costUplift = sheet.getRow(rowIndex + 2).getCell(cellIndex).getNumericCellValue();
@@ -426,6 +428,9 @@ public class MarginAnalystMacroService {
 
     public Double getManufacturingCost(String modelCode, String partNumber, String strCurrency, List<String> plants) {
         return marginAnalystMacroRepository.getManufacturingCost(modelCode, partNumber, strCurrency, plants);
+    }
+    public Double getSNManufacturingCost(String modelCode, String partNumber, String strCurrency, List<String> plants, String region) {
+        return marginAnalystMacroRepository.getSNManufacturingCost(modelCode, partNumber, strCurrency, plants, region);
     }
 
     public List<MarginAnalystMacro> getMarginAnalystMacroByPlantAndListPartNumber(String modelCode, List<String> partNumber, String strCurrency, String plant, LocalDate monthYear) {

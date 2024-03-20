@@ -27,13 +27,6 @@ public class Booking extends BaseModel{
     @Column(name = "order_type")
     private String orderType;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "region")
-    private Region region;
-
-    @Column(name = "ctry_code")
-    private String ctryCode;
-
     @Column(name = "dealerpo")
     private String dealerPO;
 
@@ -84,10 +77,10 @@ public class Booking extends BaseModel{
     private Country country;
 
 
-    public Booking(String region, String plant, Clazz clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge) {
+    public Booking(String regionName, String plant, Clazz clazz, String series, String model, long quantity, double totalCost, double dealerNet, double dealerNetAfterSurcharge, double marginAfterSurcharge) {
 
         Product p = new Product(plant, clazz, model);
-        this.region = new Region(region);
+        this.country = new Country(regionName);
         this.product = p;
         this.series = series;
         this.quantity = quantity;
@@ -97,9 +90,9 @@ public class Booking extends BaseModel{
         this.marginAfterSurcharge = marginAfterSurcharge;
     }
 
-    public Booking(String region, Product product, Currency currency, double totalCost, double dealerNetAfterSurcharge, double marginAfterSurcharge, long quantity) {
+    public Booking(String regionName, Product product, Currency currency, double totalCost, double dealerNetAfterSurcharge, double marginAfterSurcharge, long quantity) {
         this.currency = currency;
-        this.region = new Region(region);
+        this.country = new Country(regionName);
         this.product = product;
         this.quantity = quantity;
         this.totalCost = totalCost;

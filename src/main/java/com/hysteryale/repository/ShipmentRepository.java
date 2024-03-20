@@ -16,7 +16,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
 
     @Query("SELECT c FROM Shipment c WHERE " +
             "((:orderNo) IS Null OR LOWER(c.orderNo) LIKE LOWER(CONCAT('%', :orderNo, '%')))" +
-            " AND ((:regions) IS Null OR c.region IS NULL OR COALESCE(c.country.region.regionName, NULL) IN (:regions) )" +
+            " AND ((:regions) IS Null OR c.country IS NULL OR COALESCE(c.country.region.regionName, NULL) IN (:regions) )" +
             " AND ((:plants) IS NULL OR c.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(c.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR c.product.clazz.clazzName IN (:classes))" +
@@ -95,7 +95,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             "AVG(b.marginPercentageAfterSurcharge) as marginPercentage, " +
             "AVG(b.totalCost) as costOrDealerNet ) " +
             "FROM Shipment b WHERE " +
-            " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
+            " ((:regions) IS NULL OR b.country.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR b.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR b.product.clazz.clazzName IN (:classes))" +
@@ -121,7 +121,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, String> {
             "AVG(b.marginPercentageAfterSurcharge) as marginPercentage, " +
             "AVG(b.dealerNet) as costOrDealerNet ) " +
             "FROM Shipment b WHERE " +
-            " ((:regions) IS NULL OR b.region.regionName IN (:regions) )" +
+            " ((:regions) IS NULL OR b.country.region.regionName IN (:regions) )" +
             " AND ((:plants) IS NULL OR b.product.plant IN (:plants))" +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             " AND ((:classes) IS NULL OR b.product.clazz.clazzName IN (:classes))" +
