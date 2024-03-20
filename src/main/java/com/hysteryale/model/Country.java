@@ -28,4 +28,8 @@ public class Country {
         this.countryName = countryName;
         this.region = region;
     }
+
+    public Country(String regionName){
+        this.region = new Region(regionName);
+    }
 }
