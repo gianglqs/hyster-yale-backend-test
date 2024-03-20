@@ -37,9 +37,20 @@ public interface MarginAnalystMacroRepository extends JpaRepository<MarginAnalys
             "AND m.currency_currency = :currency " +
             "AND m.plant in :plants " +
             "AND m.month_year = (SELECT MAX(month_year) FROM margin_analyst_macro) " +
-            "ORDER BY m.costrmb DESC LIMIT 1", nativeQuery = true)
+            "ORDER BY similarity(m.model_code, :modelCode) desc limit 1", nativeQuery = true)
     Double getManufacturingCost(@Param("modelCode") String modelCode, @Param("partNumber") String partNumber, @Param("currency") String strCurrency,
                                 @Param("plants") List<String> plants);
+
+    @Query(value = "SELECT m.costrmb FROM margin_analyst_macro m " +
+            "WHERE m.model_code LIKE CONCAT ('%', :modelCode, '%') " +
+            "AND m.part_number = :partNumber " +
+            "AND m.currency_currency = :currency " +
+            "AND m.plant in :plants " +
+            "AND m.month_year = (SELECT MAX(month_year) FROM margin_analyst_macro) " +
+            "AND m.region = :region " +
+            "ORDER BY similarity(m.model_code, :modelCode) desc limit 1", nativeQuery = true)
+    Double getSNManufacturingCost(@Param("modelCode") String modelCode, @Param("partNumber") String partNumber, @Param("currency") String strCurrency,
+                                @Param("plants") List<String> plants, @Param("region") String region);
     @Query("SELECT m FROM MarginAnalystMacro m WHERE m.modelCode LIKE CONCAT ('%', ?1, '%') AND m.partNumber IN (?2) AND m.currency.currency = ?3 AND m.plant = ?4 AND m.monthYear = ?5")
     List<MarginAnalystMacro> getMarginAnalystMacroByPlantAndListPartNumber(String modelCode, List<String> partNumber, String currency, String plant, LocalDate monthYear);
 

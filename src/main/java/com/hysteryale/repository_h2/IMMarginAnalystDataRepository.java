@@ -15,17 +15,22 @@ public interface IMMarginAnalystDataRepository extends JpaRepository<IMMarginAna
             "AND ((:order_number) IS NULL OR m.orderNumber = (:order_number)) " +
             "AND m.currency = :currency " +
             "AND ((:type) IS NULL OR m.type = (:type)) " +
-            "AND m.fileUUID = :fileuuid")
+            "AND m.fileUUID = :fileuuid " +
+            "AND ((:region) IS NULL OR m.region = (:region))")
     List<IMMarginAnalystData> getIMMarginAnalystData(@Param("model_code") String modelCode, @Param("order_number") String orderNumber,
-                                                            @Param("currency") String currency, @Param("type") Integer type,
-                                                            @Param("fileuuid") String fileUUID, @Param("series") String series);
+                                                     @Param("currency") String currency, @Param("type") Integer type,
+                                                     @Param("fileuuid") String fileUUID, @Param("series") String series,
+                                                     @Param("region") String region);
 
     @Query("SELECT DISTINCT m.modelCode FROM IMMarginAnalystData m WHERE m.fileUUID = ?1 and m.series = ?2")
     List<String> getModelCodesBySeries(String fileUUID, String series);
 
     @Query("SELECT CASE WHEN (COUNT(m) > 0) THEN true ELSE false END " +
-            "FROM IMMarginAnalystData m WHERE m.fileUUID = ?1 AND currency = ?2")
-    boolean isFileCalculated(String fileUIID, String currency);
+            "FROM IMMarginAnalystData m " +
+            "WHERE m.fileUUID = ?1 " +
+            "AND currency = ?2 " +
+            "AND m.region = ?3")
+    boolean isFileCalculated(String fileUIID, String currency, String region);
 
     @Query("SELECT m from IMMarginAnalystData m " +
             "WHERE m.modelCode = ?1 " +
