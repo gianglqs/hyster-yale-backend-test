@@ -30,5 +30,6 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Inte
     @Query(value = "SELECT m.latest_modified_at FROM booking m WHERE m.latest_modified_at is not null ORDER BY m.latest_modified_at DESC LIMIT 1", nativeQuery = true)
     Optional<LocalDateTime> getLatestUpdatedTime();
 
-
+    @Query("SELECT e FROM ExchangeRate e WHERE e.to.currency = 'USD' ")
+    List<ExchangeRate> getExchangeRateToUSD();
 }

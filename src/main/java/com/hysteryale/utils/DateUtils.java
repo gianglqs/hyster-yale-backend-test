@@ -132,4 +132,13 @@ public class DateUtils {
         return localDateTime.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
+    public static LocalDateTime getLastUpdatedTime(List<LocalDateTime> times) {
+        LocalDateTime lastTime = null;
+        for (LocalDateTime time : times) {
+            if (lastTime == null || time.isAfter(lastTime))
+                lastTime = time;
+        }
+        return lastTime;
+    }
+
 }
