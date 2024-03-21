@@ -29,6 +29,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -770,7 +771,39 @@ public class BookingService extends BasedService {
         return bookingRepository.findById(orderNumber);
     }
 
-    public Map<String, Object> getBookingByFilter(FilterModel filterModel) throws java.text.ParseException {
+    public List<Booking> getListBookingByFilter(FilterModel filterModel) throws ParseException {
+        //Get FilterData
+        Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filterModel);
+
+        return bookingRepository.selectAllForBookingOrder(
+                (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
+                (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
+                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable"));
+    }
+
+    public int countBookingsWithFilter(FilterModel filterModel) throws ParseException {
+        //Get FilterData
+        Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filterModel);
+
+        return bookingRepository.getCount(
+                (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
+                (List<String>) filterMap.get("metaSeriesFilter"), (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"),
+                (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"));
+    }
+
+    public List<String> getListOrderNoFromListBooking(List<Booking> bookings) {
+        List<String> orderNos = new ArrayList<>();
+        bookings.forEach(booking -> orderNos.add(booking.getOrderNo()));
+        return orderNos;
+    }
+
+    public Map<String, Object> getBookingByFilter(FilterModel filterModel) throws ParseException {
         Map<String, Object> result = new HashMap<>();
         //Get FilterData
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filterModel);
@@ -911,5 +944,23 @@ public class BookingService extends BasedService {
         return null;
     }
 
+    public void convertCurrencyOfBookingToUSD(List<Booking> bookings, List<ExchangeRate> exchangeRates) {
+        for (Booking booking : bookings) {
+            if (booking.getCurrency().getCurrency().equals("USD"))
+                continue;
+
+            for (ExchangeRate exchangeRate : exchangeRates) {
+                if (booking.getCurrency().equals(exchangeRate.getFrom())
+                        && booking.getDate().getYear() == (exchangeRate.getDate().getYear())
+                        && booking.getDate().getMonth().equals(exchangeRate.getDate().getMonth())) {
+                    booking.setDealerNet(booking.getDealerNet() * exchangeRate.getRate());
+                    booking.setDealerNetAfterSurcharge(booking.getDealerNetAfterSurcharge() * exchangeRate.getRate());
+                    booking.setTotalCost(booking.getTotalCost() * exchangeRate.getRate());
+                    booking.setMarginAfterSurcharge(booking.getMarginAfterSurcharge() * exchangeRate.getRate());
+                    booking.setMarginPercentageAfterSurcharge(booking.getMarginPercentageAfterSurcharge() * exchangeRate.getRate());
+                }
+            }
+        }
+    }
 
 }
