@@ -963,4 +963,7 @@ public class BookingService extends BasedService {
         }
     }
 
+    public List<Booking> findAllForTest(){
+        return bookingRepository.findAll();
+    }
 }
