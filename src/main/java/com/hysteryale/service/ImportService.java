@@ -9,7 +9,6 @@ import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.competitor.ForeCastValue;
 import com.hysteryale.repository.*;
-import com.hysteryale.utils.CheckFormatFile;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -102,7 +101,6 @@ public class ImportService extends BasedService {
 
                 }
 
-//                String columnName = row.getCell(i).getStringCellValue().trim();
                 if (ORDER_COLUMNS_NAME.containsKey(columnName))
                     continue;
                 ORDER_COLUMNS_NAME.put(columnName, i);
