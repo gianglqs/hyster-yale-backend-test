@@ -10,6 +10,7 @@ import com.hysteryale.repository.CompetitorPricingRepository;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -229,7 +230,6 @@ public class IndicatorService extends BasedService {
     }
 
 
-
     /**
      * Checking existed Competitor Pricing and update new data from imported file
      */
@@ -240,16 +240,27 @@ public class IndicatorService extends BasedService {
         HashMap<String, Integer> competitorColumnName = new HashMap<>();
         List<CompetitorPricing> competitorPricingList = new ArrayList<>();
         List<ForeCastValue> forecastValueList = importService.loadForecastForCompetitorPricingFromFile();
-        if(forecastValueList==null){
+        if (forecastValueList == null) {
             throw new Exception("Missing Forecast Dynamic Pricing Excel file");
-
         }
 
         Sheet sheet = workbook.getSheetAt(0);
-        List<String> titleColumnFileCompetitor = List.of("Table Title", "Country", "Group", "Brand", "Region", "Class", "Origin", "Market Share", "Price (USD)", "Lead Time", "Normalized Market Share","Category", "Battery&Charger","RRP", "VAT", "Model", "HYG Series", "Percentage Dealer Premium", "Handling Cost (Dealer Street pricing - (DN  + Absolute margin))", "Dealer Net", "Dealer Pricing Premium /Margin (USD) %","Dealer Pricing Premium /Margin (USD) ");
+        List<String> titleColumnCurrent = new ArrayList<>();
+        Row headerRow = sheet.getRow(0);
+        for (int j = 0; j < CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN.size(); j++) {
+            Cell cell = headerRow.getCell(j);
+            if(cell==null)
+                continue;
+            if (cell.getCellType() == CellType.STRING)
+                titleColumnCurrent.add(cell.getStringCellValue());
+            else
+                titleColumnCurrent.add(String.valueOf(cell.getNumericCellValue()));
+
+        }
+
 
         //Check format file competitor
-        if (CheckFormatFile.checkFormatFileFollowTitleColumns(sheet,titleColumnFileCompetitor,0)) {
+        if (CheckRequiredColumnUtils.checkRequiredColumnBoolean(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN)) {
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) {
                     competitorColumnName = getCompetitorColumnName(row);
@@ -284,7 +295,6 @@ public class IndicatorService extends BasedService {
         competitorPricingRepository.saveAll(competitorPricingList);
         importService.assigningCompetitorValues();
     }
-
 
 
 }

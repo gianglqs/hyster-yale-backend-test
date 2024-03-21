@@ -8,10 +8,10 @@ import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ImportService;
 import com.hysteryale.service.IndicatorService;
-import com.hysteryale.utils.CheckFormatFile;
-import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.FileUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.utils.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,14 +143,25 @@ public class IndicatorController {
             }
             InputStream is = new FileInputStream(pathFile);
             XSSFWorkbook workbook = new XSSFWorkbook(is);
-            Sheet sheet = workbook.getSheetAt(0);
-            List<String> titleColumnFileCompetitor = List.of("Series /Segments","Description","Plant","Brand","Qty","DN","M % ","Book Rev","Book Margin $","Book Margin %");
 
-            if (CheckFormatFile.checkFormatFileFollowTitleColumns(sheet,titleColumnFileCompetitor,1)) {
-                fileUploadService.handleUpdatedSuccessfully(fileName);
-            }else{
-                fileUploadService.handleUpdatedFailure(fileName, "File is not correct format");
+            List<String> titleColumnCurrent=new ArrayList<>();
+
+
+            for(int i=0;i<workbook.getNumberOfSheets();i++){
+                Sheet sheet = workbook.getSheetAt(i);
+                Row headerRow = sheet.getRow(1);
+                for (int j = 0; j < CheckRequiredColumnUtils.FORECAST_REQUIRED_COLUMN.size(); j++) {
+                    Cell cell = headerRow.getCell(j);
+                    if(cell==null)
+                        continue;
+                    if (cell.getCellType() == CellType.STRING)
+                        titleColumnCurrent.add(cell.getStringCellValue());
+                    else
+                        titleColumnCurrent.add(String.valueOf(cell.getNumericCellValue()));
+
+                }
             }
+            CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent,CheckRequiredColumnUtils.FORECAST_REQUIRED_COLUMN);
 
     }
 }
