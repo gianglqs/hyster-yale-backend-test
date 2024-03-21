@@ -257,8 +257,8 @@ public class ExchangeRateService extends BasedService {
         for (String currency : comparisonCurrencies) {
             List<ExchangeRate> exchangeRateList = (List<ExchangeRate>) data.get(currency);
             if(exchangeRateList.size() > 2) {
-                double nearestRate = exchangeRateList.get(exchangeRateList.size() - 1).getRate();
-                double farthestRate = exchangeRateList.get(0).getRate();
+                double nearestRate = exchangeRateList.get(0).getRate();
+                double farthestRate = exchangeRateList.get(exchangeRateList.size() - 1).getRate();
                 double differentRate = nearestRate - farthestRate;
                 double differentRatePercentage = CurrencyFormatUtils.formatDoubleValue((differentRate / farthestRate) * 100, CurrencyFormatUtils.decimalFormatTwoDigits);
 
