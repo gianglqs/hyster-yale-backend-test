@@ -1,0 +1,607 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.6.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <changeSet author="oem (generated)" id="1711005719548-1">
+        <createTable tableName="product">
+            <column name="model_code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="brand" type="VARCHAR(255)"/>
+            <column name="clazz_id" type="INTEGER"/>
+            <column name="family" type="VARCHAR(255)"/>
+            <column name="series" type="VARCHAR(255)"/>
+            <column name="plant" type="VARCHAR(255)"/>
+            <column name="segment" type="VARCHAR(255)"/>
+            <column name="trucktype" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="image" type="VARCHAR(255)"/>
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="product_primary_key_contraint"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="latest_modified_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="latest_modified_by" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-2">
+        <addUniqueConstraint columnNames="series, model_code" constraintName="uk_1onsrfub7tpmstil3s7amjw1g" tableName="product"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-3">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="aopmargin_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-4">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="clazz_seq" startValue="7"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-5">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="clazz_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-6">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="costupliftseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-7">
+        <createSequence cacheSize="100" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="dealer_seq" startValue="32"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-8">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="exchangerateseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-9">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="fileuploadedseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-10">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="freight_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-11">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-12">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalysisaoprateseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-13">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalystseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-14">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalystsummarysequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-15">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginmacroseq" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-16">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="partsequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-17">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="product_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-18">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="target_margin_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-19">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="warranty_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-20">
+        <createTable tableName="aopmargin">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="aopmargin_pkey"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="dnusd" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="marginstd" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="plant" type="VARCHAR(255)"/>
+            <column name="meta_series" type="VARCHAR(255)"/>
+            <column name="year" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="region" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-21">
+        <createTable tableName="apicdealer">
+            <column name="billtocode" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="apicdealer_pkey"/>
+            </column>
+            <column name="dealerdivison" type="VARCHAR(255)"/>
+            <column name="dealername" type="VARCHAR(255)"/>
+            <column name="mkggroup" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-22">
+        <createTable tableName="booking">
+            <column name="order_no" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="booking_order_pkey"/>
+            </column>
+            <column name="aopmargin" type="INTEGER"/>
+            <column name="bill_to" type="VARCHAR(255)"/>
+            <column name="comment" type="VARCHAR(255)"/>
+            <column name="date" type="date"/>
+            <column name="dealer_net" type="FLOAT8"/>
+            <column name="dealer_net_after_surcharge" type="FLOAT8"/>
+            <column name="dealerpo" type="VARCHAR(255)"/>
+            <column name="margin_after_surcharge" type="FLOAT8"/>
+            <column name="margin_percentage_after_surcharge" type="FLOAT8"/>
+            <column name="order_type" type="VARCHAR(255)"/>
+            <column name="quantity" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="series" type="VARCHAR(255)"/>
+            <column name="total_cost" type="FLOAT8"/>
+            <column name="truck_class" type="VARCHAR(255)"/>
+            <column name="currency" type="VARCHAR(255)"/>
+            <column name="product" type="INTEGER"/>
+            <column name="dealer" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="latest_modified_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="latest_modified_by" type="VARCHAR(255)"/>
+            <column name="quote_number" type="VARCHAR(255)"/>
+            <column name="country" type="INTEGER"/>
+            <column name="ctry_code" type="VARCHAR(255)"/>
+            <column name="region" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-23">
+        <createTable tableName="booking_fpa">
+            <column name="order_no" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="booking_fpa_pkey"/>
+            </column>
+            <column name="date" type="date"/>
+            <column name="dealer_net" type="FLOAT8"/>
+            <column name="margin" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="margin_percentage" type="FLOAT8"/>
+            <column name="quantity" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_cost" type="FLOAT8"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="latest_modified_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="latest_modified_by" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-24">
+        <createTable tableName="clazz">
+            <column name="clazz_name" type="VARCHAR(255)"/>
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="clazz_primary_key_contraint"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-25">
+        <createTable tableName="competitor_color">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="competitorcolor_pkey"/>
+            </column>
+            <column name="color_code" type="VARCHAR(255)"/>
+            <column name="group_name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-26">
+        <createTable tableName="competitor_pricing">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="competitorpricing_pkey"/>
+            </column>
+            <column name="aopf" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hyg_lead_time" type="FLOAT8"/>
+            <column name="lrff" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="actual" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="average_dn" type="FLOAT8"/>
+            <column name="category" type="VARCHAR(255)"/>
+            <column name="chinese_brand" type="BOOLEAN"/>
+            <column name="clazz_id" type="INTEGER"/>
+            <column name="competitor_lead_time" type="FLOAT8"/>
+            <column name="competitor_name" type="VARCHAR(255)"/>
+            <column name="competitor_pricing" type="FLOAT8"/>
+            <column name="dealer_handling_cost" type="FLOAT8"/>
+            <column name="dealer_net" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dealer_premium_percentage" type="FLOAT8"/>
+            <column name="dealer_pricing_premium" type="FLOAT8"/>
+            <column name="dealer_pricing_premium_percentage" type="FLOAT8"/>
+            <column name="dealer_street_pricing" type="FLOAT8"/>
+            <column name="market_share" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="model" type="VARCHAR(255)"/>
+            <column name="plant" type="VARCHAR(255)"/>
+            <column name="series" type="VARCHAR(255)"/>
+            <column name="variance_percentage" type="FLOAT8"/>
+            <column name="color_id" type="INTEGER"/>
+            <column name="country_id" type="INTEGER"/>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="latest_modified_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="latest_modified_by" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-27">
+        <createTable tableName="cost_uplift">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="cost_uplift_pkey"/>
+            </column>
+            <column name="cost_uplift" type="FLOAT8"/>
+            <column name="date" type="date"/>
+            <column name="plant" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-28">
+        <createTable tableName="country">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="country_pkey"/>
+            </column>
+            <column name="country_name" type="VARCHAR(255)"/>
+            <column name="region_id" type="INTEGER"/>
+            <column name="code" type="VARCHAR(5)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-29">
+        <createTable tableName="currency">
+            <column name="currency" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="currency_pkey"/>
+            </column>
+            <column name="currency_name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-30">
+        <createTable tableName="dealer">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dealer_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-31">
+        <createTable tableName="exchange_rate">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="exchange_rate_pkey"/>
+            </column>
+            <column name="date" type="date"/>
+            <column name="rate" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="from_currency" type="VARCHAR(255)"/>
+            <column name="to_currency" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-32">
+        <createTable tableName="file_upload">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="file_upload_pkey"/>
+            </column>
+            <column name="file_name" type="VARCHAR(255)"/>
+            <column name="uploaded_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="uuid" type="VARCHAR(255)"/>
+            <column name="uploadedby_id" type="INTEGER"/>
+            <column name="success" type="BOOLEAN"/>
+            <column name="message" type="VARCHAR(500)"/>
+            <column name="screen" type="VARCHAR(255)"/>
+            <column name="path" type="VARCHAR(500)"/>
+            <column name="loading" type="BOOLEAN"/>
+            <column name="size" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-33">
+        <createTable tableName="freight">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="freight_pkey"/>
+            </column>
+            <column name="freight" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="meta_series" type="VARCHAR(255)"/>
+            <column name="month_year" type="date"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-34">
+        <createTable tableName="hibernate_sequences">
+            <column name="sequence_name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="hibernate_sequences_pkey"/>
+            </column>
+            <column name="next_val" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-35">
+        <createTable tableName="margin_analyst_macro">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="margin_analyst_macro_pkey"/>
+            </column>
+            <column name="clazz" type="VARCHAR(255)"/>
+            <column name="costrmb" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="model_code" type="VARCHAR(255)"/>
+            <column name="month_year" type="date"/>
+            <column name="part_number" type="VARCHAR(255)"/>
+            <column name="plant" type="VARCHAR(255)"/>
+            <column name="series_code" type="VARCHAR(255)"/>
+            <column name="currency_currency" type="VARCHAR(255)"/>
+            <column name="region" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-36">
+        <createTable tableName="marginanalysisaoprate">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="marginanalysisaoprate_pkey"/>
+            </column>
+            <column name="addwarranty" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="aoprate" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="costuplift" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="durationunit" type="VARCHAR(255)"/>
+            <column name="duty" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="freight" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="monthyear" type="date"/>
+            <column name="plant" type="VARCHAR(255)"/>
+            <column name="surcharge" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency_currency" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-37">
+        <createTable tableName="part">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="part_pkey"/>
+            </column>
+            <column name="bill_to" type="VARCHAR(255)"/>
+            <column name="clazz_id" type="INTEGER"/>
+            <column name="customer_price" type="FLOAT8"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="discount" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="discount_percentage" type="FLOAT8"/>
+            <column name="discount_to_customer_percentage" type="FLOAT8"/>
+            <column name="extended_customer_price" type="FLOAT8"/>
+            <column name="issped" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="list_price" type="FLOAT8"/>
+            <column name="model_code" type="VARCHAR(255)"/>
+            <column name="net_price_each" type="FLOAT8"/>
+            <column name="option_type" type="VARCHAR(255)"/>
+            <column name="order_booked_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="order_number" type="VARCHAR(255)"/>
+            <column name="order_request_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="part_number" type="VARCHAR(255)"/>
+            <column name="quantity" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quote_id" type="VARCHAR(255)"/>
+            <column name="recorded_time" type="date"/>
+            <column name="region" type="VARCHAR(255)"/>
+            <column name="series" type="VARCHAR(255)"/>
+            <column name="currency_currency" type="VARCHAR(255)"/>
+            <column name="image" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-38">
+        <createTable tableName="region">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="region_pkey"/>
+            </column>
+            <column name="region_name" type="VARCHAR(255)"/>
+            <column name="region_short_name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-39">
+        <createTable tableName="role">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="role_pkey"/>
+            </column>
+            <column name="role_name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-40">
+        <createTable tableName="shipment">
+            <column name="order_no" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="shipment_pkey"/>
+            </column>
+            <column name="aopmargin" type="INTEGER"/>
+            <column name="booking_margin_percentage_after_surcharge" type="FLOAT8"/>
+            <column name="date" type="date"/>
+            <column name="dealer_net" type="FLOAT8"/>
+            <column name="dealer_net_after_surcharge" type="FLOAT8"/>
+            <column name="margin_after_surcharge" type="FLOAT8"/>
+            <column name="margin_percentage_after_surcharge" type="FLOAT8"/>
+            <column name="netrevenue" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="serial_number" type="VARCHAR(255)"/>
+            <column name="series" type="VARCHAR(255)"/>
+            <column name="total_cost" type="FLOAT8"/>
+            <column name="currency" type="VARCHAR(255)"/>
+            <column name="product" type="INTEGER"/>
+            <column name="dealer" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="booking_margin_after_surcharge" type="FLOAT8"/>
+            <column name="booking_dealer_net_after_surcharge" type="FLOAT8"/>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="latest_modified_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="latest_modified_by" type="VARCHAR(255)"/>
+            <column name="quote_number" type="VARCHAR(255)"/>
+            <column name="country" type="INTEGER"/>
+            <column name="ctry_code" type="VARCHAR(255)"/>
+            <column name="region" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-41">
+        <createTable tableName="target_margin">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="target_margin_pkey"/>
+            </column>
+            <column name="meta_series" type="VARCHAR(255)"/>
+            <column name="month_year" type="date"/>
+            <column name="region_id" type="INTEGER"/>
+            <column name="std_margin_percentage" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-42">
+        <createTable tableName="update_history">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="update_history_pkey"/>
+            </column>
+            <column name="model_type" type="VARCHAR(255)"/>
+            <column name="success" type="BOOLEAN"/>
+            <column name="time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="file_upload" type="INTEGER"/>
+            <column name="user_id" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-43">
+        <createTable tableName="user">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="user_pkey"/>
+            </column>
+            <column name="default_locale" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="is_active" type="BOOLEAN"/>
+            <column name="last_login" type="date"/>
+            <column name="user_name" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="role_id" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-44">
+        <createTable tableName="warranty">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="warranty_pkey"/>
+            </column>
+            <column name="clazz_id" type="INTEGER"/>
+            <column name="month_year" type="date"/>
+            <column name="warranty" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-45">
+        <addForeignKeyConstraint baseColumnNames="region" baseTableName="aopmargin" constraintName="constraint_aopmargin_region" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-46">
+        <addForeignKeyConstraint baseColumnNames="aopmargin" baseTableName="booking" constraintName="constraint_booking_and_aopmargin" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="aopmargin" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-47">
+        <addForeignKeyConstraint baseColumnNames="dealer" baseTableName="booking" constraintName="constraint_booking_and_dealer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dealer" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-48">
+        <addForeignKeyConstraint baseColumnNames="dealer" baseTableName="shipment" constraintName="constraint_shipment_and_dealer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dealer" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-49">
+        <addForeignKeyConstraint baseColumnNames="aopmargin" baseTableName="shipment" constraintName="constraint_shipment_and_aopmargin" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="aopmargin" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-50">
+        <addForeignKeyConstraint baseColumnNames="product" baseTableName="booking" constraintName="contraint_key_booking_product" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-51">
+        <addForeignKeyConstraint baseColumnNames="product" baseTableName="shipment" constraintName="contraint_key_shipment_product" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-52">
+        <addForeignKeyConstraint baseColumnNames="from_currency" baseTableName="exchange_rate" constraintName="fk1rwcvrt8tiqppvlwu3cyh4bli" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-53">
+        <addForeignKeyConstraint baseColumnNames="uploadedby_id" baseTableName="file_upload" constraintName="fk331rjjrewvc14f26xlav1ii24" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-54">
+        <addForeignKeyConstraint baseColumnNames="currency_currency" baseTableName="part" constraintName="fk5gc3etg0f0v84k5l7lgxrgeup" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-55">
+        <addForeignKeyConstraint baseColumnNames="color_id" baseTableName="competitor_pricing" constraintName="fk5vyptr5fyxtgrbblddkm1aifc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="competitor_color" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-56">
+        <addForeignKeyConstraint baseColumnNames="region_id" baseTableName="country" constraintName="fk76d15mm086trvaxraob3c7shj" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-57">
+        <addForeignKeyConstraint baseColumnNames="clazz_id" baseTableName="competitor_pricing" constraintName="fk806iy89eclgtv5l1joqra94me" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="clazz" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-58">
+        <addForeignKeyConstraint baseColumnNames="currency" baseTableName="shipment" constraintName="fkb5511f7geiylgseh5euon3or7" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-59">
+        <addForeignKeyConstraint baseColumnNames="file_upload" baseTableName="update_history" constraintName="fkbl5iwer1t24vpww4wgugver69" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="file_upload" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-60">
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="user" constraintName="fkbolg2pe8eh0aaug0qwmc4cy6u" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="role" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-61">
+        <addForeignKeyConstraint baseColumnNames="region" baseTableName="booking" constraintName="fkc49wvn9923p3tppcu3vjaax6" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-62">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="update_history" constraintName="fkdm2cf8g5fq3hmugvq59vsj76d" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-63">
+        <addForeignKeyConstraint baseColumnNames="clazz_id" baseTableName="product" constraintName="fkehkd41y34yvwjapmny8qfbi6c" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="clazz" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-64">
+        <addForeignKeyConstraint baseColumnNames="clazz_id" baseTableName="warranty" constraintName="fkf8pcmilngel5fckic6j7o8biv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="clazz" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-65">
+        <addForeignKeyConstraint baseColumnNames="region_id" baseTableName="target_margin" constraintName="fkhtl0yw9b1sp5t0ulwaoucdpuq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-66">
+        <addForeignKeyConstraint baseColumnNames="to_currency" baseTableName="exchange_rate" constraintName="fkis2145dar1rfybx9fwjyanuoa" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-67">
+        <addForeignKeyConstraint baseColumnNames="currency_currency" baseTableName="marginanalysisaoprate" constraintName="fkm07xacikh03ijwk4odjgu07xr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-68">
+        <addForeignKeyConstraint baseColumnNames="country" baseTableName="shipment" constraintName="fkn8fgomqfqcgl8pm93ips5skrf" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="country" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-69">
+        <addForeignKeyConstraint baseColumnNames="clazz_id" baseTableName="part" constraintName="fkn8p9ox338mdvuq4q7d9r31bsp" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="clazz" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-70">
+        <addForeignKeyConstraint baseColumnNames="region" baseTableName="shipment" constraintName="fknv9n2am8s3uqb3j5bs5u9o1l2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-71">
+        <addForeignKeyConstraint baseColumnNames="country" baseTableName="booking" constraintName="fkolcoohuak57ke2s0s8na11rd4" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="country" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-72">
+        <addForeignKeyConstraint baseColumnNames="currency_currency" baseTableName="margin_analyst_macro" constraintName="fkq3j8hm7fc54pmcdsp54u3dt3x" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-73">
+        <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="competitor_pricing" constraintName="fkqb15wk5jg24m2hdttkbd6i2f8" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="country" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1711005719548-74">
+        <addForeignKeyConstraint baseColumnNames="currency" baseTableName="booking" constraintName="fks7fhlcyemwr6qlieh7itp5pbt" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
+    </changeSet>
+
+    <changeSet id="create-function" author="songiang">
+        <sql>
+            CREATE ALIAS similarity FOR "com.hysteryale.dbConfiguration.H2Function.similarity";
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
