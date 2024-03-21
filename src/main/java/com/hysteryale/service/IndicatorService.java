@@ -233,13 +233,18 @@ public class IndicatorService extends BasedService {
     /**
      * Checking existed Competitor Pricing and update new data from imported file
      */
-    public void importIndicatorsFromFile(String filePath) throws IOException {
+    public void importIndicatorsFromFile(String filePath) throws Exception {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         HashMap<String, Integer> competitorColumnName = new HashMap<>();
         List<CompetitorPricing> competitorPricingList = new ArrayList<>();
         List<ForeCastValue> forecastValueList = importService.loadForecastForCompetitorPricingFromFile();
+        if(forecastValueList==null){
+            throw new Exception("Missing Forecast Dynamic Pricing Excel file");
+
+        }
+
         Sheet sheet = workbook.getSheetAt(0);
         List<String> titleColumnFileCompetitor = List.of("Table Title", "Country", "Group", "Brand", "Region", "Class", "Origin", "Market Share", "Price (USD)", "Lead Time", "Normalized Market Share","Category", "Battery&Charger","RRP", "VAT", "Model", "HYG Series", "Percentage Dealer Premium", "Handling Cost (Dealer Street pricing - (DN  + Absolute margin))", "Dealer Net", "Dealer Pricing Premium /Margin (USD) %","Dealer Pricing Premium /Margin (USD) ");
 
@@ -276,8 +281,10 @@ public class IndicatorService extends BasedService {
             throw new RuntimeException("File is not correct format");
         }
 
-
         competitorPricingRepository.saveAll(competitorPricingList);
         importService.assigningCompetitorValues();
     }
+
+
+
 }

@@ -8,18 +8,6 @@ import java.util.List;
 
 public class CheckFormatFile {
     public static boolean checkFormatFileFollowTitleColumns(Sheet sheet, List<String> titleColumns,int rowTitle) {
-//        Row headerRow = sheet.getRow(rowTitle);
-//
-//
-//            for (int i = 0; i < titleColumns.size()+1; i++) {
-//                String cell = headerRow.getCell(i).getStringCellValue();
-//                if (!titleColumns.contains(cell)) {
-//                    String missingColumn="";
-//                    missingColumn+=cell+", ";
-//                    throw new RuntimeException("File missing column "+missingColumn) ;
-//                }
-//        }
-//        return true;
 
         Row headerRow = sheet.getRow(rowTitle);
         if (headerRow == null) {

@@ -12,6 +12,8 @@ import com.hysteryale.utils.CheckFormatFile;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.ModelUtil;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
@@ -125,14 +129,27 @@ public class IndicatorController {
 
     @PostMapping("/uploadForecastFile")
     public void uploadForecastFile(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
-
+            String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+            String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
             String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
             String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
             String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.FORECAST_PRICING);
+            String pathFile = baseFolder + baseFolderUploaded + targetFolder + fileName;
 
-            fileUploadService.handleUpdatedSuccessfully(fileName);
+            if (!FileUtils.isExcelFile(pathFile)) {
+                fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+                throw new Exception("Uploaded file is not an Excel file");
+            }
+            InputStream is = new FileInputStream(pathFile);
+            XSSFWorkbook workbook = new XSSFWorkbook(is);
+            Sheet sheet = workbook.getSheetAt(0);
+            List<String> titleColumnFileCompetitor = List.of("Series /Segments","Description","Plant","Brand","Qty","DN","M % ","Book Rev","Book Margin $","Book Margin %");
 
-
+            if (CheckFormatFile.checkFormatFileFollowTitleColumns(sheet,titleColumnFileCompetitor,1)) {
+                fileUploadService.handleUpdatedSuccessfully(fileName);
+            }else{
+                fileUploadService.handleUpdatedFailure(fileName, "File is not correct format");
+            }
 
     }
 }
