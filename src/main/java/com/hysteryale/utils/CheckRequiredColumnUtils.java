@@ -11,6 +11,9 @@ public class CheckRequiredColumnUtils {
     public static final List<String> SHIPMENT_REQUIRED_COLUMN = List.of("Order number", "Series", "Model",
             "Serial Number", "Quantity", "Revenue", "Revenue - Other", "Discounts", "Additional Discounts",
             "Cash Discounts", "Cost of Sales", "Dealer Commisions", "Warranty", "COS - Other", "Ship-to Country Code", "Created On");
+    public static final  List<String>  FORECAST_REQUIRED_COLUMN =List.of("Series /Segments","Description","Plant","Brand");
+
+    public static final List<String> COMPETITOR_REQUIRED_COLUMN = List.of("Table Title", "Country", "Group", "Brand", "Region", "Class", "Origin", "Market Share", "Price (USD)");
 
     public static final List<String> PRODUCT_APAC_SERIAL_COLUMN = List.of("Hyster", "Plant", "Class", "Model", "Yale");
     public static final List<String> MACRO_REQUIRED_COLUMN = List.of(); // TODO:Nhan will complete it
@@ -21,9 +24,6 @@ public class CheckRequiredColumnUtils {
     public static final List<String> BOOKING_COST_DATA_REQUIRED_COLUMN = List.of("Order", "TOTAL MFG COST Going-To");
     public static final List<String> PRODUCT_DIMENSION_REQUIRED_COLUMN = List.of("Metaseries", "Model", "Segment", "Family_Name", "Truck_Type");
     public static final List<String> AOP_MARGIN_REQUIRED_COLUMN = List.of("MetaSeries", "Plant", "Region", "std,margin,%");
-    public static final List<String> BOOKING_FPA_REQUIRED_COLUMN = List.of("Order No.", "Revised Net Sales", "Revised Cost", "Inc_Cst#");
-
-
 
 
     // REQUIRED SHEET
@@ -35,13 +35,11 @@ public class CheckRequiredColumnUtils {
     public static final String PART_REQUIRED_SHEET = "Export";
     public static final String AOP_MARGIN_REQUIRED_SHEET = "aop,dn,margin,%";
 
-    public static final String BOOKING_FPA_REQUIRED_SHEET = "Booking Margin Database";
-
 
     public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns) throws MissingColumnException {
         List<String> listMissingColumn = new ArrayList<>();
         for (String requiredColumn : requiredColumns) {
-            if(requiredColumn.contains(","))
+            if (requiredColumn.contains(","))
                 continue; // it is regex -> it will handle in each department
             if (!currentColumns.contains(requiredColumn)) {
                 listMissingColumn.add(requiredColumn);
@@ -51,5 +49,7 @@ public class CheckRequiredColumnUtils {
             throw new MissingColumnException("Missing column " + listMissingColumn);
         }
     }
+
+
 
 }
