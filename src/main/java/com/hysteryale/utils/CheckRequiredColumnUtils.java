@@ -20,7 +20,7 @@ public class CheckRequiredColumnUtils {
     public static final List<String> EXCHANGE_RATE_REQUIRED_COLUMN = List.of(); // TODO:Nhan will complete it
     public static final List<String> PART_REQUIRED_COLUMN = List.of("Model", "Part Number", "Order Number", "Currency", "Quote Number", "Quoted Quantity", "Series",
             "Part Number", "ListPrice", "Model", "Class", "Region", "Discount", "Dealer", "Net Price", "Customer Price", "Ext Customer Price", "Order Number");
-    public static final List<String> BOOKING_REQUIRED_COLUMN = List.of("ORDERNO", "SERIES", "BILLTO", "MODEL", "REGION", "DATE", "DEALERNAME", "CTRYCODE", "TRUCKCLASS", "ORDERTYPE", "DEALERPO");
+    public static final List<String> BOOKING_FPA_REQUIRED_COLUMN = List.of("Order No.", "Revised Net Sales", "Revised Cost", "Inc_Cst#");
     public static final List<String> BOOKING_COST_DATA_REQUIRED_COLUMN = List.of("Order", "TOTAL MFG COST Going-To");
     public static final List<String> PRODUCT_DIMENSION_REQUIRED_COLUMN = List.of("Metaseries", "Model", "Segment", "Family_Name", "Truck_Type");
     public static final List<String> AOP_MARGIN_REQUIRED_COLUMN = List.of("MetaSeries", "Plant", "Region", "std,margin,%");
@@ -29,7 +29,7 @@ public class CheckRequiredColumnUtils {
     // REQUIRED SHEET
     public static final String BOOKING_REQUIRED_SHEET = "NOPLDTA.NOPORDP,NOPLDTA.>Sheet1";
     public static final String BOOKING_COST_DATA_REQUIRED_SHEET = "Cost Data";
-    public static final String SHIPMENT_REQUIRED_SHEET = "Sheet1";
+    public static final String BOOKING_FPA_REQUIRED_SHEET = "Booking Margin Database";
     public static final String PRODUCT_APAC_SERIAL_REQUIRED_SHEET = "Master Summary";
     public static final String PRODUCT_DIMENSION_REQUIRED_SHEET = "Data";
     public static final String PART_REQUIRED_SHEET = "Export";
