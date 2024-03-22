@@ -63,15 +63,15 @@ public class IMMarginAnalystServiceTest {
         double exchangeRate = 0.2;
 
         // Test case EXISTING Manufacturing Cost
-        double result = marginAnalystDataService.getManufacturingCost(modelCode, partNumber, currency, plant, dealerNet, exchangeRate);
+        double result = marginAnalystDataService.getManufacturingCost(modelCode, partNumber, currency, plant, dealerNet, exchangeRate, "");
         Assertions.assertEquals(manufacturingCost, result);
 
         // Test case NON-EXISTING Manufacturing Cost with PLANT = 'SN'
-        double notFoundResultSN = marginAnalystDataService.getManufacturingCost(modelCode, partNumber, currency, "SN", dealerNet, exchangeRate);
+        double notFoundResultSN = marginAnalystDataService.getManufacturingCost(modelCode, partNumber, currency, "SN", dealerNet, exchangeRate, "");
         Assertions.assertEquals(dealerNet * 0.9, notFoundResultSN);
 
         // Test case NON-EXISTING Manufacturing Cost with PLANT = 'HYM' (~ Maximal, Ruyi, Staxx ~)
-        double notFoundResultHYM = marginAnalystDataService.getManufacturingCost(modelCode, "NOT FOUND PART", currency, "HYM", dealerNet, exchangeRate);
+        double notFoundResultHYM = marginAnalystDataService.getManufacturingCost(modelCode, "NOT FOUND PART", currency, "HYM", dealerNet, exchangeRate, "");
         Assertions.assertEquals((dealerNet / 0.2) * 0.9, notFoundResultHYM);
     }
 
@@ -138,7 +138,7 @@ public class IMMarginAnalystServiceTest {
         data.setCurrency("USD");
         marginAnalystDataRepository.save(data);
 
-        boolean result = marginAnalystDataService.isFileCalculated("UUID test file calculated", "USD");
+        boolean result = marginAnalystDataService.isFileCalculated("UUID test file calculated", "USD", "");
         Assertions.assertTrue(result);
     }
 
@@ -148,7 +148,7 @@ public class IMMarginAnalystServiceTest {
         fileUpload.setFileName("SN_AUD.xlsx");
         fileUpload.setUuid("UUID For Calculating Margin Data");
         fileUploadRepository.save(fileUpload);
-        marginAnalystDataService.calculateMarginAnalysisData("UUID For Calculating Margin Data", "AUD");
+        marginAnalystDataService.calculateMarginAnalysisData("UUID For Calculating Margin Data", "AUD", "");
 
         FileInputStream is = new FileInputStream("import_files/novo/SN_AUD.xlsx");
         XSSFWorkbook workbook = new XSSFWorkbook(is);
@@ -191,9 +191,9 @@ public class IMMarginAnalystServiceTest {
         fileUpload.setFileName("example 1_HYM.xlsx");
         fileUpload.setUuid(fileUUID);
         fileUploadRepository.save(fileUpload);
-        marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency);
+        marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency, "");
 
-        List<IMMarginAnalystData> result = marginAnalystDataService.getIMMarginAnalystData(modelCode, strCurrency, fileUUID, orderNumber, type, series);
+        List<IMMarginAnalystData> result = marginAnalystDataService.getIMMarginAnalystData(modelCode, strCurrency, fileUUID, orderNumber, type, series, "");
         Assertions.assertEquals(34, result.size());
 
         for(IMMarginAnalystData data : result) {
@@ -234,12 +234,12 @@ public class IMMarginAnalystServiceTest {
         fileUpload.setFileName("example 1_HYM.xlsx");
         fileUpload.setUuid(fileUUID);
         fileUploadRepository.save(fileUpload);
-        marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency);
+        marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency, "");
 
-        List<IMMarginAnalystData> dataList = marginAnalystDataService.getIMMarginAnalystData(modelCode, strCurrency, fileUUID, orderNumber, type, series);
+        List<IMMarginAnalystData> dataList = marginAnalystDataService.getIMMarginAnalystData(modelCode, strCurrency, fileUUID, orderNumber, type, series, "");
         Assertions.assertEquals(34, dataList.size());
 
-        Map<String, Object> result = marginAnalystDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, strCurrency);
+        Map<String, Object> result = marginAnalystDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, strCurrency, "");
         IMMarginAnalystSummary monthlyResult = (IMMarginAnalystSummary) result.get("MarginAnalystSummaryMonthly");
         IMMarginAnalystSummary annuallyResult = (IMMarginAnalystSummary) result.get("MarginAnalystSummaryAnnually");
 

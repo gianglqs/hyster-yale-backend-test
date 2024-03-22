@@ -71,5 +71,10 @@ public class FilterController {
         );
     }
 
+    @GetMapping("/bookingMarginTrialTest")
+    public Map<String, Object> getBookingMarginTrialTest() {
+        return filterService.getOrderFilter();
+    }
+
 }
 
