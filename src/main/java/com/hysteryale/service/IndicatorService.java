@@ -258,7 +258,7 @@ public class IndicatorService extends BasedService {
 
         }
         //Check format file competitor
-        CheckRequiredColumnUtils.checkRequiredColumnBoolean(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN);
+        CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN);
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {

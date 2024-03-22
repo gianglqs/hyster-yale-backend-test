@@ -50,24 +50,6 @@ public class CheckRequiredColumnUtils {
         }
     }
 
-    // Return true if match the column
-    public static boolean checkRequiredColumnBoolean(List<String> currentColumns, List<String> requiredColumns) throws MissingColumnException {
-        List<String> listMissingColumn = new ArrayList<>();
-        for (String requiredColumn : requiredColumns) {
-            if (requiredColumn.contains(","))
-                continue; // it is regex -> it will handle in each department
-            if (!currentColumns.contains(requiredColumn)) {
-                listMissingColumn.add(requiredColumn);
-            }
-        }
-        if (!listMissingColumn.isEmpty()) {
-            throw new MissingColumnException("Missing column " + listMissingColumn);
-
-        }
-        return true;
-    }
-
-
 
 
 }
