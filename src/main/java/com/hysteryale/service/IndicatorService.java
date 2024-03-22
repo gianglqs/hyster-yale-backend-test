@@ -257,40 +257,37 @@ public class IndicatorService extends BasedService {
                 titleColumnCurrent.add(String.valueOf(cell.getNumericCellValue()));
 
         }
-
-
         //Check format file competitor
-        if (CheckRequiredColumnUtils.checkRequiredColumnBoolean(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN)) {
-            for (Row row : sheet) {
-                if (row.getRowNum() == 0) {
-                    competitorColumnName = getCompetitorColumnName(row);
-                } else if (!row.getCell(competitorColumnName.get("Table Title"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
-                    List<CompetitorPricing> competitorPricings = importService.mapExcelDataIntoCompetitorObject(row, competitorColumnName);
-                    for (CompetitorPricing competitorPricing : competitorPricings) {
-                        // if it has series -> assign ForeCastValue
-                        if (!competitorPricing.getSeries().isEmpty()) {
-                            String strRegion = competitorPricing.getCountry().getRegion().getRegionName();
-                            String metaSeries = competitorPricing.getSeries().substring(1); // extract metaSeries from series
+        CheckRequiredColumnUtils.checkRequiredColumnBoolean(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN);
 
-                            int currentYear = LocalDate.now().getYear();
+        for (Row row : sheet) {
+            if (row.getRowNum() == 0) {
+                competitorColumnName = getCompetitorColumnName(row);
+            } else if (!row.getCell(competitorColumnName.get("Table Title"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
+                List<CompetitorPricing> competitorPricings = importService.mapExcelDataIntoCompetitorObject(row, competitorColumnName);
+                for (CompetitorPricing competitorPricing : competitorPricings) {
+                    // if it has series -> assign ForeCastValue
+                    if (!competitorPricing.getSeries().isEmpty()) {
+                        String strRegion = competitorPricing.getCountry().getRegion().getRegionName();
+                        String metaSeries = competitorPricing.getSeries().substring(1); // extract metaSeries from series
 
-                            ForeCastValue actualForeCast = importService.findForeCastValue(forecastValueList, strRegion, metaSeries, currentYear - 1);
-                            ForeCastValue AOPFForeCast = importService.findForeCastValue(forecastValueList, strRegion, metaSeries, currentYear);
-                            ForeCastValue LRFFForeCast = importService.findForeCastValue(forecastValueList, strRegion, metaSeries, currentYear + 1);
+                        int currentYear = LocalDate.now().getYear();
 
-                            competitorPricing.setActual(actualForeCast == null ? 0 : actualForeCast.getQuantity());
-                            competitorPricing.setAOPF(AOPFForeCast == null ? 0 : AOPFForeCast.getQuantity());
-                            competitorPricing.setLRFF(LRFFForeCast == null ? 0 : LRFFForeCast.getQuantity());
-                            competitorPricing.setPlant(LRFFForeCast == null ? "" : LRFFForeCast.getPlant());
+                        ForeCastValue actualForeCast = importService.findForeCastValue(forecastValueList, strRegion, metaSeries, currentYear - 1);
+                        ForeCastValue AOPFForeCast = importService.findForeCastValue(forecastValueList, strRegion, metaSeries, currentYear);
+                        ForeCastValue LRFFForeCast = importService.findForeCastValue(forecastValueList, strRegion, metaSeries, currentYear + 1);
 
-                        }
-                        competitorPricingList.add(checkExistAndUpdateCompetitorPricing(competitorPricing));
+                        competitorPricing.setActual(actualForeCast == null ? 0 : actualForeCast.getQuantity());
+                        competitorPricing.setAOPF(AOPFForeCast == null ? 0 : AOPFForeCast.getQuantity());
+                        competitorPricing.setLRFF(LRFFForeCast == null ? 0 : LRFFForeCast.getQuantity());
+                        competitorPricing.setPlant(LRFFForeCast == null ? "" : LRFFForeCast.getPlant());
+
                     }
+                    competitorPricingList.add(checkExistAndUpdateCompetitorPricing(competitorPricing));
                 }
             }
-        } else {
-            throw new RuntimeException("File is not correct format");
         }
+
 
         competitorPricingRepository.saveAll(competitorPricingList);
         importService.assigningCompetitorValues();
