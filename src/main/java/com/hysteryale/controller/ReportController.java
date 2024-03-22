@@ -21,7 +21,10 @@ public class ReportController {
 
     @PostMapping(path = "/compareCurrency")
     public Map<String, Object> compareCurrency(@RequestBody CompareCurrencyRequest request) {
-        return Map.of("compareCurrency", exchangeRateService.compareCurrency(request));
+        if(request.isFromRealTime())
+            return Map.of("compareCurrency", exchangeRateService.compareCurrencyFromAPI(request));
+        else
+            return Map.of("compareCurrency", exchangeRateService.compareCurrency(request));
     }
 
     @PostMapping(path = "/uploadExchangeRate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

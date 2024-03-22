@@ -1,6 +1,5 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.Booking;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.Shipment;
@@ -32,6 +31,11 @@ public class ShipmentService extends BasedService {
 
     @Resource
     BookingRepository bookingRepository;
+
+
+    public List<Shipment> getListShipmentByOrderNos(List<String> orderNos){
+        return shipmentRepository.getShipmentByOrderNos(orderNos);
+    }
 
     public Map<String, Object> getShipmentByFilter(FilterModel filterModel) throws ParseException {
         Map<String, Object> result = new HashMap<>();
@@ -133,6 +137,14 @@ public class ShipmentService extends BasedService {
     public Shipment getShipmentByOrderNo(String orderNo) {
         Optional<Shipment> optionalShipment = shipmentRepository.findShipmentByOrderNo(orderNo);
         return optionalShipment.orElse(null);
+    }
+
+    public Shipment getShipmentByOrderNo(List<Shipment> shipments, String orderNo){
+        for(Shipment shipment: shipments){
+            if(shipment.getOrderNo().equals(orderNo))
+                return shipment;
+        }
+        return null;
     }
 
 

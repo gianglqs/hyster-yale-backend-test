@@ -81,6 +81,7 @@ mkdir -p /opt/hysteryale/uploadFiles/novo
 mkdir -p /opt/hysteryale/uploadFiles/competitor
 mkdir -p /opt/hysteryale/uploadFiles/product
 mkdir -p /opt/hysteryale/uploadFiles/exchange_rate
+mkdir -p /opt/hysteryale/uploadFiles/booking_fpa
 
 
 mkdir -p /opt/hysteryale/images/product/
