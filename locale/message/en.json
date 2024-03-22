@@ -1,0 +1,14 @@
+{
+  "success": {
+    "import_file": "Import successfully!",
+    "update_image": "Update image successfully!"
+  },
+  "failure": {
+    "import_file": "Import failure!",
+    "missing_column": "Missing column ",
+    "missing_sheet": "Missing sheet "
+  },
+  "warning": {
+    "hi": "hi"
+  }
+}

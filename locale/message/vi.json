@@ -1,0 +1,14 @@
+{
+  "success": {
+    "import_file": "Import thành công!",
+    "update_image": "Cập nhập hình ảnh thành công!"
+  },
+  "failure": {
+    "import_file": "Import không thành công!",
+    "missing_column": "Không tìm thấy cột ",
+    "missing_sheet": "Không tìm thấy sheet "
+  },
+  "warning": {
+    "hi": "hi"
+  }
+}
