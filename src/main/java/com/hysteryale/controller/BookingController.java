@@ -1,5 +1,6 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.InvalidFileNameException;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.BookingService;
@@ -78,8 +79,7 @@ public class BookingController {
             bookingService.importCostData(filePath, savedFileName);
             fileUploadService.handleUpdatedSuccessfully(savedFileName);
         } else {
-            fileUploadService.handleUpdatedFailure(savedFileName, "File name is invalid");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("File name is invalid", null));
+            throw new InvalidFileNameException(file.getOriginalFilename(), savedFileName);
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import successfully", null));
 
