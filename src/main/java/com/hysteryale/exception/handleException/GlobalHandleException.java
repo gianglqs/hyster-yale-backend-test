@@ -1,9 +1,6 @@
 package com.hysteryale.exception.handleException;
 
-import com.hysteryale.exception.BlankSheetException;
-import com.hysteryale.exception.CanNotUpdateException;
-import com.hysteryale.exception.MissingColumnException;
-import com.hysteryale.exception.MissingSheetException;
+import com.hysteryale.exception.*;
 import com.hysteryale.model.json.MessageJSON;
 import com.hysteryale.response.ErrorResponse;
 import com.hysteryale.service.FileUploadService;
@@ -68,10 +65,11 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         HttpServletRequest servletRequest = attributes.getRequest();
         String locale = servletRequest.getHeader("locale");
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "missing_column");
-        String message = baseMessage + exception.getMessage();
-        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), message);
-        logError(message, exception);
-        return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.NOT_FOUND);
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
+        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), stringBuilder.toString());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MissingSheetException.class)
@@ -80,10 +78,11 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         HttpServletRequest servletRequest = attributes.getRequest();
         String locale = servletRequest.getHeader("locale");
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "missing_sheet");
-        String message = baseMessage + exception.getMessage();
-        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), message);
-        logError(message, exception);
-        return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.NOT_FOUND);
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
+        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), stringBuilder.toString());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BlankSheetException.class)
@@ -92,10 +91,13 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         HttpServletRequest servletRequest = attributes.getRequest();
         String locale = servletRequest.getHeader("locale");
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "blank_sheet");
-        String message = baseMessage + exception.getMessage();
-        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), message);
-        logError(message, exception);
-        return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.NOT_FOUND);
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
+        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), stringBuilder.toString());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(InvalidFileNameException.class)
     public ResponseEntity<ErrorResponse> handleInvalidFileNameException(InvalidFileNameException exception, WebRequest request) throws CanNotUpdateException {
         ServletRequestAttributes attributes = (ServletRequestAttributes) request;
