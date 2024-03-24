@@ -36,14 +36,13 @@ public class LocaleBean {
     }
 
     private void loadMessage() throws IOException {
-        String baseFolderLocale = EnvironmentUtils.getEnvironmentValue("locale.base-folder");
-        String folderMessagePath = baseFolderLocale + EnvironmentUtils.getEnvironmentValue("locale.message");
-        File messageFolder = new File(folderMessagePath);
+        String localFolder = EnvironmentUtils.getEnvironmentValue("locale.base-folder");
+        File messageFolder = new File(localFolder);
         if (!messageFolder.exists())
-            throw new FileNotFoundException("Not found folder " + folderMessagePath);
+            throw new FileNotFoundException("Not found folder " + localFolder);
 
         if (!messageFolder.isDirectory())
-            throw new InvalidFolderException(folderMessagePath + " is not a Folder");
+            throw new InvalidFolderException(localFolder + " is not a Folder");
 
 
         ObjectMapper mapper = new ObjectMapper();
