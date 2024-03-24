@@ -233,7 +233,7 @@ public class IndicatorService extends BasedService {
     /**
      * Checking existed Competitor Pricing and update new data from imported file
      */
-    public void importIndicatorsFromFile(String filePath) throws Exception {
+    public void importIndicatorsFromFile(String filePath, String savedFileName) throws Exception {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
@@ -249,7 +249,7 @@ public class IndicatorService extends BasedService {
         Row headerRow = sheet.getRow(0);
         for (int j = 0; j < CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN.size(); j++) {
             Cell cell = headerRow.getCell(j);
-            if(cell==null)
+            if (cell == null)
                 continue;
             if (cell.getCellType() == CellType.STRING)
                 titleColumnCurrent.add(cell.getStringCellValue());
@@ -258,7 +258,7 @@ public class IndicatorService extends BasedService {
 
         }
         //Check format file competitor
-        CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN);
+        CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN, savedFileName);
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {

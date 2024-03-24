@@ -40,8 +40,6 @@ public class IndicatorController {
     FileUploadService fileUploadService;
 
 
-
-
     @PostMapping("/getCompetitorData")
     public Map<String, Object> getCompetitorData(@RequestBody FilterModel filters,
                                                  @RequestParam(defaultValue = "0") int pageNo,
@@ -111,57 +109,57 @@ public class IndicatorController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.competitor");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.COMPETITOR);
-        String pathFile = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.COMPETITOR);
+        String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
         if (!FileUtils.isExcelFile(pathFile)) {
-            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(savedFileName, "Uploaded file is not an Excel file");
             throw new Exception("Uploaded file is not an Excel file");
         }
 
         try {
-            indicatorService.importIndicatorsFromFile(pathFile);
-            fileUploadService.handleUpdatedSuccessfully(fileName);
+            indicatorService.importIndicatorsFromFile(pathFile, savedFileName);
+            fileUploadService.handleUpdatedSuccessfully(savedFileName);
         } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            fileUploadService.handleUpdatedFailure(savedFileName, e.getMessage());
             throw e;
         }
     }
 
     @PostMapping("/uploadForecastFile")
     public void uploadForecastFile(@RequestBody MultipartFile file, Authentication authentication) throws Exception {
-            String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
-            String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-            String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
-            String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-            String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.FORECAST_PRICING);
-            String pathFile = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.FORECAST_PRICING);
+        String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
-            if (!FileUtils.isExcelFile(pathFile)) {
-                fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
-                throw new Exception("Uploaded file is not an Excel file");
+        if (!FileUtils.isExcelFile(pathFile)) {
+            fileUploadService.handleUpdatedFailure(savedFileName, "Uploaded file is not an Excel file");
+            throw new Exception("Uploaded file is not an Excel file");
+        }
+        InputStream is = new FileInputStream(pathFile);
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+
+        List<String> titleColumnCurrent = new ArrayList<>();
+
+
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            Sheet sheet = workbook.getSheetAt(i);
+            Row headerRow = sheet.getRow(1);
+            for (int j = 0; j < CheckRequiredColumnUtils.FORECAST_REQUIRED_COLUMN.size(); j++) {
+                Cell cell = headerRow.getCell(j);
+                if (cell == null)
+                    continue;
+                if (cell.getCellType() == CellType.STRING)
+                    titleColumnCurrent.add(cell.getStringCellValue());
+                else
+                    titleColumnCurrent.add(String.valueOf(cell.getNumericCellValue()));
+
             }
-            InputStream is = new FileInputStream(pathFile);
-            XSSFWorkbook workbook = new XSSFWorkbook(is);
-
-            List<String> titleColumnCurrent=new ArrayList<>();
-
-
-            for(int i=0;i<workbook.getNumberOfSheets();i++){
-                Sheet sheet = workbook.getSheetAt(i);
-                Row headerRow = sheet.getRow(1);
-                for (int j = 0; j < CheckRequiredColumnUtils.FORECAST_REQUIRED_COLUMN.size(); j++) {
-                    Cell cell = headerRow.getCell(j);
-                    if(cell==null)
-                        continue;
-                    if (cell.getCellType() == CellType.STRING)
-                        titleColumnCurrent.add(cell.getStringCellValue());
-                    else
-                        titleColumnCurrent.add(String.valueOf(cell.getNumericCellValue()));
-
-                }
-            }
-            CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent,CheckRequiredColumnUtils.FORECAST_REQUIRED_COLUMN);
+        }
+        CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.FORECAST_REQUIRED_COLUMN, savedFileName);
 
     }
 }
