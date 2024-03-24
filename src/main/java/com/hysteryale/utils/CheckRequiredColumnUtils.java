@@ -11,6 +11,9 @@ public class CheckRequiredColumnUtils {
     public static final List<String> SHIPMENT_REQUIRED_COLUMN = List.of("Order number", "Series", "Model",
             "Serial Number", "Quantity", "Revenue", "Revenue - Other", "Discounts", "Additional Discounts",
             "Cash Discounts", "Cost of Sales", "Dealer Commisions", "Warranty", "COS - Other", "Ship-to Country Code", "Created On");
+    public static final  List<String>  FORECAST_REQUIRED_COLUMN =List.of("Series /Segments","Description","Plant","Brand");
+
+    public static final List<String> COMPETITOR_REQUIRED_COLUMN = List.of("Table Title", "Country", "Group", "Brand", "Region", "Class", "Origin", "Market Share", "Price (USD)");
 
     public static final List<String> PRODUCT_APAC_SERIAL_COLUMN = List.of("Hyster", "Plant", "Class", "Model", "Yale");
     public static final List<String> MACRO_REQUIRED_COLUMN = List.of(); // TODO:Nhan will complete it
