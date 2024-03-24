@@ -52,55 +52,38 @@ public class AOPMarginService extends BasedService {
     public AOPMargin mapExcelToAOPMargin(Row row) throws IllegalAccessException, MissingColumnException {
         AOPMargin aopMargin = new AOPMargin();
 
-        if (AOP_MARGIN_COLUMNS.get("Region") != null) {
-            String valueCellRegion = row.getCell(AOP_MARGIN_COLUMNS.get("Region")).getStringCellValue();
-            Region region = regionService.getRegionByName(valueCellRegion);
-            if (region != null) {
-                aopMargin.setRegion(region);
-            } else {
-                logError("Not found Region: " + valueCellRegion);
-                return null;
-            }
+
+        String valueCellRegion = row.getCell(AOP_MARGIN_COLUMNS.get("Region")).getStringCellValue();
+        Region region = regionService.getRegionByName(valueCellRegion);
+        if (region != null) {
+            aopMargin.setRegion(region);
         } else {
-            throw new MissingColumnException("Missing column 'Region'!");
+            logError("Not found Region: " + valueCellRegion);
+            return null;
         }
 
-        if (AOP_MARGIN_COLUMNS.get("Plant") != null) {
-            aopMargin.setPlant(row.getCell(AOP_MARGIN_COLUMNS.get("Plant")).getStringCellValue());
+
+        aopMargin.setPlant(row.getCell(AOP_MARGIN_COLUMNS.get("Plant")).getStringCellValue());
+
+
+        String metaSeries = null;
+        Cell metaSeriesCell = row.getCell(AOP_MARGIN_COLUMNS.get("Series"));
+        if (metaSeriesCell.getCellType() == CellType.NUMERIC) {
+            aopMargin.setMetaSeries(String.valueOf((int) metaSeriesCell.getNumericCellValue()));
         } else {
-            throw new MissingColumnException("Missing column 'Plant'!");
+            aopMargin.setMetaSeries(row.getCell(AOP_MARGIN_COLUMNS.get("Series")).getStringCellValue());
         }
 
-        if (AOP_MARGIN_COLUMNS.get("Series") != null) {
-            String metaSeries = null;
-            Cell metaSeriesCell = row.getCell(AOP_MARGIN_COLUMNS.get("Series"));
-            if (metaSeriesCell.getCellType() == CellType.NUMERIC) {
-                aopMargin.setMetaSeries(String.valueOf((int) metaSeriesCell.getNumericCellValue()));
-            } else {
-                aopMargin.setMetaSeries(row.getCell(AOP_MARGIN_COLUMNS.get("Series")).getStringCellValue());
-            }
-        } else {
-            throw new MissingColumnException("Missing column 'Series'!");
-        }
 
-        if (AOP_MARGIN_COLUMNS.get("Margin % STD") != null) {
-            aopMargin.setMarginSTD(row.getCell(AOP_MARGIN_COLUMNS.get("Margin % STD")).getNumericCellValue());
-        } else {
-            throw new MissingColumnException("Missing column 'Margin % STD'!");
-        }
+        aopMargin.setMarginSTD(row.getCell(AOP_MARGIN_COLUMNS.get("Margin % STD")).getNumericCellValue());
 
-        if (AOP_MARGIN_COLUMNS.get("AOP DN USD") != null) {
-            aopMargin.setDnUSD(row.getCell(AOP_MARGIN_COLUMNS.get("AOP DN USD")).getNumericCellValue());
-        } else {
-            throw new MissingColumnException("Missing column 'AOP DN USD'!");
-        }
 
-        if (AOP_MARGIN_COLUMNS.get("Description") != null) {
-            if (row.getCell(AOP_MARGIN_COLUMNS.get("Description")) != null)
-                aopMargin.setDescription(row.getCell(AOP_MARGIN_COLUMNS.get("Description")).getStringCellValue());
-        } else {
-            throw new MissingColumnException("Missing column 'Description'!");
-        }
+        aopMargin.setDnUSD(row.getCell(AOP_MARGIN_COLUMNS.get("AOP DN USD")).getNumericCellValue());
+
+
+        if (row.getCell(AOP_MARGIN_COLUMNS.get("Description")) != null)
+            aopMargin.setDescription(row.getCell(AOP_MARGIN_COLUMNS.get("Description")).getStringCellValue());
+
 
         return aopMargin;
     }
@@ -169,7 +152,7 @@ public class AOPMarginService extends BasedService {
             String fileName = file.getOriginalFilename();
             int year = DateUtils.extractYear(fileName);
             InputStream is = new FileInputStream(filePath);
-            importAOPMarginFromGUM(is, year);
+            importAOPMarginFromGUM(is, year, fileNameEncoded);
 
         } catch (Exception e) {
             fileUploadService.handleUpdatedFailure(fileNameEncoded, e.getMessage());
@@ -179,7 +162,7 @@ public class AOPMarginService extends BasedService {
         fileUploadService.handleUpdatedSuccessfully(fileNameEncoded);
     }
 
-    private void importAOPMarginFromGUM(InputStream is, int year) throws IOException, MissingColumnException {
+    private void importAOPMarginFromGUM(InputStream is, int year, String savedFileName) throws IOException, MissingColumnException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         List<AOPMargin> aopMarginListInDB = aopMarginRepository.findAll();
@@ -195,7 +178,7 @@ public class AOPMarginService extends BasedService {
 
                 List<String> listCurrentColumn = new ArrayList<>(AOP_MARGIN_COLUMNS.keySet());
                 // check required columns
-                CheckRequiredColumnUtils.checkRequiredColumn(listCurrentColumn, CheckRequiredColumnUtils.AOP_MARGIN_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(listCurrentColumn, CheckRequiredColumnUtils.AOP_MARGIN_REQUIRED_COLUMN, savedFileName);
 
                 //check column 'STD Margin %'
                 boolean hasMarginSTD = false;
@@ -208,7 +191,7 @@ public class AOPMarginService extends BasedService {
                     }
                 }
                 if (!hasMarginSTD)
-                    throw new MissingColumnException("Missing column 'Margin STD %");
+                    throw new MissingColumnException("Margin STD %", savedFileName);
 
 
                 for (Row row : sheet) {

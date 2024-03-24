@@ -65,7 +65,7 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
         }
     }
 
-    public void importBookingFPA(InputStream is) throws IOException, MissingSheetException, MissingColumnException, IncorectFormatCellException {
+    public void importBookingFPA(InputStream is, String savedFileName) throws IOException, MissingSheetException, MissingColumnException, IncorectFormatCellException {
 
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
@@ -73,14 +73,14 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
         String sheetName = CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_SHEET;
         XSSFSheet orderSheet = workbook.getSheet(sheetName);
         if (orderSheet == null)
-            throw new MissingSheetException("Not found sheet '" + sheetName + "'");
+            throw new MissingSheetException(sheetName, savedFileName);
 
         HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
 
         for (Row row : orderSheet) {
             if (row.getRowNum() == 0) {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_COLUMN, savedFileName);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
 
                 BookingFPA newBookingFPA = mappingDataExcelIntoBookingFPA(row, ORDER_COLUMNS_NAME);
@@ -119,10 +119,10 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
         List<LocalDateTime> listUpdatedTime = new ArrayList<>();
         latestUpdatedTimeShipmentOptional.ifPresent(listUpdatedTime::add);
 
-        Optional<LocalDateTime>  latestUpdatedTimeBookingOptional = bookingRepository.getLatestUpdatedTime();
+        Optional<LocalDateTime> latestUpdatedTimeBookingOptional = bookingRepository.getLatestUpdatedTime();
         latestUpdatedTimeBookingOptional.ifPresent(listUpdatedTime::add);
 
-        Optional<LocalDateTime>  latestUpdatedTimeBookingFPAOptional = bookingFPARepository.getLatestUpdatedTime();
+        Optional<LocalDateTime> latestUpdatedTimeBookingFPAOptional = bookingFPARepository.getLatestUpdatedTime();
         latestUpdatedTimeBookingFPAOptional.ifPresent(listUpdatedTime::add);
 
         result.put("latestUpdatedTime", DateUtils.convertLocalDateTimeToString(DateUtils.getLastUpdatedTime(listUpdatedTime)));

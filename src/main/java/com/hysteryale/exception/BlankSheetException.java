@@ -1,7 +1,17 @@
 package com.hysteryale.exception;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class BlankSheetException extends Exception {
-    public BlankSheetException(String name) {
-        super(name);
+
+    private String savedFileName;
+
+    public BlankSheetException(String message, String savedFileName) {
+        super(message);
+        this.savedFileName = savedFileName;
     }
+
 }

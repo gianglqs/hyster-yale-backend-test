@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface BookingFPAService {
-    void importBookingFPA(InputStream is) throws IOException, MissingSheetException, MissingColumnException, IncorectFormatCellException;
+    void importBookingFPA(InputStream is,String savedFileName) throws IOException, MissingSheetException, MissingColumnException, IncorectFormatCellException;
 
     Map<String, Object > getBookingMarginTrialTest(FilterModel filter) throws ParseException;
 

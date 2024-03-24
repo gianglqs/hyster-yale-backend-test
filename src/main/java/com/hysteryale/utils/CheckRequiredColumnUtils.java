@@ -24,8 +24,6 @@ public class CheckRequiredColumnUtils {
     public static final List<String> BOOKING_FPA_REQUIRED_COLUMN = List.of("Order No.", "Revised Net Sales", "Revised Cost", "Inc_Cst#");
 
 
-
-
     // REQUIRED SHEET
     public static final String BOOKING_REQUIRED_SHEET = "NOPLDTA.NOPORDP,NOPLDTA.>Sheet1";
     public static final String BOOKING_COST_DATA_REQUIRED_SHEET = "Cost Data";
@@ -38,17 +36,17 @@ public class CheckRequiredColumnUtils {
     public static final String BOOKING_FPA_REQUIRED_SHEET = "Booking Margin Database";
 
 
-    public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns) throws MissingColumnException {
+    public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns, String savedFileName) throws MissingColumnException {
         List<String> listMissingColumn = new ArrayList<>();
         for (String requiredColumn : requiredColumns) {
-            if(requiredColumn.contains(","))
+            if (requiredColumn.contains(","))
                 continue; // it is regex -> it will handle in each department
             if (!currentColumns.contains(requiredColumn)) {
                 listMissingColumn.add(requiredColumn);
             }
         }
         if (!listMissingColumn.isEmpty()) {
-            throw new MissingColumnException("Missing column " + listMissingColumn);
+            throw new MissingColumnException(listMissingColumn.toString(), savedFileName);
         }
     }
 

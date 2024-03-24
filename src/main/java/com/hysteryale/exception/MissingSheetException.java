@@ -1,7 +1,16 @@
 package com.hysteryale.exception;
 
-public class MissingSheetException extends Exception{
-    public MissingSheetException(String name){
-        super(name);
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class MissingSheetException extends Exception {
+
+    private String savedFileName;
+
+    public MissingSheetException(String message, String savedFileName) {
+        super(message);
+        this.savedFileName = savedFileName;
     }
 }

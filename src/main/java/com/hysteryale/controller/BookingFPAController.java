@@ -53,7 +53,7 @@ public class BookingFPAController {
         if (FileUtils.isExcelFile(pathFile)) {
             try {
                 InputStream inputStream = new FileInputStream(pathFile);
-                bookingPFAService.importBookingFPA(inputStream);
+                bookingPFAService.importBookingFPA(inputStream, fileName);
 
                 //       fileUploadService.handleUpdatedSuccessfully(fileName);
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));

@@ -3,11 +3,11 @@ package com.hysteryale.Beans;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hysteryale.exception.InvalidFolderException;
-import com.hysteryale.model.json.MessageJSON;
 import com.hysteryale.utils.EnvironmentUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -19,12 +19,13 @@ import java.util.Map;
 
 @Configuration
 @EnableScheduling
+@DependsOn("environmentUtils")
 public class LocaleBean {
 
-    private Map<String, MessageJSON> locale = new HashMap<>();
+    private HashMap<String, HashMap<String, HashMap<String, String>>> locale = new HashMap<>();
 
     @Bean
-    public Map<String, MessageJSON> getMessageFromJSONFile() throws IOException {
+    public HashMap<String, HashMap<String, HashMap<String, String>>> getMessageFromJSONFile() throws IOException {
         loadMessage();
         return locale;
     }
@@ -37,7 +38,6 @@ public class LocaleBean {
     private void loadMessage() throws IOException {
         String baseFolderLocale = EnvironmentUtils.getEnvironmentValue("locale.base-folder");
         String folderMessagePath = baseFolderLocale + EnvironmentUtils.getEnvironmentValue("locale.message");
-
         File messageFolder = new File(folderMessagePath);
         if (!messageFolder.exists())
             throw new FileNotFoundException("Not found folder " + folderMessagePath);
@@ -45,20 +45,21 @@ public class LocaleBean {
         if (!messageFolder.isDirectory())
             throw new InvalidFolderException(folderMessagePath + " is not a Folder");
 
-        Map<String, MessageJSON> tempLocale = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
-        TypeReference<MessageJSON> typeReference = new TypeReference<>() {
-        };
 
+        ObjectMapper mapper = new ObjectMapper();
+        TypeReference<Map<String, Object>> typeReference = new TypeReference<>() {
+        };
+        HashMap<String, HashMap<String, HashMap<String, String>>> tempLocale = new HashMap<>();
         File[] files = messageFolder.listFiles();
         for (File file : files) {
-            MessageJSON messageJSON = mapper.readValue(file, typeReference);
+            Map<String, Object> jsonParse = mapper.readValue(file, typeReference);
+            Object message = jsonParse.get("message");
+            HashMap<String, HashMap<String, String>> messageMapper = (HashMap<String, HashMap<String, String>>) message;
             String fileName = FilenameUtils.removeExtension(file.getName());
-            tempLocale.put(fileName, messageJSON);
+            tempLocale.put(fileName, messageMapper);
         }
-        System.out.println(tempLocale);
         locale = tempLocale;
-
     }
+
 
 }

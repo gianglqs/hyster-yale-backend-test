@@ -338,10 +338,10 @@ public class BookingService extends BasedService {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         List<Booking> bookingList = new LinkedList<>();
 
-        String sheetName = CheckRequiredColumnUtils.SHIPMENT_REQUIRED_SHEET;
+        String sheetName = CheckRequiredColumnUtils.BOOKING_REQUIRED_SHEET;
         XSSFSheet orderSheet = workbook.getSheet(sheetName);
         if (orderSheet == null)
-            throw new MissingSheetException("Not found sheet '" + sheetName + "'");
+            throw new MissingSheetException(sheetName, "need check"); // TODO: need check
 
 
         HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
@@ -361,7 +361,7 @@ public class BookingService extends BasedService {
         for (Row row : orderSheet) {
             if (row.getRowNum() == numRowName) {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN, "");
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
                 Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);
 
@@ -389,7 +389,7 @@ public class BookingService extends BasedService {
 
     }
 
-    public void importNewBookingFileByFile(String filePath) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
+    public void importNewBookingFileByFile(String filePath, String savedFileName) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
 
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
@@ -400,10 +400,10 @@ public class BookingService extends BasedService {
         Sheet orderSheet = workbook.getSheet(sheetName);
         int numRowName = 0;
         if (orderSheet == null)
-            throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+            throw new MissingSheetException(sheetName, savedFileName);
 
         if (orderSheet.getLastRowNum() <= 0)
-            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
+            throw new BlankSheetException(sheetName, savedFileName);
 
         // prepare data for import
         List<Product> products = productRepository.findAll();
@@ -415,7 +415,7 @@ public class BookingService extends BasedService {
         for (Row row : orderSheet) {
             if (row.getRowNum() == numRowName) {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN, savedFileName);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
                 Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);
 
@@ -485,7 +485,7 @@ public class BookingService extends BasedService {
         for (Row row : orderSheet) {
             if (row.getRowNum() == 0) {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN, "");// TODO: need check
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 1) {
                 // map data from excel file
                 Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);
@@ -600,16 +600,16 @@ public class BookingService extends BasedService {
         String sheetName = CheckRequiredColumnUtils.BOOKING_COST_DATA_REQUIRED_SHEET;
         Sheet sheet = workbook.getSheet(sheetName);
         if (sheet == null)
-            throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+            throw new MissingSheetException(sheetName, "need check"); // TODO: need check
 
         if (sheet.getLastRowNum() <= 0)
-            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
+            throw new BlankSheetException(sheetName, "need check"); // TODO: need check
 
         HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_COST_DATA_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_COST_DATA_REQUIRED_COLUMN, "");// TODO: need check
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
 
                 // create CostDataFile
@@ -686,7 +686,7 @@ public class BookingService extends BasedService {
         return result;
     }
 
-    public void importCostData(String filePath) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
+    public void importCostData(String filePath, String savedFileName) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         InputStream is = new FileInputStream(filePath);
         List<CostDataFile> costDataList = getListCostDataByMonthAndYear(is);
         List<String> listOrderNo = new ArrayList<>();
