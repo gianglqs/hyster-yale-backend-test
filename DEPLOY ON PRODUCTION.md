@@ -91,8 +91,8 @@ mkdir -p /opt/hysteryale/images/part/
 ### set permission
 
 ```angular2html
-sudo chown -R 777 /opt/hysteryale/images
-sudo chown -R 777 /opt/hysteryale/uploadFiles
+sudo chmod -R 777 /opt/hysteryale/images
+sudo chmod -R 777 /opt/hysteryale/uploadFiles
 ```
 
 ### Update Github Deployment Key
