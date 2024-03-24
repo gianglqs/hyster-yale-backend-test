@@ -96,6 +96,17 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), message);
         logError(message, exception);
         return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.NOT_FOUND);
+    @ExceptionHandler(InvalidFileNameException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFileNameException(InvalidFileNameException exception, WebRequest request) throws CanNotUpdateException {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "invalid_fileName");
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
+        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), stringBuilder.toString());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
     }
 
 

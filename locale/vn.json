@@ -210,8 +210,9 @@
     "failure": {
       "import_file": "Import không thành công!",
       "missing_column": "Không tìm thấy cột ",
-      "missing_sheet": "Không tìm thấy sheet: ",
-      "blank_sheet": "Sheet bị trống: "
+      "missing_sheet": "Không tìm thấy sheet: ''",
+      "blank_sheet": "Sheet bị trống: ''",
+      "invalid_fileName": "Tên file không hợp lệ: ''"
     },
     "warning": {
       "hi": "hi"

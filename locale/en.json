@@ -216,8 +216,9 @@
     "failure": {
       "import_file": "Import failure!",
       "missing_column": "Missing column ",
-      "missing_sheet": "Not found sheet: ",
-      "blank_sheet": "Sheet is BLANK: "
+      "missing_sheet": "Not found sheet: ''",
+      "blank_sheet": "Sheet is BLANK: ''",
+      "invalid_fileName": "Invalid file name: ''"
     },
     "warning": {
       "hi": "hi"
