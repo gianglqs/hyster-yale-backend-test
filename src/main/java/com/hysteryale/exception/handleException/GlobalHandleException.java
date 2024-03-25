@@ -1,7 +1,6 @@
 package com.hysteryale.exception.handleException;
 
 import com.hysteryale.exception.*;
-import com.hysteryale.model.json.MessageJSON;
 import com.hysteryale.response.ErrorResponse;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.LocaleUtils;
@@ -19,7 +18,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.Map;
 
 @ControllerAdvice
 @DependsOn("getMessageFromJSONFile")
@@ -64,6 +62,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         ServletRequestAttributes attributes = (ServletRequestAttributes) request;
         HttpServletRequest servletRequest = attributes.getRequest();
         String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "missing_column");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
         stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
@@ -77,6 +76,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         ServletRequestAttributes attributes = (ServletRequestAttributes) request;
         HttpServletRequest servletRequest = attributes.getRequest();
         String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "missing_sheet");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
         stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
@@ -90,6 +90,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         ServletRequestAttributes attributes = (ServletRequestAttributes) request;
         HttpServletRequest servletRequest = attributes.getRequest();
         String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "blank_sheet");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
         stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
@@ -103,6 +104,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         ServletRequestAttributes attributes = (ServletRequestAttributes) request;
         HttpServletRequest servletRequest = attributes.getRequest();
         String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "invalid_fileName");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
         stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
@@ -111,5 +113,83 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(IncorectFormatCellException.class)
+    public ResponseEntity<ErrorResponse> handleIncorrectFormatCellException(IncorectFormatCellException exception, WebRequest request) throws CanNotUpdateException {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "incorrect_cell_format");
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length(), exception.getMessage());
+        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), stringBuilder.toString());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.BAD_REQUEST);
+    }
 
+    @ExceptionHandler(InvalidFileFormatException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFileFormatException(InvalidFileFormatException exception, WebRequest request) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "invalid_file_format");
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length(), exception.getSavedFileName() + " is not " + exception.getFileExtension());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SeriesNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSeriesNotFoundException(SeriesNotFoundException exception, WebRequest request) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "series_not_found");
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length(), exception.getSeries());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ExchangeRatesException.class)
+    public ResponseEntity<ErrorResponse> handleExchangeRatesException(ExchangeRatesException exception, WebRequest request) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+
+        String errorKey = "unexpected_error";
+        String currency = "";
+        if(exception.getMessage().contains("Unsupported currency before")) {
+            errorKey = "unsupported_currency_before_2020";
+            currency = exception.getUnsupportedCurrency();
+        }
+        else if(exception.getMessage().contains("Unsupported currency")) {
+            errorKey = "unsupported_currency";
+            currency = exception.getUnsupportedCurrency();
+        }
+        else if(exception.getMessage().contains("Inactive API Keys. Please check API Keys expired date"))
+            errorKey = "inactive_api_key";
+        else if(exception.getMessage().contains("Plan updated required"))
+            errorKey = "plan_update_required";
+
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", errorKey) + currency;
+        logError(baseMessage, exception);
+        return new ResponseEntity<>(new ErrorResponse(baseMessage), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception exception, WebRequest request) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "unexpected_error");
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(baseMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
