@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.ExchangeRatesException;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.reports.CompareCurrencyRequest;
@@ -221,7 +222,7 @@ public class ExchangeRateServiceTest {
     }
 
     @Test
-    public void testCompareExchangeRate() {
+    public void testCompareExchangeRate() throws ExchangeRatesException {
         String currency1 = "USD";
         String currency2 = "JPY";
         String currency3 = "VND";

@@ -1,5 +1,6 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.ExchangeRatesException;
 import com.hysteryale.model.reports.CompareCurrencyRequest;
 import com.hysteryale.service.ExchangeRateService;
 import org.springframework.http.MediaType;
@@ -20,7 +21,7 @@ public class ReportController {
     ExchangeRateService exchangeRateService;
 
     @PostMapping(path = "/compareCurrency")
-    public Map<String, Object> compareCurrency(@RequestBody CompareCurrencyRequest request) {
+    public Map<String, Object> compareCurrency(@RequestBody CompareCurrencyRequest request) throws ExchangeRatesException {
         if(request.isFromRealTime())
             return Map.of("compareCurrency", exchangeRateService.compareCurrencyFromAPI(request));
         else
