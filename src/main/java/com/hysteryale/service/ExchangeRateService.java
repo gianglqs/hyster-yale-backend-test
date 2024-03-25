@@ -316,7 +316,7 @@ public class ExchangeRateService extends BasedService {
         String apiKey = EnvironmentUtils.getEnvironmentValue("exchange_rate_api_key");
         String url;
 
-        LocalDate now = LocalDate.now();
+
 
         int year = queryDate.getYear();
         int month = queryDate.getMonthValue();

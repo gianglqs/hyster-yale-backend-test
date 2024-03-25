@@ -148,7 +148,7 @@ public class ExchangeRateServiceTest {
 
 
             Optional<ExchangeRate> dbExchangeRate = exchangeRateRepository.getExchangeRateByFromToCurrencyAndDate(fromCurrency.getCurrency(), toCurrency.getCurrency(), date);
-            Assertions.assertNotNull(dbExchangeRate);
+            Assertions.assertTrue(dbExchangeRate.isPresent());
 
             double rate = row.getCell(cellIndex).getNumericCellValue();
             Assertions.assertEquals(
