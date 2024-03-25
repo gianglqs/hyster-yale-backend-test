@@ -1,7 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.exception.MissingColumnException;
-import com.hysteryale.exception.MissingSheetException;
+import com.hysteryale.exception.*;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.Part;
@@ -17,9 +16,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
@@ -56,7 +53,7 @@ public class PartService extends BasedService {
         return optionalClazz.orElse(null);
     }
 
-    public Part mapExcelDataToPart(Row row) {
+    public Part mapExcelDataToPart(Row row) throws ExchangeRatesException {
         String strCurrency = row.getCell(powerBIExportColumns.get("Currency")).getStringCellValue().strip();
         Currency currency = currencyService.getCurrenciesByName(strCurrency);
 
@@ -119,7 +116,7 @@ public class PartService extends BasedService {
         return isPartExisted == 1;
     }
 
-    public void importPartFromFile(String fileName, String filePath, String savedFileName) throws IOException, MissingColumnException, MissingSheetException {
+    public void importPartFromFile(String fileName, String filePath, String savedFileName) throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException, InvalidFileNameException, IncorectFormatCellException {
         logInfo("==== Importing " + fileName + " ====");
         InputStream is = new FileInputStream(filePath);
         IOUtils.setByteArrayMaxOverride(700000000);
@@ -141,7 +138,7 @@ public class PartService extends BasedService {
             month = matcher.group(1);
             year = 2000 + Integer.parseInt(matcher.group(2));
         } else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is not in appropriate format");
+            throw new InvalidFileNameException(fileName, savedFileName);
         LocalDate recordedTime = LocalDate.of(year, DateUtils.getMonth(month), 1);
 
         for (Row row : sheet) {
@@ -149,10 +146,26 @@ public class PartService extends BasedService {
                 getPowerBiColumnsName(row);
                 CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(powerBIExportColumns.keySet()), CheckRequiredColumnUtils.PART_REQUIRED_COLUMN, savedFileName);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
-                String modelCode = row.getCell(powerBIExportColumns.get("Model")).getStringCellValue();
-                String partNumber = row.getCell(powerBIExportColumns.get("Part Number")).getStringCellValue();
-                String orderNumber = row.getCell(powerBIExportColumns.get("Order Number")).getStringCellValue();
-                String strCurrency = row.getCell(powerBIExportColumns.get("Currency")).getStringCellValue().strip();
+                Cell modelCodeCell = row.getCell(powerBIExportColumns.get("Model"));
+                if(modelCodeCell.getCellType() != CellType.STRING)
+                    throw new IncorectFormatCellException(modelCodeCell.getRowIndex() + ":" + modelCodeCell.getColumnIndex(), fileName);
+
+                Cell partNumberCell = row.getCell(powerBIExportColumns.get("Part Number"));
+                if(partNumberCell.getCellType() != CellType.STRING)
+                    throw new IncorectFormatCellException(partNumberCell.getRowIndex() + ":" + partNumberCell.getColumnIndex(), fileName);
+
+                Cell orderNumberCell = row.getCell(powerBIExportColumns.get("Order Number"));
+                if(orderNumberCell.getCellType() != CellType.STRING)
+                    throw new IncorectFormatCellException(orderNumberCell.getRowIndex() + ":" + orderNumberCell.getColumnIndex(), fileName);
+
+                Cell strCurrencyCell = row.getCell(powerBIExportColumns.get("Currency"));
+                if(strCurrencyCell.getCellType() != CellType.STRING)
+                    throw new IncorectFormatCellException(strCurrencyCell.getRowIndex() + ":" + strCurrencyCell.getColumnIndex(), fileName);
+
+                String modelCode = modelCodeCell.getStringCellValue();
+                String partNumber = partNumberCell.getStringCellValue();
+                String orderNumber = orderNumberCell.getStringCellValue();
+                String strCurrency = strCurrencyCell.getStringCellValue().strip();
 
                 Part part = mapExcelDataToPart(row);
                 if (!isPartExisted(modelCode, partNumber, orderNumber, recordedTime, strCurrency)) {
@@ -170,7 +183,7 @@ public class PartService extends BasedService {
         updateStateImportFile(filePath);
     }
 
-    public void importPart() throws IOException, MissingColumnException, MissingSheetException {
+    public void importPart() throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException, InvalidFileNameException, IncorectFormatCellException {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.bi-download");
         List<String> files = FileUtils.getAllFilesInFolder(folderPath);
@@ -195,14 +208,6 @@ public class PartService extends BasedService {
 
     private void updatePart(Part dbPart, Part filePart) {
         filePart.setId(dbPart.getId());
-    }
-
-    public List<String> getDistinctModelCodeByMonthYear(LocalDate monthYear) {
-        return partRepository.getDistinctModelCodeByMonthYear(monthYear);
-    }
-
-    public List<Part> getDistinctPart(String modelCode, String currency) {
-        return partRepository.getDistinctPart(modelCode, currency);
     }
 
     public Double getAverageDealerNet(String region, String clazz, String series) {

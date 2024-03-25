@@ -83,7 +83,7 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
                 CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_COLUMN, savedFileName);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
 
-                BookingFPA newBookingFPA = mappingDataExcelIntoBookingFPA(row, ORDER_COLUMNS_NAME);
+                BookingFPA newBookingFPA = mappingDataExcelIntoBookingFPA(row, ORDER_COLUMNS_NAME, savedFileName);
 
                 bookingList.add(newBookingFPA);
 
@@ -164,14 +164,14 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
     }
 
 
-    private BookingFPA mappingDataExcelIntoBookingFPA(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) throws IncorectFormatCellException {
+    private BookingFPA mappingDataExcelIntoBookingFPA(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME, String fileName) throws IncorectFormatCellException {
 
         BookingFPA bookingFPA = new BookingFPA();
 
         // orderNo
         Cell orderNoCell = row.getCell(ORDER_COLUMNS_NAME.get("Order No."));
         if (orderNoCell.getCellType() != CellType.STRING || orderNoCell.getStringCellValue().isEmpty()) {
-            throw new IncorectFormatCellException("Incorrect format of Cell " + (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Order No.") + 1));
+            throw new IncorectFormatCellException("Incorrect format of Cell " + (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Order No.") + 1), fileName);
         }
         bookingFPA.setOrderNo(orderNoCell.getStringCellValue());
 
@@ -182,7 +182,7 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
         //dealerNet
         Cell dealerNetCell = row.getCell(ORDER_COLUMNS_NAME.get("Revised Net Sales"));
         if (dealerNetCell.getCellType() != CellType.NUMERIC) {
-            throw new IncorectFormatCellException("Incorrect format of Cell " + (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Revised Net Sales") + 1));
+            throw new IncorectFormatCellException("Incorrect format of Cell " + (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Revised Net Sales") + 1),fileName);
         }
         double dealerNet = dealerNetCell.getNumericCellValue();
         bookingFPA.setDealerNet(dealerNet);
@@ -190,7 +190,7 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
         //cost
         Cell costCell = row.getCell(ORDER_COLUMNS_NAME.get("Revised Cost"));
         if (costCell.getCellType() != CellType.NUMERIC) {
-            throw new IncorectFormatCellException("Incorrect format of Cell " + (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Revised Cost") + 1));
+            throw new IncorectFormatCellException("Incorrect format of Cell " + (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Revised Cost") + 1), fileName);
         }
         double cost = costCell.getNumericCellValue();
         bookingFPA.setTotalCost(cost);
