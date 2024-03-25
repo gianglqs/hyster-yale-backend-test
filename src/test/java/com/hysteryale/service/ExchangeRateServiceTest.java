@@ -221,7 +221,7 @@ public class ExchangeRateServiceTest {
     }
 
     @Test
-    public void testCompareExchangeRate() {
+    public void testCompareExchangeRate() throws Exception {
         String currency1 = "USD";
         String currency2 = "JPY";
         String currency3 = "VND";
