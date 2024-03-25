@@ -212,7 +212,15 @@
       "missing_column": "Không tìm thấy cột ",
       "missing_sheet": "Không tìm thấy sheet: ''",
       "blank_sheet": "Sheet bị trống: ''",
-      "invalid_fileName": "Tên file không hợp lệ: ''"
+      "invalid_fileName": "Tên file không hợp lệ: ''",
+      "incorrect_cell_format": "Định dạng ô Excel không hợp lệ: ",
+      "unexpected_error": "Đã xảy ra lỗi không mong muốn",
+      "invalid_file_format": "Định dạng file không hợp lệ: ",
+      "series_not_found": "Không tìm thấy Series: ",
+      "unsupported_currency": "Đơn vị tiền tệ không được hỗ trợ: ",
+      "unsupported_currency_before_2020": "Đơn vị tiền tệ không được hỗ trợ trước ngày 31/12/2020: ",
+      "inactive_api_key": "API key chưa được kích hoạt. Hãy kiểm tra lại!",
+      "plan_update_required": "Gói cước cần được cập nhật"
     },
     "warning": {
       "hi": "hi"
