@@ -222,7 +222,8 @@
       "invalid_fileName": "Invalid file name: ''"
     },
     "warning": {
-      "not-find-country-with-code": "Country with Code '%s' not found. Automatically creating a new country using the code."
+      "not-find-country-with-code": "Country with Code '%s' not found. Automatically creating a new country using the code.",
+      "not-find-booking-with-orderNo": "Booking with order number: '%s' not found."
     },
     "error": {
       "not-find-product-with-modelCode-series": "Product with ModelCode '%s' and Series '%s' not found.",

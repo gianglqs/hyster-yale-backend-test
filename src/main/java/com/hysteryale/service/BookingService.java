@@ -5,9 +5,12 @@ import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.*;
+import com.hysteryale.model.enums.ImportFailureType;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.repository.*;
+import com.hysteryale.repository.importFailure.ImportFailureRepository;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import com.hysteryale.utils.*;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
@@ -89,6 +93,18 @@ public class BookingService extends BasedService {
     @Resource
     CountryRepository countryRepository;
 
+    @Resource
+    ImportFailureService importFailureService;
+
+    @Resource
+    DealerService dealerService;
+
+    @Resource
+    ImportFailureRepository importFailureRepository;
+
+    @Resource
+    LocaleUtils localeUtils;
+
     /**
      * Get Columns' name in Booking Excel file, then store them (columns' name) respectively with the index into HashMap
      *
@@ -131,7 +147,10 @@ public class BookingService extends BasedService {
     }
 
 
-    Booking mapExcelDataIntoOrderObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME, List<Product> products, List<Region> regions, List<AOPMargin> aopMargins, List<Dealer> dealers, List<Country> countries) throws MissingColumnException {
+    Booking mapExcelDataIntoOrderObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME, List<Product> products,
+                                        List<Region> regions, List<AOPMargin> aopMargins, List<Dealer> dealers,
+                                        List<Country> countries, List<ImportFailure> importFailures, Set<Country> newCountrySet,
+                                        Set<Region> newRegionSet) {
         Booking booking = new Booking();
 
         //set OrderNo
@@ -160,7 +179,8 @@ public class BookingService extends BasedService {
                 product = p;
         }
         if (product == null) {
-            log.error("Not found Product with OrderNo: " + booking.getOrderNo());
+            String reasonValue = modelCell.getStringCellValue() + "###" + series;
+            importFailureService.addIntoListImportFailure(importFailures, orderNo, "not-find-product-with-modelCode-series", reasonValue, ImportFailureType.ERROR);
             return null;
         }
         booking.setProduct(product);
@@ -183,37 +203,20 @@ public class BookingService extends BasedService {
 
         // dealer
         String dealerName = row.getCell(ORDER_COLUMNS_NAME.get("DEALERNAME")).getStringCellValue();
-
-        Dealer dealer = null;
-        for (Dealer d : dealers) {
-            if (d.equals(dealerName)) {
-                dealer = d;
-            }
-        }
+        Dealer dealer = dealerService.getDealerByName(dealers, dealerName);
         if (dealer == null) {
-            dealerRepository.save(new Dealer(dealerName));
-            Optional<Dealer> dealerOptional = dealerRepository.findByName(dealerName);
-            if (dealerOptional.isPresent()) {
-                dealer = dealerOptional.get();
-                dealers.add(dealer);
-            } else {
-                log.error("Not found Dealer with OrderNo " + booking.getOrderNo());
-                return null;
-            }
+            importFailureService.addIntoListImportFailure(importFailures, orderNo, "not-find-Dealer-with-name", dealerName, ImportFailureType.ERROR);
+            return null;
         }
         booking.setDealer(dealer);
 
-        //set region
-        Cell regionCell = row.getCell(ORDER_COLUMNS_NAME.get("REGION"));
-        Region region = null;
-
-        for (Region r : regions) {
-            if (r.getRegionShortName().equals(regionCell.getStringCellValue()))
-                region = r;
-        }
+        //get region
+        String regionCode = row.getCell(ORDER_COLUMNS_NAME.get("REGION")).getStringCellValue();
+        Region region = regionService.getRegionInListRegionByShortName(regions, regionCode);
         if (region == null) {
-            log.error("Not found Region with OrderNo" + booking.getOrderNo());
-            return null;
+            region = new Region();
+            region.setRegionShortName(regionCode);
+            newRegionSet.add(region);
         }
 
         // country
@@ -221,17 +224,15 @@ public class BookingService extends BasedService {
         String ctryCode = ctryCodeCell.getStringCellValue();
         Country country = countryService.findByCountryCode(countries, ctryCode);
         if (country == null) {
-            // insert new country in database and update list countries
-            Country newCountry = new Country();
-            newCountry.setCode(ctryCode);
-            newCountry.setRegion(region);
-            // TODO: admin must log into Database to update country name
-            countryRepository.save(newCountry);
-            countries.add(newCountry);
-            booking.setCountry(newCountry);
-        } else {
-            booking.setCountry(country);
+            // create new Country with ctry_code and region
+            country = new Country();
+            country.setCode(ctryCode);
+            country.setRegion(region);
+            newCountrySet.add(country);
+            importFailureService.addIntoListImportFailure(importFailures, orderNo,
+                    "not-find-country-with-code", ctryCode, ImportFailureType.WARNING);
         }
+        booking.setCountry(country);
 
 
         // truck class
@@ -248,14 +249,12 @@ public class BookingService extends BasedService {
         booking.setDealerPO(dealerPo.getStringCellValue());
 
         // AOPMargin
-        AOPMargin aopMargin = null;
-        for (AOPMargin a : aopMargins) {
-            if (a.equals(booking.getCountry().getRegion(), booking.getSeries().substring(1),
-                    booking.getProduct().getPlant(), booking.getDate().getYear()))
-                aopMargin = a;
-        }
+        AOPMargin aopMargin = aopMarginService.getAOPMargin(aopMargins, booking.getCountry().getRegion(), booking.getSeries(), booking.getProduct().getPlant(), booking.getDate());
         if (aopMargin == null) {
-            log.error("Not found AOPMargin with OrderNo " + booking.getOrderNo());
+            String reasonValue = booking.getCountry().getRegion().getRegionName() + "###" + series.substring(1) + "###" + booking.getProduct().getPlant() + "###" + booking.getDate().getYear();
+            importFailureService.addIntoListImportFailure(importFailures, orderNo,
+                    "not-find-AOPMargin-with-region-series-plant-year", reasonValue,
+                    ImportFailureType.ERROR);
             return null;
         }
 
@@ -355,6 +354,9 @@ public class BookingService extends BasedService {
         List<AOPMargin> aopMargins = aopMarginRepository.findAll();
         List<Dealer> dealers = dealerRepository.findAll();
         List<Country> countries = countryRepository.findAll();
+        List<ImportFailure> importFailures = new ArrayList<>();
+        Set<Country> newCountrySet = new HashSet<>();
+        Set<Region> newRegionSet = new HashSet<>();
 
         //get list cost data from month and year
 
@@ -363,7 +365,7 @@ public class BookingService extends BasedService {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
                 CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN, "");
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
-                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries, importFailures, newCountrySet, newRegionSet);
 
                 if (newBooking == null)
                     continue;
@@ -389,7 +391,7 @@ public class BookingService extends BasedService {
 
     }
 
-    public void importNewBookingFileByFile(String filePath, String fileUUID) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
+    public List<ImportFailure> importNewBookingFileByFile(String filePath, String fileUUID) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
 
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
@@ -411,13 +413,16 @@ public class BookingService extends BasedService {
         List<AOPMargin> aopMargins = aopMarginRepository.findAll();
         List<Dealer> dealers = dealerRepository.findAll();
         List<Country> countries = countryRepository.findAll();
+        List<ImportFailure> importFailures = new ArrayList<>();
+        Set<Country> newCountrySet = new HashSet<>();
+        Set<Region> newRegionSet = new HashSet<>();
 
         for (Row row : orderSheet) {
             if (row.getRowNum() == numRowName) {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
                 CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN, fileUUID);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
-                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries, importFailures, newCountrySet, newRegionSet);
 
                 if (newBooking == null)
                     continue;
@@ -449,8 +454,15 @@ public class BookingService extends BasedService {
             }
 
         }
-        logInfo("list booked" + bookingList.size());
+        log.info("list booked" + bookingList.size());
+        importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
         bookingRepository.saveAll(bookingList);
+        importFailureRepository.saveAll(importFailures);
+        countryRepository.saveAll(newCountrySet);
+
+        localeUtils.logStatusImportComplete(importFailures, ModelUtil.SHIPMENT);
+
+        return importFailures;
 
     }
 
@@ -481,6 +493,9 @@ public class BookingService extends BasedService {
         List<AOPMargin> aopMargins = aopMarginRepository.findAll();
         List<Dealer> dealers = dealerRepository.findAll();
         List<Country> countries = countryRepository.findAll();
+        List<ImportFailure> importFailures = new ArrayList<>();
+        Set<Country> newCountrySet = new HashSet<>();
+        Set<Region> newRegionSet = new HashSet<>();
 
         for (Row row : orderSheet) {
             if (row.getRowNum() == 0) {
@@ -488,7 +503,7 @@ public class BookingService extends BasedService {
                 CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN, "");// TODO: need check
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 1) {
                 // map data from excel file
-                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);
+                Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries, importFailures, newCountrySet, newRegionSet);
 
                 if (newBooking == null)
                     continue;
@@ -702,6 +717,103 @@ public class BookingService extends BasedService {
             }
         }
         bookingRepository.saveAll(listBookingExisted);
+    }
+
+    public List<ImportFailure> importCostDataNew(String filePath, String fileUUID) throws IOException, MissingSheetException, BlankSheetException, MissingColumnException {
+
+        InputStream is = new FileInputStream(filePath);
+        XSSFWorkbook workbook = new XSSFWorkbook(is);
+
+        String sheetName = CheckRequiredColumnUtils.BOOKING_COST_DATA_REQUIRED_SHEET;
+        Sheet orderSheet = workbook.getSheet(sheetName);
+
+        if (orderSheet == null)
+            throw new MissingSheetException(sheetName, fileUUID);
+
+        if (orderSheet.getLastRowNum() <= 0)
+            throw new BlankSheetException(sheetName, fileUUID);
+
+        //get list costData
+        List<CostDataFile> listCostData = getListCostDataFromSheet(orderSheet, fileUUID);
+
+        // get list orderNo in list costData
+        Set<String> setOrderNo = getListOrderNoFromListCostData(listCostData);
+
+        // get list Booking by list OrderNo
+        List<Booking> listBooking = bookingRepository.getListBookingByListOrderNo(setOrderNo);
+
+        // calculate margin
+        calculateMarginWithCostData(listBooking, listCostData);
+        bookingRepository.saveAll(listBooking);
+
+        return handleNotFindBookingByCostData(listCostData, listBooking, fileUUID);
+    }
+
+    private List<ImportFailure> handleNotFindBookingByCostData(List<CostDataFile> listCostData, List<Booking> listBooking, String fileUUID) {
+        List<ImportFailure> listImportFailure = new ArrayList<>();
+
+        costDataLoop:
+        for (CostDataFile costData : listCostData) {
+            for (Booking booking : listBooking) {
+                if (costData.orderNo.equals(booking.getOrderNo()))
+                    continue costDataLoop;
+            }
+            importFailureService.addIntoListImportFailure(listImportFailure, costData.orderNo, "not-find-booking-with-orderNo", costData.orderNo, ImportFailureType.WARNING);
+        }
+        importFailureService.setFileUUIDForListImportFailure(listImportFailure, fileUUID);
+        importFailureRepository.saveAll(listImportFailure);
+        localeUtils.logStatusImportComplete(listImportFailure, ModelUtil.COST_DATA);
+        return listImportFailure;
+    }
+
+
+    private void calculateMarginWithCostData(List<Booking> listBooking, List<CostDataFile> listCostData) {
+        for (Booking booking : listBooking) {
+            for (CostDataFile costDataFile : listCostData) {
+                if (booking.getOrderNo().equals(costDataFile.orderNo)) {
+                    booking.setTotalCost(costDataFile.totalCost);
+                    calculateMargin(booking);
+                    break;
+                }
+            }
+        }
+    }
+
+    private Set<String> getListOrderNoFromListCostData(List<CostDataFile> costDataList) {
+        Set<String> orderNoSet = new HashSet<>();
+        for (CostDataFile costData : costDataList) {
+            orderNoSet.add(costData.orderNo);
+        }
+        return orderNoSet;
+    }
+
+    private List<CostDataFile> getListCostDataFromSheet(Sheet sheet, String fileUUID) throws MissingColumnException {
+        List<CostDataFile> listCostData = new LinkedList<>();
+        HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
+        for (Row row : sheet) {
+            if (row.getRowNum() == 0) {
+                getOrderColumnsName(row, ORDER_COLUMNS_NAME);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_COST_DATA_REQUIRED_COLUMN, fileUUID);
+            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
+                // create CostDataFile
+                CostDataFile costDataFile = new CostDataFile();
+
+                // get orderNo
+                Cell orderNOCell = row.getCell(ORDER_COLUMNS_NAME.get("Order"));
+                costDataFile.orderNo = orderNOCell.getStringCellValue();
+
+                // get TotalCost
+                Cell totalCostCell = row.getCell(ORDER_COLUMNS_NAME.get("TOTAL MFG COST Going-To"));
+                if (totalCostCell.getCellType() == CellType.NUMERIC) {
+                    costDataFile.totalCost = totalCostCell.getNumericCellValue();
+                } else if (totalCostCell.getCellType() == CellType.STRING) {
+                    costDataFile.totalCost = Double.parseDouble(totalCostCell.getStringCellValue());
+                }
+
+                listCostData.add(costDataFile);
+            }
+        }
+        return listCostData;
     }
 
 

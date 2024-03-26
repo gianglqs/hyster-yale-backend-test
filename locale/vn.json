@@ -216,11 +216,12 @@
       "invalid_fileName": "Tên file không hợp lệ: ''"
     },
     "warning": {
-      "not-find-country-with-code": "Không tìm thấy Quốc gia nào với mã: '%s', nên tự động tạo Quốc gia mới với mã này"
+      "not-find-country-with-code": "Không tìm thấy Quốc gia nào với mã: '%s', nên tự động tạo Quốc gia mới với mã này",
+      "not-find-booking-with-orderNo": "Không tìm thấy Booking nào với order number: '%s'."
     },
     "error": {
-      "not-find-product-with-modelCode-series": "Không tìm thấy Product với ModelCode: '%s' và Series: '%s'",
-      "not-find-Dealer-with-name": "Không tìm thấy Dealer với tên: '%s'",
+      "not-find-product-with-modelCode-series": "Không tìm thấy Product nào với ModelCode: '%s' và Series: '%s'",
+      "not-find-Dealer-with-name": "Không tìm thấy Dealer nào với tên: '%s'",
       "not-find-AOPMargin-with-region-series-plant-year": "Không tìm thấy AOPMargin nào với khu vực: '%s', metaSeries: '%s', nhà máy: '%s' và trong năm %s"
     }
   },

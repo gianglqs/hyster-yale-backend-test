@@ -15,6 +15,7 @@ import com.hysteryale.repository.importFailure.ImportFailureRepository;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.LocaleUtils;
+import com.hysteryale.utils.ModelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -101,7 +102,6 @@ public class ImportService extends BasedService {
 
     @Resource
     LocaleUtils localeUtils;
-
 
 
     public void getOrderColumnsName(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) {
@@ -535,7 +535,7 @@ public class ImportService extends BasedService {
         importFailureRepository.saveAll(importFailures);
         shipmentRepository.saveAll(shipmentListAfterCalculate);
 
-        localeUtils.logStatusImportComplete(importFailures, "Shipment");
+        localeUtils.logStatusImportComplete(importFailures, ModelUtil.SHIPMENT);
 
         return importFailures;
     }
@@ -691,15 +691,13 @@ public class ImportService extends BasedService {
         Country country = countryService.findByCountryCode(prepareCountries, ctryCode);
         if (country == null) {
             // create new Country with ctry_code
-            Country newCountry = new Country();
-            newCountry.setCode(ctryCode);
-            newCountrySet.add(newCountry);
-            shipment.setCountry(newCountry);
+            country = new Country();
+            country.setCode(ctryCode);
+            newCountrySet.add(country);
             importFailureService.addIntoListImportFailure(importFailures, orderNo,
                     "not-find-country-with-code", ctryCode, ImportFailureType.WARNING);
-            return null;
-        } else
-            shipment.setCountry(country);
+        }
+        shipment.setCountry(country);
 
         // currency
         shipment.setCurrency(USDCurrency);
