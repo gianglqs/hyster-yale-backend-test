@@ -204,8 +204,9 @@
   },
   "message": {
     "success": {
-      "import_file": "Import thành công!",
-      "update_image": "Cập nhập hình ảnh thành công!"
+      "import-complete": "Nhập dữ liệu %s hoàn tất (%d lỗi, %d cảnh báo)",
+      "update_image": "Cập nhập hình ảnh thành công!",
+      "totalError-totalWarning": "%d lỗi, %d cảnh báo"
     },
     "failure": {
       "import_file": "Import không thành công!",
@@ -215,7 +216,12 @@
       "invalid_fileName": "Tên file không hợp lệ: ''"
     },
     "warning": {
-      "hi": "hi"
+      "not-find-country-with-code": "Không tìm thấy Quốc gia nào với mã: '%s', nên tự động tạo Quốc gia mới với mã này"
+    },
+    "error": {
+      "not-find-product-with-modelCode-series": "Không tìm thấy Product với ModelCode: '%s' và Series: '%s'",
+      "not-find-Dealer-with-name": "Không tìm thấy Dealer với tên: '%s'",
+      "not-find-AOPMargin-with-region-series-plant-year": "Không tìm thấy AOPMargin nào với khu vực: '%s', metaSeries: '%s', nhà máy: '%s' và trong năm %s"
     }
   },
   "yes": "Có",

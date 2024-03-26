@@ -1,0 +1,251 @@
+{
+  "navBar": {
+    "dashboard": "仪表板",
+    "competitors": "竞争对手",
+    "users": "用户",
+    "historicalImporting": "历史导入"
+  },
+
+  "title": {
+    "financialBookings": "财务预订",
+    "financialShipments": "财务发货",
+    "quotationMarginPercentage": "报价利润率 %",
+    "competitorBenchmark": "竞争对手基准",
+    "simulationModelling": "模拟建模",
+    "productMarginAnalytics": "产品利润分析",
+    "products": "产品",
+    "exchangeRates": "汇率",
+    "dataScraping": "数据抓取",
+    "volumeDiscountAnalysis": "数量折扣分析",
+    "bookingMarginTrialTest": "比较利润"
+  },
+
+  "user": {
+    "email": "电子邮件",
+    "name": "姓名",
+    "role": "角色",
+    "lastLogin": "上次登录",
+    "status": "状态",
+    "edit": "编辑",
+    "active": "活跃",
+    "locked": "锁定",
+    "newUser": "新用户",
+    "reload": "重新加载",
+    "search": "搜索",
+    "adminPage": "管理员页面",
+    "changePassword": "更改密码",
+    "logOut": "退出登录",
+    "password": "密码",
+    "language": "语言",
+    "userDetails": "用户详情",
+    "deactivateUser": "停用用户",
+    "activateUser": "激活用户",
+    "activateUserQuestion": "您确定要",
+    "oldPassword": "旧密码",
+    "newPassword": "新密码",
+    "confirmNewPassword": "确认新密码"
+  },
+
+  "filters": {
+    "order#": "订单号",
+    "region": "地区",
+    "plant": "工厂",
+    "metaSeries": "元系列",
+    "series": "系列",
+    "dealerName": "经销商名称",
+    "class": "类别",
+    "models": "型号",
+    "segment": "段",
+    "aopMarginPercentage": "AOP利润率 %",
+    "marginPercentage": "利润率",
+    "fromDate": "起始日期",
+    "toDate": "结束日期",
+    "chineseBrand": "中国品牌",
+    "country": "国家",
+    "category": "类别",
+    "brand": "品牌",
+    "family": "家族",
+    "truckType": "卡车类型",
+    "searchOrderById": "按订单ID搜索",
+    "searchProductByModel": "按型号代码搜索产品",
+    "startingPricePerUnit": "每单位的起始销售价格",
+    "costOfGoodSold": "每单位的销售成本",
+    "marginPercentagePerUnit": "每单位的利润率",
+    "discountPercentagePerOneNewItem": "每增加 1 个新项目的折扣率",
+    "unitIncreaseLever": "单位增长杠杆"
+  },
+
+  "button": {
+    "filter": "过滤",
+    "clear": "清除",
+    "clearCalculators": "清除计算器",
+    "selectFile": "选择文件",
+    "import": "导入",
+    "openFile": "打开文件",
+    "calculateData": "计算数据",
+    "fileUploaded": "文件已上传",
+    "compare": "比较",
+    "uploadFile": "上传文件",
+    "clearReports": "清除报告",
+    "fromDatabase": "从数据库",
+    "fromExchangeRateApi": "来自 exchangerate-api.com",
+    "scrape": "抓取",
+    "save": "保存",
+    "close": "关闭"
+  },
+
+  "table": {
+    "lastUpdated": "最后更新时间：",
+    "rowsPerPage": "每页行数：",
+
+    "order#": "订单号",
+    "quoteNumber": "報價單號",
+    "createAt": "创建时间",
+    "region": "地区",
+    "country": "国家",
+    "dealerName": "经销商名称",
+    "plant": "工厂",
+    "class": "类别",
+    "series": "系列",
+    "models": "型号",
+    "qty": "数量",
+    "dealerNet": "经销商净价",
+    "dealerNetAfterSurcharge": "附加费后的经销商净价",
+    "totalCost": "总成本",
+    "marginAfterSurcharge": "附加费后利润",
+    "marginPercentageAfterSurcharge": "附加费后利润率",
+    "aopMarginPercentage": "AOP利润率",
+
+    "totalActualCost": "实际总成本",
+    "bookingMarginPercentage": "预订利润率",
+
+    "partNumber": "零件编号",
+    "listPrice": "列表价格",
+
+    "numberOfOrders": "订单数量",
+    "additionalUnits": "额外单位",
+    "originalDealerNet": "原始经销商净价",
+    "originalMargin": "原始利润",
+    "originalMarginPercentage": "原始利润率",
+    "adjustedCost": "调整后成本",
+    "adjustedFreight": "调整运费",
+    "adjustedFX": "调整汇率",
+    "totalManualAdjCost": "总手动调整成本",
+    "adjustedDealerNet": "调整后经销商净价",
+    "newMargin": "新利润",
+    "newMarginPercentage": "新利润率",
+
+    "brand": "品牌",
+    "segment": "段",
+    "family": "家族",
+    "truckType": "卡车类型",
+    "description": "描述",
+    "edit": "编辑",
+
+    "productName": "产品名称",
+    "image": "图像",
+    "price": "价格",
+    "currency": "货币",
+
+    "fileName": "文件名",
+    "importAt": "导入时间",
+    "importBy": "导入者",
+    "size": "大小"
+  },
+
+  "competitors": {
+    "competitorName": "竞争对手名称",
+    "colorCode": "颜色代码",
+    "color": "颜色",
+    "competitorLeadTime": "竞争对手交货时间",
+    "dealerStreetPricing": "经销商街道定价",
+    "dealerHandlingCost": "经销商处理费",
+    "competitorPricing": "竞争对手定价",
+    "dealerPricingPremium": "经销商定价溢价/利润",
+    "dealerPremium": "经销商溢价/利润率",
+    "averageDealerNet": "平均经销商净价",
+    "variancePercentage": "差异率",
+    "competitorSwotAnalysis": "竞争对手 SWOT 分析",
+    "highPrice": "最高价格",
+    "lowPrice": "最低价格",
+    "highLeadTime": "最长交货时间",
+    "lowLeadTime": "最短交货时间",
+    "competitorLegendColor": "竞争对手图例颜色"
+  },
+
+  "quotationMargin": {
+    "totalListPrice": "总列表价格",
+    "blendedDiscountPercentage": "混合折扣率 %",
+    "marginPercentageAOPRate": "AOP利润率 @利率",
+    "marginAnalysisAOPRate": "利润分析 @ AOP利润率",
+    "marignAnalysisMonthlyRate": "利润分析 @ 月利率",
+    "costUplift": "成本提升",
+    "manufacturingCost": "制造成本",
+    "addWarranty": "添加：保修",
+    "surcharge": "附加费（内陆、处理等）",
+    "duty": "关税",
+    "freight": "运费",
+    "liIonIncluded": "包括 Li-Ion B 或 C",
+    "fullCost": "全成本",
+    "forUSPricing": "用于美国定价 @ AOP利润率",
+    "excludingFreight": "不包括运费",
+    "withFreight": "包括运费",
+    "targetMarginPercentage": "目标利润率",
+    "margin": "利润",
+    "partNumber": "零件编号",
+    "totalCost": "总成本",
+    "dealerNet": "经销商净价"
+  },
+
+  "exchangeRates": {
+    "weakeningText": "相对于弱于",
+    "stableText": "与持平",
+    "strengtheningText": "相对于强于"
+  },
+
+  "volumeDiscount": {
+    "discountAdded": "已添加折扣",
+    "totalDiscount": "总折扣",
+    "pricePerUnit": "每单位价格",
+    "totalPrice": "总价格",
+    "costOfGoodSold": "销售成本",
+    "standardMargin": "标准利润",
+    "averageStandardMargin": "每单位平均标准利润",
+    "expectedUnitSales": "预期单位销售量",
+    "revenue": "收入",
+    "ocos": "OCOS",
+    "adjustedStandardMargin": "调整后的标准利润",
+    "grossProfit": "毛利润",
+    "volume": "销量"
+  },
+  "message": {
+    "success": {
+      "import-complete": "导入 %s 已完成（%d 个错误，%d 个警告",
+      "update_image": "更新图片成功!",
+      "totalError-totalWarning": "%d 个错误，%d 个警告"
+    },
+    "failure": {
+      "import_file": "导入失败!",
+      "missing_column": "缺少列",
+      "missing_sheet": "未找到工作表：''",
+      "blank_sheet": "工作表是空白的：''",
+      "invalid_fileName": "无效的文件名：''"
+    },
+    "warning": {
+      "not-find-country-with-code": "未找到代码为“%s”的国家/地区。 使用代码自动创建一个新国家."
+    },
+    "error": {
+      "not-find-product-with-modelCode-series": "未找到型号代码为“%s”且系列为“%s”的产品。”",
+      "not-find-Dealer-with-name": "未找到名为“%s”的经销商。",
+      "not-find-AOPMargin-with-region-series-plant-year": "未找到区域“%s”、MestaSeries“%s”、工厂“%s”和年份“%s”的 AOPMargin。"
+    }
+  },
+  "yes": "是",
+  "no": "否",
+  "or": "或",
+  "search": "搜索 ...",
+  "updateProduct": "更新产品",
+  "complete": "成功",
+  "failure": "失败",
+  "go": "去"
+}

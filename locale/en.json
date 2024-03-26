@@ -210,8 +210,9 @@
   },
   "message": {
     "success": {
-      "import_file": "Import successfully!",
-      "update_image": "Update image successfully!"
+      "import-complete": "Import %s complete (%d error, %d warning)",
+      "update_image": "Update image successfully!",
+      "totalError-totalWarning": "%d error, %d warning"
     },
     "failure": {
       "import_file": "Import failure!",
@@ -221,7 +222,12 @@
       "invalid_fileName": "Invalid file name: ''"
     },
     "warning": {
-      "hi": "hi"
+      "not-find-country-with-code": "Country with Code '%s' not found. Automatically creating a new country using the code."
+    },
+    "error": {
+      "not-find-product-with-modelCode-series": "Product with ModelCode '%s' and Series '%s' not found.",
+      "not-find-Dealer-with-name": "Dealer with the name '%s' not found.",
+      "not-find-AOPMargin-with-region-series-plant-year": "AOPMargin with Region '%s', MestaSeries '%s', Plant '%s', and Year '%s' not found."
     }
   },
   "yes": "Yes",
