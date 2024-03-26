@@ -1,7 +1,5 @@
 package com.hysteryale.model.importFailure;
 
-import com.hysteryale.model.enums.ImportFailureType;
-import com.hysteryale.service.ImportService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,18 +24,29 @@ public class ImportFailure {
     @Column(name = "primary_key")
     private String primaryKey;
 
-    private String reason;
+    @Column(name = "reason_key")
+    private String reasonKey;
 
-    @Column(name = "file_name")
-    private String fileName;
+    @Column(name = "reason_value")
+    private String reasonValue;
+
+    @Column(name = "file_uuid")
+    private String fileUUID;
 
     private String type;
 
-    public ImportFailure(String primaryKey, String reason, String type) {
+    @Transient
+    private String reason;
+
+    public ImportFailure(String primaryKey, String reasonKey, String reasonValue, String type) {
         this.primaryKey = primaryKey;
-        this.reason = reason;
+        this.reasonKey = reasonKey;
+        this.reasonValue = reasonValue;
         this.type = type;
     }
 
+    public String toString() {
+        return String.format("%s (%s): %s", primaryKey, type, reason);
+    }
 
 }
