@@ -14,6 +14,7 @@ import com.hysteryale.repository.*;
 import com.hysteryale.repository.importFailure.ImportFailureRepository;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.LocaleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -97,6 +98,11 @@ public class ImportService extends BasedService {
 
     @Resource
     ImportFailureRepository importFailureRepository;
+
+    @Resource
+    LocaleUtils localeUtils;
+
+
 
     public void getOrderColumnsName(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) {
         for (int i = 0; i < 50; i++) {
@@ -529,9 +535,10 @@ public class ImportService extends BasedService {
         importFailureRepository.saveAll(importFailures);
         shipmentRepository.saveAll(shipmentListAfterCalculate);
 
-        logInfo("import shipment successfully");
-    }
+        localeUtils.logStatusImportComplete(importFailures, "Shipment");
 
+        return importFailures;
+    }
 
     private Shipment checkExistOrderNo(List<Shipment> list, String orderNo) {
         for (Shipment s : list) {
@@ -605,7 +612,8 @@ public class ImportService extends BasedService {
         //product
         Product product = productService.findProductByModelCodeAndSeries(prepareProducts, modelCode, series);
         if (product == null) {
-            importFailureService.addIntoListImportFailure(importFailures, orderNo, String.format("Not found Product with ModelCode: '%s' and Series: '%s'", modelCode, series), ImportFailureType.ERROR);
+            String reasonValue = modelCode + "###" + series;
+            importFailureService.addIntoListImportFailure(importFailures, orderNo, "not-find-product-with-modelCode-series", reasonValue, ImportFailureType.ERROR);
             return null;
         }
         shipment.setProduct(product);
@@ -673,7 +681,7 @@ public class ImportService extends BasedService {
         String dealerName = row.getCell(shipmentColumnsName.get("End Customer Name")).getStringCellValue();
         Dealer dealer = dealerService.getDealerByName(prepareDealers, dealerName);
         if (dealer == null) {
-            importFailureService.addIntoListImportFailure(importFailures, orderNo, String.format("Not found Dealer with dealerName: '%s'", dealerName), ImportFailureType.ERROR);
+            importFailureService.addIntoListImportFailure(importFailures, orderNo, "not-find-Dealer-with-name", dealerName, ImportFailureType.ERROR);
             return null;
         }
         shipment.setDealer(dealer);
@@ -688,8 +696,7 @@ public class ImportService extends BasedService {
             newCountrySet.add(newCountry);
             shipment.setCountry(newCountry);
             importFailureService.addIntoListImportFailure(importFailures, orderNo,
-                    String.format("Not found Country with Code: '%s', so auto create new Country", ctryCode), ImportFailureType.WARNING);
-            log.error("Not found Country with countryCode: " + ctryCode);
+                    "not-find-country-with-code", ctryCode, ImportFailureType.WARNING);
             return null;
         } else
             shipment.setCountry(country);
@@ -699,10 +706,10 @@ public class ImportService extends BasedService {
 
         AOPMargin aopMargin = aopMarginService.getAOPMargin(prepareAOPMargins, shipment.getCountry().getRegion(), shipment.getSeries(), shipment.getProduct().getPlant(), shipment.getDate());
         if (aopMargin == null) {
+            String reasonValue = shipment.getCountry().getRegion().getRegionName() + "###" + series.substring(1) + "###" + shipment.getProduct().getPlant() + "###" + shipment.getDate().getYear();
             importFailureService.addIntoListImportFailure(importFailures, orderNo,
-                    String.format("Not found AOPMargin with Region: '%s', MestaSeries: '%s', Plant: '%s' and Year: '%d'", shipment.getCountry().getRegion().getRegionName(), series.substring(1), shipment.getProduct().getPlant(), shipment.getDate().getYear()),
+                    "not-find-AOPMargin-with-region-series-plant-year", reasonValue,
                     ImportFailureType.ERROR);
-            log.error("Not found AOPMargin with orderNo: " + orderNo);
             return null;
         }
         shipment.setAOPMargin(aopMargin);

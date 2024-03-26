@@ -9,6 +9,7 @@ import com.hysteryale.service.ImportService;
 import com.hysteryale.service.ShipmentService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.LocaleUtils;
 import com.hysteryale.utils.ModelUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,6 +39,9 @@ public class ShipmentController {
 
     @Resource
     FileUploadRepository fileUploadRepository;
+
+    @Resource
+    LocaleUtils localeUtils;
 
     @PostMapping("/getShipmentData")
     public Map<String, Object> getDataFinancialShipment(@RequestBody FilterModel filters,
@@ -70,7 +74,7 @@ public class ShipmentController {
 
         InputStream inputStream = new FileInputStream(pathFile);
         List<ImportFailure> importFailures = importService.importShipmentFileOneByOne(inputStream, fileUUID);
-        String message = importService.getMessageImportComplete(importFailures, ModelUtil.SHIPMENT, locale);
+        String message = localeUtils.getMessageImportComplete(importFailures, ModelUtil.SHIPMENT, locale);
         fileUploadService.handleUpdatedSuccessfully(savedFileName);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(message, fileUUID));
 
