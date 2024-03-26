@@ -8,6 +8,7 @@ import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.ProductRepository;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.utils.*;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,9 @@ public class ProductService extends BasedService {
     FileUploadService fileUploadService;
     @Resource
     ClazzRepository clazzRepository;
+
+    @Resource
+    FileUploadRepository fileUploadRepository;
 
     private final HashMap<String, Integer> COLUMNS = new HashMap<>();
 
@@ -363,11 +367,11 @@ public class ProductService extends BasedService {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product");
         String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.PRODUCT);
-
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(savedFileName, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
             throw new Exception("Imported file is not Excel");
         }
 
@@ -377,14 +381,14 @@ public class ProductService extends BasedService {
             } else if (file.getOriginalFilename().toLowerCase().contains("dimension")) {
                 importDimensionProduct(filePath,savedFileName);
             } else {
-                fileUploadService.handleUpdatedFailure(savedFileName, "File name is invalid");
+                fileUploadService.handleUpdatedFailure(fileUUID, "File name is invalid");
                 throw new FileNotFoundException("File name is invalid");
             }
         } catch (Exception e) {
             if (e instanceof FileNotFoundException) {
                 throw e;
             }
-            fileUploadService.handleUpdatedFailure(savedFileName, e.getMessage());
+            fileUploadService.handleUpdatedFailure(fileUUID, e.getMessage());
             throw e;
         }
 
@@ -573,7 +577,7 @@ public class ProductService extends BasedService {
 
             // save image in disk and DB
             String savedImageName = fileUploadService.upLoadImage(imagePath, targetFolder, authentication, ModelUtil.PRODUCT);
-
+            String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedImageName);
             List<Product> mappingProducts = new ArrayList<>();
 
             // step 1: extract by space ' '
@@ -588,7 +592,7 @@ public class ProductService extends BasedService {
             // update product if it is mapped
 
             if (mappingProducts.isEmpty()) {
-                fileUploadService.handleUpdatedFailure(savedImageName, "No suitable product found for mapping");
+                fileUploadService.handleUpdatedFailure(fileUUID, "No suitable product found for mapping");
                 continue;
             }
 

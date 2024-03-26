@@ -39,7 +39,7 @@ public class CheckRequiredColumnUtils {
     public static final String BOOKING_FPA_REQUIRED_SHEET = "Booking Margin Database";
 
 
-    public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns, String savedFileName) throws MissingColumnException {
+    public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns, String fileUUID) throws MissingColumnException {
         List<String> listMissingColumn = new ArrayList<>();
         for (String requiredColumn : requiredColumns) {
             if (requiredColumn.contains(","))
@@ -49,7 +49,7 @@ public class CheckRequiredColumnUtils {
             }
         }
         if (!listMissingColumn.isEmpty()) {
-            throw new MissingColumnException(listMissingColumn.toString(), savedFileName);
+            throw new MissingColumnException(listMissingColumn.toString(), fileUUID);
         }
     }
 

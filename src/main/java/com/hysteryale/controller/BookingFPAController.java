@@ -1,6 +1,7 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.BookingFPAService;
 import com.hysteryale.service.FileUploadService;
@@ -30,6 +31,9 @@ public class BookingFPAController {
     @Resource
     FileUploadService fileUploadService;
 
+    @Resource
+    FileUploadRepository fileUploadRepository;
+
     @PostMapping("/getBookingMarginTrialTest")
     public Map<String, Object> getDataFinancialShipment(@RequestBody FilterModel filters,
                                                         @RequestParam(defaultValue = "1") int pageNo,
@@ -49,11 +53,12 @@ public class BookingFPAController {
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.bookingFPA");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.BOOKING_FPA);
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileName);
         String pathFile = baseFolder + baseFolderUploaded + targetFolder + fileName;
         if (FileUtils.isExcelFile(pathFile)) {
             try {
                 InputStream inputStream = new FileInputStream(pathFile);
-                bookingPFAService.importBookingFPA(inputStream, fileName);
+                bookingPFAService.importBookingFPA(inputStream, fileUUID);
 
                 //       fileUploadService.handleUpdatedSuccessfully(fileName);
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));

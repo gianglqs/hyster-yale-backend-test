@@ -4,6 +4,7 @@ import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.reports.CompareCurrencyRequest;
 import com.hysteryale.repository.ExchangeRateRepository;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -36,6 +37,9 @@ public class ExchangeRateService extends BasedService {
     CurrencyService currencyService;
     @Resource
     FileUploadService fileUploadService;
+
+    @Resource
+    FileUploadRepository fileUploadRepository;
     public static Map<Integer, String> fromCurrenciesTitle = new HashMap<>();
 
     public Map<Integer, String> getFromCurrencyTitle(Row row) {
@@ -349,20 +353,20 @@ public class ExchangeRateService extends BasedService {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.exchange_rate");
         String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.EXCHANGE_RATE);
-
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileName);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
 
 
         // Verify file's type
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is not an Excel file");
         }
 
         // Verify whether file's name is null or not
         String originalFileName = file.getOriginalFilename();
         if (originalFileName == null) {
-            fileUploadService.handleUpdatedFailure(fileName, "File's name is not in appropriate format");
+            fileUploadService.handleUpdatedFailure(fileUUID, "File's name is not in appropriate format");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File's name is not in appropriate format");
         }
         //Pattern for getting date from fileName
@@ -376,7 +380,7 @@ public class ExchangeRateService extends BasedService {
             int year = Integer.parseInt(matcher.group(2));
             date = LocalDate.of(year, DateUtils.getMonth(month), 1);
         } else {
-            fileUploadService.handleUpdatedFailure(fileName, "File's name is not in appropriate format");
+            fileUploadService.handleUpdatedFailure(fileUUID, "File's name is not in appropriate format");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File's name is not in appropriate format");
         }
 
@@ -400,7 +404,7 @@ public class ExchangeRateService extends BasedService {
             exchangeRatesList.clear();
             fileUploadService.handleUpdatedSuccessfully(fileName);
         } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            fileUploadService.handleUpdatedFailure(fileUUID, e.getMessage());
             throw e;
         }
 

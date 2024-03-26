@@ -1,9 +1,9 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.model.Product;
-import com.hysteryale.model.User;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.UserRepository;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ProductService;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController()
 @RequestMapping("product")
@@ -36,6 +34,9 @@ public class ProductController {
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    FileUploadRepository fileUploadRepository;
 
 
     @PostMapping("/getData")
@@ -62,15 +63,16 @@ public class ProductController {
 
 
         String savedImageName = null;
-
+        String fileUUID = null;
         try {
             if (image != null) {
                 String targetFolder = EnvironmentUtils.getEnvironmentValue("image-folder.product");
                 savedImageName = fileUploadService.upLoadImage(image, targetFolder, authentication, ModelUtil.PRODUCT);
+                 fileUUID = fileUploadRepository.getFileUUIDByFileName(savedImageName);
             }
             productService.updateImageAndDescription(modelCode, series, savedImageName, description);
         } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(savedImageName, e.getMessage());
+            fileUploadService.handleUpdatedFailure(fileUUID, e.getMessage());
             throw e;
         }
         fileUploadService.handleUpdatedSuccessfully(savedImageName);

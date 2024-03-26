@@ -5,6 +5,7 @@ import com.hysteryale.model.AOPMargin;
 import com.hysteryale.model.Region;
 import com.hysteryale.repository.AOPMarginRepository;
 import com.hysteryale.repository.RegionRepository;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -40,6 +41,9 @@ public class AOPMarginService extends BasedService {
 
     @Resource
     private RegionRepository regionRepository;
+
+    @Resource
+    FileUploadRepository fileUploadRepository;
 
     public void getAOPMarginColumns(Row row) {
         for (int i = 0; i < 20; i++) {
@@ -140,10 +144,10 @@ public class AOPMarginService extends BasedService {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product");
         String fileNameEncoded = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.AOP_MARGIN);
-
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileNameEncoded);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileNameEncoded;
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileNameEncoded, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
             throw new Exception("Imported file is not Excel");
         }
 
@@ -152,17 +156,17 @@ public class AOPMarginService extends BasedService {
             String fileName = file.getOriginalFilename();
             int year = DateUtils.extractYear(fileName);
             InputStream is = new FileInputStream(filePath);
-            importAOPMarginFromGUM(is, year, fileNameEncoded);
+            importAOPMarginFromGUM(is, year, fileUUID);
 
         } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(fileNameEncoded, e.getMessage());
+            fileUploadService.handleUpdatedFailure(fileUUID, e.getMessage());
             throw e;
         }
 
         fileUploadService.handleUpdatedSuccessfully(fileNameEncoded);
     }
 
-    private void importAOPMarginFromGUM(InputStream is, int year, String savedFileName) throws IOException, MissingColumnException {
+    private void importAOPMarginFromGUM(InputStream is, int year, String fileUUID) throws IOException, MissingColumnException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         List<AOPMargin> aopMarginListInDB = aopMarginRepository.findAll();
@@ -178,7 +182,7 @@ public class AOPMarginService extends BasedService {
 
                 List<String> listCurrentColumn = new ArrayList<>(AOP_MARGIN_COLUMNS.keySet());
                 // check required columns
-                CheckRequiredColumnUtils.checkRequiredColumn(listCurrentColumn, CheckRequiredColumnUtils.AOP_MARGIN_REQUIRED_COLUMN, savedFileName);
+                CheckRequiredColumnUtils.checkRequiredColumn(listCurrentColumn, CheckRequiredColumnUtils.AOP_MARGIN_REQUIRED_COLUMN, fileUUID);
 
                 //check column 'STD Margin %'
                 boolean hasMarginSTD = false;
@@ -191,7 +195,7 @@ public class AOPMarginService extends BasedService {
                     }
                 }
                 if (!hasMarginSTD)
-                    throw new MissingColumnException("Margin STD %", savedFileName);
+                    throw new MissingColumnException("Margin STD %", fileUUID);
 
 
                 for (Row row : sheet) {

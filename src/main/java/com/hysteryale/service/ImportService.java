@@ -469,16 +469,16 @@ public class ImportService extends BasedService {
     }
 
 
-    public void importShipmentFileOneByOne(InputStream is, String savedFileName) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
+    public List<ImportFailure> importShipmentFileOneByOne(InputStream is, String fileUUID) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         HashMap<String, Integer> SHIPMENT_COLUMNS_NAME = new HashMap<>();
         String sheetName = CheckRequiredColumnUtils.SHIPMENT_REQUIRED_SHEET;
         XSSFSheet shipmentSheet = workbook.getSheet(sheetName);
         if (shipmentSheet == null)
-            throw new MissingSheetException(sheetName, savedFileName);
+            throw new MissingSheetException(sheetName, fileUUID);
 
         if (shipmentSheet.getLastRowNum() <= 0)
-            throw new BlankSheetException(sheetName, savedFileName);
+            throw new BlankSheetException(sheetName, fileUUID);
 
         logInfo("import shipment");
         List<Shipment> shipmentList = new ArrayList<>();
@@ -497,7 +497,7 @@ public class ImportService extends BasedService {
         for (Row row : shipmentSheet) {
             if (row.getRowNum() == 0) {
                 getOrderColumnsName(row, SHIPMENT_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(SHIPMENT_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.SHIPMENT_REQUIRED_COLUMN, savedFileName);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(SHIPMENT_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.SHIPMENT_REQUIRED_COLUMN, fileUUID);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
                 Shipment newShipment = mapExcelDataIntoShipmentObject(
                         row, SHIPMENT_COLUMNS_NAME, prepareProducts, prepareAOPMargin, prepareDealers, prepareCurrency, prepareBookings, prepareCountries, importFailures, newCountrySet);
@@ -524,7 +524,8 @@ public class ImportService extends BasedService {
             }
         }
         countryRepository.saveAll(newCountrySet);
-        importFailureService.setFileNameForListImportFailure(importFailures, savedFileName);
+
+        importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
         importFailureRepository.saveAll(importFailures);
         shipmentRepository.saveAll(shipmentListAfterCalculate);
 

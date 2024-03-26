@@ -2,6 +2,7 @@ package com.hysteryale.controller;
 
 import com.hysteryale.exception.InvalidFileNameException;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.BookingService;
 import com.hysteryale.service.FileUploadService;
@@ -32,6 +33,9 @@ public class BookingController {
 
     @Resource
     FileUploadService fileUploadService;
+
+    @Resource
+    FileUploadRepository fileUploadRepository;
 
     private FilterModel filters;
 
@@ -67,13 +71,15 @@ public class BookingController {
         String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.BOOKING);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
+
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(savedFileName, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("File is not EXCEL", null));
         }
 
         if (FileUtils.checkFileNameValid(file, "booked") || FileUtils.checkFileNameValid(file, "booking")) {
-            bookingService.importNewBookingFileByFile(filePath, savedFileName);
+            bookingService.importNewBookingFileByFile(filePath, fileUUID);
             fileUploadService.handleUpdatedSuccessfully(savedFileName);
         } else if (FileUtils.checkFileNameValid(file, "cost_data")) {
             bookingService.importCostData(filePath, savedFileName);
