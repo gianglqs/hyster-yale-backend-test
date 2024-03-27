@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -159,44 +160,63 @@ public class ExchangeRateService extends BasedService {
     /**
      * Compare Currencies for reporting in Reports page
      */
-    public Map<String, Object> compareCurrency(CompareCurrencyRequest request) {
+    public Map<String, Object> compareCurrency(CompareCurrencyRequest request) throws Exception {
         Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
         List<String> comparisonCurrencies = request.getComparisonCurrencies();
-        LocalDate fromDate = parseDateFromRequest(request.getFromDate());
-        LocalDate toDate = parseDateFromRequest(request.getToDate());
+        LocalDate fromDate = parseDateFromRequestGetMonthYear(request.getFromDate());
+        LocalDate toDate = parseDateFromRequestGetMonthYear(request.getToDate());
+        if(fromDate!=null)
+            fromDate = fromDate.minusMonths(1);
 
         // if fromDate and toDate is not set then limit will be 12
         // if toDate is not set => set current month & year
         // fromDate will be: toDate - limit (limit can be 12 or 60)
         int limit = fromDate == null || toDate == null ? 12 : 60;
-        if(toDate == null) toDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 1);
-        if(fromDate == null) fromDate = toDate.minusMonths(limit);
+
+        if (toDate == null && fromDate == null) {
+            toDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 1);
+            fromDate =toDate.minusMonths(limit);
+        }
+        else if (toDate == null){
+            toDate = fromDate.plusMonths(limit);
+        } else if (fromDate == null)
+            fromDate=toDate.minusMonths(limit);
+
+        if(ChronoUnit.MONTHS.between(fromDate, toDate) > 12){
+            throw new Exception("Time exceeds 12 months, please choose a shorter range");
+        }
 
         Map<String, Object> data = new HashMap<>();
         List<String> stableCurrencies = new ArrayList<>();
         List<String> weakerCurrencies = new ArrayList<>();
         List<String> strongerCurrencies = new ArrayList<>();
 
+        for (String currency : comparisonCurrencies) {
+            data.put(currency, new ArrayList<>());
+        }
+        LocalDate queryDate = toDate;
         for (String strCurrency : comparisonCurrencies) {
-            Currency currency = currencyService.getCurrenciesByName(strCurrency);
-            List<ExchangeRate> exchangeRateList = new ArrayList<>();
-            LocalDate queryDate = toDate;
+            List<ExchangeRate> exchangeRateList = (List<ExchangeRate>) data.get(strCurrency);
+
 
             double nearestRate = 0;
             double farthestRate = 0;
             int numberOfMonths = 1;
             boolean isSetNearestRate = false;
 
-            while(queryDate.isAfter(fromDate) && numberOfMonths <= limit) {
+            while (queryDate.isAfter(fromDate) && numberOfMonths <= limit) {
+                Currency currency = currencyService.getCurrenciesByName(strCurrency);
+
                 Optional<ExchangeRate> optional = exchangeRateRepository.getExchangeRateByFromToCurrencyAndDate(currentCurrency.getCurrency(), strCurrency, queryDate);
 
                 // if Exchange Rate in the month & year does not exist then the RATE value will be null
-                if (optional.isEmpty()) exchangeRateList.add(new ExchangeRate(currentCurrency, currency, null, queryDate));
+                if (optional.isEmpty())
+                    exchangeRateList.add(new ExchangeRate(currentCurrency, currency, null, queryDate));
                 else exchangeRateList.add(optional.get());
 
                 // Set the nearest and farthest Exchange Rates to calculate difference
-                if(optional.isPresent()) {
-                    if(!isSetNearestRate) {
+                if (optional.isPresent()) {
+                    if (!isSetNearestRate) {
                         nearestRate = optional.get().getRate();
                         isSetNearestRate = true;
                     }
@@ -215,10 +235,11 @@ public class ExchangeRateService extends BasedService {
             if (Math.abs(differentRatePercentage) > 5) {
                 StringBuilder sb = formatNumericValue(differentRate);
                 if (differentRatePercentage < 0)
-                    weakerCurrencies.add(currency.getCurrency() + ": " + sb + " (" + differentRatePercentage + "%)");
-                else strongerCurrencies.add(currency.getCurrency() + ": +" + sb + " (+" + differentRatePercentage + "%)");
-            } else stableCurrencies.add(currency.getCurrency());
-            data.put(currency.getCurrency(), exchangeRateList);
+                    weakerCurrencies.add(strCurrency + ": " + sb + " (" + differentRatePercentage + "%)");
+                else
+                    strongerCurrencies.add(strCurrency+ ": +" + sb + " (+" + differentRatePercentage + "%)");
+            } else stableCurrencies.add(strCurrency);
+            data.put(strCurrency , exchangeRateList);
         }
 
         data.put("stable", stableCurrencies);
@@ -227,18 +248,29 @@ public class ExchangeRateService extends BasedService {
         return data;
     }
 
-    public Map<String, Object> compareCurrencyFromAPI(CompareCurrencyRequest request) {
-        Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
+    public Map<String, Object> compareCurrencyFromAPI(CompareCurrencyRequest request) throws Exception {
+//        Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
         List<String> comparisonCurrencies = request.getComparisonCurrencies();
         LocalDate fromDate = parseDateFromRequest(request.getFromDate());
+        if(fromDate!=null)
+            fromDate = fromDate.minusDays(1);
         LocalDate toDate = parseDateFromRequest(request.getToDate());
 
-        // if fromDate and toDate is not set then limit will be 12
-        // if toDate is not set => set current month & year
-        // fromDate will be: toDate - limit (limit can be 12 or 60)
-        int limit = fromDate == null || toDate == null ? 12 : 60;
-        if(toDate == null) toDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 1);
-        if(fromDate == null) fromDate = toDate.minusMonths(limit);
+        // if fromDate and toDate is not set then limit will be 30
+        // if toDate is not set => set current date
+        // fromDate will be: toDate - limit (limit can be 30 or 60)
+        int limit = fromDate == null || toDate == null ? 30 : 60;
+        if (toDate == null && fromDate == null){
+            toDate = LocalDate.now();
+            fromDate = toDate.minusDays(limit);
+        }else if (toDate == null){
+            toDate = fromDate.plusDays(limit);
+        } else if (fromDate == null)
+            fromDate=toDate.minusDays(limit);
+
+        if(ChronoUnit.MONTHS.between(fromDate, toDate) > 1){
+            throw new Exception("Time exceeds 1 month, please choose a shorter range");
+        }
 
         Map<String, Object> data = new HashMap<>();
         for (String currency : comparisonCurrencies) {
@@ -250,17 +282,12 @@ public class ExchangeRateService extends BasedService {
         List<String> strongerCurrencies = new ArrayList<>();
 
         LocalDate queryDate = toDate;
-        int numberOfMonths = 1;
-        while(queryDate.isAfter(fromDate) && numberOfMonths <= limit) {
-            getExchangeRatesFromAPI(currentCurrency.getCurrency(), comparisonCurrencies, queryDate, data);
-            // update looping condition
-            queryDate = queryDate.minusMonths(1);
-            numberOfMonths++;
-        }
+        int numberOfDays = 1;
+
 
         for (String currency : comparisonCurrencies) {
             List<ExchangeRate> exchangeRateList = (List<ExchangeRate>) data.get(currency);
-            if(exchangeRateList.size() > 2) {
+            if (exchangeRateList.size() >= 2) {
                 double nearestRate = exchangeRateList.get(0).getRate();
                 double farthestRate = exchangeRateList.get(exchangeRateList.size() - 1).getRate();
                 double differentRate = nearestRate - farthestRate;
@@ -273,6 +300,13 @@ public class ExchangeRateService extends BasedService {
                     else strongerCurrencies.add(currency + ": +" + sb + " (+" + differentRatePercentage + "%)");
                 } else stableCurrencies.add(currency);
             }
+            while (queryDate.isAfter(fromDate) && numberOfDays <= limit) {
+                Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
+                getExchangeRatesFromAPI(currentCurrency.getCurrency(), comparisonCurrencies, queryDate, data);
+                // update looping condition
+                queryDate = queryDate.minusDays(1);
+                numberOfDays++;
+            }
         }
 
         data.put("stable", stableCurrencies);
@@ -281,17 +315,17 @@ public class ExchangeRateService extends BasedService {
         return data;
     }
 
-    private void getExchangeRatesFromAPI (String currentCurrency, List<String> comparisonCurrencies, LocalDate queryDate, Map<String, Object> result) {
+    private void getExchangeRatesFromAPI(String currentCurrency, List<String> comparisonCurrencies, LocalDate queryDate, Map<String, Object> result) {
         RestTemplate template = new RestTemplate();
         String apiKey = EnvironmentUtils.getEnvironmentValue("exchange_rate_api_key");
         String url;
 
-        LocalDate now = LocalDate.now();
+
 
         int year = queryDate.getYear();
         int month = queryDate.getMonthValue();
-        int day = month == now.getMonthValue() ? now.getDayOfMonth() : queryDate.getMonth().minLength();
-
+//        int day = month == now.getMonthValue() ? now.getDayOfMonth() : queryDate.getMonth().minLength();
+        int day = queryDate.getDayOfMonth();
         Map<String, Object> response;
         Map<String, Object> conversionRates;
 
@@ -314,7 +348,7 @@ public class ExchangeRateService extends BasedService {
 
         for (String currency : comparisonCurrencies) {
             Object rateObject = conversionRates.get(currency);
-            if(rateObject == null)
+            if (rateObject == null)
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported currency before 31/12/2020: " + currency);
 
             double rate = Double.parseDouble(conversionRates.get(currency).toString());
@@ -428,13 +462,27 @@ public class ExchangeRateService extends BasedService {
         return LocalDate.of(year, DateUtils.getMonth(month), date);
     }
 
+
+    // get day,month year from request
     private LocalDate parseDateFromRequest(String dateFromRequest) {
-        Pattern pattern = Pattern.compile("(\\d{4})-(\\d{2})");
+        Pattern pattern = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})");
         Matcher matcher = pattern.matcher(dateFromRequest);
-        if(matcher.find()) {
+        if (matcher.find()) {
             int year = Integer.parseInt(matcher.group(1));
             int month = Integer.parseInt(matcher.group(2));
-            return LocalDate.of(year, month, 1);
+            int day = Integer.parseInt(matcher.group(3));
+            return LocalDate.of(year, month, day);
+        } else
+            return null;
+    }
+// get month and year from request
+    private LocalDate parseDateFromRequestGetMonthYear(String dateFromRequest) {
+        Pattern pattern = Pattern.compile("(\\d{4})-(\\d{2})");
+        Matcher matcher = pattern.matcher(dateFromRequest);
+        if (matcher.find()) {
+            int year = Integer.parseInt(matcher.group(1));
+            int month = Integer.parseInt(matcher.group(2));
+            return LocalDate.of(year, month,1);
         } else
             return null;
     }

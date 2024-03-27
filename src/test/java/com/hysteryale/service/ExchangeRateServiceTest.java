@@ -148,7 +148,7 @@ public class ExchangeRateServiceTest {
 
 
             Optional<ExchangeRate> dbExchangeRate = exchangeRateRepository.getExchangeRateByFromToCurrencyAndDate(fromCurrency.getCurrency(), toCurrency.getCurrency(), date);
-            Assertions.assertNotNull(dbExchangeRate);
+            Assertions.assertTrue(dbExchangeRate.isPresent());
 
             double rate = row.getCell(cellIndex).getNumericCellValue();
             Assertions.assertEquals(
@@ -221,7 +221,7 @@ public class ExchangeRateServiceTest {
     }
 
     @Test
-    public void testCompareExchangeRate() {
+    public void testCompareExchangeRate() throws Exception {
         String currency1 = "USD";
         String currency2 = "JPY";
         String currency3 = "VND";
