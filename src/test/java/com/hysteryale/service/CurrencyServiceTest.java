@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.ExchangeRatesException;
 import com.hysteryale.model.Currency;
 import com.hysteryale.repository.CurrencyRepository;
 import org.junit.jupiter.api.Assertions;
@@ -18,7 +19,7 @@ public class CurrencyServiceTest {
     CurrencyRepository currencyRepository;
 
     @Test
-    public void testGetCurrencyByName() {
+    public void testGetCurrencyByName() throws ExchangeRatesException {
         String currencyName = "abc";
         currencyRepository.save(new Currency("abc", "ABC"));
 
