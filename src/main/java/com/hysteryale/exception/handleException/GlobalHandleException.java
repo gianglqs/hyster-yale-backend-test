@@ -66,7 +66,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "missing_column");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
         stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
-        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), stringBuilder.toString());
+        fileUploadService.handleUpdatedFailure(exception.getFileUUID(), stringBuilder.toString());
         logError(stringBuilder.toString(), exception);
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
     }
@@ -80,7 +80,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "missing_sheet");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
         stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
-        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), stringBuilder.toString());
+        fileUploadService.handleUpdatedFailure(exception.getFileUUID(), stringBuilder.toString());
         logError(stringBuilder.toString(), exception);
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
     }
@@ -94,7 +94,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "blank_sheet");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
         stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
-        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), stringBuilder.toString());
+        fileUploadService.handleUpdatedFailure(exception.getFileUUID(), stringBuilder.toString());
         logError(stringBuilder.toString(), exception);
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
     }
@@ -108,9 +108,20 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "invalid_fileName");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
         stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
-        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), stringBuilder.toString());
+        fileUploadService.handleUpdatedFailure(exception.getFileUUID(), stringBuilder.toString());
         logError(stringBuilder.toString(), exception);
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidFileFormatException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFileFormatException(InvalidFileFormatException exception, WebRequest request) throws CanNotUpdateException {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "file-is-not-excel");
+        fileUploadService.handleUpdatedFailure(exception.getFileUUID(), baseMessage);
+        logError(baseMessage, exception);
+        return new ResponseEntity<>(new ErrorResponse(baseMessage), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IncorectFormatCellException.class)

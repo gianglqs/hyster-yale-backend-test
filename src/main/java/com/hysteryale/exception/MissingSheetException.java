@@ -7,10 +7,10 @@ import lombok.Setter;
 @Setter
 public class MissingSheetException extends Exception {
 
-    private String savedFileName;
+    private String fileUUID;
 
-    public MissingSheetException(String message, String savedFileName) {
+    public MissingSheetException(String message, String fileUUID) {
         super(message);
-        this.savedFileName = savedFileName;
+        this.fileUUID = fileUUID;
     }
 }

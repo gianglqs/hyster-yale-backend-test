@@ -5,6 +5,7 @@ import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.reports.CompareCurrencyRequest;
 import com.hysteryale.repository.ExchangeRateRepository;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -37,6 +38,9 @@ public class ExchangeRateService extends BasedService {
     CurrencyService currencyService;
     @Resource
     FileUploadService fileUploadService;
+
+    @Resource
+    FileUploadRepository fileUploadRepository;
     public static Map<Integer, String> fromCurrenciesTitle = new HashMap<>();
 
     public Map<Integer, String> getFromCurrencyTitle(Row row) {

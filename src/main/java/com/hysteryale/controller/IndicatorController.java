@@ -4,24 +4,23 @@ import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
-import com.hysteryale.response.ResponseObject;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.service.FileUploadService;
-import com.hysteryale.service.ImportService;
 import com.hysteryale.service.IndicatorService;
-import com.hysteryale.utils.*;
+import com.hysteryale.utils.CheckRequiredColumnUtils;
+import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.ModelUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
@@ -38,6 +37,10 @@ public class IndicatorController {
     IndicatorService indicatorService;
     @Resource
     FileUploadService fileUploadService;
+
+    @Resource
+    FileUploadRepository fileUploadRepository;
+
 
 
     @PostMapping("/getCompetitorData")
@@ -111,17 +114,18 @@ public class IndicatorController {
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.COMPETITOR);
         String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
         if (!FileUtils.isExcelFile(pathFile)) {
-            fileUploadService.handleUpdatedFailure(savedFileName, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
             throw new Exception("Uploaded file is not an Excel file");
         }
 
         try {
-            indicatorService.importIndicatorsFromFile(pathFile, savedFileName);
+            indicatorService.importIndicatorsFromFile(pathFile, fileUUID);
             fileUploadService.handleUpdatedSuccessfully(savedFileName);
         } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(savedFileName, e.getMessage());
+            fileUploadService.handleUpdatedFailure(fileUUID, e.getMessage());
             throw e;
         }
     }
@@ -134,9 +138,10 @@ public class IndicatorController {
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.FORECAST_PRICING);
         String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
         if (!FileUtils.isExcelFile(pathFile)) {
-            fileUploadService.handleUpdatedFailure(savedFileName, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
             throw new Exception("Uploaded file is not an Excel file");
         }
         InputStream is = new FileInputStream(pathFile);
@@ -159,7 +164,7 @@ public class IndicatorController {
 
             }
         }
-        CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.FORECAST_REQUIRED_COLUMN, savedFileName);
+        CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.FORECAST_REQUIRED_COLUMN, fileUUID);
 
     }
 }

@@ -210,8 +210,9 @@
   },
   "message": {
     "success": {
-      "import_file": "Import successfully!",
-      "update_image": "Update image successfully!"
+      "import-complete": "Import %s complete (%d error, %d warning)",
+      "update_image": "Update image successfully!",
+      "totalError-totalWarning": "%d error, %d warning"
     },
     "failure": {
       "import_file": "Import failure!",
@@ -219,6 +220,7 @@
       "missing_sheet": "Not found sheet: ''",
       "blank_sheet": "Sheet is BLANK: ''",
       "invalid_fileName": "Invalid file name: ''",
+      "file-is-not-excel": "File is not Excel"
       "incorrect_cell_format": "Incorrect format of Cell ",
       "unexpected_error": "Unexpected error",
       "invalid_file_format": "Invalid file format: ",
@@ -229,7 +231,17 @@
       "plan_update_required": "Plan updated required"
     },
     "warning": {
-      "hi": "hi"
+      "not-find-country-with-code": "Country with Code '%s' not found. Automatically creating a new country using the code.",
+      "not-find-booking-with-orderNo": "Booking with order number: '%s' not found.",
+      "not-find-product-with-modelCode-series": "Product with ModelCode '%s' and MetaSeries '%s' not found."
+    },
+    "error": {
+      "not-find-product-with-modelCode-series": "Product with ModelCode '%s' and Series '%s' not found.",
+      "not-find-Dealer-with-name": "Dealer with the name '%s' not found.",
+      "not-find-AOPMargin-with-region-series-plant-year": "AOPMargin with Region '%s', MestaSeries '%s', Plant '%s', and Year '%s' not found.",
+      "not-find-clazz-with-clazzName": "Class with the Class name '%s' not found.",
+      "incorrect-format-at-cell": "Incorrect format at Cell %s",
+      "not-find-region-with-name": "Region with name: '%s' not found."
     }
   },
   "yes": "Yes",

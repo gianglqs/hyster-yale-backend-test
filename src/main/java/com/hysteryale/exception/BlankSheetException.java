@@ -7,11 +7,11 @@ import lombok.Setter;
 @Setter
 public class BlankSheetException extends Exception {
 
-    private String savedFileName;
+    private String fileUUID;
 
-    public BlankSheetException(String message, String savedFileName) {
+    public BlankSheetException(String message, String fileUUID) {
         super(message);
-        this.savedFileName = savedFileName;
+        this.fileUUID = fileUUID;
     }
 
 }
