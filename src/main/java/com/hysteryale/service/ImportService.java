@@ -237,6 +237,8 @@ public class ImportService extends BasedService {
         return competitorPricingList;
     }
 
+
+
     /**
      * Get Country and create new Country if not existed
      */
@@ -463,7 +465,7 @@ public class ImportService extends BasedService {
     public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         HashMap<String, Integer> SHIPMENT_COLUMNS_NAME = new HashMap<>();
-        String sheetName = CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_SHEET;
+        String sheetName = CheckRequiredColumnUtils.SHIPMENT_REQUIRED_SHEET;
         XSSFSheet shipmentSheet = workbook.getSheet(sheetName);
         if (shipmentSheet == null)
             throw new MissingSheetException("Not found sheet '" + sheetName + "'");
@@ -471,7 +473,7 @@ public class ImportService extends BasedService {
         if (shipmentSheet.getLastRowNum() <= 0)
             throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
 
-        logInfo("import shipment");
+//        logInfo("import shipment");
         List<Shipment> shipmentList = new ArrayList<>();
 
         //prepare data for import
@@ -484,10 +486,11 @@ public class ImportService extends BasedService {
 
 
         for (Row row : shipmentSheet) {
-            if (row.getRowNum() == 0) {
+            if (row.getRowNum() == 1) {
                 getOrderColumnsName(row, SHIPMENT_COLUMNS_NAME);
                 CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(SHIPMENT_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.SHIPMENT_REQUIRED_COLUMN);
-            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
+            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 1) {
+
                 Shipment newShipment = mapExcelDataIntoShipmentObject(
                         row, SHIPMENT_COLUMNS_NAME, prepareProducts, prepareAOPMargin, prepareDealers, prepareCurrency, prepareBookings, prepareCountries);
 
@@ -512,6 +515,8 @@ public class ImportService extends BasedService {
                 shipmentListAfterCalculate.add(shipment);
             }
         }
+//        Cannot invoke "java.lang.Integer.intValue()" because the return value of "java.util.HashMap.get(Object)" is null
+
 
         shipmentRepository.saveAll(shipmentListAfterCalculate);
 
