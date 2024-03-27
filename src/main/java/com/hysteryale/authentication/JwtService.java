@@ -66,13 +66,13 @@ public class JwtService extends BasedService {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
             return true;
         } catch (MalformedJwtException ex) {
-            logError("Invalid JWT token");
+            log.error("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
-            logError("Expired JWT token");
+            log.error("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
-            logError("Unsupported JWT token");
+            log.error("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
-            logError("JWT claims string is empty.");
+            log.error("JWT claims string is empty.");
         }
         return false;
     }

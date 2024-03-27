@@ -7,12 +7,10 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
 import com.hysteryale.repository.CompetitorColorRepository;
 import com.hysteryale.repository.CompetitorPricingRepository;
-import com.hysteryale.utils.ConvertDataFilterUtil;
-import com.hysteryale.utils.DateUtils;
-import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -58,26 +56,26 @@ public class IndicatorService extends BasedService {
 
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filterModel);
         List<CompetitorPricing> competitorPricingList = competitorPricingRepository.findCompetitorByFilterForTable(
-                (List<String>)   filterMap.get("regionFilter"),(List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
-                (List<String>)   filterMap.get("classFilter"),(List<String>) filterMap.get("modelFilter"),(Boolean) filterMap.get("ChineseBrandFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((String)((List) filterMap.get("marginPercentageFilter")).get(0)),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((Double)((List) filterMap.get("marginPercentageFilter")).get(1)), (Pageable) filterMap.get("pageable"));
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"), (Boolean) filterMap.get("ChineseBrandFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)), (Pageable) filterMap.get("pageable"));
         result.put("listCompetitor", competitorPricingList);
 
         //get total Recode
         int totalCompetitor = competitorPricingRepository.getCountAll(
-                (List<String>)   filterMap.get("regionFilter"),(List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
-                (List<String>)   filterMap.get("classFilter"),(List<String>) filterMap.get("modelFilter"),(Boolean) filterMap.get("ChineseBrandFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((String)((List) filterMap.get("marginPercentageFilter")).get(0)),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((Double)((List) filterMap.get("marginPercentageFilter")).get(1)));
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"), (Boolean) filterMap.get("ChineseBrandFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)));
         result.put("totalItems", totalCompetitor);
 
         // get Total
         List<CompetitorPricing> getTotal = competitorPricingRepository.getTotal(
-                (List<String>)   filterMap.get("regionFilter"),(List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
-                (List<String>)   filterMap.get("classFilter"),(List<String>) filterMap.get("modelFilter"),(Boolean) filterMap.get("ChineseBrandFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((String)((List) filterMap.get("marginPercentageFilter")).get(0)),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((Double)((List) filterMap.get("marginPercentageFilter")).get(1)));
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"), (Boolean) filterMap.get("ChineseBrandFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)));
         result.put("total", getTotal);
 
         // get latest updated time
@@ -87,7 +85,7 @@ public class IndicatorService extends BasedService {
             latestUpdatedTime = DateUtils.convertLocalDateTimeToString(latestUpdatedTimeOptional.get());
         }
 
-        result.put("latestUpdatedTime",latestUpdatedTime);
+        result.put("latestUpdatedTime", latestUpdatedTime);
         result.put("serverTimeZone", TimeZone.getDefault().getID());
 
         return result;
@@ -98,10 +96,10 @@ public class IndicatorService extends BasedService {
         logInfo(filterModel.toString());
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filterModel);
         return competitorPricingRepository.findCompetitorByFilterForLineChartRegion(
-                (List<String>)   filterMap.get("regionFilter"),(List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
-                (List<String>)   filterMap.get("classFilter"),(List<String>) filterMap.get("modelFilter"),(Boolean) filterMap.get("ChineseBrandFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((String)((List) filterMap.get("marginPercentageFilter")).get(0)),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((Double)((List) filterMap.get("marginPercentageFilter")).get(1)));
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"), (Boolean) filterMap.get("ChineseBrandFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)));
     }
 
 
@@ -109,10 +107,10 @@ public class IndicatorService extends BasedService {
         logInfo(filterModel.toString());
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filterModel);
         return competitorPricingRepository.findCompetitorByFilterForLineChartPlant(
-                (List<String>)   filterMap.get("regionFilter"),(List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
-                (List<String>)   filterMap.get("classFilter"),(List<String>) filterMap.get("modelFilter"),(Boolean) filterMap.get("ChineseBrandFilter"),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((String)((List) filterMap.get("marginPercentageFilter")).get(0)),
-                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null: ((Double)((List) filterMap.get("marginPercentageFilter")).get(1)));
+                (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"), (List<String>) filterMap.get("metaSeriesFilter"),
+                (List<String>) filterMap.get("classFilter"), (List<String>) filterMap.get("modelFilter"), (Boolean) filterMap.get("ChineseBrandFilter"),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
+                ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)));
     }
 
     public List<CompetitorPricing> getCompetitiveLandscape(SwotFilters filters) {
@@ -123,36 +121,36 @@ public class IndicatorService extends BasedService {
         List<String> category = filters.getCategories();
         List<String> series = filters.getSeries();
 
-        if(countryNames.isEmpty())
+        if (countryNames.isEmpty())
             countryNames = null;
-        if(competitorClass.isEmpty())
+        if (competitorClass.isEmpty())
             competitorClass = null;
-        if(category.isEmpty())
+        if (category.isEmpty())
             category = null;
-        if(series.isEmpty())
+        if (series.isEmpty())
             series = null;
         return competitorPricingRepository.getDataForBubbleChart(Collections.singletonList(regions), countryNames, competitorClass, category, series);
     }
 
     /**
      * Get CompetitorColor by competitorName
+     *
      * @return competitor color if existed, else randomly generate new one.
      */
     public CompetitorColor getCompetitorColor(String groupName) {
         Optional<CompetitorColor> optional = competitorColorRepository.getCompetitorColor(groupName.strip());
-        if(optional.isEmpty()) {
+        if (optional.isEmpty()) {
             Random random = new Random();
             int nextColorCode = random.nextInt(256 * 256 * 256);
             String colorCode = String.format("#%06x", nextColorCode);
             return competitorColorRepository.save(new CompetitorColor(groupName, colorCode));
-        }
-        else
+        } else
             return optional.get();
     }
 
     public CompetitorColor getCompetitorById(int id) {
         Optional<CompetitorColor> optional = competitorColorRepository.findById(id);
-        if(optional.isPresent())
+        if (optional.isPresent())
             return optional.get();
         else
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Competitor Color not found");
@@ -166,13 +164,12 @@ public class IndicatorService extends BasedService {
     @Transactional
     public void updateCompetitorColor(CompetitorColor modifyColor) {
         Optional<CompetitorColor> optional = competitorColorRepository.findById(modifyColor.getId());
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             CompetitorColor dbCompetitorColor = optional.get();
 
             dbCompetitorColor.setGroupName(modifyColor.getGroupName());
             dbCompetitorColor.setColorCode(modifyColor.getColorCode());
-        }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Competitor Color not found");
+        } else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Competitor Color not found");
     }
 
     /**
@@ -185,7 +182,7 @@ public class IndicatorService extends BasedService {
 
         // delete current Forecast file in folder
         List<String> fileNames = FileUtils.getAllFilesInFolder(baseFolder + "/" + forecastFolder);
-        for(String fileName : fileNames) {
+        for (String fileName : fileNames) {
             File forecastFile = new File(baseFolder + "/" + forecastFolder + "/" + fileName);
             forecastFile.delete();
         }
@@ -207,12 +204,6 @@ public class IndicatorService extends BasedService {
         }
     }
 
-    public HashMap<String, Integer> getCompetitorColumnName(Row row) {
-        HashMap<String, Integer> competitorColumnName = new HashMap<>();
-        for(Cell cell : row)
-            competitorColumnName.put(cell.getStringCellValue(), cell.getColumnIndex());
-        return competitorColumnName;
-    }
 
     /**
      * Check the existence of Competitor Pricing in DB then update value
@@ -230,22 +221,49 @@ public class IndicatorService extends BasedService {
         return competitorPricing;
     }
 
+    public HashMap<String, Integer> getCompetitorColumnName(Row row) {
+        HashMap<String, Integer> competitorColumnName = new HashMap<>();
+        for (Cell cell : row)
+            competitorColumnName.put(cell.getStringCellValue(), cell.getColumnIndex());
+
+        return competitorColumnName;
+    }
+
+
     /**
      * Checking existed Competitor Pricing and update new data from imported file
      */
-    public void importIndicatorsFromFile(String filePath) throws IOException {
+    public void importIndicatorsFromFile(String filePath, String fileUUID) throws Exception {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         HashMap<String, Integer> competitorColumnName = new HashMap<>();
         List<CompetitorPricing> competitorPricingList = new ArrayList<>();
         List<ForeCastValue> forecastValueList = importService.loadForecastForCompetitorPricingFromFile();
-        Sheet sheet = workbook.getSheetAt(0);
+        if (forecastValueList == null) {
+            throw new Exception("Missing Forecast Dynamic Pricing Excel file");
+        }
 
-        for(Row row : sheet) {
-            if(row.getRowNum() == 0)
+        Sheet sheet = workbook.getSheetAt(0);
+        List<String> titleColumnCurrent = new ArrayList<>();
+        Row headerRow = sheet.getRow(0);
+        for (int j = 0; j < CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN.size(); j++) {
+            Cell cell = headerRow.getCell(j);
+            if (cell == null)
+                continue;
+            if (cell.getCellType() == CellType.STRING)
+                titleColumnCurrent.add(cell.getStringCellValue());
+            else
+                titleColumnCurrent.add(String.valueOf(cell.getNumericCellValue()));
+
+        }
+        //Check format file competitor
+        CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN, fileUUID);
+
+        for (Row row : sheet) {
+            if (row.getRowNum() == 0) {
                 competitorColumnName = getCompetitorColumnName(row);
-            else if (!row.getCell(competitorColumnName.get("Table Title"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
+            } else if (!row.getCell(competitorColumnName.get("Table Title"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
                 List<CompetitorPricing> competitorPricings = importService.mapExcelDataIntoCompetitorObject(row, competitorColumnName);
                 for (CompetitorPricing competitorPricing : competitorPricings) {
                     // if it has series -> assign ForeCastValue
@@ -269,7 +287,11 @@ public class IndicatorService extends BasedService {
                 }
             }
         }
+
+
         competitorPricingRepository.saveAll(competitorPricingList);
         importService.assigningCompetitorValues();
     }
+
+
 }

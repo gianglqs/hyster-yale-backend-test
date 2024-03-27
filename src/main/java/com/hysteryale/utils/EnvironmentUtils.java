@@ -42,10 +42,11 @@ public class EnvironmentUtils implements EnvironmentAware {
         System.setProperty("IMPORTED_FILES", dotenv().get("IMPORTED_FILES"));
         System.setProperty("MJ_API_KEY", dotenv().get("MJ_API_KEY"));
         System.setProperty("MJ_API_SECRET", dotenv().get("MJ_API_SECRET"));
-        System.setProperty("BASE_FOLDER_UPLOAD", dotenv().get("BASE_FOLDER_UPLOAD"));
+        System.setProperty("BASE_FOLDER-UPLOAD", dotenv().get("BASE_FOLDER-UPLOAD"));
         System.setProperty("PUBLIC_FOLDER", dotenv().get("PUBLIC_FOLDER"));
         System.setProperty("EXCHANGE_RATE_API_KEY", dotenv().get("EXCHANGE_RATE_API_KEY"));
         System.setProperty("FOLDER_PRODUCT_IMAGES", dotenv().get("FOLDER_PRODUCT_IMAGES"));
+        System.setProperty("BASE_FOLDER-LOCALE", dotenv().get("BASE_FOLDER-LOCALE"));
     }
 
 }

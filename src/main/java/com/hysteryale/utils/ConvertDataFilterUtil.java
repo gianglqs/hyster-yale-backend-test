@@ -116,5 +116,9 @@ public class ConvertDataFilterUtil {
         return result;
     }
 
-
+    public static String convertFilter(String filter) {
+        if (filter == null || filter.trim().equals(""))
+            return null;
+        return filter;
+    }
 }

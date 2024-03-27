@@ -93,10 +93,11 @@ public class MarginAnalystController {
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.NOVO);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is not an Excel file");
         }
 
@@ -109,7 +110,7 @@ public class MarginAnalystController {
                     "fileUUID", uuid
             );
         } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            fileUploadService.handleUpdatedFailure(fileUUID, e.getMessage());
             throw e;
         }
 
@@ -126,11 +127,11 @@ public class MarginAnalystController {
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.MACRO);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
-
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is not an Excel file");
         }
 
@@ -139,7 +140,7 @@ public class MarginAnalystController {
 
             fileUploadService.handleUpdatedSuccessfully(fileName);
         } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            fileUploadService.handleUpdatedFailure(fileUUID, e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
@@ -154,20 +155,21 @@ public class MarginAnalystController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.part");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.PART);
-        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.PART);
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is not an Excel file");
         }
 
         try {
-            partService.importPartFromFile(file.getOriginalFilename(), filePath);
-            fileUploadService.handleUpdatedSuccessfully(fileName);
+            partService.importPartFromFile(file.getOriginalFilename(), filePath, fileUUID);
+            fileUploadService.handleUpdatedSuccessfully(savedFileName);
         } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            fileUploadService.handleUpdatedFailure(fileUUID, e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 

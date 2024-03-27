@@ -1,11 +1,16 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.InvalidFileFormatException;
+import com.hysteryale.exception.InvalidFileNameException;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.model.importFailure.ImportFailure;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.BookingService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.LocaleUtils;
 import com.hysteryale.utils.ModelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,13 +18,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,8 +35,12 @@ public class BookingController {
     @Resource
     FileUploadService fileUploadService;
 
-    private FilterModel filters;
+    @Resource
+    FileUploadRepository fileUploadRepository;
 
+
+    @Resource
+    LocaleUtils localeUtils;
 
     /**
      * Get BookingOrders based on filters and pagination
@@ -49,44 +56,43 @@ public class BookingController {
                                               @RequestParam(defaultValue = "100") int perPage) throws java.text.ParseException {
         filters.setPageNo(pageNo);
         filters.setPerPage(perPage);
-        this.filters = filters;
+
         return bookingService.getBookingByFilter(filters);
 
     }
 
     @PostMapping(path = "/importNewBooking", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> importNewDataBooking(@RequestParam("file") MultipartFile file, Authentication authentication) throws Exception {
+    public ResponseEntity<Object> importNewDataBooking(@RequestParam("file") MultipartFile file, @RequestHeader("locale") String locale, Authentication authentication) throws Exception {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.booked");
 
         //save file on disk
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String fileNameSaved = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.BOOKING);
-        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileNameSaved;
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.BOOKING);
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
+
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileNameSaved, "Uploaded file is not an Excel file");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("File is not EXCEL", null));
+            throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
         }
 
-        try {
-            if (FileUtils.checkFileNameValid(file, "booked") || FileUtils.checkFileNameValid(file, "booking")) {
-                bookingService.importNewBookingFileByFile(filePath);
-                fileUploadService.handleUpdatedSuccessfully(fileNameSaved);
-            } else if (FileUtils.checkFileNameValid(file, "cost_data")) {
-                bookingService.importCostData(filePath);
-                fileUploadService.handleUpdatedSuccessfully(fileNameSaved);
-            } else {
-                fileUploadService.handleUpdatedFailure(fileNameSaved, "File name is invalid");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("File name is invalid", null));
-            }
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import successfully", null));
-        } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(fileNameSaved, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject(e.getMessage(), null));
+        List<ImportFailure> importFailures = null;
+
+        if (FileUtils.checkFileNameValid(file, "booked") || FileUtils.checkFileNameValid(file, "booking")) {
+            importFailures = bookingService.importNewBookingFileByFile(filePath, fileUUID);
+            fileUploadService.handleUpdatedSuccessfully(savedFileName);
+        } else if (FileUtils.checkFileNameValid(file, "cost_data")) {
+            importFailures = bookingService.importCostDataNew(filePath, fileUUID);
+            fileUploadService.handleUpdatedSuccessfully(savedFileName);
+        } else {
+            throw new InvalidFileNameException(file.getOriginalFilename(), savedFileName);
         }
+        String message = localeUtils.getMessageImportComplete(importFailures, ModelUtil.BOOKING, locale);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(message, fileUUID));
+
     }
 
 
