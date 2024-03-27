@@ -16,10 +16,7 @@ public class DealerController {
     @PostMapping()
     public  Map<String, Object> getDealerListing(@RequestBody DealerPayload dealerPayload, @RequestParam(defaultValue = "1") int pageNo) {
         return Map.of(
-                "dealerListing", dealerService.getDealerListing(dealerPayload, pageNo),
-                "pageNo", 1,
-                "perPage", 15,
-                "totalItems", 30
+                "dealerListing", dealerService.getDealerListing(dealerPayload, pageNo)
         );
     }
 }
