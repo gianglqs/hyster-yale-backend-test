@@ -16,6 +16,7 @@ public class CheckRequiredColumnUtils {
     public static final List<String> COMPETITOR_REQUIRED_COLUMN = List.of("Table Title", "Country", "Group", "Brand", "Region", "Class", "Origin", "Market Share", "Price (USD)");
 
     public static final List<String> PRODUCT_APAC_SERIAL_COLUMN = List.of("Hyster", "Plant", "Class", "Model", "Yale");
+    public static final List<String> NOVO_REQUIRED_COLUMN = List.of("Quote Number:", "#", "Series Code", "Model Code", "Part Number", "Part Description", "List Price", "Net Price Each");
     public static final List<String> MACRO_REQUIRED_COLUMN = List.of(); // TODO:Nhan will complete it
     public static final List<String> EXCHANGE_RATE_REQUIRED_COLUMN = List.of(); // TODO:Nhan will complete it
     public static final List<String> PART_REQUIRED_COLUMN = List.of("Model", "Part Number", "Order Number", "Currency", "Quote Number", "Quoted Quantity", "Series",
@@ -25,6 +26,7 @@ public class CheckRequiredColumnUtils {
     public static final List<String> BOOKING_COST_DATA_REQUIRED_COLUMN = List.of("Order", "TOTAL MFG COST Going-To");
     public static final List<String> PRODUCT_DIMENSION_REQUIRED_COLUMN = List.of("Metaseries", "Model", "Segment", "Family_Name", "Truck_Type");
     public static final List<String> AOP_MARGIN_REQUIRED_COLUMN = List.of("MetaSeries", "Plant", "Region", "std,margin,%");
+
 
     // REQUIRED SHEET
     public static final String BOOKING_REQUIRED_SHEET = "NOPLDTA.NOPORDP,NOPLDTA.>Sheet1";
@@ -36,7 +38,8 @@ public class CheckRequiredColumnUtils {
     public static final String PART_REQUIRED_SHEET = "Export";
     public static final String AOP_MARGIN_REQUIRED_SHEET = "aop,dn,margin,%";
 
-    public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns, String savedFileName) throws MissingColumnException {
+
+    public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns, String fileUUID) throws MissingColumnException {
         List<String> listMissingColumn = new ArrayList<>();
         for (String requiredColumn : requiredColumns) {
             if (requiredColumn.contains(","))
@@ -46,7 +49,7 @@ public class CheckRequiredColumnUtils {
             }
         }
         if (!listMissingColumn.isEmpty()) {
-            throw new MissingColumnException(listMissingColumn.toString(), savedFileName);
+            throw new MissingColumnException(listMissingColumn.toString(), fileUUID);
         }
     }
 

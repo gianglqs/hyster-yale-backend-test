@@ -5,6 +5,7 @@ import com.hysteryale.model.User;
 import com.hysteryale.model.filters.AdminFilter;
 import com.hysteryale.model.upload.FileUpload;
 import com.hysteryale.repository.upload.FileUploadRepository;
+import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -131,6 +132,7 @@ public class FileUploadService {
         String strUploadedTime = (new SimpleDateFormat("ddMMyyyyHHmmss").format(uploadedTime));
         String encodedFileName = FileUtils.encoding(Objects.requireNonNull(multipartFile.getOriginalFilename())) + "_" + strUploadedTime + FileUtils.IMAGE_FILE_EXTENSION;
         String fileUploadedPath = uploadFolder + encodedFileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(encodedFileName);
         File file = new File(fileUploadedPath);
         if (file.createNewFile()) {
             log.info("File " + encodedFileName + " created");
@@ -141,7 +143,7 @@ public class FileUploadService {
             // check the file is an image
             if (!FileUtils.isImageFile(fileUploadedPath)) {
                 log.info("File is not an image: " + encodedFileName);
-                handleUpdatedFailure(encodedFileName, "File is not an image");
+                handleUpdatedFailure(fileUUID, "File is not an image");
                 throw new Exception("File is not an image: " + multipartFile.getOriginalFilename());
             }
             return encodedFileName;
@@ -293,9 +295,9 @@ public class FileUploadService {
         }
     }
 
-    public void handleUpdatedFailure(String fileName, String message) throws CanNotUpdateException {
-        if (fileName != null) {
-            Optional<FileUpload> fileUploadOptional = fileUploadRepository.getFileUploadByFileName(fileName);
+    public void handleUpdatedFailure(String fileUUID, String message) throws CanNotUpdateException {
+        if (fileUUID != null) {
+            Optional<FileUpload> fileUploadOptional = fileUploadRepository.getFileUploadByUUID(fileUUID);
             if (fileUploadOptional.isEmpty())
                 throw new CanNotUpdateException("Can not update status of file uploaded");
 
@@ -312,7 +314,7 @@ public class FileUploadService {
 
         Pageable pageable = PageRequest.of(pageNo == 0 ? pageNo : pageNo - 1, perPage == 0 ? 100 : perPage);
 
-        List<FileUpload> getFileUploadByFilter = fileUploadRepository.getFileUploadByFilter(convertFilter(filter.getFilter()), pageable);
+        List<FileUpload> getFileUploadByFilter = fileUploadRepository.getFileUploadByFilter(ConvertDataFilterUtil.convertFilter(filter.getFilter()), pageable);
 
         for (FileUpload fileUpload : getFileUploadByFilter) {
             fileUpload.getUploadedBy().setPassword(null);
@@ -321,7 +323,7 @@ public class FileUploadService {
             //  fileUpload.getUploadedBy().setRole(null);
         }
 
-        int countAll = fileUploadRepository.countAll(convertFilter(filter.getFilter()));
+        int countAll = fileUploadRepository.countAll(ConvertDataFilterUtil.convertFilter(filter.getFilter()));
 
         result.put("listFileUploaded", getFileUploadByFilter);
         result.put("serverTimeZone", TimeZone.getDefault().getID());
@@ -329,11 +331,7 @@ public class FileUploadService {
         return result;
     }
 
-    private String convertFilter(String filter) {
-        if (filter == null || filter.trim().equals(""))
-            return null;
-        return filter;
-    }
+
 
     public String decodeFileName(String fileName) {
         String fileNameEncode = fileName.split("_")[0];

@@ -149,13 +149,6 @@ public class UserController {
         userService.resetUserPassword(user.getEmail());
     }
 
-    /**
-     * Revoke the access_token for logging user out
-     */
-//    @PostMapping(path = "/oauth/revokeAccessToken")
-//    public void revokeAccessToken(@RequestHeader("Authorization") String accessToken) {
-//        tokenServices.revokeToken(accessToken.substring(6));
-//    }
     @PostMapping(path = "/oauth/checkToken")
     public void checkToken() {
     }
@@ -164,11 +157,6 @@ public class UserController {
     public ResponseEntity<ResponseObject> login(@RequestBody User user) {
         return authenticationService.login(user);
     }
-
-//    @PostMapping(path = "/oauth/register")
-//    public void register(@RequestBody User user) {
-//         authenticationService.register(user);
-//    }
 
     @PostMapping(path = "/oauth/checkTokenOfAdmin")
     @PreAuthorize("hasAuthority('ADMIN')")

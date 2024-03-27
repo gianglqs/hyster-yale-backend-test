@@ -1,28 +1,34 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.InvalidFileFormatException;
 import com.hysteryale.model.Product;
-import com.hysteryale.model.User;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.UserRepository;
+import com.hysteryale.repository.importFailure.ImportFailureRepository;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ProductService;
 import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.LocaleUtils;
 import com.hysteryale.utils.ModelUtil;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.InvalidPropertiesFormatException;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController()
 @RequestMapping("product")
@@ -37,6 +43,15 @@ public class ProductController {
     @Resource
     private UserRepository userRepository;
 
+    @Resource
+    FileUploadRepository fileUploadRepository;
+
+
+    @Resource
+    LocaleUtils localeUtils;
+
+    @Resource
+    ImportFailureRepository importFailureRepository;
 
     @PostMapping("/getData")
     public Map<String, Object> getDataByFilter(@RequestBody FilterModel filters,
@@ -62,15 +77,16 @@ public class ProductController {
 
 
         String savedImageName = null;
-
+        String fileUUID = null;
         try {
             if (image != null) {
                 String targetFolder = EnvironmentUtils.getEnvironmentValue("image-folder.product");
                 savedImageName = fileUploadService.upLoadImage(image, targetFolder, authentication, ModelUtil.PRODUCT);
+                fileUUID = fileUploadRepository.getFileUUIDByFileName(savedImageName);
             }
             productService.updateImageAndDescription(modelCode, series, savedImageName, description);
         } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(savedImageName, e.getMessage());
+            fileUploadService.handleUpdatedFailure(fileUUID, e.getMessage());
             throw e;
         }
         fileUploadService.handleUpdatedSuccessfully(savedImageName);
@@ -83,11 +99,43 @@ public class ProductController {
 
     @PostMapping(path = "/importData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> importProduct(@RequestParam("file") MultipartFile file, Authentication authentication) throws Exception {
+    public ResponseEntity<ResponseObject> importProduct(@RequestParam("file") MultipartFile file, @RequestHeader("locale") String locale, Authentication authentication) throws Exception {
 
-        productService.importProduct(file, authentication);
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product");
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.PRODUCT);
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));
+        if (!FileUtils.isExcelFile(filePath)) {
+            throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
+        }
+
+        List<ImportFailure> importFailures ;
+
+        try {
+            if (file.getOriginalFilename().toLowerCase().contains("apac")) {
+              importFailures =  productService.importBaseProduct(filePath, fileUUID);
+            } else if (file.getOriginalFilename().toLowerCase().contains("dimension")) {
+                importFailures = productService.importDimensionProduct(filePath,fileUUID);
+            } else {
+                fileUploadService.handleUpdatedFailure(fileUUID, "File name is invalid");
+                throw new FileNotFoundException("File name is invalid");
+            }
+        } catch (Exception e) {
+            if (e instanceof FileNotFoundException) {
+                throw e;
+            }
+            fileUploadService.handleUpdatedFailure(fileUUID, e.getMessage());
+            throw e;
+        }
+
+        fileUploadService.handleUpdatedSuccessfully(savedFileName);
+        importFailureRepository.saveAll(importFailures);
+
+        String message = localeUtils.getMessageImportComplete(importFailures, ModelUtil.PRODUCT, locale);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(message, fileUUID));
     }
 
     @GetMapping(path = "/uploadImage")

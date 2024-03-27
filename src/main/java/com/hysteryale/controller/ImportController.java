@@ -1,8 +1,6 @@
 package com.hysteryale.controller;
 
-import com.hysteryale.exception.BlankSheetException;
-import com.hysteryale.exception.MissingColumnException;
-import com.hysteryale.exception.MissingSheetException;
+import com.hysteryale.exception.*;
 import com.hysteryale.service.*;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +37,7 @@ public class ImportController {
     ImportService importService;
 
     @PostMapping(path = "/importAllData")
-    void importAllData() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException, BlankSheetException {
+    void importAllData() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException, BlankSheetException, IncorectFormatCellException, ExchangeRatesException, InvalidFileNameException {
         importApicDealer();
         importCurrencies();
         importPart();
@@ -63,7 +61,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importPart")
-    void importPart() throws IOException, MissingColumnException, MissingSheetException {
+    void importPart() throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException, InvalidFileNameException, IncorectFormatCellException {
         partService.importPart();
     }
 
@@ -83,7 +81,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importExchangeRate")
-    void importExchangeRate() throws IOException {
+    void importExchangeRate() throws IOException, IncorectFormatCellException, ExchangeRatesException {
         exchangeRateService.importExchangeRate();
     }
 

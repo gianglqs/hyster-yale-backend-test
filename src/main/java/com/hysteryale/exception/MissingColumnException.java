@@ -7,10 +7,10 @@ import lombok.Setter;
 @Setter
 public class MissingColumnException extends Exception{
 
-    private String savedFileName;
+    private String fileUUID;
 
-    public MissingColumnException(String message, String savedFileName){
+    public MissingColumnException(String message, String fileUUID){
         super(message);
-        this.savedFileName = savedFileName;
+        this.fileUUID = fileUUID;
     }
 }
