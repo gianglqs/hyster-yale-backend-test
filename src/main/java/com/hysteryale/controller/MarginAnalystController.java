@@ -154,20 +154,20 @@ public class MarginAnalystController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.part");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.PART);
-        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.PART);
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(savedFileName, "Uploaded file is not an Excel file");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is not an Excel file");
         }
 
         try {
-            partService.importPartFromFile(file.getOriginalFilename(), filePath);
-            fileUploadService.handleUpdatedSuccessfully(fileName);
+            partService.importPartFromFile(file.getOriginalFilename(), filePath, savedFileName);
+            fileUploadService.handleUpdatedSuccessfully(savedFileName);
         } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            fileUploadService.handleUpdatedFailure(savedFileName, e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 

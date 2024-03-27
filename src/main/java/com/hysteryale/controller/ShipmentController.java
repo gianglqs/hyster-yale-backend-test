@@ -55,24 +55,20 @@ public class ShipmentController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.shipment");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.SHIPMENT);
-        String pathFile = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.SHIPMENT);
+        String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
-        if (FileUtils.isExcelFile(pathFile)) {
-            try {
-                InputStream inputStream = new FileInputStream(pathFile);
-                importService.importShipmentFileOneByOne(inputStream);
-
-                fileUploadService.handleUpdatedSuccessfully(fileName);
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));
-
-            } catch (Exception e) {
-                fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject(e.getMessage(), null));
-            }
-        } else {
-            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+        if (!FileUtils.isExcelFile(pathFile)) {
+            fileUploadService.handleUpdatedFailure(savedFileName, "Uploaded file is not an Excel file");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Uploaded file is not an Excel file", null));
         }
+
+        InputStream inputStream = new FileInputStream(pathFile);
+        importService.importShipmentFileOneByOne(inputStream, savedFileName);
+
+        fileUploadService.handleUpdatedSuccessfully(savedFileName);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));
+
+
     }
 }

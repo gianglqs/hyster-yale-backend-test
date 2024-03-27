@@ -47,7 +47,7 @@ public class PartServiceTest {
     public void testImportPartFromFile() throws IOException, MissingColumnException, MissingSheetException {
         String fileName = "power bi Oct 23.xlsx";
         String filePath = "import_files/bi_download/power bi Oct 23.xlsx";
-        partService.importPartFromFile(fileName, filePath);
+        partService.importPartFromFile(fileName, filePath, "");
 
         Pattern pattern = Pattern.compile("\\w{5} \\w{2} (\\w{3}) (\\d{2}).xlsx");
         Matcher matcher = pattern.matcher(fileName);

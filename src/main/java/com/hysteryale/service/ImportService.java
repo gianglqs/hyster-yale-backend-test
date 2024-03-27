@@ -460,16 +460,16 @@ public class ImportService extends BasedService {
     }
 
 
-    public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
+    public void importShipmentFileOneByOne(InputStream is, String savedFileName) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         HashMap<String, Integer> SHIPMENT_COLUMNS_NAME = new HashMap<>();
         String sheetName = CheckRequiredColumnUtils.SHIPMENT_REQUIRED_SHEET;
         XSSFSheet shipmentSheet = workbook.getSheet(sheetName);
         if (shipmentSheet == null)
-            throw new MissingSheetException("Not found sheet '" + sheetName + "'");
+            throw new MissingSheetException(sheetName, savedFileName);
 
         if (shipmentSheet.getLastRowNum() <= 0)
-            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
+            throw new BlankSheetException(sheetName, savedFileName);
 
         logInfo("import shipment");
         List<Shipment> shipmentList = new ArrayList<>();
@@ -486,7 +486,7 @@ public class ImportService extends BasedService {
         for (Row row : shipmentSheet) {
             if (row.getRowNum() == 0) {
                 getOrderColumnsName(row, SHIPMENT_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(SHIPMENT_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.SHIPMENT_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(SHIPMENT_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.SHIPMENT_REQUIRED_COLUMN, savedFileName);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
                 Shipment newShipment = mapExcelDataIntoShipmentObject(
                         row, SHIPMENT_COLUMNS_NAME, prepareProducts, prepareAOPMargin, prepareDealers, prepareCurrency, prepareBookings, prepareCountries);
@@ -544,7 +544,7 @@ public class ImportService extends BasedService {
 
             InputStream is = new FileInputStream(pathFile);
 
-            importShipmentFileOneByOne(is);
+            importShipmentFileOneByOne(is, "");// TODO: need check
 
             updateStateImportFile(pathFile);
         }

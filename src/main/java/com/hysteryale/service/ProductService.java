@@ -104,7 +104,7 @@ public class ProductService extends BasedService {
         for (Row row : sheet) {
             if (row.getRowNum() == 1) {
                 assignColumnNames(row);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_COLUMN, "");
             } else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 2) {
                 Product newProduct = mapExcelSheetToProductDimension(row);
@@ -362,54 +362,54 @@ public class ProductService extends BasedService {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product");
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.PRODUCT);
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.PRODUCT);
 
-        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
+            fileUploadService.handleUpdatedFailure(savedFileName, "Uploaded file is not an Excel file");
             throw new Exception("Imported file is not Excel");
         }
 
         try {
             if (file.getOriginalFilename().toLowerCase().contains("apac")) {
-                importBaseProduct(filePath);
+                importBaseProduct(filePath, savedFileName);
             } else if (file.getOriginalFilename().toLowerCase().contains("dimension")) {
-                importDimensionProduct(filePath);
+                importDimensionProduct(filePath,savedFileName);
             } else {
-                fileUploadService.handleUpdatedFailure(fileName, "File name is invalid");
+                fileUploadService.handleUpdatedFailure(savedFileName, "File name is invalid");
                 throw new FileNotFoundException("File name is invalid");
             }
         } catch (Exception e) {
             if (e instanceof FileNotFoundException) {
                 throw e;
             }
-            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
+            fileUploadService.handleUpdatedFailure(savedFileName, e.getMessage());
             throw e;
         }
 
-        fileUploadService.handleUpdatedSuccessfully(fileName);
+        fileUploadService.handleUpdatedSuccessfully(savedFileName);
 
     }
 
     // brand, segment, family, truckType
-    private void importDimensionProduct(String pathFile) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
+    private void importDimensionProduct(String pathFile, String savedFileName) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         String sheetName = CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_SHEET;
         Sheet sheet = workbook.getSheet(sheetName);
         if (sheet == null)
-            throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+            throw new MissingSheetException(sheetName, savedFileName);
 
         if (sheet.getLastRowNum() <= 0)
-            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
+            throw new BlankSheetException(sheetName, savedFileName);
 
         Set<Product> listDimensionProduct = new HashSet<>();
 
         for (Row row : sheet) {
             if (row.getRowNum() == 1) {
                 assignColumnNames(row);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_COLUMN, savedFileName);
             } else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 2) {
                 listDimensionProduct.add(mapExcelSheetToProductDimension(row));
@@ -419,24 +419,24 @@ public class ProductService extends BasedService {
     }
 
 
-    private void importBaseProduct(String pathFile) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
+    private void importBaseProduct(String pathFile,String savedFileName) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         String sheetName = CheckRequiredColumnUtils.PRODUCT_APAC_SERIAL_REQUIRED_SHEET;
         Sheet sheet = workbook.getSheet(sheetName);
         if (sheet == null)
-            throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+            throw new MissingSheetException(sheetName,savedFileName);
 
         if (sheet.getLastRowNum() <= 0)
-            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
+            throw new BlankSheetException(sheetName,savedFileName);
 
         Set<Product> listProduct = new HashSet<>();
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {
                 assignColumnNames(row);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_APAC_SERIAL_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_APAC_SERIAL_COLUMN, savedFileName);
             } else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 1) {
                 listProduct.addAll(mappedFromAPACFile(row));

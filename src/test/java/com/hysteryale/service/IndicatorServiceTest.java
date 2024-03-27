@@ -678,9 +678,9 @@ public class IndicatorServiceTest {
     }
 
     @Test
-    public void testImportIndicatorsFromFile() throws IOException {
+    public void testImportIndicatorsFromFile() throws Exception {
         String filePath = "import_files/competitor_pricing/Competitor Pricing Database.xlsx";
-        indicatorService.importIndicatorsFromFile(filePath);
+        indicatorService.importIndicatorsFromFile(filePath, "");// TODO: recheck
 
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);

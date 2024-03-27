@@ -5,13 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BlankSheetException extends Exception {
+public class InvalidFileNameException extends Exception{
 
     private String savedFileName;
 
-    public BlankSheetException(String message, String savedFileName) {
+    public InvalidFileNameException(String message, String savedFileName){
         super(message);
         this.savedFileName = savedFileName;
     }
-
 }
