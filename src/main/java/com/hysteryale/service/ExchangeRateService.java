@@ -158,7 +158,7 @@ public class ExchangeRateService extends BasedService {
     /**
      * Compare Currencies for reporting in Reports page
      */
-    public Map<String, Object> compareCurrency(CompareCurrencyRequest request) throws ExchangeRatesException {
+    public Map<String, Object> compareCurrency(CompareCurrencyRequest request) throws Exception {
         Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
         List<String> comparisonCurrencies = request.getComparisonCurrencies();
         LocalDate fromDate = parseDateFromRequestGetMonthYear(request.getFromDate());
@@ -246,8 +246,7 @@ public class ExchangeRateService extends BasedService {
         return data;
     }
 
-    public Map<String, Object> compareCurrencyFromAPI(CompareCurrencyRequest request) throws ExchangeRatesException {
-        Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
+    public Map<String, Object> compareCurrencyFromAPI(CompareCurrencyRequest request) throws Exception {
         List<String> comparisonCurrencies = request.getComparisonCurrencies();
         LocalDate fromDate = parseDateFromRequest(request.getFromDate());
         if(fromDate!=null)

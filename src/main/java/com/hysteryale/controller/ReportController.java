@@ -21,7 +21,7 @@ public class ReportController {
     ExchangeRateService exchangeRateService;
 
     @PostMapping(path = "/compareCurrency")
-    public Map<String, Object> compareCurrency(@RequestBody CompareCurrencyRequest request) throws ExchangeRatesException {
+    public Map<String, Object> compareCurrency(@RequestBody CompareCurrencyRequest request) throws Exception {
         if(request.isFromRealTime())
             return Map.of("compareCurrency", exchangeRateService.compareCurrencyFromAPI(request));
         else
