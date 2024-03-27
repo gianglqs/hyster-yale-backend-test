@@ -119,7 +119,7 @@ public class PartService extends BasedService {
         return isPartExisted == 1;
     }
 
-    public void importPartFromFile(String fileName, String filePath, String savedFileName) throws IOException, MissingColumnException, MissingSheetException {
+    public void importPartFromFile(String fileName, String filePath, String fileUUID) throws IOException, MissingColumnException, MissingSheetException {
         logInfo("==== Importing " + fileName + " ====");
         InputStream is = new FileInputStream(filePath);
         IOUtils.setByteArrayMaxOverride(700000000);
@@ -127,7 +127,7 @@ public class PartService extends BasedService {
         String sheetName = CheckRequiredColumnUtils.PART_REQUIRED_SHEET;
         Sheet sheet = workbook.getSheet(sheetName);
         if (sheet == null)
-            throw new MissingSheetException(sheetName, savedFileName);
+            throw new MissingSheetException(sheetName, fileUUID);
 
         List<Part> partList = new ArrayList<>();
 
@@ -147,7 +147,7 @@ public class PartService extends BasedService {
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {
                 getPowerBiColumnsName(row);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(powerBIExportColumns.keySet()), CheckRequiredColumnUtils.PART_REQUIRED_COLUMN, savedFileName);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(powerBIExportColumns.keySet()), CheckRequiredColumnUtils.PART_REQUIRED_COLUMN, fileUUID);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
                 String modelCode = row.getCell(powerBIExportColumns.get("Model")).getStringCellValue();
                 String partNumber = row.getCell(powerBIExportColumns.get("Part Number")).getStringCellValue();

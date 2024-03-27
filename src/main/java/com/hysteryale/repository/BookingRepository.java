@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface BookingRepository extends JpaRepository<Booking, String> {
 
@@ -422,4 +423,6 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     @Query(value = "SELECT m.latest_modified_at FROM booking m WHERE m.latest_modified_at is not null ORDER BY m.latest_modified_at DESC LIMIT 1", nativeQuery = true)
     Optional<LocalDateTime> getLatestUpdatedTime();
 
+    @Query("SELECT b FROM Booking b WHERE b.orderNo IN (:setOrderNo)")
+    List<Booking> getListBookingByListOrderNo(Set<String> setOrderNo);
 }

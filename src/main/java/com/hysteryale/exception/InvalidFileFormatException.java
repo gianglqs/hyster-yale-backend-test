@@ -5,11 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BlankSheetException extends Exception {
+public class InvalidFileFormatException extends Exception {
 
     private String fileUUID;
 
-    public BlankSheetException(String message, String fileUUID) {
+    public InvalidFileFormatException(String message, String fileUUID) {
         super(message);
         this.fileUUID = fileUUID;
     }

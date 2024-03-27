@@ -7,16 +7,17 @@ import com.hysteryale.model.Booking;
 import com.hysteryale.model.BookingFPA;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.Shipment;
+import com.hysteryale.model.enums.ImportFailureType;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.model.payLoad.BookingMarginTrialTestPayLoad;
 import com.hysteryale.repository.BookingFPARepository;
 import com.hysteryale.repository.BookingRepository;
 import com.hysteryale.repository.ExchangeRateRepository;
 import com.hysteryale.repository.ShipmentRepository;
+import com.hysteryale.repository.importFailure.ImportFailureRepository;
 import com.hysteryale.service.*;
-import com.hysteryale.utils.CheckRequiredColumnUtils;
-import com.hysteryale.utils.ConvertDataFilterUtil;
-import com.hysteryale.utils.DateUtils;
+import com.hysteryale.utils.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -55,6 +56,15 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
     @Resource
     private BookingRepository bookingRepository;
 
+    @Resource
+    private ImportFailureService importFailureService;
+    @Resource
+    private ImportFailureRepository importFailureRepository;
+
+    @Resource
+    LocaleUtils localeUtils;
+
+
     public void getOrderColumnsName(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) {
         for (int i = 0; i < 10; i++) {
             if (row.getCell(i) != null) {
@@ -65,7 +75,7 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
         }
     }
 
-    public void importBookingFPA(InputStream is, String savedFileName) throws IOException, MissingSheetException, MissingColumnException, IncorectFormatCellException {
+    public List<ImportFailure> importBookingFPA(InputStream is, String fileUUID) throws IOException, MissingSheetException, MissingColumnException, IncorectFormatCellException {
 
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
@@ -73,25 +83,30 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
         String sheetName = CheckRequiredColumnUtils.SHIPMENT_REQUIRED_SHEET;
         XSSFSheet orderSheet = workbook.getSheet(sheetName);
         if (orderSheet == null)
-            throw new MissingSheetException(sheetName, savedFileName);
+            throw new MissingSheetException(sheetName, fileUUID);
 
         HashMap<String, Integer> ORDER_COLUMNS_NAME = new HashMap<>();
+
+        List<ImportFailure> importFailures = new ArrayList<>();
 
         for (Row row : orderSheet) {
             if (row.getRowNum() == 0) {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_COLUMN, savedFileName);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_COLUMN, fileUUID);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
 
-                BookingFPA newBookingFPA = mappingDataExcelIntoBookingFPA(row, ORDER_COLUMNS_NAME);
-
-                bookingList.add(newBookingFPA);
+                BookingFPA newBookingFPA = mappingDataExcelIntoBookingFPA(row, ORDER_COLUMNS_NAME, importFailures);
+                if (newBookingFPA != null)
+                    bookingList.add(newBookingFPA);
 
             }
         }
 
+        importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
         bookingFPARepository.saveAll(bookingList);
-
+        importFailureRepository.saveAll(importFailures);
+        localeUtils.logStatusImportComplete(importFailures, ModelUtil.BOOKING_FPA);
+        return importFailures;
     }
 
     @Override
@@ -164,14 +179,16 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
     }
 
 
-    private BookingFPA mappingDataExcelIntoBookingFPA(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) throws IncorectFormatCellException {
+    private BookingFPA mappingDataExcelIntoBookingFPA(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME, List<ImportFailure> importFailures) throws IncorectFormatCellException {
 
         BookingFPA bookingFPA = new BookingFPA();
 
         // orderNo
         Cell orderNoCell = row.getCell(ORDER_COLUMNS_NAME.get("Order No."));
         if (orderNoCell.getCellType() != CellType.STRING || orderNoCell.getStringCellValue().isEmpty()) {
-            throw new IncorectFormatCellException("Incorrect format of Cell " + (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Order No.") + 1));
+            String reasonKey = (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Order No.") + 1);
+            importFailureService.addIntoListImportFailure(importFailures, String.valueOf(row.getRowNum() + 1), "incorrect-format-at-cell", reasonKey, ImportFailureType.ERROR);
+            return null;
         }
         bookingFPA.setOrderNo(orderNoCell.getStringCellValue());
 
@@ -182,7 +199,9 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
         //dealerNet
         Cell dealerNetCell = row.getCell(ORDER_COLUMNS_NAME.get("Revised Net Sales"));
         if (dealerNetCell.getCellType() != CellType.NUMERIC) {
-            throw new IncorectFormatCellException("Incorrect format of Cell " + (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Revised Net Sales") + 1));
+            String reasonKey = (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Revised Net Sales") + 1);
+            importFailureService.addIntoListImportFailure(importFailures, String.valueOf(row.getRowNum() + 1), "incorrect-format-at-cell", reasonKey, ImportFailureType.ERROR);
+            return null;
         }
         double dealerNet = dealerNetCell.getNumericCellValue();
         bookingFPA.setDealerNet(dealerNet);
@@ -190,7 +209,9 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
         //cost
         Cell costCell = row.getCell(ORDER_COLUMNS_NAME.get("Revised Cost"));
         if (costCell.getCellType() != CellType.NUMERIC) {
-            throw new IncorectFormatCellException("Incorrect format of Cell " + (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Revised Cost") + 1));
+            String reasonKey = (row.getRowNum() + 1) + ":" + (ORDER_COLUMNS_NAME.get("Revised Cost") + 1);
+            importFailureService.addIntoListImportFailure(importFailures, String.valueOf(row.getRowNum() + 1), "incorrect-format-at-cell", reasonKey, ImportFailureType.ERROR);
+            return null;
         }
         double cost = costCell.getNumericCellValue();
         bookingFPA.setTotalCost(cost);

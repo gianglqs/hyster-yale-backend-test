@@ -204,8 +204,9 @@
   },
   "message": {
     "success": {
-      "import_file": "Import thành công!",
-      "update_image": "Cập nhập hình ảnh thành công!"
+      "import-complete": "Nhập dữ liệu %s hoàn tất (%d lỗi, %d cảnh báo)",
+      "update_image": "Cập nhập hình ảnh thành công!",
+      "totalError-totalWarning": "%d lỗi, %d cảnh báo"
     },
     "failure": {
       "import_file": "Import không thành công!",
@@ -215,7 +216,18 @@
       "invalid_fileName": "Tên file không hợp lệ: ''"
     },
     "warning": {
-      "hi": "hi"
+      "not-find-country-with-code": "Không tìm thấy Quốc gia nào với mã: '%s', nên tự động tạo Quốc gia mới với mã này",
+      "not-find-booking-with-orderNo": "Không tìm thấy Đơn hàng nào với order number: '%s'.",
+      "not-find-product-with-modelCode-series": "Không tìm thấy Sản phẩm nào với ModelCode: '%s' và MetaSeries: '%s'"
+    },
+    "error": {
+      "not-find-product-with-modelCode-series": "Không tìm thấy Sản phẩm nào với ModelCode: '%s' và Series: '%s'",
+      "not-find-Dealer-with-name": "Không tìm thấy Dealer nào với tên: '%s'",
+      "not-find-AOPMargin-with-region-series-plant-year": "Không tìm thấy AOPMargin nào với khu vực: '%s', metaSeries: '%s', nhà máy: '%s' và trong năm %s",
+      "not-find-clazz-with-clazzName": "Không tìm thấy Class với tên '%s'.",
+      "incorrect-format-at-cell": "Lỗi định dạng tại ô %s",
+      "file-is-not-excel": "File không phải là Excel",
+      "not-find-region-with-name": "Không tìm thấy khu vực nào với tên: '%s'."
     }
   },
   "yes": "Có",

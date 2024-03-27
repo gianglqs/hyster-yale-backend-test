@@ -7,10 +7,10 @@ import lombok.Setter;
 @Setter
 public class InvalidFileNameException extends Exception{
 
-    private String savedFileName;
+    private String fileUUID;
 
-    public InvalidFileNameException(String message, String savedFileName){
+    public InvalidFileNameException(String message, String fileUUID){
         super(message);
-        this.savedFileName = savedFileName;
+        this.fileUUID = fileUUID;
     }
 }
