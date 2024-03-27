@@ -233,7 +233,8 @@
     },
     "warning": {
       "not-find-country-with-code": "未找到代码为“%s”的国家/地区。 使用代码自动创建一个新国家.",
-      "not-find-booking-with-orderNo": "未找到订单号为“%s”的Booking."
+      "not-find-booking-with-orderNo": "未找到订单号为“%s”的Booking.",
+      "not-find-product-with-modelCode-series": "未找到型号代码为“%s”且系列为“%s”的产品。”"
     },
     "error": {
       "not-find-product-with-modelCode-series": "未找到型号代码为“%s”且系列为“%s”的产品。”",
