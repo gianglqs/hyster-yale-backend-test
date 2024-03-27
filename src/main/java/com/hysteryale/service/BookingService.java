@@ -338,7 +338,7 @@ public class BookingService extends BasedService {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         List<Booking> bookingList = new LinkedList<>();
 
-        String sheetName = CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_SHEET;
+        String sheetName = CheckRequiredColumnUtils.SHIPMENT_REQUIRED_SHEET;
         XSSFSheet orderSheet = workbook.getSheet(sheetName);
         if (orderSheet == null)
             throw new MissingSheetException("Not found sheet '" + sheetName + "'");
@@ -361,7 +361,7 @@ public class BookingService extends BasedService {
         for (Row row : orderSheet) {
             if (row.getRowNum() == numRowName) {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
                 Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);
 
@@ -415,7 +415,7 @@ public class BookingService extends BasedService {
         for (Row row : orderSheet) {
             if (row.getRowNum() == numRowName) {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > numRowName) {
                 Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);
 
@@ -485,7 +485,7 @@ public class BookingService extends BasedService {
         for (Row row : orderSheet) {
             if (row.getRowNum() == 0) {
                 getOrderColumnsName(row, ORDER_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(ORDER_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.BOOKING_REQUIRED_COLUMN);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 1) {
                 // map data from excel file
                 Booking newBooking = mapExcelDataIntoOrderObject(row, ORDER_COLUMNS_NAME, products, regions, aopMargins, dealers, countries);

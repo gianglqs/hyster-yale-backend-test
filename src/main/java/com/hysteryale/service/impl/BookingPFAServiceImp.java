@@ -70,7 +70,7 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         List<BookingFPA> bookingList = new LinkedList<>();
-        String sheetName = CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_SHEET;
+        String sheetName = CheckRequiredColumnUtils.SHIPMENT_REQUIRED_SHEET;
         XSSFSheet orderSheet = workbook.getSheet(sheetName);
         if (orderSheet == null)
             throw new MissingSheetException("Not found sheet '" + sheetName + "'");
