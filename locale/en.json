@@ -220,7 +220,7 @@
       "missing_sheet": "Not found sheet: ''",
       "blank_sheet": "Sheet is BLANK: ''",
       "invalid_fileName": "Invalid file name: ''",
-      "file-is-not-excel": "File is not Excel"
+      "file-is-not-excel": "File is not Excel",
       "incorrect_cell_format": "Incorrect format of Cell ",
       "unexpected_error": "Unexpected error",
       "invalid_file_format": "Invalid file format: ",

@@ -138,19 +138,6 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InvalidFileFormatException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidFileFormatException(InvalidFileFormatException exception, WebRequest request) {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
-        HttpServletRequest servletRequest = attributes.getRequest();
-        String locale = servletRequest.getHeader("locale");
-        locale = locale == null ? "en" : locale;
-        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "invalid_file_format");
-        StringBuilder stringBuilder = new StringBuilder(baseMessage);
-        stringBuilder.insert(baseMessage.length(), exception.getSavedFileName() + " is not " + exception.getFileExtension());
-        logError(stringBuilder.toString(), exception);
-        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(SeriesNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleSeriesNotFoundException(SeriesNotFoundException exception, WebRequest request) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) request;
