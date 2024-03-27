@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.ExchangeRatesException;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.reports.CompareCurrencyRequest;

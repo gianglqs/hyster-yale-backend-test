@@ -220,7 +220,15 @@
       "missing_sheet": "Not found sheet: ''",
       "blank_sheet": "Sheet is BLANK: ''",
       "invalid_fileName": "Invalid file name: ''",
-      "file-is-not-excel": "File is not Excel"
+      "file-is-not-excel": "File is not Excel",
+      "incorrect_cell_format": "Incorrect format of Cell ",
+      "unexpected_error": "Unexpected error",
+      "invalid_file_format": "Invalid file format: ",
+      "series_not_found": "Series not found: ",
+      "unsupported_currency": "Unsupported Currency: ",
+      "unsupported_currency_before_2020": "Unsupported Currency before 31/12/2020: ",
+      "inactive_api_key": "Inactive API Keys. Please check API Keys expired date",
+      "plan_update_required": "Plan updated required"
     },
     "warning": {
       "not-find-country-with-code": "Country with Code '%s' not found. Automatically creating a new country using the code.",
