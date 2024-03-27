@@ -225,7 +225,8 @@
       "not-find-Dealer-with-name": "Không tìm thấy Dealer nào với tên: '%s'",
       "not-find-AOPMargin-with-region-series-plant-year": "Không tìm thấy AOPMargin nào với khu vực: '%s', metaSeries: '%s', nhà máy: '%s' và trong năm %s",
       "not-find-clazz-with-clazzName": "Không tìm thấy Class với tên '%s'.",
-      "incorrect-format-at-cell": "Lỗi định dạng tại ô %s"
+      "incorrect-format-at-cell": "Lỗi định dạng tại ô %s",
+      "file-is-not-excel": "File không phải là Excel"
     }
   },
   "yes": "Có",

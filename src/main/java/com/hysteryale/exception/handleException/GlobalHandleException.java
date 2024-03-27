@@ -109,5 +109,16 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(InvalidFileFormatException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFileFormatException(InvalidFileFormatException exception, WebRequest request) throws CanNotUpdateException {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "file-is-not-excel");
+        fileUploadService.handleUpdatedFailure(exception.getFileUUID(), baseMessage);
+        logError(baseMessage, exception);
+        return new ResponseEntity<>(new ErrorResponse(baseMessage), HttpStatus.BAD_REQUEST);
+    }
+
 
 }

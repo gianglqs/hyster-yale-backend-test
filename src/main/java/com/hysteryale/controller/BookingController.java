@@ -1,5 +1,6 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.InvalidFileFormatException;
 import com.hysteryale.exception.InvalidFileNameException;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.importFailure.ImportFailure;
@@ -75,8 +76,7 @@ public class BookingController {
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("File is not EXCEL", null));
+            throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
         }
 
         List<ImportFailure> importFailures = null;

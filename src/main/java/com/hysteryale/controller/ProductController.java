@@ -1,5 +1,6 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.InvalidFileFormatException;
 import com.hysteryale.model.Product;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.importFailure.ImportFailure;
@@ -108,11 +109,10 @@ public class ProductController {
         String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
         if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
-            throw new Exception("Imported file is not Excel");
+            throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
         }
 
-        List<ImportFailure> importFailures = new ArrayList<>();
+        List<ImportFailure> importFailures ;
 
         try {
             if (file.getOriginalFilename().toLowerCase().contains("apac")) {

@@ -229,7 +229,8 @@
       "missing_column": "缺少列",
       "missing_sheet": "未找到工作表：''",
       "blank_sheet": "工作表是空白的：''",
-      "invalid_fileName": "无效的文件名：''"
+      "invalid_fileName": "无效的文件名：''",
+      "file-is-not-excel": "文件不是 Excel"
     },
     "warning": {
       "not-find-country-with-code": "未找到代码为“%s”的国家/地区。 使用代码自动创建一个新国家.",

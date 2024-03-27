@@ -219,7 +219,8 @@
       "missing_column": "Missing column ",
       "missing_sheet": "Not found sheet: ''",
       "blank_sheet": "Sheet is BLANK: ''",
-      "invalid_fileName": "Invalid file name: ''"
+      "invalid_fileName": "Invalid file name: ''",
+      "file-is-not-excel": "File is not Excel"
     },
     "warning": {
       "not-find-country-with-code": "Country with Code '%s' not found. Automatically creating a new country using the code.",

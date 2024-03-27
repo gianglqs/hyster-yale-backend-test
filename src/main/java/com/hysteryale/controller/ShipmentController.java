@@ -1,5 +1,6 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.InvalidFileFormatException;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.upload.FileUploadRepository;
@@ -66,10 +67,8 @@ public class ShipmentController {
         String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
-
         if (!FileUtils.isExcelFile(pathFile)) {
-            fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Uploaded file is not an Excel file", null));
+            throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
         }
 
         InputStream inputStream = new FileInputStream(pathFile);
