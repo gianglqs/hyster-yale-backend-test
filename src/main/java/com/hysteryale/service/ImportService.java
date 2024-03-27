@@ -463,7 +463,7 @@ public class ImportService extends BasedService {
     public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         HashMap<String, Integer> SHIPMENT_COLUMNS_NAME = new HashMap<>();
-        String sheetName = CheckRequiredColumnUtils.SHIPMENT_REQUIRED_SHEET;
+        String sheetName = CheckRequiredColumnUtils.BOOKING_FPA_REQUIRED_SHEET;
         XSSFSheet shipmentSheet = workbook.getSheet(sheetName);
         if (shipmentSheet == null)
             throw new MissingSheetException("Not found sheet '" + sheetName + "'");
