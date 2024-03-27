@@ -230,7 +230,8 @@
       "not-find-product-with-modelCode-series": "Product with ModelCode '%s' and Series '%s' not found.",
       "not-find-Dealer-with-name": "Dealer with the name '%s' not found.",
       "not-find-AOPMargin-with-region-series-plant-year": "AOPMargin with Region '%s', MestaSeries '%s', Plant '%s', and Year '%s' not found.",
-      "not-find-clazz-with-clazzName": "Class with the Class name '%s' not found."
+      "not-find-clazz-with-clazzName": "Class with the Class name '%s' not found.",
+      "incorrect-format-at-cell": "Incorrect format at Cell %s"
     }
   },
   "yes": "Yes",
