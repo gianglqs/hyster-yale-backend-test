@@ -1,5 +1,6 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.ExchangeRatesException;
 import com.hysteryale.model.reports.CompareCurrencyRequest;
 import com.hysteryale.service.ExchangeRateService;
 import org.springframework.http.MediaType;

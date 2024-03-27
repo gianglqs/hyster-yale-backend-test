@@ -16,6 +16,7 @@ public class CheckRequiredColumnUtils {
     public static final List<String> COMPETITOR_REQUIRED_COLUMN = List.of("Table Title", "Country", "Group", "Brand", "Region", "Class", "Origin", "Market Share", "Price (USD)");
 
     public static final List<String> PRODUCT_APAC_SERIAL_COLUMN = List.of("Hyster", "Plant", "Class", "Model", "Yale");
+    public static final List<String> NOVO_REQUIRED_COLUMN = List.of("Quote Number:", "#", "Series Code", "Model Code", "Part Number", "Part Description", "List Price", "Net Price Each");
     public static final List<String> MACRO_REQUIRED_COLUMN = List.of(); // TODO:Nhan will complete it
     public static final List<String> EXCHANGE_RATE_REQUIRED_COLUMN = List.of(); // TODO:Nhan will complete it
     public static final List<String> PART_REQUIRED_COLUMN = List.of("Model", "Part Number", "Order Number", "Currency", "Quote Number", "Quoted Quantity", "Series",
@@ -25,7 +26,6 @@ public class CheckRequiredColumnUtils {
     public static final List<String> BOOKING_COST_DATA_REQUIRED_COLUMN = List.of("Order", "TOTAL MFG COST Going-To");
     public static final List<String> PRODUCT_DIMENSION_REQUIRED_COLUMN = List.of("Metaseries", "Model", "Segment", "Family_Name", "Truck_Type");
     public static final List<String> AOP_MARGIN_REQUIRED_COLUMN = List.of("MetaSeries", "Plant", "Region", "std,margin,%");
-    public static final List<String> BOOKING_FPA_REQUIRED_COLUMN = List.of("Order No.", "Revised Net Sales", "Revised Cost", "Inc_Cst#");
 
 
     // REQUIRED SHEET
@@ -37,8 +37,6 @@ public class CheckRequiredColumnUtils {
     public static final String PRODUCT_DIMENSION_REQUIRED_SHEET = "Data";
     public static final String PART_REQUIRED_SHEET = "Export";
     public static final String AOP_MARGIN_REQUIRED_SHEET = "aop,dn,margin,%";
-
-    public static final String BOOKING_FPA_REQUIRED_SHEET = "Booking Margin Database";
 
 
     public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns, String fileUUID) throws MissingColumnException {

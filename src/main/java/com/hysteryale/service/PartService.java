@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.ExchangeRatesException;
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Clazz;
@@ -56,7 +57,7 @@ public class PartService extends BasedService {
         return optionalClazz.orElse(null);
     }
 
-    public Part mapExcelDataToPart(Row row) {
+    public Part mapExcelDataToPart(Row row) throws ExchangeRatesException {
         String strCurrency = row.getCell(powerBIExportColumns.get("Currency")).getStringCellValue().strip();
         Currency currency = currencyService.getCurrenciesByName(strCurrency);
 
@@ -119,7 +120,7 @@ public class PartService extends BasedService {
         return isPartExisted == 1;
     }
 
-    public void importPartFromFile(String fileName, String filePath, String fileUUID) throws IOException, MissingColumnException, MissingSheetException {
+    public void importPartFromFile(String fileName, String filePath, String fileUUID) throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException {
         logInfo("==== Importing " + fileName + " ====");
         InputStream is = new FileInputStream(filePath);
         IOUtils.setByteArrayMaxOverride(700000000);
@@ -170,7 +171,7 @@ public class PartService extends BasedService {
         updateStateImportFile(filePath);
     }
 
-    public void importPart() throws IOException, MissingColumnException, MissingSheetException {
+    public void importPart() throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.bi-download");
         List<String> files = FileUtils.getAllFilesInFolder(folderPath);

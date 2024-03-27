@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.ExchangeRatesException;
 import com.hysteryale.model.Currency;
 import com.hysteryale.repository.CurrencyRepository;
 import com.hysteryale.utils.EnvironmentUtils;
@@ -8,9 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
@@ -33,7 +32,7 @@ public class CurrencyService {
         List<String> files = FileUtils.getAllFilesInFolder(folderPath);
 
         //if there is a file, then use it to extract currency, all files in this folder can be used to do that because they have the same currencies
-        if (files.size() > 0) {
+        if (!files.isEmpty()) {
 
             List<Currency> currencyList = new ArrayList<>();
 
@@ -64,17 +63,15 @@ public class CurrencyService {
 
     }
 
-    public Currency getCurrenciesByName(String currencyName) {
+    public Currency getCurrenciesByName(String currencyName) throws ExchangeRatesException {
         Optional<Currency> optionalCurrencies = currencyRepository.getCurrenciesByName(currencyName);
         if (optionalCurrencies.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No currencies found with " + currencyName);
+            throw new ExchangeRatesException("Unsupported currency " + currencyName, currencyName);
         return optionalCurrencies.get();
     }
 
     public Currency getCurrencies(String currencyName) {
         Optional<Currency> optionalCurrencies = currencyRepository.getCurrenciesByName(currencyName);
-        if (!optionalCurrencies.isEmpty())
-            return optionalCurrencies.get();
-        return null;
+        return optionalCurrencies.orElse(null);
     }
 }
