@@ -12,7 +12,7 @@ public class CheckRequiredColumnUtils {
             "Serial Number", "Quantity", "Revenue", "Revenue - Other", "Discounts", "Additional Discounts",
             "Cash Discounts", "Cost of Sales", "Dealer Commisions", "Warranty", "COS - Other", "End Customer Name","Ship-to Country Code","Created On");
 
-    public static final List<String> DEALEAR_LISTING_REQUIRED_COLUMN = List.of("MkgGroup", "BilltoCode", "DealerDivison", "DealerName","TerritoryManager","AreaBusinesssDirector","BigTruckManager","AftermarketManager","AftermarketTechnicalServiceManager");
+    public static final List<String> DEALEAR_REQUIRED_COLUMN = List.of("MkgGroup", "BilltoCode", "DealerDivison", "DealerName","TerritoryManager","AreaBusinesssDirector","BigTruckManager","AftermarketManager","AftermarketTechnicalServiceManager");
 
     public static final  List<String>  FORECAST_REQUIRED_COLUMN =List.of("Series /Segments","Description","Plant","Brand");
 

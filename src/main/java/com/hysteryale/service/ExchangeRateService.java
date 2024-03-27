@@ -159,6 +159,11 @@ public class ExchangeRateService extends BasedService {
     public Map<String, Object> compareCurrency(CompareCurrencyRequest request) throws Exception {
         Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
         List<String> comparisonCurrencies = request.getComparisonCurrencies();
+
+        if(currentCurrency==null||comparisonCurrencies.size()<1){
+            throw new RuntimeException("User must select currency units and comparison currencyy");
+        }
+
         LocalDate fromDate = parseDateFromRequestGetMonthYear(request.getFromDate());
         LocalDate toDate = parseDateFromRequestGetMonthYear(request.getToDate());
         if(fromDate!=null)

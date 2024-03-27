@@ -2,7 +2,7 @@ package com.hysteryale.controller;
 
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.response.ResponseObject;
-import com.hysteryale.service.DealerListingService;
+import com.hysteryale.service.DealerService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
@@ -23,26 +23,26 @@ import javax.annotation.Resource;
 
 @RestController
 @Slf4j
-public class DearlerListingController {
+public class DearlerController {
 
     @Resource
-    DealerListingService dealerListingService;
+    DealerService dealerService;
 
     @Resource
     FileUploadService fileUploadService;
 
     private FilterModel filters;
-    @PostMapping(path = "/importNewDealerListing", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/importNewDealer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject>  importNewDataDealerListing(@RequestParam("file") MultipartFile file, Authentication authentication) throws Exception {
+    public ResponseEntity<ResponseObject> importNewDataDealer(@RequestParam("file") MultipartFile file, Authentication authentication) throws Exception {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.dealer_listing");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.dealer");
         //save file on disk
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
 
 
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.DEALER_LISTING);
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.DEALER);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
 
         if (!FileUtils.isExcelFile(filePath)) {
@@ -52,7 +52,7 @@ public class DearlerListingController {
         }
 
         try {
-            dealerListingService.importNewDealerListingFileByFile(filePath);
+            dealerService.importNewDealerFileByFile(filePath);
             fileUploadService.handleUpdatedSuccessfully(fileName);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import successfully", null));
         } catch (Exception e) {

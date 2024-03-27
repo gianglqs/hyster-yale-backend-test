@@ -2,7 +2,7 @@ package com.hysteryale.service;
 
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.model.*;
-import com.hysteryale.repository.DealerListingRepository;
+import com.hysteryale.repository.DealerRepository;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -22,31 +22,31 @@ import java.util.*;
 @Slf4j
 public class DealerListingService {
     @Resource
-    DealerListingRepository dealerListingRepository;
+    DealerRepository dealerRepository;
 
-    public void importNewDealerListingFileByFile(String filePath) throws IOException, MissingColumnException {
+    public void importNewDealerFileByFile(String filePath) throws IOException, MissingColumnException {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
-        List<DealerListing> dealerListingList = new LinkedList<>();
+        List<Dealer> dealerList = new LinkedList<>();
         Sheet sheet = workbook.getSheetAt(0);
 
-        HashMap<String, Integer> DEALER_LISTING_NAME = new HashMap<>();
+        HashMap<String, Integer> DEALER_NAME = new HashMap<>();
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {
-                getDealerListingColumnName(row, DEALER_LISTING_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(DEALER_LISTING_NAME.keySet()), CheckRequiredColumnUtils.DEALEAR_LISTING_REQUIRED_COLUMN);
+                getDealerListingColumnName(row, DEALER_NAME);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(DEALER_NAME.keySet()), CheckRequiredColumnUtils.DEALEAR_REQUIRED_COLUMN);
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
-                DealerListing newDealerListing = mapExcelDataIntoDealerListingObject(row, DEALER_LISTING_NAME);
+                Dealer newDealer = mapExcelDataIntoDealerListingObject(row, DEALER_NAME);
 
-                if (newDealerListing == null)
+                if (newDealer == null)
                     continue;
 
-                dealerListingList.add(newDealerListing);
+                dealerList.add(newDealer);
 
             }
         }
-        dealerListingRepository.saveAll(dealerListingList);
+        dealerRepository.saveAll(dealerList);
 
     }
 
@@ -61,39 +61,39 @@ public class DealerListingService {
 
         return result;
     }
-    DealerListing mapExcelDataIntoDealerListingObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) throws MissingColumnException {
-        DealerListing dealerListing = new DealerListing();
+    Dealer mapExcelDataIntoDealerListingObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) throws MissingColumnException {
+        Dealer dealer = new Dealer();
 
         // set billToCost
-        String billtoCode = convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("BilltoCode")));
-        dealerListing.setBilltoCode(billtoCode);
+//        String billtoCode = convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("BilltoCode")));
+//        dealer.setBilltoCode(billtoCode);
+//
+//        String mkgGroup = convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("MkgGroup")));
+//        dealer.setBilltoCode(mkgGroup);
+//
+//        // Series
+//        String dealerDivison= convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("DealerDivison"))) ;
+//        dealer.setDealerDivison(dealerDivison);
+//
+//        String dealerName = convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("DealerName"))) ;
+//        dealer.setDealerName(dealerName);
+//
+//        String teritoryManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("TerritoryManager"))) ;
+//        dealer.setTerritoryManager(teritoryManager);
+//
+//        String areaBusinesssDirector=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AreaBusinesssDirector")));
+//        dealer.setAreaBusinesssDirector(areaBusinesssDirector);
+//
+//        String bigTruckManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("BigTruckManager")));
+//        dealer.setBigTruckManager(bigTruckManager);
+//
+//        String aftermarketManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AftermarketManager")));
+//        dealer.setAftermarketManager(aftermarketManager);
+//
+//        String aftermarketTechnicalServiceManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AftermarketTechnicalServiceManager")));
+//        dealer.setAftermarketTechnicalServiceManager(aftermarketTechnicalServiceManager);
 
-        String mkgGroup = convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("MkgGroup")));
-        dealerListing.setBilltoCode(mkgGroup);
-
-        // Series
-        String dealerDivison= convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("DealerDivison"))) ;
-        dealerListing.setDealerDivison(dealerDivison);
-
-        String dealerName = convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("DealerName"))) ;
-        dealerListing.setDealerName(dealerName);
-
-        String teritoryManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("TerritoryManager"))) ;
-        dealerListing.setTerritoryManager(teritoryManager);
-
-        String areaBusinesssDirector=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AreaBusinesssDirector")));
-        dealerListing.setAreaBusinesssDirector(areaBusinesssDirector);
-
-        String bigTruckManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("BigTruckManager")));
-        dealerListing.setBigTruckManager(bigTruckManager);
-
-        String aftermarketManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AftermarketManager")));
-        dealerListing.setAftermarketManager(aftermarketManager);
-
-        String aftermarketTechnicalServiceManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AftermarketTechnicalServiceManager")));
-        dealerListing.setAftermarketTechnicalServiceManager(aftermarketTechnicalServiceManager);
-
-        return dealerListing;
+        return dealer;
     }
 
     public void getDealerListingColumnName(Row row,HashMap<String, Integer> DEALER_LISTING_COLUMNS_NAME) {
