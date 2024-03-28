@@ -3,8 +3,12 @@ package com.hysteryale.service;
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.model.AOPMargin;
 import com.hysteryale.model.Region;
+import com.hysteryale.model.enums.ImportFailureType;
+import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.AOPMarginRepository;
 import com.hysteryale.repository.RegionRepository;
+import com.hysteryale.repository.importFailure.ImportFailureRepository;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -41,6 +45,17 @@ public class AOPMarginService extends BasedService {
     @Resource
     private RegionRepository regionRepository;
 
+    @Resource
+    FileUploadRepository fileUploadRepository;
+
+    @Resource
+    ImportFailureService importFailureService;
+
+    @Resource
+    ImportFailureRepository importFailureRepository;
+    @Resource
+    LocaleUtils localeUtils;
+
     public void getAOPMarginColumns(Row row) {
         for (int i = 0; i < 20; i++) {
             String columnName = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
@@ -52,55 +67,38 @@ public class AOPMarginService extends BasedService {
     public AOPMargin mapExcelToAOPMargin(Row row) throws IllegalAccessException, MissingColumnException {
         AOPMargin aopMargin = new AOPMargin();
 
-        if (AOP_MARGIN_COLUMNS.get("Region") != null) {
-            String valueCellRegion = row.getCell(AOP_MARGIN_COLUMNS.get("Region")).getStringCellValue();
-            Region region = regionService.getRegionByName(valueCellRegion);
-            if (region != null) {
-                aopMargin.setRegion(region);
-            } else {
-                logError("Not found Region: " + valueCellRegion);
-                return null;
-            }
+
+        String valueCellRegion = row.getCell(AOP_MARGIN_COLUMNS.get("Region")).getStringCellValue();
+        Region region = regionService.getRegionByName(valueCellRegion);
+        if (region != null) {
+            aopMargin.setRegion(region);
         } else {
-            throw new MissingColumnException("Missing column 'Region'!");
+            logError("Not found Region: " + valueCellRegion);
+            return null;
         }
 
-        if (AOP_MARGIN_COLUMNS.get("Plant") != null) {
-            aopMargin.setPlant(row.getCell(AOP_MARGIN_COLUMNS.get("Plant")).getStringCellValue());
+
+        aopMargin.setPlant(row.getCell(AOP_MARGIN_COLUMNS.get("Plant")).getStringCellValue());
+
+
+        String metaSeries = null;
+        Cell metaSeriesCell = row.getCell(AOP_MARGIN_COLUMNS.get("Series"));
+        if (metaSeriesCell.getCellType() == CellType.NUMERIC) {
+            aopMargin.setMetaSeries(String.valueOf((int) metaSeriesCell.getNumericCellValue()));
         } else {
-            throw new MissingColumnException("Missing column 'Plant'!");
+            aopMargin.setMetaSeries(row.getCell(AOP_MARGIN_COLUMNS.get("Series")).getStringCellValue());
         }
 
-        if (AOP_MARGIN_COLUMNS.get("Series") != null) {
-            String metaSeries = null;
-            Cell metaSeriesCell = row.getCell(AOP_MARGIN_COLUMNS.get("Series"));
-            if (metaSeriesCell.getCellType() == CellType.NUMERIC) {
-                aopMargin.setMetaSeries(String.valueOf((int) metaSeriesCell.getNumericCellValue()));
-            } else {
-                aopMargin.setMetaSeries(row.getCell(AOP_MARGIN_COLUMNS.get("Series")).getStringCellValue());
-            }
-        } else {
-            throw new MissingColumnException("Missing column 'Series'!");
-        }
 
-        if (AOP_MARGIN_COLUMNS.get("Margin % STD") != null) {
-            aopMargin.setMarginSTD(row.getCell(AOP_MARGIN_COLUMNS.get("Margin % STD")).getNumericCellValue());
-        } else {
-            throw new MissingColumnException("Missing column 'Margin % STD'!");
-        }
+        aopMargin.setMarginSTD(row.getCell(AOP_MARGIN_COLUMNS.get("Margin % STD")).getNumericCellValue());
 
-        if (AOP_MARGIN_COLUMNS.get("AOP DN USD") != null) {
-            aopMargin.setDnUSD(row.getCell(AOP_MARGIN_COLUMNS.get("AOP DN USD")).getNumericCellValue());
-        } else {
-            throw new MissingColumnException("Missing column 'AOP DN USD'!");
-        }
 
-        if (AOP_MARGIN_COLUMNS.get("Description") != null) {
-            if (row.getCell(AOP_MARGIN_COLUMNS.get("Description")) != null)
-                aopMargin.setDescription(row.getCell(AOP_MARGIN_COLUMNS.get("Description")).getStringCellValue());
-        } else {
-            throw new MissingColumnException("Missing column 'Description'!");
-        }
+        aopMargin.setDnUSD(row.getCell(AOP_MARGIN_COLUMNS.get("AOP DN USD")).getNumericCellValue());
+
+
+        if (row.getCell(AOP_MARGIN_COLUMNS.get("Description")) != null)
+            aopMargin.setDescription(row.getCell(AOP_MARGIN_COLUMNS.get("Description")).getStringCellValue());
+
 
         return aopMargin;
     }
@@ -147,39 +145,17 @@ public class AOPMarginService extends BasedService {
     }
 
     public void importAOPMargin(MultipartFile file, Authentication authentication) throws Exception {
+
+    }
+
+    public List<ImportFailure> importAOPMarginFromGUM(InputStream is, int year, String fileUUID) throws IOException, MissingColumnException {
+
         // b1 take out the first 10 rows
         // b2 check rows are header, conditions: cellType only STRING or BLANK
         // b3 Map column name with column index
         // b4 use regex to get required column and compare ->  throws Exception if missing column
         // b5 read body
 
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
-        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product");
-        String fileNameEncoded = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.AOP_MARGIN);
-
-        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileNameEncoded;
-        if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileNameEncoded, "Uploaded file is not an Excel file");
-            throw new Exception("Imported file is not Excel");
-        }
-
-
-        try {
-            String fileName = file.getOriginalFilename();
-            int year = DateUtils.extractYear(fileName);
-            InputStream is = new FileInputStream(filePath);
-            importAOPMarginFromGUM(is, year);
-
-        } catch (Exception e) {
-            fileUploadService.handleUpdatedFailure(fileNameEncoded, e.getMessage());
-            throw e;
-        }
-
-        fileUploadService.handleUpdatedSuccessfully(fileNameEncoded);
-    }
-
-    private void importAOPMarginFromGUM(InputStream is, int year) throws IOException, MissingColumnException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         List<AOPMargin> aopMarginListInDB = aopMarginRepository.findAll();
@@ -192,10 +168,11 @@ public class AOPMarginService extends BasedService {
 
                 List<AOPMargin> newAOPMarginList = new ArrayList<>();
                 int startIndexBodyRow = getStartIndexBodyRow(sheet);
+                List<ImportFailure> importFailures = new ArrayList<>();
 
                 List<String> listCurrentColumn = new ArrayList<>(AOP_MARGIN_COLUMNS.keySet());
                 // check required columns
-                CheckRequiredColumnUtils.checkRequiredColumn(listCurrentColumn, CheckRequiredColumnUtils.AOP_MARGIN_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(listCurrentColumn, CheckRequiredColumnUtils.AOP_MARGIN_REQUIRED_COLUMN, fileUUID);
 
                 //check column 'STD Margin %'
                 boolean hasMarginSTD = false;
@@ -208,12 +185,12 @@ public class AOPMarginService extends BasedService {
                     }
                 }
                 if (!hasMarginSTD)
-                    throw new MissingColumnException("Missing column 'Margin STD %");
+                    throw new MissingColumnException("Margin STD %", fileUUID);
 
 
                 for (Row row : sheet) {
                     if (row.getRowNum() >= startIndexBodyRow) {
-                        AOPMargin aopMargin = mapExcelGUMToAOPMargin(row);
+                        AOPMargin aopMargin = mapExcelGUMToAOPMargin(row, importFailures);
                         if (aopMargin == null)
                             continue;
 
@@ -224,8 +201,14 @@ public class AOPMarginService extends BasedService {
 
                 // save or update
                 saveOrUpdateAOPMargin(aopMarginListInDB, newAOPMarginList);
+                importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
+                importFailureRepository.saveAll(importFailures);
+                localeUtils.logStatusImportComplete(importFailures, ModelUtil.BOOKING_FPA);
+                return importFailures;
             }
+
         }
+        return null;
     }
 
     private void saveOrUpdateAOPMargin(List<AOPMargin> aopMarginListInDB, List<AOPMargin> newAOPMarginList) {
@@ -244,22 +227,24 @@ public class AOPMarginService extends BasedService {
         aopMarginRepository.saveAllAndFlush(newAOPMarginNotInDB);
     }
 
-    private AOPMargin mapExcelGUMToAOPMargin(Row row) {
+    private AOPMargin mapExcelGUMToAOPMargin(Row row, List<ImportFailure> importFailures) {
         AOPMargin aopMargin = new AOPMargin();
 
         // region
         String regionName = row.getCell(AOP_MARGIN_COLUMNS.get("Region")).getStringCellValue();
         Region region = regionRepository.getRegionByName(regionName);
         if (region == null) {
-            log.error("Could not find Region with region name: " + regionName);
+            String primaryKey = (row.getRowNum() + 1) + ":" + (AOP_MARGIN_COLUMNS.get("Region") + 1);
+            importFailureService.addIntoListImportFailure(importFailures, primaryKey, "not-find-region-with-name", regionName, ImportFailureType.ERROR);
             return null;
         }
         aopMargin.setRegion(region);
 
         //series
-        Cell seriesCell = row.getCell(AOP_MARGIN_COLUMNS.get("Region"));
+        Cell seriesCell = row.getCell(AOP_MARGIN_COLUMNS.get("MetaSeries"));
         if (seriesCell.getCellType() != CellType.STRING) {
-            log.error("Series is not STRING at row " + row.getRowNum());
+            String reasonKey = (row.getRowNum() + 1) + ":" + (AOP_MARGIN_COLUMNS.get("MetaSeries") + 1);
+            importFailureService.addIntoListImportFailure(importFailures, String.valueOf(row.getRowNum() + 1), "incorrect-format-at-cell", reasonKey, ImportFailureType.ERROR);
             return null;
         }
         aopMargin.setMetaSeries(seriesCell.getStringCellValue());
@@ -267,7 +252,8 @@ public class AOPMarginService extends BasedService {
         //series
         Cell plantCell = row.getCell(AOP_MARGIN_COLUMNS.get("Plant"));
         if (plantCell.getCellType() != CellType.STRING) {
-            log.error("Series is not STRING at row " + row.getRowNum());
+            String reasonKey = (row.getRowNum() + 1) + ":" + (AOP_MARGIN_COLUMNS.get("Plant") + 1);
+            importFailureService.addIntoListImportFailure(importFailures, String.valueOf(row.getRowNum() + 1), "incorrect-format-at-cell", reasonKey, ImportFailureType.ERROR);
             return null;
         }
         aopMargin.setPlant(plantCell.getStringCellValue());

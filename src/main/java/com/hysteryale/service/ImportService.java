@@ -8,9 +8,14 @@ import com.hysteryale.model.*;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.competitor.ForeCastValue;
+import com.hysteryale.model.enums.ImportFailureType;
+import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.*;
+import com.hysteryale.repository.importFailure.ImportFailureRepository;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.LocaleUtils;
+import com.hysteryale.utils.ModelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -88,6 +93,16 @@ public class ImportService extends BasedService {
 
     @Resource
     CountryRepository countryRepository;
+
+    @Resource
+    ImportFailureService importFailureService;
+
+    @Resource
+    ImportFailureRepository importFailureRepository;
+
+    @Resource
+    LocaleUtils localeUtils;
+
 
     public void getOrderColumnsName(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) {
         for (int i = 0; i < 50; i++) {
@@ -236,8 +251,6 @@ public class ImportService extends BasedService {
             competitorPricingList.add(cp);
         return competitorPricingList;
     }
-
-
 
     /**
      * Get Country and create new Country if not existed
@@ -462,18 +475,18 @@ public class ImportService extends BasedService {
     }
 
 
-    public void importShipmentFileOneByOne(InputStream is) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
+    public List<ImportFailure> importShipmentFileOneByOne(InputStream is, String fileUUID) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         HashMap<String, Integer> SHIPMENT_COLUMNS_NAME = new HashMap<>();
         String sheetName = CheckRequiredColumnUtils.SHIPMENT_REQUIRED_SHEET;
         XSSFSheet shipmentSheet = workbook.getSheet(sheetName);
         if (shipmentSheet == null)
-            throw new MissingSheetException("Not found sheet '" + sheetName + "'");
+            throw new MissingSheetException(sheetName, fileUUID);
 
         if (shipmentSheet.getLastRowNum() <= 0)
-            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
+            throw new BlankSheetException(sheetName, fileUUID);
 
-//        logInfo("import shipment");
+        logInfo("import shipment");
         List<Shipment> shipmentList = new ArrayList<>();
 
         //prepare data for import
@@ -483,16 +496,17 @@ public class ImportService extends BasedService {
         Currency prepareCurrency = currencyRepository.findByCurrency("USD");
         List<Booking> prepareBookings = bookingRepository.findAll();
         List<Country> prepareCountries = countryRepository.findAll();
+        Set<Country> newCountrySet = new HashSet<>();
+        List<ImportFailure> importFailures = new ArrayList<>();
 
 
         for (Row row : shipmentSheet) {
-            if (row.getRowNum() == 1) {
+            if (row.getRowNum() == 0) {
                 getOrderColumnsName(row, SHIPMENT_COLUMNS_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(SHIPMENT_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.SHIPMENT_REQUIRED_COLUMN);
-            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 1) {
-
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(SHIPMENT_COLUMNS_NAME.keySet()), CheckRequiredColumnUtils.SHIPMENT_REQUIRED_COLUMN, fileUUID);
+            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
                 Shipment newShipment = mapExcelDataIntoShipmentObject(
-                        row, SHIPMENT_COLUMNS_NAME, prepareProducts, prepareAOPMargin, prepareDealers, prepareCurrency, prepareBookings, prepareCountries);
+                        row, SHIPMENT_COLUMNS_NAME, prepareProducts, prepareAOPMargin, prepareDealers, prepareCurrency, prepareBookings, prepareCountries, importFailures, newCountrySet);
 
                 // check it has BookingOrder
                 if (newShipment == null)
@@ -515,14 +529,16 @@ public class ImportService extends BasedService {
                 shipmentListAfterCalculate.add(shipment);
             }
         }
-//        Cannot invoke "java.lang.Integer.intValue()" because the return value of "java.util.HashMap.get(Object)" is null
+        countryRepository.saveAll(newCountrySet);
 
-
+        importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
+        importFailureRepository.saveAll(importFailures);
         shipmentRepository.saveAll(shipmentListAfterCalculate);
 
-        logInfo("import shipment successfully");
-    }
+        localeUtils.logStatusImportComplete(importFailures, ModelUtil.SHIPMENT);
 
+        return importFailures;
+    }
 
     private Shipment checkExistOrderNo(List<Shipment> list, String orderNo) {
         for (Shipment s : list) {
@@ -572,12 +588,13 @@ public class ImportService extends BasedService {
         return s1;
     }
 
-
     private Shipment mapExcelDataIntoShipmentObject(Row row, HashMap<String, Integer> shipmentColumnsName,
                                                     List<Product> prepareProducts, List<AOPMargin> prepareAOPMargins,
                                                     List<Dealer> prepareDealers, Currency USDCurrency,
-                                                    List<Booking> prepareBookings, List<Country> prepareCountries) {
+                                                    List<Booking> prepareBookings, List<Country> prepareCountries,
+                                                    List<ImportFailure> importFailures, Set<Country> newCountrySet) {
         Shipment shipment = new Shipment();
+
 
         // Set orderNo
         String orderNo = row.getCell(shipmentColumnsName.get("Order number")).getStringCellValue();
@@ -594,8 +611,11 @@ public class ImportService extends BasedService {
 
         //product
         Product product = productService.findProductByModelCodeAndSeries(prepareProducts, modelCode, series);
-        if (product == null)
+        if (product == null) {
+            String reasonValue = modelCode + "###" + series;
+            importFailureService.addIntoListImportFailure(importFailures, orderNo, "not-find-product-with-modelCode-series", reasonValue, ImportFailureType.ERROR);
             return null;
+        }
         shipment.setProduct(product);
 
         // Set serialNUmber
@@ -661,17 +681,21 @@ public class ImportService extends BasedService {
         String dealerName = row.getCell(shipmentColumnsName.get("End Customer Name")).getStringCellValue();
         Dealer dealer = dealerService.getDealerByName(prepareDealers, dealerName);
         if (dealer == null) {
-            log.error("Not found Dealer with dealerName: " + dealerName);
+            importFailureService.addIntoListImportFailure(importFailures, orderNo, "not-find-Dealer-with-name", dealerName, ImportFailureType.ERROR);
             return null;
         }
         shipment.setDealer(dealer);
 
-        // region
+        // country
         String ctryCode = row.getCell(shipmentColumnsName.get("Ship-to Country Code")).getStringCellValue();
         Country country = countryService.findByCountryCode(prepareCountries, ctryCode);
         if (country == null) {
-            log.error("Not found Country with countryCode: " + ctryCode);
-            return null;
+            // create new Country with ctry_code
+            country = new Country();
+            country.setCode(ctryCode);
+            newCountrySet.add(country);
+            importFailureService.addIntoListImportFailure(importFailures, orderNo,
+                    "not-find-country-with-code", ctryCode, ImportFailureType.WARNING);
         }
         shipment.setCountry(country);
 
@@ -680,7 +704,10 @@ public class ImportService extends BasedService {
 
         AOPMargin aopMargin = aopMarginService.getAOPMargin(prepareAOPMargins, shipment.getCountry().getRegion(), shipment.getSeries(), shipment.getProduct().getPlant(), shipment.getDate());
         if (aopMargin == null) {
-            log.error("Not found AOPMargin with orderNo: " + orderNo);
+            String reasonValue = shipment.getCountry().getRegion().getRegionName() + "###" + series.substring(1) + "###" + shipment.getProduct().getPlant() + "###" + shipment.getDate().getYear();
+            importFailureService.addIntoListImportFailure(importFailures, orderNo,
+                    "not-find-AOPMargin-with-region-series-plant-year", reasonValue,
+                    ImportFailureType.ERROR);
             return null;
         }
         shipment.setAOPMargin(aopMargin);

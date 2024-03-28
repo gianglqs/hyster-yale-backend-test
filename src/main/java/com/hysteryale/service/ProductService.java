@@ -5,9 +5,13 @@ import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Product;
+import com.hysteryale.model.enums.ImportFailureType;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.ProductRepository;
+import com.hysteryale.repository.importFailure.ImportFailureRepository;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.utils.*;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +21,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.*;
@@ -36,6 +39,18 @@ public class ProductService extends BasedService {
     FileUploadService fileUploadService;
     @Resource
     ClazzRepository clazzRepository;
+
+    @Resource
+    FileUploadRepository fileUploadRepository;
+
+    @Resource
+    ImportFailureService importFailureService;
+
+    @Resource
+    ImportFailureRepository importFailureRepository;
+
+    @Resource
+    LocaleUtils localeUtils;
 
     private final HashMap<String, Integer> COLUMNS = new HashMap<>();
 
@@ -104,7 +119,7 @@ public class ProductService extends BasedService {
         for (Row row : sheet) {
             if (row.getRowNum() == 1) {
                 assignColumnNames(row);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_COLUMN, "");
             } else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 2) {
                 Product newProduct = mapExcelSheetToProductDimension(row);
@@ -300,7 +315,7 @@ public class ProductService extends BasedService {
         return optionalClazz.orElse(null);
     }
 
-    public List<Product> mappedFromAPACFile(Row row) {
+    public List<Product> mappedFromAPACFile(Row row, List<ImportFailure> importFailures) {
         List<Product> listProduct = new ArrayList<>();
 
         String plant = row.getCell(COLUMNS.get("Plant")).getStringCellValue();
@@ -326,7 +341,12 @@ public class ProductService extends BasedService {
                 hysterProduct.setPlant(plant);
                 hysterProduct.setClazz(clazz);
                 hysterProduct.setBrand("Hyster");
-                listProduct.add(hysterProduct);
+
+                if (clazz == null) {
+                    String primaryKey = hysterModel + ", " + hysterSeries;
+                    importFailureService.addIntoListImportFailure(importFailures, primaryKey,
+                            "not-find-clazz-with-clazzName", strClazz, ImportFailureType.ERROR);
+                } else listProduct.add(hysterProduct);
             }
         }
 
@@ -346,7 +366,11 @@ public class ProductService extends BasedService {
                 yaleProduct.setPlant(plant);
                 yaleProduct.setClazz(clazz);
                 yaleProduct.setBrand("Yale");
-                listProduct.add(yaleProduct);
+                if (clazz == null) {
+                    String primaryKey = yaleModel + ", " + yaleSeries;
+                    importFailureService.addIntoListImportFailure(importFailures, primaryKey,
+                            "not-find-clazz-with-clazzName", strClazz, ImportFailureType.ERROR);
+                } else listProduct.add(yaleProduct);
             }
         }
 
@@ -358,113 +382,92 @@ public class ProductService extends BasedService {
         return modelCode.split("_| -")[0];
     }
 
-    public void importProduct(MultipartFile file, Authentication authentication) throws Exception {
-        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
-        String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
-        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product");
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.PRODUCT);
-
-        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
-
-        if (!FileUtils.isExcelFile(filePath)) {
-            fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
-            throw new Exception("Imported file is not Excel");
-        }
-
-        try {
-            if (file.getOriginalFilename().toLowerCase().contains("apac")) {
-                importBaseProduct(filePath);
-            } else if (file.getOriginalFilename().toLowerCase().contains("dimension")) {
-                importDimensionProduct(filePath);
-            } else {
-                fileUploadService.handleUpdatedFailure(fileName, "File name is invalid");
-                throw new FileNotFoundException("File name is invalid");
-            }
-        } catch (Exception e) {
-            if (e instanceof FileNotFoundException) {
-                throw e;
-            }
-            fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
-            throw e;
-        }
-
-        fileUploadService.handleUpdatedSuccessfully(fileName);
-
-    }
-
     // brand, segment, family, truckType
-    private void importDimensionProduct(String pathFile) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
+    public List<ImportFailure> importDimensionProduct(String pathFile, String fileUUID) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         String sheetName = CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_SHEET;
         Sheet sheet = workbook.getSheet(sheetName);
         if (sheet == null)
-            throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+            throw new MissingSheetException(sheetName, fileUUID);
 
         if (sheet.getLastRowNum() <= 0)
-            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
+            throw new BlankSheetException(sheetName, fileUUID);
 
         Set<Product> listDimensionProduct = new HashSet<>();
+        List<ImportFailure> importFailures = new ArrayList<>();
 
         for (Row row : sheet) {
             if (row.getRowNum() == 1) {
                 assignColumnNames(row);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_DIMENSION_REQUIRED_COLUMN, fileUUID);
             } else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 2) {
                 listDimensionProduct.add(mapExcelSheetToProductDimension(row));
             }
         }
-        saveListDimensionProduct(listDimensionProduct);
+        saveListDimensionProduct(listDimensionProduct, importFailures);
+        importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
+        localeUtils.logStatusImportComplete(importFailures, ModelUtil.PRODUCT);
+        return importFailures;
     }
 
 
-    private void importBaseProduct(String pathFile) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
+    public List<ImportFailure> importBaseProduct(String pathFile, String fileUUID) throws IOException, MissingColumnException, MissingSheetException, BlankSheetException {
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         String sheetName = CheckRequiredColumnUtils.PRODUCT_APAC_SERIAL_REQUIRED_SHEET;
         Sheet sheet = workbook.getSheet(sheetName);
         if (sheet == null)
-            throw new MissingSheetException("Missing sheet '" + sheetName + "'");
+            throw new MissingSheetException(sheetName, fileUUID);
 
         if (sheet.getLastRowNum() <= 0)
-            throw new BlankSheetException("Sheet '" + sheetName + "' is blank");
+            throw new BlankSheetException(sheetName, fileUUID);
 
         Set<Product> listProduct = new HashSet<>();
+        List<ImportFailure> importFailures = new ArrayList<>();
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {
                 assignColumnNames(row);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_APAC_SERIAL_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMNS.keySet()), CheckRequiredColumnUtils.PRODUCT_APAC_SERIAL_COLUMN, fileUUID);
             } else if (row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getCellType() != CellType.BLANK
                     && row.getRowNum() >= 1) {
-                listProduct.addAll(mappedFromAPACFile(row));
+                listProduct.addAll(mappedFromAPACFile(row, importFailures));
             }
         }
         saveListBaseProduct(listProduct);
+
+        importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
+        localeUtils.logStatusImportComplete(importFailures, ModelUtil.PRODUCT);
+
+        return importFailures;
     }
 
-    private void saveListDimensionProduct(Set<Product> listDimensionProduct) {
-        List<Product> listProductInDB = new ArrayList<>();
+    private void saveListDimensionProduct(Set<Product> listDimensionProduct, List<ImportFailure> importFailures) {
+        List<Product> listProductInDB = productRepository.findAll();
+        List<Product> mapProduct = new ArrayList<>();
+
         for (Product p : listDimensionProduct) {
-            List<Product> products = productRepository.findByModelCodeAndMetaSeries(p.getModelCode(), p.getSeries());
-            listProductInDB.addAll(products);
+            List<Product> mappedProduct = getListProductByRangeModelCodeAndMetaSeries(listProductInDB, p.getModelCode(), p.getSeries());
+
+            if (mappedProduct.isEmpty()) {
+                String primaryKey = p.getModelCode() + ", "+ p.getSeries();
+                String reasonValue = p.getModelCode() + "###"+ p.getSeries();
+                importFailureService.addIntoListImportFailure(importFailures,primaryKey, "not-find-product-with-modelCode-series", reasonValue,  ImportFailureType.WARNING);
+                continue;
+            }
+
+            for (Product product : mappedProduct) {
+                product.setFamily(p.getFamily());
+                product.setSegment(p.getSegment());
+                product.setTruckType(p.getTruckType());
+            }
+            mapProduct.addAll(mappedProduct);
         }
 
-        for (Product oldProduct : listProductInDB) {
-            for (Product newProduct : listDimensionProduct) {
-                if (newProduct.getModelCode().equals(oldProduct.getModelCode())
-                        //in DB : series but in ProductDimension file is metaSeries
-                        && newProduct.getSeries().equals(oldProduct.getSeries().substring(1))) {
-                    oldProduct.setFamily(newProduct.getFamily());
-                    oldProduct.setSegment(newProduct.getSegment());
-                    oldProduct.setTruckType(newProduct.getTruckType());
-                    break;
-                }
-            }
-        }
-        productRepository.saveAll(listProductInDB);
+        productRepository.saveAll(mapProduct);
     }
 
 
@@ -573,7 +576,7 @@ public class ProductService extends BasedService {
 
             // save image in disk and DB
             String savedImageName = fileUploadService.upLoadImage(imagePath, targetFolder, authentication, ModelUtil.PRODUCT);
-
+            String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedImageName);
             List<Product> mappingProducts = new ArrayList<>();
 
             // step 1: extract by space ' '
@@ -588,7 +591,7 @@ public class ProductService extends BasedService {
             // update product if it is mapped
 
             if (mappingProducts.isEmpty()) {
-                fileUploadService.handleUpdatedFailure(savedImageName, "No suitable product found for mapping");
+                fileUploadService.handleUpdatedFailure(fileUUID, "No suitable product found for mapping");
                 continue;
             }
 
@@ -649,6 +652,15 @@ public class ProductService extends BasedService {
                 return product;
         }
         return null;
+    }
+
+    public static List<Product> getListProductByRangeModelCodeAndMetaSeries(List<Product> products, String modelCode, String metaSeries) {
+        List<Product> productList = new ArrayList<>();
+        for (Product product : products) {
+            if (StringUtils.compareString(modelCode, product.getModelCode()) && product.getSeries().substring(1).equals(metaSeries))
+                productList.add(product);
+        }
+        return productList;
     }
 
 }

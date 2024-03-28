@@ -36,4 +36,10 @@ public interface FileUploadRepository extends JpaRepository<FileUpload, Integer>
 
     @Query("SELECT f.uuid FROM FileUpload f WHERE f.fileName = :fileName")
     String getUUIDByName(String fileName);
+
+    @Query("SELECT f.uuid FROM FileUpload f WHERE f.fileName = :savedFileName")
+    String getFileUUIDByFileName(String savedFileName);
+
+    @Query("SELECT f FROM FileUpload f WHERE f.uuid = :fileUUID")
+    Optional<FileUpload> getFileUploadByUUID(String fileUUID);
 }

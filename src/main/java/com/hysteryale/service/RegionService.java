@@ -36,4 +36,12 @@ public class RegionService {
         return regionRepository.getRegionByShortName(shortName);
     }
 
+    public Region getRegionInListRegionByShortName(List<Region> regions, String regionShortName) {
+        for (Region region : regions) {
+            if (region.getRegionShortName().equals(regionShortName))
+                return region;
+        }
+        return null;
+    }
+
 }

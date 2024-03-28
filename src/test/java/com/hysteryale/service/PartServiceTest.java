@@ -1,7 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.exception.MissingColumnException;
-import com.hysteryale.exception.MissingSheetException;
+import com.hysteryale.exception.*;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.Part;
@@ -44,10 +43,10 @@ public class PartServiceTest {
     ClazzRepository clazzRepository;
 
     @Test
-    public void testImportPartFromFile() throws IOException, MissingColumnException, MissingSheetException {
+    public void testImportPartFromFile() throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException, InvalidFileNameException, IncorectFormatCellException {
         String fileName = "power bi Oct 23.xlsx";
         String filePath = "import_files/bi_download/power bi Oct 23.xlsx";
-        partService.importPartFromFile(fileName, filePath);
+        partService.importPartFromFile(fileName, filePath, "");
 
         Pattern pattern = Pattern.compile("\\w{5} \\w{2} (\\w{3}) (\\d{2}).xlsx");
         Matcher matcher = pattern.matcher(fileName);
@@ -87,7 +86,7 @@ public class PartServiceTest {
         return powerBiExportColumns;
     }
 
-    private Part mapPartValue(Row row, Map<String, Integer> powerBIExportColumns) {
+    private Part mapPartValue(Row row, Map<String, Integer> powerBIExportColumns) throws ExchangeRatesException {
         String strCurrency = row.getCell(powerBIExportColumns.get("Currency")).getStringCellValue().strip();
         Currency currency = currencyService.getCurrenciesByName(strCurrency);
 

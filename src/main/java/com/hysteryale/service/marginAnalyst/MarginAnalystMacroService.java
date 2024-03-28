@@ -1,5 +1,6 @@
 package com.hysteryale.service.marginAnalyst;
 
+import com.hysteryale.exception.ExchangeRatesException;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
@@ -61,7 +62,7 @@ public class MarginAnalystMacroService {
         log.info(MACRO_COLUMNS + "");
     }
 
-    private MarginAnalystMacro mapExcelDataToMarginAnalystMacro(Row row, String strCurrency, LocalDate monthYear, String plant) {
+    private MarginAnalystMacro mapExcelDataToMarginAnalystMacro(Row row, String strCurrency, LocalDate monthYear, String plant) throws ExchangeRatesException {
         MarginAnalystMacro marginAnalystMacro = new MarginAnalystMacro();
 
         double costRMB;
@@ -363,7 +364,7 @@ public class MarginAnalystMacroService {
     /**
      * Get Margin Analysis @ AOP Rate from Excel sheet: 'USD HYM Ruyi Staxx', 'SN AUD Template' and 'AUD HYM Ruyi Staxx'
      */
-    void saveMarginAnalysisAOPRate(Sheet sheet, String currency, LocalDate monthYear, String durationUnit) {
+    void saveMarginAnalysisAOPRate(Sheet sheet, String currency, LocalDate monthYear, String durationUnit) throws ExchangeRatesException {
 
         if(sheet.getSheetName().equals("USD HYM Ruyi Staxx")
                 || sheet.getSheetName().equals("SN AUD Template")

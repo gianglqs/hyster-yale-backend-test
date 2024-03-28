@@ -1,11 +1,15 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.InvalidFileFormatException;
 import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.model.importFailure.ImportFailure;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.BookingFPAService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
+import com.hysteryale.utils.LocaleUtils;
 import com.hysteryale.utils.ModelUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +23,7 @@ import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,6 +34,12 @@ public class BookingFPAController {
     private BookingFPAService bookingPFAService;
     @Resource
     FileUploadService fileUploadService;
+
+    @Resource
+    FileUploadRepository fileUploadRepository;
+
+    @Resource
+    LocaleUtils localeUtils;
 
     @PostMapping("/getBookingMarginTrialTest")
     public Map<String, Object> getDataFinancialShipment(@RequestBody FilterModel filters,
@@ -43,28 +54,23 @@ public class BookingFPAController {
 
     @PostMapping(path = "/importNewBookingFPA", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<ResponseObject> importNewDataShipment(MultipartFile file, Authentication authentication) throws Exception {
+    public ResponseEntity<ResponseObject> importNewDataShipment(MultipartFile file, @RequestHeader("locale") String locale, Authentication authentication) throws Exception {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.bookingFPA");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.BOOKING_FPA);
-        String pathFile = baseFolder + baseFolderUploaded + targetFolder + fileName;
-        if (FileUtils.isExcelFile(pathFile)) {
-            try {
-                InputStream inputStream = new FileInputStream(pathFile);
-                bookingPFAService.importBookingFPA(inputStream);
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.BOOKING_FPA);
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
+        String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
-                //       fileUploadService.handleUpdatedSuccessfully(fileName);
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import data successfully", null));
-
-            } catch (Exception e) {
-                //       fileUploadService.handleUpdatedFailure(fileName, e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject(e.getMessage(), null));
-            }
-        } else {
-            //     fileUploadService.handleUpdatedFailure(fileName, "Uploaded file is not an Excel file");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseObject("Uploaded file is not an Excel file", null));
+        if (!FileUtils.isExcelFile(pathFile)) {
+            throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
         }
+
+        InputStream inputStream = new FileInputStream(pathFile);
+        List<ImportFailure> importFailures = bookingPFAService.importBookingFPA(inputStream, fileUUID);
+        String message = localeUtils.getMessageImportComplete(importFailures, "Booking FP&A", locale);
+        fileUploadService.handleUpdatedSuccessfully(savedFileName);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(message, fileUUID));
     }
 }
