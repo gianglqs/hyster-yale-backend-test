@@ -1,5 +1,8 @@
 package com.hysteryale.service.marginAnalyst;
 
+import com.hysteryale.exception.IncorectFormatCellException;
+import com.hysteryale.exception.MissingColumnException;
+import com.hysteryale.exception.SeriesNotFoundException;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.model.upload.FileUpload;
@@ -76,7 +79,7 @@ public class IMMarginAnalystServiceTest {
     }
 
     @Test
-    public void testPopulateMarginFilters() throws IOException {
+    public void testPopulateMarginFilters() throws IOException, MissingColumnException, IncorectFormatCellException {
         FileUpload fileUpload = new FileUpload();
         fileUpload.setFileName("import_files/novo/SN_AUD.xlsx");
         fileUpload.setUuid("UUID populate Margin Filters");
@@ -105,7 +108,7 @@ public class IMMarginAnalystServiceTest {
                 typeMap.put((int) row.getCell(columns.get("#")).getNumericCellValue(), 1);
             }
         }
-        Map<String, Object> result = marginAnalystDataService.populateMarginFilters("import_files/novo/SN_AUD.xlsx");
+        Map<String, Object> result = marginAnalystDataService.populateMarginFilters("import_files/novo/SN_AUD.xlsx", "SN_AUD.xlsx");
         Assertions.assertNotNull(result.get("modelCodes"));
         Assertions.assertNotNull(result.get("series"));
         Assertions.assertNotNull(result.get("orderNumbers"));
@@ -143,7 +146,7 @@ public class IMMarginAnalystServiceTest {
     }
 
     @Test
-    public void testCalculateMarginAnalysisData() throws IOException {
+    public void testCalculateMarginAnalysisData() throws IOException, IncorectFormatCellException {
         FileUpload fileUpload = new FileUpload();
         fileUpload.setFileName("SN_AUD.xlsx");
         fileUpload.setUuid("UUID For Calculating Margin Data");
@@ -179,7 +182,7 @@ public class IMMarginAnalystServiceTest {
     }
 
     @Test
-    public void testGetMarginAnalysisData() throws IOException {
+    public void testGetMarginAnalysisData() throws IOException, IncorectFormatCellException {
         String modelCode = "H2.5UT";
         String strCurrency = "USD";
         String fileUUID = "UUID Get Margin Data";
@@ -222,7 +225,7 @@ public class IMMarginAnalystServiceTest {
     }
 
     @Test
-    public void testCalculateMarginAnalystSummary() throws IOException {
+    public void testCalculateMarginAnalystSummary() throws IOException, IncorectFormatCellException, SeriesNotFoundException {
         String modelCode = "H2.5UT";
         String strCurrency = "USD";
         String fileUUID = "UUID Get Margin Data 2";
