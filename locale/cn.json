@@ -242,7 +242,8 @@
       "not-find-Dealer-with-name": "未找到名为“%s”的经销商。",
       "not-find-AOPMargin-with-region-series-plant-year": "未找到区域“%s”、MestaSeries“%s”、工厂“%s”和年份“%s”的 AOPMargin。",
       "incorrect-format-at-cell": "单元格格式不正确 %s",
-      "not-find-region-with-name": "未找到名称为“%s”的区域."
+      "not-find-region-with-name": "未找到名称为“%s”的区域.",
+      "not-find-region-with-code": "未找到代码为“%s”的区域。"
     }
   },
   "yes": "是",
