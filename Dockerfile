@@ -35,6 +35,7 @@ RUN mkdir -p /opt/hysteryale/uploadFiles/booking_fpa
 
 RUN mkdir -p /opt/hysteryale/images/product/
 RUN mkdir -p /opt/hysteryale/images/part/
+RUN mkdir -p /opt/hysteryale/locale/
 # run
 #ENTRYPOINT ["java","-jar","target/hysteryale.war"]
 CMD java -Xmx12000m -Dspring.profiles.active=dev -jar target/hysteryale.war
