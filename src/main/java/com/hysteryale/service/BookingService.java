@@ -214,9 +214,9 @@ public class BookingService extends BasedService {
         String regionCode = row.getCell(ORDER_COLUMNS_NAME.get("REGION")).getStringCellValue();
         Region region = regionService.getRegionInListRegionByShortName(regions, regionCode);
         if (region == null) {
-            region = new Region();
-            region.setRegionShortName(regionCode);
-            newRegionSet.add(region);
+            importFailureService.addIntoListImportFailure(importFailures, orderNo,
+                    "not-find-region-with-code", regionCode, ImportFailureType.ERROR);
+            return null;
         }
 
         // country
@@ -224,13 +224,9 @@ public class BookingService extends BasedService {
         String ctryCode = ctryCodeCell.getStringCellValue();
         Country country = countryService.findByCountryCode(countries, ctryCode);
         if (country == null) {
-            // create new Country with ctry_code and region
-            country = new Country();
-            country.setCode(ctryCode);
-            country.setRegion(region);
-            newCountrySet.add(country);
             importFailureService.addIntoListImportFailure(importFailures, orderNo,
-                    "not-find-country-with-code", ctryCode, ImportFailureType.WARNING);
+                    "not-find-country-with-code", ctryCode, ImportFailureType.ERROR);
+            return null;
         }
         booking.setCountry(country);
 
