@@ -919,7 +919,6 @@ public class BookingService extends BasedService {
         Map<String, Object> result = new HashMap<>();
         //Get FilterData
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadDataFilterIntoMap(filterModel);
-        logInfo(filterMap.toString());
 
         List<Booking> bookingList = bookingRepository.selectAllForBookingOrder(
                 (String) filterMap.get("orderNoFilter"), (List<String>) filterMap.get("regionFilter"), (List<String>) filterMap.get("plantFilter"),
