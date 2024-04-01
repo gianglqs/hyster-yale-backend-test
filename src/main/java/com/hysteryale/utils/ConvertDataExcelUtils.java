@@ -10,7 +10,7 @@ public class ConvertDataExcelUtils {
             return result;
         if (cell.getCellType() == CellType.STRING)
             result=cell.getStringCellValue();
-        else
+        else if(cell.getCellType() == CellType.NUMERIC)
             result=String.valueOf(cell.getNumericCellValue());
 
         return result;
