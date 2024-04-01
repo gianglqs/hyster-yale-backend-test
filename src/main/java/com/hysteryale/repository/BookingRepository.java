@@ -446,12 +446,12 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 //            " GROUP BY b.series, b.product.segment ")
 //    long countAllForPriceVolSensitivityGroupBySeries(List<String> segments, List<String> metaSeries);
 
-    @Query(value = "select count(*) from (select p.segment from "+
+    @Query(value = "select count(*) from (select p.series from "+
             " booking b inner join product p on b.product = p.id "+
             " where p.segment is not null and trim(p.segment) <> '' "+
             " and ((:segments) is null or p.segment in (:segments))"+
             " and ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
-            "group by p.segment) as groupbySegment", nativeQuery = true)
+            "group by p.series) as groupbySegment", nativeQuery = true)
     long countAllForPriceVolSensitivityGroupBySeries(List<String> segments, List<String> metaSeries);
 
     @Query(value = "select count(*) from (select p.segment from "+
