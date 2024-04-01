@@ -4,8 +4,8 @@ import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.model.Dealer;
 import com.hysteryale.repository.DealerRepository;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
+import com.hysteryale.utils.ConvertDataExcelUtils;
+
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -36,7 +36,7 @@ public class DealerService {
         return input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
     }
 
-
+    //import and save dealer to dealer listing
     public void importNewDealerFileByFile(String filePath) throws IOException, MissingColumnException {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
@@ -49,61 +49,44 @@ public class DealerService {
             if (row.getRowNum() == 0) {
                 getDealerColumnName(row, DEALER_NAME);
                 CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(DEALER_NAME.keySet()), CheckRequiredColumnUtils.DEALEAR_REQUIRED_COLUMN,"");
-            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
+            } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
                 Dealer newDealer = mapExcelDataIntoDealerListingObject(row, DEALER_NAME);
-
-                if (newDealer == null)
-                    continue;
-
                 dealerList.add(newDealer);
-
             }
         }
         dealerRepository.saveAll(dealerList);
-
     }
 
-    public String convertDataFromExcelToString(Cell cell){
-        String result="";
-        if(cell==null)
-            result="";
-        if (cell.getCellType() == CellType.STRING)
-            result=cell.getStringCellValue();
-        else
-            result=String.valueOf(cell.getNumericCellValue());
-
-        return result;
-    }
-    Dealer mapExcelDataIntoDealerListingObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME) throws MissingColumnException {
+    // map excel data put into list dealer
+    Dealer mapExcelDataIntoDealerListingObject(Row row, HashMap<String, Integer> ORDER_COLUMNS_NAME)  {
         Dealer dealer = new Dealer();
-
         // set billToCost
-        String billtoCode = convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("BilltoCode")));
+        String billtoCode = ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("BilltoCode")));
         dealer.setBilltoCode(billtoCode);
 
-        String mkgGroup = convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("MkgGroup")));
+        String mkgGroup = ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("MkgGroup")));
         dealer.setBilltoCode(mkgGroup);
 
         // Series
-        String dealerDivison= convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("DealerDivison"))) ;
+        String dealerDivison= ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("DealerDivison"))) ;
         dealer.setDealerDivison(dealerDivison);
 
-        String dealerName = convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("DealerName"))) ;
+        String dealerName = ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("DealerName"))) ;
         dealer.setName(dealerName);
 
-        String teritoryManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("TerritoryManager"))) ;
+        String teritoryManager=ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("TerritoryManager"))) ;
         dealer.setTerritoryManager(teritoryManager);
 
-        String areaBusinesssDirector=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AreaBusinesssDirector")));
+        String areaBusinesssDirector=ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AreaBusinesssDirector")));
         dealer.setAreaBusinesssDirector(areaBusinesssDirector);
 
-        String bigTruckManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("BigTruckManager")));
+        String bigTruckManager=ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("BigTruckManager")));
         dealer.setBigTruckManager(bigTruckManager);
 
-        String aftermarketManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AftermarketManager")));
+        String aftermarketManager=ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AftermarketManager")));
         dealer.setAftermarketManager(aftermarketManager);
 
-        String aftermarketTechnicalServiceManager=convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AftermarketTechnicalServiceManager")));
+        String aftermarketTechnicalServiceManager=ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(ORDER_COLUMNS_NAME.get("AftermarketTechnicalServiceManager")));
         dealer.setAftermarketTechnicalServiceManager(aftermarketTechnicalServiceManager);
 
         return dealer;
@@ -118,5 +101,4 @@ public class DealerService {
             }
         }
     }
-
 }

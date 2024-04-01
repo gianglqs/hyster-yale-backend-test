@@ -1,6 +1,7 @@
 package com.hysteryale.utils;
 
 import com.hysteryale.model.filters.FilterModel;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -121,4 +122,5 @@ public class ConvertDataFilterUtil {
             return null;
         return filter;
     }
+
 }

@@ -12,10 +12,7 @@ import com.hysteryale.model.enums.ImportFailureType;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.*;
 import com.hysteryale.repository.importFailure.ImportFailureRepository;
-import com.hysteryale.utils.CheckRequiredColumnUtils;
-import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.LocaleUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -336,31 +333,26 @@ public class ImportService extends BasedService {
         if (fileList.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Forecast Dynamic Pricing Excel file");
 
-
         List<ForeCastValue> foreCastValues = new ArrayList<>();
 
         for (String fileName : fileList) {
             String pathFile = folderPath + "/" + fileName;
-
             InputStream is = new FileInputStream(pathFile);
             XSSFWorkbook workbook = new XSSFWorkbook(is);
-
-
             List<Integer> years = new ArrayList<>();
             HashMap<Integer, Integer> YEARS_COLUMN = new HashMap<>();
             HashMap<String, Integer> FORECAST_ORDER_COLUMN = new HashMap<>();
 
             for (Sheet sheet : workbook) {
                 Region region = getRegionBySheetName(sheet.getSheetName());
-                List<String> titleColumnFileCompetitor = List.of("Series /Segments", "Description", "Plant", "Brand", "Planform", "Qty", "DN", "M % ", "Book Rev", "Book Margin $");
                 for (Row row : sheet) {
                     if (row.getRowNum() == 0) {
                         getYearsInForeCast(YEARS_COLUMN, row, years);
 
                     } else if (row.getRowNum() == 1)
                         getOrderColumnsName(row, FORECAST_ORDER_COLUMN);
-                    else if (!convertDataFromExcelToString(row.getCell(0)).equals("") &&       // checking null
-                            convertDataFromExcelToString(row.getCell(0)) .length() == 3 &&    // checking cell is whether metaSeries or not
+                    else if (!ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(0)).isEmpty() &&       // checking null
+                            ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(0)) .length() == 3 &&    // checking cell is whether metaSeries or not
                             row.getRowNum() > 1) {
 
                         // get all quantity value from 2021 to 2027
@@ -374,25 +366,12 @@ public class ImportService extends BasedService {
                         }
                     }
                 }
-
-
             }
         }
         log.info("Number of ForeCastValue: " + foreCastValues.size());
         return foreCastValues;
     }
 
-    public String convertDataFromExcelToString(Cell cell){
-        String result="";
-        if(cell==null)
-            return result;
-        if (cell.getCellType() == CellType.STRING)
-            result=cell.getStringCellValue();
-        else
-            result=String.valueOf(cell.getNumericCellValue());
-
-        return result;
-    }
 
     private void getYearsInForeCast(HashMap<Integer, Integer> YEARS_COLUMN, Row row, List<Integer> years) {
         for (Cell cell : row) {
