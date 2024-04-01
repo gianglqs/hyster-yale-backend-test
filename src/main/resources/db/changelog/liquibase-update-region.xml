@@ -50,10 +50,17 @@
              WHERE id = 3 </sql>
     </changeSet>
 
-    <changeSet id="change-India-Sub-to-India-Sub-Continent" author="quocbao">
+
+    <changeSet id="change-India-to-ISC" author="songiang">
+        <sql>UPDATE region
+             SET region_name = 'ISC'
+             WHERE region_name = 'India'</sql>
+    </changeSet>
+
+    <changeSet id="change-ISC-to-India-Sub-Continent" author="quocbao">
         <sql>UPDATE region
              SET region_name = 'India Sub Continent'
-             WHERE region_name = 'India Sub'</sql>
+             WHERE region_name = 'ISC'</sql>
     </changeSet>
 
 

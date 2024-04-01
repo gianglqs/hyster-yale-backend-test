@@ -111,9 +111,10 @@ public class ImportService extends BasedService {
 
                 if (row.getCell(i).getCellType() == CellType.STRING) {
                     columnName = row.getCell(i).getStringCellValue().trim();
-                } else {
+                } else if(row.getCell(i).getCellType()==CellType.NUMERIC){
                     columnName = String.valueOf(row.getCell(i).getNumericCellValue());
-
+                }else{
+                    columnName="";
                 }
 
                 if (ORDER_COLUMNS_NAME.containsKey(columnName))
@@ -326,7 +327,7 @@ public class ImportService extends BasedService {
         return null;
     }
 
-    public List<ForeCastValue> loadForecastForCompetitorPricingFromFile() throws IOException {
+    public  List<ForeCastValue> loadForecastForCompetitorPricingFromFile() throws IOException {
 
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
@@ -358,8 +359,8 @@ public class ImportService extends BasedService {
 
                     } else if (row.getRowNum() == 1)
                         getOrderColumnsName(row, FORECAST_ORDER_COLUMN);
-                    else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() &&       // checking null
-                            row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().length() == 3 &&    // checking cell is whether metaSeries or not
+                    else if (!convertDataFromExcelToString(row.getCell(0)).equals("") &&       // checking null
+                            convertDataFromExcelToString(row.getCell(0)) .length() == 3 &&    // checking cell is whether metaSeries or not
                             row.getRowNum() > 1) {
 
                         // get all quantity value from 2021 to 2027
@@ -379,6 +380,18 @@ public class ImportService extends BasedService {
         }
         log.info("Number of ForeCastValue: " + foreCastValues.size());
         return foreCastValues;
+    }
+
+    public String convertDataFromExcelToString(Cell cell){
+        String result="";
+        if(cell==null)
+            return result;
+        if (cell.getCellType() == CellType.STRING)
+            result=cell.getStringCellValue();
+        else
+            result=String.valueOf(cell.getNumericCellValue());
+
+        return result;
     }
 
     private void getYearsInForeCast(HashMap<Integer, Integer> YEARS_COLUMN, Row row, List<Integer> years) {
