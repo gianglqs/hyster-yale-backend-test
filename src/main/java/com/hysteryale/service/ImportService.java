@@ -565,7 +565,7 @@ public class ImportService extends BasedService {
 
             InputStream is = new FileInputStream(pathFile);
 
-            importShipmentFileOneByOne(is);
+            importShipmentFileOneByOne(is,"");
 
             updateStateImportFile(pathFile);
         }

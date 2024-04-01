@@ -48,7 +48,7 @@ public class DealerService {
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {
                 getDealerColumnName(row, DEALER_NAME);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(DEALER_NAME.keySet()), CheckRequiredColumnUtils.DEALEAR_REQUIRED_COLUMN);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(DEALER_NAME.keySet()), CheckRequiredColumnUtils.DEALEAR_REQUIRED_COLUMN,"");
             } else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() && row.getRowNum() > 0) {
                 Dealer newDealer = mapExcelDataIntoDealerListingObject(row, DEALER_NAME);
 

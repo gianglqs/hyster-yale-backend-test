@@ -50,17 +50,26 @@
              WHERE id = 3 </sql>
     </changeSet>
 
-    <changeSet id="change-India-to-ISC" author="songiang">
+    <changeSet id="change-India-Sub-to-India-Sub-Continent" author="quocbao">
         <sql>UPDATE region
-             SET region_name = 'ISC'
-             WHERE region_name = 'India'</sql>
+             SET region_name = 'India Sub Continent'
+             WHERE region_name = 'India Sub'</sql>
     </changeSet>
+
+
 
     <changeSet id="addColumn-country-in-booking" author="songiang">
         <addColumn tableName="booking">
             <column type="INT" name="country"/>
         </addColumn>
     </changeSet>
+    <changeSet id="insert-region" author="quocbao">
+        <sql>
+            INSERT INTO region(id, region_name, region_short_name)
+            VALUES(5, 'China', 'C')
+        </sql>
+    </changeSet>
+
 
     <changeSet id="insert-country" author="songiang">
         <sql>
@@ -69,6 +78,23 @@
                    (345, 'Guam', 2, 'GU')
         </sql>
     </changeSet>
+
+    <changeSet id="update-country" author="quocbao">
+        <sql>
+            UPDATE country
+            SET region_id=4
+            WHERE id =341
+        </sql>
+    </changeSet>
+
+    <changeSet id="update-country-1" author="quocbao">
+        <sql>
+            UPDATE country
+            SET region_id=4
+            WHERE id =343
+        </sql>
+    </changeSet>
+
 
     <changeSet id="update-data-country-in-booking" author="songiang">
         <sql>
