@@ -123,38 +123,4 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
         return result;
     }
 
-    public static void main(String[] args) {
-        double revenue = 2106000;
-        long volume = 89;
-        double COGS = 1814000;
-        double margin = revenue - COGS;
-        double marginPercent = margin / revenue;
-
-        double ASP = revenue / volume;
-        double ACP = COGS / volume;
-        double AvSM = ASP - ACP;
-
-        // discountPercent
-        double discountPercent = 0.01;
-        boolean withMarginVolumeRecovery = false;
-
-        double newDN = ASP * (1 - discountPercent);
-        double marginErosion = Math.abs((newDN - ASP) * volume);
-        double revisedMargin = newDN - ACP;
-        double revisedMarginPercent = revisedMargin / newDN;
-        int unitVolumeOffset = 0;
-
-        if (withMarginVolumeRecovery)
-            unitVolumeOffset = (int) Math.ceil(marginErosion / AvSM);
-
-        double incrementalRevenueRecovery = unitVolumeOffset * newDN;
-
-        long volumeAfterOffset = unitVolumeOffset + volume;
-        double revenueAfterOffset = volume * newDN;
-        if (withMarginVolumeRecovery)
-            revenueAfterOffset = incrementalRevenueRecovery + revenue;
-        double COGSAfterOffset = volumeAfterOffset * ACP;
-        double marginAfterOffset = revenueAfterOffset - COGSAfterOffset;
-        double marginPercentAfterOffset = marginAfterOffset / revenueAfterOffset;
-    }
 }
