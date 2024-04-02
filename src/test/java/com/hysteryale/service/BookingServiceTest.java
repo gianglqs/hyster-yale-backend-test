@@ -58,7 +58,8 @@ public class BookingServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                "");
+                "",
+                null);
     }
     @BeforeEach
     public void setUp(){

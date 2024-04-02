@@ -62,7 +62,8 @@ public class ShipmentServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                "");
+                "",
+                null);
     }
 
     private void assertTotalValue(Shipment totalResult, long totalQuantity, double totalDealerNet,
