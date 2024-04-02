@@ -152,4 +152,22 @@ public class Booking extends BaseModel{
         this.marginAfterSurcharge = marginAfterSurcharge;
     }
 
+    public Booking(String segment, String series, double totalCost, double dealerNetAfterSurcharge, long quantity){
+        Product product = new Product();
+        product.setSegment(segment);
+        this.series = series;
+        this.product = product;
+        this.totalCost = totalCost;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
+        this.quantity = quantity;
+    }
+
+    public Booking(String segment, double totalCost, double dealerNetAfterSurcharge, long quantity){
+        Product product = new Product();
+        product.setSegment(segment);
+        this.product = product;
+        this.totalCost = totalCost;
+        this.dealerNetAfterSurcharge = dealerNetAfterSurcharge;
+        this.quantity = quantity;
+    }
 }

@@ -74,7 +74,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             "   (:comparator = '=' AND c.marginPercentageAfterSurcharge = :marginPercentageAfterSurCharge))" +
             " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
             " AND (cast(:fromDate as date) IS NULL OR c.date >= (:fromDate))" +
-            " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))"+
+            " AND (cast(:toDate as date) IS NULL OR c.date <= (:toDate))" +
             " AND c.currency IS NOT NULL "
     )
     List<Booking> getSumAllOrderForOutlier(
@@ -425,4 +425,40 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query("SELECT b FROM Booking b WHERE b.orderNo IN (:setOrderNo)")
     List<Booking> getListBookingByListOrderNo(Set<String> setOrderNo);
+
+    @Query("SELECT new Booking(b.product.segment, b.series, SUM(b.totalCost), SUM(b.dealerNetAfterSurcharge), SUM(b.quantity)) FROM Booking b " +
+            " WHERE b.product.segment IS NOT NULL AND b.product.segment <> '' AND " +
+            " ((:segments) IS NULL OR b.product.segment in (:segments)) " +
+            " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
+            " GROUP BY b.series, b.product.segment ")
+    List<Booking> getBookingForPriceVolumeSensitivityGroupBySeries(List<String> segments, List<String> metaSeries);
+
+    @Query("SELECT new Booking(b.product.segment, SUM(b.totalCost), SUM(b.dealerNetAfterSurcharge), SUM(b.quantity)) FROM Booking b " +
+            " WHERE b.product.segment IS NOT NULL AND b.product.segment <> '' AND " +
+            " ((:segments) IS NULL OR b.product.segment in (:segments)) " +
+            " GROUP BY b.product.segment ")
+    List<Booking> getBookingForPriceVolumeSensitivityGroupBySegment(List<String> segments);
+
+//    @Query("SELECT COUNT(b) FROM Booking b " +
+//            " WHERE b.product.segment IS NOT NULL AND b.product.segment <> '' AND " +
+//            " ((:segments) IS NULL OR b.product.segment in (:segments)) " +
+//            " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
+//            " GROUP BY b.series, b.product.segment ")
+//    long countAllForPriceVolSensitivityGroupBySeries(List<String> segments, List<String> metaSeries);
+
+    @Query(value = "select count(*) from (select p.series from "+
+            " booking b inner join product p on b.product = p.id "+
+            " where p.segment is not null and trim(p.segment) <> '' "+
+            " and ((:segments) is null or p.segment in (:segments))"+
+            " and ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
+            "group by p.series) as groupbySegment", nativeQuery = true)
+    long countAllForPriceVolSensitivityGroupBySeries(List<String> segments, List<String> metaSeries);
+
+    @Query(value = "select count(*) from (select p.segment from "+
+            " booking b inner join product p on b.product = p.id "+
+            " where p.segment is not null and trim(p.segment) <> '' "+
+            " and ((:segments) is null or p.segment in (:segments))"+
+            "group by p.segment) as groupbySegment", nativeQuery = true)
+    long countAllForPriceVolSensitivityGroupBySegment(List<String> segments);
+
 }
