@@ -167,6 +167,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             " AND ((:models) IS NULL OR c.product.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
+            " AND ((:dealerId) IS NULL OR c.dealer.id = (:dealerId))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
             "   (:AOPMarginPercentage = 'Above AOP Margin %' AND c.AOPMargin.marginSTD < c.marginPercentageAfterSurcharge) OR" +
             "   (:AOPMarginPercentage = 'Below AOP Margin %' AND c.AOPMargin.marginSTD >= c.marginPercentageAfterSurcharge))" +
@@ -194,7 +195,8 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
             @Param("fromDate") LocalDate fromDate,
             @Param("toDate") LocalDate toData,
-            @Param("pageable") Pageable pageable
+            @Param("pageable") Pageable pageable,
+            @Param("dealerId") Integer dealerId
     );
 
     @Query("SELECT b from Booking b where b.orderNo IN :listOrderNo")
@@ -345,6 +347,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             " AND ((:models) IS NULL OR c.product.modelCode IN (:models))" +
             " AND ((:segments) IS NULL OR c.product.segment IN (:segments))" +
             " AND ((:dealerName) IS NULL OR c.dealer.name IN (:dealerName))" +
+            " AND ((:dealerId) IS NULL OR c.dealer.id = (:dealerId))" +
             " AND ((:AOPMarginPercentage) IS NULL OR " +
             "   (:AOPMarginPercentage = 'Above AOP Margin %' AND c.AOPMargin.marginSTD < c.marginPercentageAfterSurcharge) OR" +
             "   (:AOPMarginPercentage = 'Below AOP Margin %' AND c.AOPMargin.marginSTD >= c.marginPercentageAfterSurcharge))" +
@@ -371,7 +374,8 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             @Param("comparator") String comparator,
             @Param("marginPercentageAfterSurCharge") Double marginPercentageAfterSurCharge,
             @Param("fromDate") LocalDate fromDate,
-            @Param("toDate") LocalDate toDate);
+            @Param("toDate") LocalDate toDate,
+            @Param("dealerId") Integer dealerId);
 
     @Query("SELECT COALESCE((sum(c.marginAfterSurcharge) / NULLIF( sum(c.dealerNetAfterSurcharge),0)),0) FROM Booking c WHERE " +
             "(:listOrderNo) IS Null OR c.orderNo IN (:listOrderNo) ")
