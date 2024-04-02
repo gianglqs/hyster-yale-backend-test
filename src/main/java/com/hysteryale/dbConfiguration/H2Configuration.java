@@ -59,4 +59,6 @@ public class H2Configuration {
                 h2EntityManager().getObject());
         return transactionManager;
     }
+
+
 }

@@ -1,511 +1,734 @@
 'model_code','brand','clazz_id','family','series','plant','segment','trucktype','description','image','id','created_at','created_by','latest_modified_at','latest_modified_by'
-MS15UX,Yale,3,'1-2 Ton MH Strad Stk',A7S3,Ruyi,C3 - Low Intensity,Warehouse,'','',7138,,,,
-W40ZA,Hyster,3,'1-2 Ton MH Strad Stk',C453,Greenville,C3 - Standard and Premium,Warehouse,'','',7106,,,,
-P1.5UT,Hyster,3,'1-2 Ton MH LL Wlk CP',A3D1,Ruyi,C3 - Low Intensity,Warehouse,'','',7242,,,,
-GP155VX,Yale,6,'6-8 Ton ICE Pneu',H878,Berea,C5 4-9T - Standard and Premium,Counterbalance,'','',7017,,,,
-MCW040-E,Yale,3,'1-2 Ton MH CB Stack',D819,Greenville,C3 - Standard and Premium,Warehouse,'','',7204,,,,
-MRW030-E,Yale,3,'1-2 Ton MH Reach Stk',D821,Greenville,C3 - Standard and Premium,Warehouse,'','',7260,,,,
-W80Z,Hyster,3,'4 Ton MH LL Walkie',B234,Greenville,C3 - Standard and Premium,Warehouse,'','',7136,,,,
-ERP040VT,Yale,2,'1-2 Ton 3 Wheel FWD',G807,Craigavon,C1 1-3.5T - Standard and Premium,Warehouse,'','',7098,,,,
-GC120VX,Yale,4,'3.5-5.5 Ton ICE Cush',G818,Berea,C4 4-9T - Standard and Premium,Counterbalance,'','',7008,,,,
-MPC15,Yale,3,'1-2 Ton MH LL Wlk CP',A3D4,Staxx,C3 - Low Intensity,Warehouse,'','',7271,,,,
-W40ZC,Hyster,3,'1-2 Ton MH CB Stack',C454,Greenville,C3 - Standard and Premium,Warehouse,'','',7130,,,,
-T6.0UT,Hyster,3,MH Tractor,A3C7,Ruyi,C3 - Low Intensity,Warehouse,'','',6959,,,,
-MR14E,Yale,2,NA  Small Reach,A942,Masate,C2 - Standard and Premium,Warehouse,'','',7021,,,,
-J40XNT,Hyster,2,'1-2 Ton 3 Wheel FWD',K160,Craigavon,C1 1-3.5T - Standard and Premium,Warehouse,'','',7009,,,,
-E80XN,Hyster,1,'3.2-5.5 Ton Elec 4Wh',A099,Greenville,C1 4-9T - Standard and Premium,Counterbalance,'','',7241,,,,
-T5ZAC,Hyster,3,MH Tractor,D476,Ramos,C3 - Standard and Premium,Warehouse,'','',7001,,,,
-T3.0UTS,Hyster,3,MH Tractor,A3C8,Ruyi,C3 - Low Intensity,Warehouse,'','',7046,,,,
-GP190VX,Yale,6,'8-9 Ton ICE Pneu',D909,Berea,Big Forklift Trucks 10-16T,Big Trucks,'','',7233,,,,
-J4.0XN,Hyster,3,'3.5-5.5 Ton Elect DBB',A970,Craigavon,C1 4-9T - Standard and Premium,Counterbalance,'','',7213,,,,
-ERC080VH,Yale,1,'3.2-5.5 Ton Elec 4Wh',A938,Greenville,C1 4-9T - Standard and Premium,Counterbalance,'','',7179,,,,
-T3.0UT,Hyster,3,MH Tractor,A3C9,Ruyi,C3 - Low Intensity,Warehouse,'','',7102,,,,
-GTP2XB,Yale,7,'',D871,'','','','','',7089,,,,
-H7XD-EC4,Hyster,5,'',R007,Nijmegen,'','','','',6981,,,,
-GDP8F9,Yale,5,'',K876,Nijmegen,'','','','',6903,,,,
-GDP10F,Yale,5,'',J876,Nijmegen,'','','','',6904,,,,
-FB35PYE,Yale,1,'',A901,SN,'','','','',6905,,,,
-MS14X,Yale,3,'',D847,Masate,'','','','',6906,,,,
-H4.5FT6,Hyster,6,'',U005,Craigavon,'','','','',6907,,,,
-RS46-41XD/67,Hyster,5,'',F222,Nijmegen,'','','','',6908,,,,
-J2.0GXS,Hyster,1,'',C225,SN,'','','','',6909,,,,
-GP40VX5,Yale,6,'',K813,Craigavon,'','','','',6912,,,,
-ESC030AD,Yale,1,'',C883,Greenville,'','','','',6913,,,,
-H10XD6,Hyster,5,'',P007,Nijmegen,'','','','',6914,,,,
-H11XD-ECD8,Hyster,5,'',F214,Nijmegen,'','','','',6916,,,,
-H9XDL6,Hyster,5,'',R007,Nijmegen,'','','','',6917,,,,
-GDP10D,Yale,5,'',K876,Nijmegen,'','','','',6919,,,,
-GP40UX,Yale,6,'',A7S6,Maximal,'','','','',6920,,,,
-J4.5XN,Hyster,3,'',A970,Craigavon,'','','','',6921,,,,
-J1.8UTT,Hyster,1,'',A3C5,Maximal,'','','','',6922,,,,
-H2.0FTS,Hyster,6,'',G001,Craigavon,'','','','',6923,,,,
-H170FT,Hyster,6,'',D299,Berea,'','','','',6924,,,,
-H4.5UT,Hyster,6,'',A3C6,Maximal,'','','','',6925,,,,
-GP40VX6,Yale,6,'',K813,Craigavon,'','','','',6926,,,,
-J2.5XN,Hyster,2,'',A276,Craigavon,'','','','',6927,,,,
-H44XDS12,Hyster,5,'',D917,Nijmegen,'','','','',6928,,,,
-ERP30VLL,Yale,2,'',A976,Craigavon,'','','','',6929,,,,
-J80XNS,Hyster,1,'',A250,Craigavon,'','','','',6930,,,,
-H11XD-ECD9,Hyster,5,'',F214,Nijmegen,'','','','',6931,,,,
-ERC060VG,Yale,1,'',A968,Greenville,'','','','',6932,,,,
-GP2.5N,Yale,6,'',E875,Craigavon,'','','','',6933,,,,
-H25XD12,Hyster,5,'',J008,Nijmegen,'','','','',6934,,,,
-P2.0S,Hyster,3,'',A3D9,Maximal,'','','','',6935,,,,
-GP70UX6,Yale,6,'',A3D0,Maximal,'','','','',6936,,,,
-MS12XI,Yale,3,'',D847,Masate,'','','','',6938,,,,
-H16XDS9,Hyster,5,'',R007,Nijmegen,'','','','',6939,,,,
-K1.0H,Hyster,2,'',B460,Masate,'','','','',6940,,,,
-MR25,Yale,2,'',D849,Masate,'','','','',6941,,,,
-H10XD6,Hyster,5,'',R007,Nijmegen,'','','','',6942,,,,
-F1.8UT4,Hyster,6,'',A3B8,Maximal,'','','','',6943,,,,
-ERC120VH,Yale,1,'',A938,Greenville,'','','','',6944,,,,
-GDP90F,Yale,5,'',K876,Nijmegen,'','','','',6945,,,,
-KDP18UX,Yale,6,'',A7S0,Maximal,'','','','',6946,,,,
-F2.5UT4,Hyster,6,'',A3B8,Maximal,'','','','',6947,,,,
-J3.5GXS,Hyster,1,'',C225,SN,'','','','',6948,,,,
-ME60XN,Hyster,1,'',A268,Greenville,'','','','',6949,,,,
-MYMR16,Yale,,'',A7R4,unknown,'','','','',6950,,,,
-GP2.5N6,Yale,6,'',E875,Craigavon,'','','','',6951,,,,
-GP20SVX,Yale,6,'',D810,Craigavon,'','','','',6952,,,,
-ERP40VM,Yale,3,'',A985,Craigavon,'','','','',6953,,,,
-MPW080-E,Yale,3,'',B891,Greenville,'','','','',6954,,,,
-GLP15MX,Yale,6,'',E812,SN,'','','','',6955,,,,
-C1.5S,Hyster,2,'',B464,Masate,'','','','',6956,,,,
-E100XNS,Hyster,1,'',A099,Greenville,'','','','',6957,,,,
-G14DPE,Yale,5,'',K876,Nijmegen,'','','','',6958,,,,
-N40ZR3,Hyster,2,'',E264,Greenville,'','','','',6960,,,,
-S120FTPRS,Hyster,4,'',J004,Berea,'','','','',6961,,,,
-MR14,Yale,2,'',D849,Masate,'','','','',6962,,,,
-MO20P,Yale,2,'',E857,Masate,'','','','',6963,,,,
-RS46-41XD/75S,Hyster,5,'',F222,Nijmegen,'','','','',6964,,,,
-H190FT,Hyster,6,'',D299,Berea,'','','','',6965,,,,
-GDP12F,Yale,5,'',J876,Nijmegen,'','','','',6966,,,,
-GDP13E,Yale,5,'',K876,Nijmegen,'','','','',6967,,,,
-R1.6N,Hyster,2,'',D435,Masate,'','','','',6968,,,,
-H8XD-EC7,Hyster,5,'',F214,Nijmegen,'','','','',6969,,,,
-GTP25B,Yale,7,'',D871,'','','','','',6970,,,,
-J35XNT,Hyster,2,'',K160,Craigavon,'','','','',6971,,,,
-H135FT,Hyster,6,'',P006,Berea,'','','','',6972,,,,
-YGDP16,Yale,5,'',B674,Nijmegen,'','','','',6973,,,,
-ESC040AD,Yale,1,'',C883,Greenville,'','','','',6974,,,,
-GDP35MX,Yale,6,'',D871,SN,'','','','',6975,,,,
-MS12X,Yale,3,'',D847,Masate,'','','','',6976,,,,
-S1.4S,Hyster,3,'',D442,Masate,'','','','',6977,,,,
-H3.5XT,Hyster,6,'',D466,SN,'','','','',6978,,,,
-H16XD6,Hyster,5,'',N019,Nijmegen,'','','','',6979,,,,
-H1.8FT,Hyster,6,'',G001,Craigavon,'','','','',6980,,,,
-MSL15XUX,Yale,3,'1-2 Ton MH Strad Stk',A7R7,Ruyi,C3 - Low Intensity,Warehouse,'','',6895,,,,
-ERP25VL,Yale,2,'',A976,Craigavon,'','','','',6982,,,,
-FBR15SZ,Yale,2,'',C900,SN,'','','','',6983,,,,
-H30XD9,Hyster,5,'',J008,Nijmegen,'','','','',6984,,,,
-H16XDS12,Hyster,5,'',R007,Nijmegen,'','','','',6985,,,,
-MS70FT,Hyster,4,'',H187,Berea,'','','','',6986,,,,
-KDP35UX4,Yale,6,'',A7R8,Maximal,'','','','',6987,,,,
-H8XD-EC6,Hyster,5,'',F214,Nijmegen,'','','','',6988,,,,
-H36XDS12,Hyster,5,'',D917,Nijmegen,'','','','',6989,,,,
-H12XD12,Hyster,5,'',R007,Nijmegen,'','','','',6990,,,,
-H9XM-EC8,Hyster,5,'',A3C0,Maximal,'','','','',6991,,,,
-H4.5FTS5,Hyster,6,'',U005,Craigavon,'','','','',6992,,,,
-GP30UX,Yale,6,'',A7S1,Maximal,'','','','',6993,,,,
-ERC070VG,Yale,1,'',A968,Greenville,'','','','',6994,,,,
-FBR18WZ,Yale,2,'',C900,SN,'','','','',6995,,,,
-MR16,Yale,2,'',D849,Masate,'','','','',6996,,,,
-H2XTBD,Hyster,7,'',D466,'','','','','',6997,,,,
-GDP10D,Yale,5,'',J876,Nijmegen,'','','','',6998,,,,
-MO12C (SPED),Yale,2,'',E857,Masate,'','','','',6999,,,,
-P3.0S,Hyster,3,'',A3D9,Maximal,'','','','',7000,,,,
-H9XD6,Hyster,5,'',R007,Nijmegen,'','','','',7002,,,,
-H16XD2,Hyster,5,'',C238,Nijmegen,'','','','',7003,,,,
-R30XMS3,Hyster,2,'',E174,Greenville,'','','','',7004,,,,
-ERP70S,Yale,1,'',A410,Craigavon,'','','','',7005,,,,
-W45ZHD2,Hyster,3,'',B419,Ramos,'','','','',7006,,,,
-H2.5A,Hyster,6,'',R177,Craigavon,'','','','',7007,,,,
-ERP30VL,Yale,3,'',A976,Craigavon,'','','','',7010,,,,
-H6.0UT6,Hyster,6,'',A3D0,Maximal,'','','','',7011,,,,
-H20XDS9,Hyster,5,'',D236,Nijmegen,'','','','',7012,,,,
-N45ZR3,Hyster,2,'',E264,Greenville,'','','','',7013,,,,
-G130DP,Yale,5,'',K876,Nijmegen,'','','','',7014,,,,
-H10XD-ECD8,Hyster,5,'',F214,Nijmegen,'','','','',7015,,,,
-P3.0S,Hyster,3,'',E439,Masate,'','','','',7016,,,,
-RS 45-31 CH,Hyster,5,'',A921,Maximal,'','','','',7018,,,,
-GC060V,Yale,4,'',C910,Berea,'','','','',7019,,,,
-ERP25UX,Yale,1,'',A7S4,Maximal,'','','','',7020,,,,
-S12SIL,Hyster,3,'',D442,Masate,'','','','',7022,,,,
-S100FTBCS,Hyster,4,'',J004,Berea,'','','','',7023,,,,
-J2.0UT,Hyster,1,'',A3C4,Maximal,'','','','',7024,,,,
-NR035EC,Yale,2,'',E861,Greenville,'','','','',7025,,,,
-P2.0UTS,Hyster,3,'',A3B1,Ruyi,'','','','',7026,,,,
-ERP18UXT,Yale,1,'',A7S5,Maximal,'','','','',7027,,,,
-N35ZDR3,Hyster,2,'',E264,Greenville,'','','','',7028,,,,
-J4.00EX,Hyster,1,'',A920,SN,'','','','',7029,,,,
-S55FTS,Hyster,4,'',H187,Berea,'','','','',7030,,,,
-GP175VX,Yale,6,'',D909,Berea,'','','','',7031,,,,
-H3.5UT,Hyster,6,'',A3C1,Maximal,'','','','',7032,,,,
-H155FT,Hyster,6,'',P006,Berea,'','','','',7033,,,,
-E20MW3,Yale,2,'',G807,Craigavon,'','','','',7034,,,,
-H13XD6,Hyster,5,'',R007,Nijmegen,'','','','',7035,,,,
-ERP7S9,Yale,1,'',A410,Craigavon,'','','','',7036,,,,
-GLP20SMX,Yale,6,'',E812,SN,'','','','',7037,,,,
-H9XD-ECD8,Hyster,5,'',F214,Nijmegen,'','','','',7038,,,,
-G12DPE,Yale,5,'',K876,Nijmegen,'','','','',7039,,,,
-MP20X,Yale,3,'',A3D9,Maximal,'','','','',7040,,,,
-GP 30MX,Yale,6,'',D871,SN,'','','','',7041,,,,
-FB35SRZ,Yale,1,'',C881,SN,'','','','',7042,,,,
-G90DPF,Yale,5,'',K876,Nijmegen,'','','','',7043,,,,
-OS030BF,Yale,2,'',E826,Greenville,'','','','',7044,,,,
-H5.0FT,Hyster,6,'',U005,Craigavon,'','','','',7045,,,,
-ERP80S,Yale,1,'',A410,Craigavon,'','','','',7047,,,,
-H1.8XT,Hyster,6,'',D475,SN,'','','','',7048,,,,
-H2.5A6,Hyster,6,'',R177,Craigavon,'','','','',7049,,,,
-S80FTBCS,Hyster,4,'',J004,Berea,'','','','',7050,,,,
-FB20SRZ,Yale,1,'',C881,SN,'','','','',7051,,,,
-J7XNS9,Hyster,1,'',A250,Craigavon,'','','','',7052,,,,
-E30HSD3,Hyster,1,'',C219,Greenville,'','','','',7053,,,,
-MS60FT,Hyster,4,'',H187,Berea,'','','','',7054,,,,
-H12XD6,Hyster,5,'',P007,Nijmegen,'','','','',7055,,,,
-MR16HD,Yale,2,'',D849,Masate,'','','','',7056,,,,
-GDP2CD,Yale,7,'',D871,'','','','','',7057,,,,
-H18XD9,Hyster,5,'',D236,Nijmegen,'','','','',7058,,,,
-H2.5XT,Hyster,6,'',D466,SN,'','','','',7059,,,,
-ERC100VHS,Yale,1,'',A938,Greenville,'','','','',7060,,,,
-GDP25MX,Yale,6,'',D871,SN,'','','','',7061,,,,
-GLP25L,Yale,7,'',D871,'','','','','',7062,,,,
-GD30CD,Yale,7,'',D871,'','','','','',7063,,,,
-H5.0UT6,Hyster,6,'',A3D0,Maximal,'','','','',7064,,,,
-N30ZDR3,Hyster,2,'',E264,Greenville,'','','','',7065,,,,
-C1.5L,Hyster,2,'',B464,Masate,'','','','',7066,,,,
-GC070V,Yale,4,'',C910,Berea,'','','','',7067,,,,
-H18XD7,Hyster,5,'',C238,Nijmegen,'','','','',7068,,,,
-H4.0FT6,Hyster,6,'',U005,Craigavon,'','','','',7069,,,,
-GDP25A,Yale,7,'',D871,'','','','','',7070,,,,
-H8XD6,Hyster,5,'',R007,Nijmegen,'','','','',7071,,,,
-MS40FT,Hyster,4,'',H187,Berea,'','','','',7072,,,,
-W30ZC,Hyster,3,'',C454,Greenville,'','','','',7073,,,,
-S120FTS,Hyster,4,'',J004,Berea,'','','','',7074,,,,
-H20XTC,Hyster,7,'',D466,'','','','','',7075,,,,
-H6XDEC,Hyster,5,'',N019,Nijmegen,'','','','',7076,,,,
-J80XNL,Hyster,1,'',A250,Craigavon,'','','','',7077,,,,
-GP50UXS6,Yale,6,'',A7S6,Maximal,'','','','',7078,,,,
-ERP50VM6,Yale,4,'',A985,Craigavon,'','','','',7079,,,,
-G140DP,Yale,5,'',K876,Nijmegen,'','','','',7080,,,,
-GDP15MX,Yale,6,'',E812,SN,'','','','',7081,,,,
-GC120VXPRS,Yale,4,'',G818,Berea,'','','','',7082,,,,
-GDP10F,Yale,5,'',K876,Nijmegen,'','','','',7083,,,,
-FBR13SZ,Yale,2,'',C900,SN,'','','','',7084,,,,
-H10XD12,Hyster,5,'',R007,Nijmegen,'','','','',7085,,,,
-MO10L,Yale,2,'',E857,Masate,'','','','',7086,,,,
-F1.8UT,Hyster,6,'',A3B4,Maximal,'','','','',7087,,,,
-MR12E,Yale,2,'',A942,Masate,'','','','',7088,,,,
-H12XD6,Hyster,5,'',R007,Nijmegen,'','','','',7090,,,,
-F3.5UT,Hyster,6,'',A3B4,Maximal,'','','','',7091,,,,
-ERP35UX,Yale,1,'',A7S4,Maximal,'','','','',7092,,,,
-GTP30MX,Yale,6,'',D871,SN,'','','','',7093,,,,
-H7.0UT6,Hyster,6,'',A3D0,Maximal,'','','','',7094,,,,
-H5.0UTS6,Hyster,6,'',A3C6,Maximal,'','','','',7095,,,,
-GLP35MX,Yale,6,'',D871,SN,'','','','',7096,,,,
-MO10S,Yale,2,'',B865,Masate,'','','','',7097,,,,
-MP30X,Yale,3,'',A3D9,Maximal,'','','','',7099,,,,
-R30XM3,Hyster,2,'',E118,Greenville,'','','','',7100,,,,
-S1.5UTS,Hyster,3,'',A3B3,Ruyi,'','','','',7101,,,,
-MP15UX,Yale,3,'',A3D1,Ruyi,'','','','',7103,,,,
-MTC10,Yale,2,'',B868,Masate,'','','','',7104,,,,
-ERC045VG,Yale,1,'',A968,Greenville,'','','','',7105,,,,
-H28XD12,Hyster,5,'',J008,Nijmegen,'','','','',7107,,,,
-ERP030VT,Yale,2,'',G807,Craigavon,'','','','',7108,,,,
-P2.5S,Hyster,3,'',A3D9,Maximal,'','','','',7109,,,,
-E35HSD3,Hyster,1,'',C219,Greenville,'','','','',7110,,,,
-H18XD9,Hyster,5,'',C238,Nijmegen,'','','','',7111,,,,
-H9XD-EC7,Hyster,5,'',F214,Nijmegen,'','','','',7112,,,,
-H25XBT,Hyster,7,'',D466,'','','','','',7113,,,,
-GC080VXBCS,Yale,4,'',G818,Berea,'','','','',7114,,,,
-H10XD2,Hyster,5,'',P007,Nijmegen,'','','','',7115,,,,
-GTP20MX,Yale,6,'',D871,SN,'','','','',7116,,,,
-FBR15WZ,Yale,2,'',C900,SN,'','','','',7117,,,,
-H48XD12,Hyster,5,'',D917,Nijmegen,'','','','',7118,,,,
-J3.0XN,Hyster,3,'',A276,Craigavon,'','','','',7119,,,,
-J2.0UTT,Hyster,1,'',A3C5,Maximal,'','','','',7120,,,,
-C1.5M,Hyster,2,'',B464,Masate,'','','','',7121,,,,
-H2.0UT,Hyster,6,'',A3C1,Maximal,'','','','',7122,,,,
-K1.0M,Hyster,2,'',B460,Masate,'','','','',7123,,,,
-MS20X,Yale,3,'',D847,Masate,'','','','',7124,,,,
-GP50UX,Yale,6,'',A7S6,Maximal,'','','','',7125,,,,
-H9XD-EC8,Hyster,5,'',F214,Nijmegen,'','','','',7126,,,,
-S135FT,Hyster,4,'',H024,Berea,'','','','',7127,,,,
-YGDP16,Yale,5,'',K876,Nijmegen,'','','','',7128,,,,
-LO7.0T,Hyster,2,'',E444,Masate,'','','','',7129,,,,
-MS50FT,Hyster,4,'',H187,Berea,'','','','',7131,,,,
-S100FT,Hyster,4,'',J004,Berea,'','','','',7132,,,,
-GP35UX,Yale,6,'',A7S1,Maximal,'','','','',7133,,,,
-N35ZR3,Hyster,2,'',E264,Greenville,'','','','',7134,,,,
-H25XD9,Hyster,5,'',J008,Nijmegen,'','','','',7135,,,,
-KDP5.0UX,Yale,6,'',A7R9,Maximal,'','','','',7137,,,,
-S14SIL,Hyster,3,'',D442,Masate,'','','','',7139,,,,
-GP135VX,Yale,6,'',H878,Berea,'','','','',7140,,,,
-J30XNT,Hyster,2,'',K160,Craigavon,'','','','',7141,,,,
-KDP25UX4,Yale,6,'',A7R8,Maximal,'','','','',7142,,,,
-MCW030-E,Yale,3,'',D819,Greenville,'','','','',7143,,,,
-C1.3,Hyster,2,'',B463,Masate,'','','','',7144,,,,
-J3.0XNL,Hyster,2,'',A276,Craigavon,'','','','',7145,,,,
-MTC13,Yale,2,'',B868,Masate,'','','','',7146,,,,
-H20XMD,Hyster,5,'',P007,Nijmegen,'','','','',7147,,,,
-C1.3,Hyster,2,'',B464,Masate,'','','','',7148,,,,
-MH8XD6,Hyster,5,'',P007,Nijmegen,'','','','',7149,,,,
-MTC13,Yale,2,'',B869,Masate,'','','','',7150,,,,
-W25ZC,Hyster,3,'',C454,Greenville,'','','','',7151,,,,
-RS 45-31 CH,Hyster,5,'',A404,Maximal,'','','','',7152,,,,
-E60XNL,Hyster,1,'',A268,Greenville,'','','','',7153,,,,
-MPB045VH,Yale,3,'',B245,Ramos,'','','','',7154,,,,
-ERP20UXT,Yale,1,'',A7S5,Maximal,'','','','',7155,,,,
-MR10E,Yale,2,'',A942,Masate,'','','','',7156,,,,
-W20ZR,Hyster,3,'',C455,Greenville,'','','','',7157,,,,
-GP50VX,Yale,6,'',K813,Craigavon,'','','','',7158,,,,
-GC155VX,Yale,4,'',G879,Berea,'','','','',7159,,,,
-ERP90V,Yale,1,'',A410,Craigavon,'','','','',7160,,,,
-GC120SVX,Yale,4,'',G818,Berea,'','','','',7161,,,,
-GLP2BL,Yale,7,'',D871,'','','','','',7162,,,,
-H28XD-16CH,Hyster,5,'',J008,Nijmegen,'','','','',7163,,,,
-MS16XS,Yale,3,'',D847,Masate,'','','','',7164,,,,
-H1.5XT,Hyster,6,'',D475,SN,'','','','',7165,,,,
-J16XNL,Hyster,1,'',A935,Greenville,'','','','',7166,,,,
-H4.0UT,Hyster,6,'',A3C6,Maximal,'','','','',7167,,,,
-H175FT,Hyster,6,'',D299,Berea,'','','','',7168,,,,
-C1.0,Hyster,2,'',B463,Masate,'','','','',7169,,,,
-ME65XN,Hyster,1,'',A268,Greenville,'','','','',7170,,,,
-GLP30MX,Yale,6,'',D871,SN,'','','','',7171,,,,
-R2.0,Hyster,2,'',D435,Masate,'','','','',7172,,,,
-H14XD6,Hyster,5,'',R007,Nijmegen,'','','','',7173,,,,
-GP 25MX,Yale,6,'',D871,SN,'','','','',7174,,,,
-E120XN,Hyster,1,'',A099,Greenville,'','','','',7175,,,,
-MO20,Yale,2,'',E857,Masate,'','','','',7176,,,,
-GP2.0N,Yale,6,'',E875,Craigavon,'','','','',7177,,,,
-GDP3F9,Yale,5,'',K876,Nijmegen,'','','','',7178,,,,
-LO2.0,Hyster,2,'',E444,Masate,'','','','',7180,,,,
-R1.4E,Hyster,2,'',A432,Masate,'','','','',7181,,,,
-J3.5UT,Hyster,1,'',A3C4,Maximal,'','','','',7182,,,,
-MP25X,Yale,3,'',E843,Masate,'','','','',7183,,,,
-MO70T,Yale,2,'',E857,Masate,'','','','',7184,,,,
-H13XDS6,Hyster,5,'',R007,Nijmegen,'','','','',7185,,,,
-MT30XUX,Yale,3,'',A3C8,Ruyi,'','','','',7186,,,,
-H20XD9,Hyster,5,'',D236,Nijmegen,'','','','',7187,,,,
-H4.0FT5,Hyster,6,'',U005,Craigavon,'','','','',7188,,,,
-GC100VX,Yale,4,'',G818,Berea,'','','','',7189,,,,
-R1.50EX 2,Hyster,2,'',C915,SN,'','','','',7190,,,,
-H32XD-16CH,Hyster,5,'',J008,Nijmegen,'','','','',7191,,,,
-ERP45VM,Yale,3,'',A985,Craigavon,'','','','',7192,,,,
-J5.0XN6,Hyster,4,'',A970,Craigavon,'','','','',7193,,,,
-ESC035AD,Yale,1,'',C883,Greenville,'','','','',7194,,,,
-GTP35MX,Yale,6,'',D871,SN,'','','','',7195,,,,
-GP60UX6,Yale,6,'',A3D0,Maximal,'','','','',7196,,,,
-S16SSL,Hyster,3,'',D442,Masate,'','','','',7197,,,,
-S2.0,Hyster,3,'',D456,Masate,'','','','',7198,,,,
-GC040V,Yale,4,'',C910,Berea,'','','','',7199,,,,
-H10XDS6,Hyster,5,'',R007,Nijmegen,'','','','',7200,,,,
-MOMP16,Yale,3,'',A428,Masate,'','','','',7201,,,,
-H16XD9,Hyster,5,'',R007,Nijmegen,'','','','',7202,,,,
-E40HSD3,Hyster,1,'',C219,Greenville,'','','','',7203,,,,
-H2XTBT,Hyster,7,'',D466,'','','','','',7205,,,,
-ERP15UX,Yale,1,'',A7S4,Maximal,'','','','',7206,,,,
-MSW040-E,Yale,3,'',D820,Greenville,'','','','',7207,,,,
-MH9XD6,Hyster,5,'',P007,Nijmegen,'','','','',7208,,,,
-G18DPE,Yale,5,'',K876,Nijmegen,'','','','',7209,,,,
-J5.0XN,Hyster,3,'',A970,Craigavon,'','','','',7210,,,,
-R1.80EX W2,Hyster,2,'',C915,SN,'','','','',7211,,,,
-MO10,Yale,2,'',B865,Masate,'','','','',7212,,,,
-P2.5S,Hyster,3,'',E439,Masate,'','','','',7214,,,,
-R1.50EX W2,Hyster,2,'',C915,SN,'','','','',7215,,,,
-ERC065VG,Yale,1,'',A968,Greenville,'','','','',7216,,,,
-MR20HD,Yale,2,'',D849,Masate,'','','','',7217,,,,
-NDR035EC,Yale,2,'',E861,Greenville,'','','','',7218,,,,
-H10XD2,Hyster,5,'',N019,Nijmegen,'','','','',7219,,,,
-FB40PYE,Yale,1,'',A901,SN,'','','','',7220,,,,
-FB25RZ,Yale,1,'',C881,SN,'','','','',7221,,,,
-H9XD-ECD7,Hyster,5,'',F214,Nijmegen,'','','','',7222,,,,
-GDP2BD,Yale,7,'',D871,'','','','','',7223,,,,
-GP170SVX,Yale,6,'',H878,Berea,'','','','',7224,,,,
-GP25UX,Yale,6,'',A7S1,Maximal,'','','','',7225,,,,
-MRW020-E,Yale,3,'',D821,Greenville,'','','','',7226,,,,
-GDP20SMX,Yale,6,'',E812,SN,'','','','',7227,,,,
-R1.25EX 2,Hyster,2,'',C915,SN,'','','','',7228,,,,
-J1.6UTT,Hyster,1,'',A3C5,Maximal,'','','','',7229,,,,
-GDP18MX,Yale,6,'',E812,SN,'','','','',7230,,,,
-NR045EC,Yale,2,'',E861,Greenville,'','','','',7231,,,,
-ERP80V,Yale,1,'',A410,Craigavon,'','','','',7232,,,,
-GC050V,Yale,4,'',C910,Berea,'','','','',7234,,,,
-F3.5UT4,Hyster,6,'',A3B8,Maximal,'','','','',7235,,,,
-LO1.0F,Hyster,2,'',E444,Masate,'','','','',7236,,,,
-H155FTS,Hyster,6,'',P006,Berea,'','','','',7237,,,,
-H40XDS12,Hyster,5,'',D917,Nijmegen,'','','','',7238,,,,
-J2.5GX,Hyster,1,'',C225,SN,'','','','',7239,,,,
-GLP20MX,Yale,6,'',D871,SN,'','','','',7240,,,,
-J3.50EX,Hyster,1,'',A920,SN,'','','','',7243,,,,
-MS16XL,Yale,3,'',D847,Masate,'','','','',7244,,,,
-S155FT,Hyster,4,'',H024,Berea,'','','','',7245,,,,
-MTC15,Yale,2,'',B869,Masate,'','','','',7246,,,,
-LO5.0T,Hyster,2,'',E444,Masate,'','','','',7247,,,,
-H25XBL,Hyster,7,'',D466,'','','','','',7248,,,,
-S120FT,Hyster,4,'',J004,Berea,'','','','',7249,,,,
-GC100VXBCS,Yale,4,'',G818,Berea,'','','','',7250,,,,
-KDP25UX,Yale,6,'',A7S0,Maximal,'','','','',7251,,,,
-KDP18UX4,Yale,6,'',A7R8,Maximal,'','','','',7252,,,,
-H3.0XT,Hyster,6,'',D466,SN,'','','','',7253,,,,
-RSTIL4,Hyster,5,'',C289,India,'','','','',7254,,,,
-M12ILY,Yale,3,'',D852,Masate,'','','','',7255,,,,
-H5.0UT,Hyster,6,'',A3C6,Maximal,'','','','',7256,,,,
-LO2.5,Hyster,2,'',E444,Masate,'','','','',7257,,,,
-H2.0XTS,Hyster,6,'',D475,SN,'','','','',7258,,,,
-J1.8UT,Hyster,1,'',A3C4,Maximal,'','','','',7259,,,,
-GC135VX,Yale,4,'',G879,Berea,'','','','',7261,,,,
-GTP25MX,Yale,6,'',D871,SN,'','','','',7262,,,,
-S80FT,Hyster,4,'',J004,Berea,'','','','',7263,,,,
-H40XD-CH,Hyster,5,'',K117,Nijmegen,'','','','',7264,,,,
-H16XD12,Hyster,5,'',R007,Nijmegen,'','','','',7265,,,,
-GDP16E,Yale,5,'',K876,Nijmegen,'','','','',7266,,,,
-RSTILC,Hyster,5,'',A366,India,'','','','',7267,,,,
-J2.5UT,Hyster,1,'',A3C4,Maximal,'','','','',7268,,,,
-H44XD12,Hyster,5,'',D917,Nijmegen,'','','','',7269,,,,
-SL1.5UT,Hyster,3,'',A3B6,Ruyi,'','','','',7270,,,,
-RS 45-27 CH,Hyster,5,'',A921,Maximal,'','','','',7272,,,,
-H2.0XT,Hyster,6,'',D466,SN,'','','','',7273,,,,
-ERP20UX,Yale,1,'',A7S4,Maximal,'','','','',7274,,,,
-GP 35MX,Yale,6,'',D871,SN,'','','','',7275,,,,
-GDP14E,Yale,5,'',J877,Nijmegen,'','','','',7276,,,,
-H32XD12,Hyster,5,'',J008,Nijmegen,'','','','',7277,,,,
-MO50T,Yale,2,'',E857,Masate,'','','','',7278,,,,
-H48XDS12,Hyster,5,'',D917,Nijmegen,'','','','',7279,,,,
-MR16N,Yale,2,'',D849,Masate,'','','','',7280,,,,
-GDP30MX,Yale,6,'',D871,SN,'','','','',7281,,,,
-GD25CD,Yale,7,'',D871,'','','','','',7282,,,,
-J2.5XNL,Hyster,2,'',A276,Craigavon,'','','','',7283,,,,
-R2.5,Hyster,2,'',D435,Masate,'','','','',7284,,,,
-MT30UX,Yale,3,'',A3C9,Ruyi,'','','','',7285,,,,
-GDP90F,Yale,5,'',J876,Nijmegen,'','','','',7286,,,,
-GDP80F,Yale,5,'',K876,Nijmegen,'','','','',7287,,,,
-GC055S,Yale,4,'',C910,Berea,'','','','',7288,,,,
-S1.5UT,Hyster,3,'',A3C3,Ruyi,'','','','',7289,,,,
-GC080VX,Yale,4,'',G818,Berea,'','','','',7290,,,,
-ERP35VL,Yale,3,'',A976,Craigavon,'','','','',7291,,,,
-MTR007-F,Yale,3,'',C903,Ramos,'','','','',7292,,,,
-S1.6S,Hyster,3,'',D442,Masate,'','','','',7293,,,,
-H30XD12,Hyster,5,'',J008,Nijmegen,'','','','',7294,,,,
-GP18VX,Yale,6,'',D810,Craigavon,'','','','',7295,,,,
-H3.0UT,Hyster,6,'',A3C1,Maximal,'','','','',7296,,,,
-J2.2XN,Hyster,2,'',A276,Craigavon,'','','','',7297,,,,
-H14XD12,Hyster,5,'',R007,Nijmegen,'','','','',7298,,,,
-KDP35UX,Yale,6,'',A7S0,Maximal,'','','','',7299,,,,
-H25XTC,Hyster,7,'',D466,'','','','','',7300,,,,
-FB30RZ,Yale,1,'',C881,SN,'','','','',7301,,,,
-RS46-41XD/67S,Hyster,5,'',F222,Nijmegen,'','','','',7302,,,,
-MODP16,Hyster,3,'',A418,Masate,'','','','',7303,,,,
-H52XD-CH,Hyster,5,'',K117,Nijmegen,'','','','',7304,,,,
-P2.0UTE,Hyster,3,'',A3B5,Ruyi,'','','','',7305,,,,
-GDP13E,Yale,5,'',J877,Nijmegen,'','','','',7306,,,,
-RS46-33XD/62,Hyster,5,'',F222,Nijmegen,'','','','',7307,,,,
-NR040EC,Yale,2,'',E861,Greenville,'','','','',7308,,,,
-GP20UX,Yale,6,'',A7S1,Maximal,'','','','',7309,,,,
-J3.0GX,Hyster,1,'',C225,SN,'','','','',7310,,,,
-E100XN,Hyster,1,'',A099,Greenville,'','','','',7311,,,,
-MS20,Yale,3,'',D852,Masate,'','','','',7312,,,,
-HS12IL,Hyster,3,'',D456,Masate,'','','','',7313,,,,
-H16XD6,Hyster,5,'',R007,Nijmegen,'','','','',7314,,,,
-H40XD12,Hyster,5,'',D917,Nijmegen,'','','','',7315,,,,
-F2.5UT,Hyster,6,'',A3B4,Maximal,'','','','',7316,,,,
-ME45XN,Hyster,1,'',A268,Greenville,'','','','',7317,,,,
-NDR030EC,Yale,2,'',E861,Greenville,'','','','',7318,,,,
-SL1.5UTS,Hyster,3,'',A3B7,Ruyi,'','','','',7319,,,,
-GDP14E,Yale,5,'',K876,Nijmegen,'','','','',7321,,,,
-R1.0E,Hyster,2,'',A432,Masate,'','','','',7322,,,,
-J70XNS,Hyster,1,'',A250,Craigavon,'','','','',7323,,,,
-ERP30UX,Yale,1,'',A7S4,Maximal,'','','','',7324,,,,
-GD35CD,Yale,7,'',D871,'','','','','',7325,,,,
-J90XNL,Hyster,1,'',A250,Craigavon,'','','','',7326,,,,
-GDP20MX,Yale,6,'',D871,SN,'','','','',7327,,,,
-H5.5FT,Hyster,6,'',U005,Craigavon,'','','','',7328,,,,
-GLP18MX,Yale,6,'',E812,SN,'','','','',7329,,,,
-E16LWB,Yale,1,'',A955,Greenville,'','','','',7330,,,,
-R1.6HD,Hyster,2,'',D435,Masate,'','','','',7331,,,,
-H13XD6,Hyster,5,'',N019,Nijmegen,'','','','',7332,,,,
-J5.5XN6,Hyster,4,'',A970,Craigavon,'','','','',7333,,,,
-MS14XL,Yale,3,'',D847,Masate,'','','','',7334,,,,
-MP20X,Yale,3,'',E843,Masate,'','','','',7336,,,,
-H30XTC,Hyster,7,'',D466,'','','','','',7337,,,,
-GP45UX,Yale,6,'',A7S6,Maximal,'','','','',7338,,,,
-GDP16E,Yale,5,'',J877,Nijmegen,'','','','',7339,,,,
-MTR005-F,Yale,3,'',D902,Ramos,'','','','',7340,,,,
-H44XD-CH,Hyster,5,'',K117,Nijmegen,'','','','',7341,,,,
-H170FTS,Hyster,6,'',P006,Berea,'','','','',7342,,,,
-GP50UX6,Yale,6,'',A3D0,Maximal,'','','','',7343,,,,
-ERP18UX,Yale,1,'',A7S4,Maximal,'','','','',7344,,,,
-R1.4,Hyster,2,'',D435,Masate,'','','','',7345,,,,
-MCW025-E,Yale,3,'',D819,Greenville,'','','','',7346,,,,
-ERC100VH,Yale,1,'',A938,Greenville,'','','','',7347,,,,
-J20MWB,Hyster,2,'',K160,Craigavon,'','','','',7348,,,,
-H32XD9,Hyster,5,'',J008,Nijmegen,'','','','',7349,,,,
-GP45VX6,Yale,6,'',K813,Craigavon,'','','','',7352,,,,
-H2.5UT,Hyster,6,'',A3C1,Maximal,'','','','',7353,,,,
-MS16X,Yale,3,'',D847,Masate,'','','','',7354,,,,
-H14XDS6,Hyster,5,'',R007,Nijmegen,'','','','',7355,,,,
-MP20UX,Yale,3,'',A7R5,Ruyi,'','','','',7356,,,,
-H2.0A,Hyster,6,'',R177,Craigavon,'','','','',7358,,,,
-ERC060VGL,Yale,1,'',A968,Greenville,'','','','',7359,,,,
-GDP80F,Yale,5,'',J876,Nijmegen,'','','','',7360,,,,
-ERP55VM6,Yale,4,'',A985,Craigavon,'','','','',7361,,,,
-GP170VX,Yale,6,'',D909,Berea,'','','','',7362,,,,
-J3.5XN,Hyster,3,'',A276,Craigavon,'','','','',7363,,,,
-ERP25VLL,Yale,2,'',A976,Craigavon,'','','','',7364,,,,
-R1.80EX 2,Hyster,2,'',C915,SN,'','','','',7365,,,,
-R1.2E,Hyster,2,'',A432,Masate,'','','','',7366,,,,
-OS030EF,Yale,2,'',D801,Greenville,'','','','',7367,,,,
-H25XBD,Hyster,7,'',D466,'','','','','',7368,,,,
-H14XD6,Hyster,5,'',N019,Nijmegen,'','','','',7369,,,,
-H6XD-EC3,Hyster,5,'',R007,Nijmegen,'','','','',7370,,,,
-H18XD9,Hyster,5,'',R007,Nijmegen,'','','','',7371,,,,
-GP155SVX,Yale,6,'',H878,Berea,'','','','',7372,,,,
-GP45SVX5,Yale,6,'',K813,Craigavon,'','','','',7373,,,,
-RS46-36XD/62,Hyster,5,'',F222,Nijmegen,'','','','',7374,,,,
-H2XTBL,Hyster,7,'',D466,'','','','','',7375,,,,
-LO2.0S,Hyster,2,'',E444,Masate,'','','','',7376,,,,
-MO25,Yale,2,'',E857,Masate,'','','','',7377,,,,
-S16SIL,Hyster,3,'',D442,Masate,'','','','',7378,,,,
-G16DPE,Yale,5,'',K876,Nijmegen,'','','','',7379,,,,
-MT60UX,Yale,3,MH Tractor,A7S7,Ruyi,C3 - Low Intensity,Warehouse,'','',7357,,,,
-T7ZAC,Hyster,3,MH Tractor,C477,Ramos,C3 - Standard and Premium,Warehouse,'','',7351,,,,
-W30ZR,Hyster,3,'1-2 Ton MH Reach Stk',C455,Greenville,C3 - Standard and Premium,Warehouse,'','',7350,,,,
-PC1.5,Hyster,3,'1-2 Ton MH LL Wlk CP',A6W9,Staxx,C3 - Low Intensity,Warehouse,'','',7320,,,,
-MP20XUX,Yale,3,'1-2 Ton MH LL Wlk UT',A7R1,Ruyi,C3 - Low Intensity,Warehouse,'','',7335,,,,
-H50XD-CH,Hyster,5,,K117,Nijmegen,,,,,849,2024-03-05 17:30:40.079,admin@gmail.com,2024-03-05 17:30:40.079,admin@gmail.com
-H48XD-CH,Hyster,5,,K117,Nijmegen,,,,,850,2024-03-05 17:30:40.081,admin@gmail.com,2024-03-05 17:30:40.081,admin@gmail.com
-F5.0UT,Hyster,6,'3.5-5.5 Ton ICE P UT',A3B9,Maximal,C5 4-9T - Low Intensity,Counterbalance,'','',6915,,,,
-H9XM-EC7,Hyster,5,'16-25 Ton ICE Pneu CH',A3C0,Maximal,Port Equipment - Empty Container Handlers,Big Trucks,'','',6937,,,,
-MSL15WUX,Yale,3,'1-2 Ton MH Strad Stk',A7R6,Ruyi,C3 - Low Intensity,Warehouse,'','',6910,,,,
-P2.0S,Hyster,3,'2-3 Ton MH LL Rider',E439,Masate,C3 - Standard and Premium,Warehouse,'','',6918,,,,
-MS15XUX,Yale,3,'1-2 Ton MH Strad Stk',A7R3,Ruyi,C3 - Low Intensity,Warehouse,'','',6880,,,,
-GP55VX,Yale,6,'',K813,Craigavon,'','','','',6879,,,,
-H18XD6,Hyster,5,'',R007,Nijmegen,'','','','',6881,,,,
-J3.0UT,Hyster,1,'',A3C4,Maximal,'','','','',6882,,,,
-C1.3L,Hyster,2,'',B463,Masate,'','','','',6883,,,,
-H1.6FT,Hyster,6,'',G001,Craigavon,'','','','',6884,,,,
-GP16VX,Yale,6,'',D810,Craigavon,'','','','',6885,,,,
-RS46-41XD/62S,Hyster,5,'',F222,Nijmegen,'','','','',6886,,,,
-MP25X,Yale,3,'',A3D9,Maximal,'','','','',6887,,,,
-G16EF9,Yale,5,'',K876,Nijmegen,'','','','',6888,,,,
-RS 45-27 CH,Hyster,5,'',A404,Maximal,'','','','',6889,,,,
-H18XDS9,Hyster,5,'',D236,Nijmegen,'','','','',6890,,,,
-J1.5UT,Hyster,1,'',A3C4,Maximal,'','','','',6891,,,,
-GDP12F,Yale,5,'',K876,Nijmegen,'','','','',6892,,,,
-S2.0S,Hyster,3,'',D442,Masate,'','','','',6893,,,,
-R2.0HD,Hyster,2,'',D435,Masate,'','','','',6894,,,,
-ERP16UXT,Yale,1,'',A7S5,Maximal,'','','','',6896,,,,
-S1.2S,Hyster,3,'',D442,Masate,'','','','',6897,,,,
-ERP50VM,Yale,3,'',A985,Craigavon,'','','','',6898,,,,
-ME70XN,Hyster,1,'',A268,Greenville,'','','','',6899,,,,
-GP 20MX,Yale,6,'',D871,SN,'','','','',6900,,,,
-RS46-29XD/62,Hyster,5,'',F222,Nijmegen,'','','','',6901,,,,
-GLP25MX,Yale,6,'',D871,SN,'','','','',6902,,,,
-H35XTC,Hyster,7,'',D466,'','','','','',6911,,,,
-FBR18SZ,Yale,2,'',C900,SN,'','','','',7380,,,,
-ERP22VL,Yale,2,'',A976,Craigavon,'','','','',7381,,,,
-MR20,Yale,2,'',D849,Masate,'','','','',7382,,,,
-LO1.2C (SPED),Hyster,2,'',E444,Masate,'','','','',7383,,,,
-R1.6,Hyster,2,'',D435,Masate,'','','','',7384,,,,
-ERP035VT,Yale,2,'',G807,Craigavon,'','','','',7385,,,,
-MP30X,Yale,3,'',E843,Masate,'','','','',7386,,,,
+H4.5UT,Hyster,6,'3.5-5.5 Ton ICE P UT',A3C6,Maximal,C5 4-9T - Low Intensity,Counterbalance,'',SDQuMC01LjBVVF9INS4wVVRTNl9BM0M2LmpwZw==_13032024153451.png,6925,,,2024-03-27 10:11:24.479,admin@gmail.com
+KDP25UX,Yale,6,'',A7S0,Maximal,'','','',S0RQMTgtMzVVWF9LRFAxOC0zNVVYNF9LRFA1MFVYX0E3UzBfQTdSOF9BN1I5LmpwZw==_13032024153204.png,7251,,,2024-03-13 15:32:05.224,admin@gmail.com
+MP25T,Yale,3,,C854,Masate,,,,TVAyMC0yNVRfQzg1NC5qcGc=_13032024153222.png,368,2024-02-29 11:57:25.206,admin@gmail.com,2024-03-13 15:32:23.285,admin@gmail.com
+MC10,Yale,3,,C860,Masate,,,,TUMxMC0xNV9DODYwLmpwZw==_13032024152421.png,377,2024-02-29 11:57:25.206,admin@gmail.com,2024-03-13 15:24:21.706,admin@gmail.com
+RS 45-31 CH,Hyster,5,'',A921,Maximal,'','','',UlM0NV9BNDA0X0E5MjEucG5n_13032024153338.png,7018,,,2024-03-13 15:33:39.021,admin@gmail.com
+RS46-41XD/67,Hyster,5,'',F222,Nijmegen,'','','',UlM0Nl9GMjIyLmpwZw==_13032024153339.png,6908,,,2024-03-13 15:33:40.679,admin@gmail.com
+LO2.0,Hyster,2,'',E444,Masate,'','','',TE8yLjAtMi41X0xPMS4yQ19FNDQ0LnRpZg==_13032024152626.png,7180,,,2024-03-13 15:26:27.229,admin@gmail.com
+RS46-36XD/62,Hyster,5,'',F222,Nijmegen,'','','',UlM0Nl9GMjIyLmpwZw==_13032024153339.png,7374,,,2024-03-13 15:33:40.680,admin@gmail.com
+S120FT,Hyster,4,'',J004,Berea,'','','',UzgwLTEyMEZUX0owMDQudGlm_13032024153127.png,7249,,,2024-03-13 15:31:28.561,admin@gmail.com
+MT30XUX,Yale,3,MH Tractor,A7S8,Ruyi,C3 - Low Intensity,Warehouse,,TVQzMFhVWF9BN1M4LlBORw==_13032024153129.png,454,2024-02-29 11:57:25.212,admin@gmail.com,2024-03-13 15:31:29.236,admin@gmail.com
+MPB045VH,Yale,3,'',B245,Ramos,'','','',TVBCMDQ1VkhfQjI0NS5wbmc=_13032024153129.png,7154,,,2024-03-13 15:31:29.311,admin@gmail.com
+MT30UX,Yale,3,MH Tractor,A7S9,Ruyi,C3 - Low Intensity,Warehouse,,TVQzMFVYX0E3UzkuUE5H_13032024153145.png,399,2024-02-29 11:57:25.208,admin@gmail.com,2024-03-13 15:31:45.303,admin@gmail.com
+MPC15,Yale,3,'1-2 Ton MH LL Wlk CP',A3D4,Staxx,C3 - Low Intensity,Warehouse,'ádfghjkl''''',TVBDMTVfQTNENC50aWY=_13032024153145.png,7271,,,2024-03-13 15:31:46.007,admin@gmail.com
+GC080VX,Yale,4,'',G818,Berea,'','','',R0MwODAtMTIwVlhfRzgxOC50aWY=_13032024153147.png,7290,,,2024-03-13 15:31:47.649,admin@gmail.com
+RS46-41XD/67S,Hyster,5,'',F222,Nijmegen,'','','',UlM0Nl9GMjIyLmpwZw==_13032024153339.png,7302,,,2024-03-13 15:33:40.680,admin@gmail.com
+RS46-33XD/62,Hyster,5,'',F222,Nijmegen,'','','',UlM0Nl9GMjIyLmpwZw==_13032024153339.png,7307,,,2024-03-13 15:33:40.680,admin@gmail.com
+RS46-29XD/62,Hyster,5,'',F222,Nijmegen,'','','',UlM0Nl9GMjIyLmpwZw==_13032024153339.png,6901,,,2024-03-13 15:33:40.680,admin@gmail.com
+P2.0UTS,Hyster,3,'',A3B1,Ruyi,'','','',UDIuMFVUU19BM0IxLnBuZw==_13032024153345.png,7026,,,2024-03-13 15:33:45.894,admin@gmail.com
+S1.5UTS,Hyster,3,'',A3B3,Ruyi,'','','',UzEuNVVUU19BM0IzLnBuZw==_13032024153346.png,7101,,,2024-03-13 15:33:47.142,admin@gmail.com
+W80Z,Hyster,3,'4 Ton MH LL Walkie',B234,Greenville,C3 - Standard and Premium,Warehouse,'111111',VzYwWl9CMjMxX1c4MFpfQjIzNC50aWY=_13032024153349.png,7136,,,2024-03-13 15:33:50.185,admin@gmail.com
+T6.0UT,Hyster,3,MH Tractor,A3C7,Ruyi,C3 - Low Intensity,Warehouse,'',VDYuMFVUX0EzQzcuanBn_13032024153352.png,6959,,,2024-03-13 15:33:53.841,admin@gmail.com
+H2.0XT,Hyster,6,'',D466,SN,'','','',SDEuNS0yLjBYVF9IMi4wLTMuNVhUX0Q0NzVfRDQ2Ni5qcGc=_13032024153453.png,7273,,,2024-03-13 15:34:59.149,admin@gmail.com
+ERP040VT,Yale,2,'1-2 Ton 3 Wheel FWD',G807,Craigavon,C1 1-3.5T - Standard and Premium,Warehouse,'4566O',RVJQMTYtMjBWVF9FUlAwMzAtMDQwVlRfRzgwNy5wbmc=_13032024153150.png,7098,,,2024-03-13 16:06:35.109,admin@gmail.com
+FB40PYE,Yale,1,'3.5-5.5 Ton Elect DBB',A901,SN,C1 4-9T - Standard and Premium,Counterbalance,'',RkIzNS00MFBZRV9BOTAxLkpQRw==_13032024153149.png,7220,,,2024-03-27 10:11:24.477,admin@gmail.com
+R30XMF3,Hyster,2,NA  Prem Ord Picker,A169,Greenville,C2 - Standard and Premium,Warehouse,,UjMwWE0zX1IzMFhNQTNfUjMwWE1GM19SMzBYTVMzLnRpZg==_13032024153517.png,338,2024-02-29 11:57:25.204,admin@gmail.com,2024-03-13 15:35:19.540,admin@gmail.com
+R30XMS3,Hyster,2,'',E174,Greenville,'','','',UjMwWE0zX1IzMFhNQTNfUjMwWE1GM19SMzBYTVMzLnRpZg==_13032024153517.png,7004,,,2024-03-13 15:35:19.540,admin@gmail.com
+C1.3L,Hyster,2,'',B463,Masate,'','',saAAAAAjjjjqqqq,QzEuMC0xLjVMX0I0NjNfQjQ2NC5qcGc=_13032024153519.png,6883,,,2024-03-13 15:35:21.426,admin@gmail.com
+H9XDL6,Hyster,5,'',R007,Nijmegen,'','','',,6917,,,2024-03-13 14:59:21.786,admin@gmail.com
+H16XDS9,Hyster,5,'',R007,Nijmegen,'','','',,6939,,,2024-03-13 14:59:21.786,admin@gmail.com
+H18XD6,Hyster,5,'',R007,Nijmegen,'','','',,6881,,,2024-03-13 14:59:21.786,admin@gmail.com
+N35ZDR3,Hyster,2,'',E264,Greenville,'','','',TjMwWkRSUzNfQzI2NV9OMzVaRFIzX0UyNjQuanBn_13032024153521.png,7028,,,2024-03-13 15:35:22.006,admin@gmail.com
+N30ZDRS3,Hyster,2,,C265,Greenville,,,,TjMwWkRSUzNfQzI2NV9OMzVaRFIzX0UyNjQuanBn_13032024153521.png,440,2024-02-29 11:57:25.211,admin@gmail.com,2024-03-13 15:35:22.006,admin@gmail.com
+K1.0L AC,Hyster,2,,C457,Masate,,,,SzEuMEwgQUNfQzQ1Ny50aWY=_13032024153535.png,395,2024-02-29 11:57:25.207,admin@gmail.com,2024-03-13 15:35:35.707,admin@gmail.com
+J35XNT,Hyster,2,'',K160,Craigavon,'','','',SjEuNi0yLjBYTlRfSjMwLTQwWE5UX0sxNjAudGlm_13032024153357.png,6971,,,2024-03-13 16:06:35.109,admin@gmail.com
+J4.00EX,Hyster,1,'3.5-5.5 Ton Elect DBB',A920,SN,C1 4-9T - Standard and Premium,Counterbalance,'',,7029,,,2024-03-27 10:11:24.481,admin@gmail.com
+H13XDS6,Hyster,5,'',R007,Nijmegen,'','','',,7185,,,2024-03-13 14:59:21.786,admin@gmail.com
+H9XD6,Hyster,5,'',R007,Nijmegen,'','','',,7002,,,2024-03-13 14:59:21.786,admin@gmail.com
+J3.0UT,Hyster,1,'2-3 Ton Elec 4 Wh UT',A3C4,Maximal,C1 1-3.5T - Low Intensity,Warehouse,'',,6882,,,2024-03-27 10:11:24.482,admin@gmail.com
+MS15XUX,Yale,3,'1-2 Ton MH Strad Stk',A7R3,Ruyi,C3 - Low Intensity,Warehouse,ádfghjkkkkkk,TVMxNVhVWF9BN1IzLmpwZw==_13032024153128.png,6880,,,2024-03-13 15:31:28.911,admin@gmail.com
+MP15UX,Yale,3,'1-2 Ton MH LL Wlk CP',A7T1,Ruyi,C3 - Low Intensity,Warehouse,,TVAxNVVYX0E3VDEuUE5H_13032024153128.png,421,2024-02-29 11:57:25.209,admin@gmail.com,2024-03-13 15:31:28.988,admin@gmail.com
+MSL15XUX,Yale,3,'1-2 Ton MH Strad Stk',A7R7,Ruyi,C3 - Low Intensity,Warehouse,'',TVNMMTVYVVhfQTdSNy5qcGc=_13032024153130.png,6895,,,2024-03-13 15:31:45.165,admin@gmail.com
+MP20KUX,Yale,3,'1-2 Ton MH LL Wlk UT',A7R0,Ruyi,C3 - Low Intensity,Warehouse,,TVAyMEtVWF9BN1IwLmpwZw==_13032024153146.png,409,2024-02-29 11:57:25.209,admin@gmail.com,2024-03-13 15:31:46.399,admin@gmail.com
+MT60UX,Yale,3,MH Tractor,A7S7,Ruyi,C3 - Low Intensity,Warehouse,'',TVQ2MFVYX0E3UzcuUE5H_13032024153146.png,7357,,,2024-03-13 15:31:47.009,admin@gmail.com
+GP50UXS6,Yale,6,'',A7S6,Maximal,'','','',R1A0MC01MFVYX0dQNTBVWFM2X0E3UzYuanBn_13032024153151.png,7078,,,2024-03-13 15:31:51.928,admin@gmail.com
+KDP35UX4,Yale,6,'',A7R8,Maximal,'','','',S0RQMTgtMzVVWF9LRFAxOC0zNVVYNF9LRFA1MFVYX0E3UzBfQTdSOF9BN1I5LmpwZw==_13032024153204.png,6987,,,2024-03-13 15:32:05.224,admin@gmail.com
+SL1.5UTS,Hyster,3,'',A3B7,Ruyi,'','','',U0wxLjVVVFNfQTNCNy5wbmc=_13032024153347.png,7319,,,2024-03-13 15:33:47.901,admin@gmail.com
+J1.8UTT,Hyster,1,'1-2 Ton 3 Whl FWD UT',A3C5,Maximal,C1 1-3.5T - Low Intensity,Warehouse,'',SjEuNi0yLjBVVFRfQTNDNS5qcGc=_13032024153355.png,6922,,,2024-03-27 10:11:24.484,admin@gmail.com
+R1.4E,Hyster,2,NA  Small Reach,A432,Masate,C2 - Standard and Premium,Warehouse,'',,7181,,,2024-03-27 10:11:24.484,admin@gmail.com
+GP25UX,Yale,6,'2-3 Ton ICE Pneu - LCT',A7S1,Maximal,C5 1-3.5T - Low Intensity,Counterbalance,'',,7225,,,2024-03-27 10:11:24.485,admin@gmail.com
+J1.6UTT,Hyster,1,'1-2 Ton 3 Whl FWD UT',A3C5,Maximal,C1 1-3.5T - Low Intensity,Warehouse,'',,7229,,,2024-03-27 10:11:24.485,admin@gmail.com
+J2.0UTT,Hyster,1,'1-2 Ton 3 Whl FWD UT',A3C5,Maximal,C1 1-3.5T - Low Intensity,Warehouse,'',,7120,,,2024-03-27 10:11:24.485,admin@gmail.com
+H5.0UT,Hyster,6,'3.5-5.5 Ton ICE P UT',A3C6,Maximal,C5 4-9T - Low Intensity,Counterbalance,'',,7256,,,2024-03-27 10:11:24.485,admin@gmail.com
+J1.8UT,Hyster,1,'2-3 Ton Elec 4 Wh UT',A3C4,Maximal,C1 1-3.5T - Low Intensity,Warehouse,'',,7259,,,2024-03-27 10:11:24.485,admin@gmail.com
+GP20UX,Yale,6,'2-3 Ton ICE Pneu - LCT',A7S1,Maximal,C5 1-3.5T - Low Intensity,Counterbalance,'',,7309,,,2024-03-27 10:11:24.486,admin@gmail.com
+H13XD6,Hyster,5,'',R007,Nijmegen,'','','',,7035,,,2024-03-13 14:59:21.786,admin@gmail.com
+H8XD6,Hyster,5,'',R007,Nijmegen,'','','',,7071,,,2024-03-13 14:59:21.786,admin@gmail.com
+R1.0E,Hyster,2,NA  Small Reach,A432,Masate,C2 - Standard and Premium,Warehouse,'',,7322,,,2024-03-27 10:11:24.486,admin@gmail.com
+GP45UX,Yale,6,'3.5-5.5 Ton ICE P UT',A7S6,Maximal,C5 4-9T - Low Intensity,Counterbalance,'',,7338,,,2024-03-27 10:11:24.486,admin@gmail.com
+R1.2E,Hyster,2,NA  Small Reach,A432,Masate,C2 - Standard and Premium,Warehouse,'',,7366,,,2024-03-27 10:11:24.486,admin@gmail.com
+S1.0C,Hyster,3,'1-2 Ton MH CB Stack',C447,Masate,C3 - Standard and Premium,Warehouse,,,415,2024-02-29 11:57:25.209,admin@gmail.com,2024-03-27 10:11:24.486,admin@gmail.com
+P3.0S,Hyster,3,'2-3 Ton MH LL Rider',A3D9,Maximal,C3 - Standard and Premium,Warehouse,'',,7000,,,2024-03-27 10:11:24.486,admin@gmail.com
+ERP20UXT,Yale,1,'1-2 Ton 3 Whl FWD UT',A7S5,Maximal,C1 1-3.5T - Low Intensity,Warehouse,wwwww,,7155,,,2024-03-27 10:11:24.487,admin@gmail.com
+H10XDS6,Hyster,5,'',R007,Nijmegen,'','','',,7200,,,2024-03-13 14:59:21.786,admin@gmail.com
+MS15UX,Yale,3,'1-2 Ton MH Strad Stk',A7S3,Ruyi,C3 - Low Intensity,Warehouse,'',TVMxNVVYX0E3UzMuanBn_13032024153147.png,7138,,,2024-03-13 15:31:47.524,admin@gmail.com
+FS030BF,Yale,2,NA  Prem Ord Picker,A497,Greenville,C2 - Standard and Premium,Warehouse,,T1MwMzBFRl9PUzAzMEJGX1NTMDMwQkZfRlMwMzBCRl9EODAxX0U4MjZfQTQ3NF9BNDk3LmpwZw==_13032024153210.png,351,2024-02-29 11:57:25.205,admin@gmail.com,2024-03-13 15:32:10.550,admin@gmail.com
+OS030BF,Yale,2,'',E826,Greenville,'','','',T1MwMzBFRl9PUzAzMEJGX1NTMDMwQkZfRlMwMzBCRl9EODAxX0U4MjZfQTQ3NF9BNDk3LmpwZw==_13032024153210.png,7044,,,2024-03-13 15:32:10.550,admin@gmail.com
+OS030EF,Yale,2,'',D801,Greenville,'','','',T1MwMzBFRl9PUzAzMEJGX1NTMDMwQkZfRlMwMzBCRl9EODAxX0U4MjZfQTQ3NF9BNDk3LmpwZw==_13032024153210.png,7367,,,2024-03-13 15:32:10.550,admin@gmail.com
+H18XD9,Hyster,5,'',R007,Nijmegen,'','','',,7371,,,2024-03-13 14:59:21.785,admin@gmail.com
+H7XD-EC4,Hyster,5,'',R007,Nijmegen,'','','',,6981,,,2024-03-13 14:59:21.785,admin@gmail.com
+H190FT,Hyster,6,'',D299,Berea,'','','',SDE3MC0xOTBGVF9EMjk5LnBuZw==_13032024153359.png,6965,,,2024-03-13 15:33:59.761,admin@gmail.com
+H3.0UT,Hyster,6,'',A3C1,Maximal,'','','',SDIuMC0zLjVVVF9BM0MxLnRpZg==_13032024153433.png,7296,,,2024-03-13 15:34:34.641,admin@gmail.com
+J20LWB,Hyster,2,,K160,Craigavon,,,,,467,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+E18MW3,Yale,2,,G807,Craigavon,,,,,468,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+ERP35UX,Yale,1,'',A7S4,Maximal,'','',wwwww,RVJQMTUtMzVVWF9BN1M0LnBuZw==_13032024153147.png,7092,,,2024-03-13 16:06:35.109,admin@gmail.com
+J30XNT,Hyster,2,'',K160,Craigavon,'','','',,7141,,,2024-03-13 16:06:35.109,admin@gmail.com
+GP170SVX,Yale,6,'',H878,Berea,'','','',,7224,,,2024-03-13 16:06:35.109,admin@gmail.com
+H155FTS,Hyster,6,'',P006,Berea,'','','',SDEzNS0xNTVGVF9IMTU1LTE3MEZUU19QMDA2LnRpZg==_13032024153432.png,7237,,,2024-03-13 16:06:35.109,admin@gmail.com
+ERP20UX,Yale,1,'',A7S4,Maximal,'','',wwwwww,,7274,,,2024-03-13 16:06:35.110,admin@gmail.com
+ERP30UX,Yale,1,'',A7S4,Maximal,'','','11113wesws
+22
+222
+2
+22222
+22222
+22222
+22222222',,7324,,,2024-03-13 16:06:35.110,admin@gmail.com
+H170FTS,Hyster,6,'',P006,Berea,'','','',SDEzNS0xNTVGVF9IMTU1LTE3MEZUU19QMDA2LnRpZg==_13032024152709.png,7342,,,2024-03-13 16:06:35.110,admin@gmail.com
+ERP035VT,Yale,2,'',G807,Craigavon,'','','',,7385,,,2024-03-13 16:06:35.110,admin@gmail.com
+J2.0UT,Hyster,1,'2-3 Ton Elec 4 Wh UT',A3C4,Maximal,C1 1-3.5T - Low Intensity,Warehouse,'',,7024,,,2024-03-27 10:11:24.479,admin@gmail.com
+J3.5UT,Hyster,1,'2-3 Ton Elec 4 Wh UT',A3C4,Maximal,C1 1-3.5T - Low Intensity,Warehouse,'',,7182,,,2024-03-27 10:11:24.479,admin@gmail.com
+M14ELY,Yale,3,,D852,Masate,,,,,369,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+MTC13 80V,Yale,2,,B869,Masate,,,,,370,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+H8XD-EC7,Hyster,5,'',F214,Nijmegen,'','','',,6969,,,,
+GTP25B,Yale,7,'',D871,'','','','',,6970,,,,
+YGDP16,Yale,5,'',B674,Nijmegen,'','','',,6973,,,,
+GC080VXBCS,Yale,4,'',G818,Berea,'','','',,7114,,,,
+H10XD2,Hyster,5,'',P007,Nijmegen,'','','',,7115,,,,
+GTP20MX,Yale,6,'',D871,SN,'','','',,7116,,,,
+J3.50EX,Hyster,1,'3.5-5.5 Ton Elect DBB',A920,SN,C1 4-9T - Standard and Premium,Counterbalance,'',SjMuNTAtNC4wMEVYX0E5MjAuanBn_13032024153355.png,7243,,,2024-03-27 10:11:24.480,admin@gmail.com
+MTR005-F,Yale,3,'',D902,Ramos,'','','',,7340,,,,
+H50XD-CH,Hyster,5,,K117,Nijmegen,,,,,313,,,,
+H48XD-CH,Hyster,5,,K117,Nijmegen,,,,,314,,,,
+S1.5UT,Hyster,3,'',A3C3,Ruyi,'','','',UzEuNVVUX0EzQzMucG5n_13032024153351.png,7289,,,2024-03-13 15:33:52.105,admin@gmail.com
+W40ZA,Hyster,3,'1-2 Ton MH Strad Stk',C453,Greenville,C3 - Standard and Premium,Warehouse,'',VzI1LTMwWkEyX0I0OTVfVzQwWkFfQzQ1My50aWY=_13032024153352.png,7106,,,2024-03-13 15:33:52.187,admin@gmail.com
+T3.0UT,Hyster,3,MH Tractor,A3C9,Ruyi,C3 - Low Intensity,Warehouse,'',VDMuMFVUX0EzQzkucG5n_13032024153352.png,7102,,,2024-03-13 15:33:52.751,admin@gmail.com
+S155FT,Hyster,4,'',H024,Berea,'','','',UzEzNS0xNTVGVF9IMDI0LnRpZg==_13032024153353.png,7245,,,2024-03-13 15:33:55.404,admin@gmail.com
+J4.5XN,Hyster,3,'',A970,Craigavon,'','','',SjQuMC01LjVYTl9BOTcwLmpwZw==_13032024153355.png,6921,,,2024-03-13 15:33:56.252,admin@gmail.com
+E80XN,Hyster,1,'3.2-5.5 Ton Elec 4Wh',A099,Greenville,C1 4-9T - Standard and Premium,Counterbalance,'123488',RTgwLTEyMFhOX0EwOTkudGlm_13032024153357.png,7241,,,2024-03-13 15:33:58.433,admin@gmail.com
+MP25X,Yale,3,'',E843,Masate,'','','',TVAyMC0zMFhfRTg0M19BN1Q5LnRpZg==_13032024153129.png,7183,,,2024-03-13 15:31:30.711,admin@gmail.com
+E30HSD3,Hyster,1,'',C219,Greenville,'','',eeee,RTMwLTQwSFNEM19DMjE5LmpwZw==_13032024153358.png,7053,,,2024-03-13 15:33:58.507,admin@gmail.com
+H5.0UTS6,Hyster,6,'',A3C6,Maximal,'','','',SDQuMC01LjBVVF9INS4wVVRTNl9BM0M2LmpwZw==_13032024153451.png,7095,,,2024-03-13 15:34:53.195,admin@gmail.com
+ERP30VL,Yale,3,'',A976,Craigavon,'','','090909090',RVJQMjItMzVWTF9BOTc2LnRpZg==_13032024153151.png,7010,,,2024-03-13 15:31:51.634,admin@gmail.com
+FB20RZ,Yale,1,,C881,SN,,,,RkIxNS0zNVJaX0M4ODEuSlBH_13032024153151.png,345,2024-02-29 11:57:25.204,admin@gmail.com,2024-03-13 15:31:51.662,admin@gmail.com
+GP155VX,Yale,6,'6-8 Ton ICE Pneu',H878,Berea,C5 4-9T - Standard and Premium,Counterbalance,'',R1AxMzUtMTU1VlhfR1AxNTUtMTcwVlhTX0g4NzgudGlm_13032024153202.png,7017,,,2024-03-13 15:32:03.201,admin@gmail.com
+GP3.0N,Yale,6,,E875,Craigavon,,,,R1AyLjAtMy41Tl9FODc1LmpwZw==_13032024153205.png,473,2024-02-29 11:57:25.213,admin@gmail.com,2024-03-13 15:32:05.376,admin@gmail.com
+H12XD6,Hyster,5,'',R007,Nijmegen,'','','',,7090,,,2024-03-13 14:59:21.785,admin@gmail.com
+SS030BF,Yale,2,NA  Prem Ord Picker,A474,Greenville,C2 - Standard and Premium,Warehouse,,T1MwMzBFRl9PUzAzMEJGX1NTMDMwQkZfRlMwMzBCRl9EODAxX0U4MjZfQTQ3NF9BNDk3LmpwZw==_13032024153210.png,451,2024-02-29 11:57:25.212,admin@gmail.com,2024-03-13 15:32:10.550,admin@gmail.com
+MPR100VG,Yale,2,,A284,Greenville,,,,TVBSMDgwLTEwMFZHX0EyODQudGlm_13032024153223.png,358,2024-02-29 11:57:25.205,admin@gmail.com,2024-03-13 15:32:23.554,admin@gmail.com
+H14XD6,Hyster,5,'',R007,Nijmegen,'','','',,7173,,,2024-03-13 14:59:21.785,admin@gmail.com
+H14XDS6,Hyster,5,'',R007,Nijmegen,'','','',,7355,,,2024-03-13 14:59:21.785,admin@gmail.com
+H6XD-EC3,Hyster,5,'',R007,Nijmegen,'','','',,7370,,,2024-03-13 14:59:21.785,admin@gmail.com
+NDR035EC,Yale,2,'',E861,Greenville,'','','',TkRSMDM1LTA0MERDX05EUjAzNUVDX0MyOTVfRTg2MS5wbmc=_13032024153222.png,7218,,,2024-03-13 15:32:22.321,admin@gmail.com
+H3.0A,Hyster,6,,R177,Craigavon,,,,SDIuMC0zLjVBX1IxNzcuanBn_13032024153411.png,330,2024-02-29 11:57:25.203,admin@gmail.com,2024-03-13 15:34:32.681,admin@gmail.com
+H1.5XT,Hyster,6,'',D475,SN,'','','',SDEuNS0yLjBYVF9IMi4wLTMuNVhUX0Q0NzVfRDQ2Ni5qcGc=_13032024153453.png,7165,,,2024-03-13 15:34:59.149,admin@gmail.com
+H5.0FT,Hyster,6,'',U005,Craigavon,'','','',SDQuMC01LjVGVF9VMDA1LmpwZw==_13032024153500.png,7045,,,2024-03-13 15:35:02.016,admin@gmail.com
+F3.5UT,Hyster,6,'',A3B4,Maximal,'','','',RjEuOC0zLjVVVF9GMS44LTMuNVVUNF9GNS4wVVRfQTNCNF9BM0I4X0EzQjkuanBn_13032024153502.png,7091,,,2024-03-13 15:35:03.035,admin@gmail.com
+RS 45-31 CH,Hyster,5,'',A404,Maximal,'','','',UlM0NV9BNDA0X0E5MjEucG5n_13032024153338.png,7152,,,2024-03-13 15:33:39.021,admin@gmail.com
+RS46-41XD/75S,Hyster,5,'',F222,Nijmegen,'','','',UlM0Nl9GMjIyLmpwZw==_13032024153339.png,6964,,,2024-03-13 15:33:40.680,admin@gmail.com
+RS46-41XD/62S,Hyster,5,'',F222,Nijmegen,'','','',UlM0Nl9GMjIyLmpwZw==_13032024153339.png,6886,,,2024-03-13 15:33:40.680,admin@gmail.com
+F5.0UT,Hyster,6,'3.5-5.5 Ton ICE P UT',A3B9,Maximal,C5 4-9T - Low Intensity,Counterbalance,'8888888888888',RjEuOC0zLjVVVF9GMS44LTMuNVVUNF9GNS4wVVRfQTNCNF9BM0I4X0EzQjkuanBn_13032024153502.png,6915,,,2024-03-13 15:35:03.035,admin@gmail.com
+S1.2C,Hyster,3,'1-2 Ton MH CB Stack',C447,Masate,C3 - Standard and Premium,Warehouse,,UzEuMC0xLjVDX0M0NDcucG5n_13032024153350.png,433,2024-02-29 11:57:25.210,admin@gmail.com,2024-03-27 10:11:24.480,admin@gmail.com
+LO7.0T,Hyster,2,'',E444,Masate,'','','',TE81LjAtNy4wVF9FNDQ0LmpwZw==_13032024153342.png,7129,,,2024-03-13 15:33:45.549,admin@gmail.com
+GP50UX,Yale,6,'3.5-5.5 Ton ICE P UT',A7S6,Maximal,C5 4-9T - Low Intensity,Counterbalance,'',R1A0MC01MFVYX0dQNTBVWFM2X0E3UzYuanBn_13032024153151.png,7125,,,2024-03-27 10:11:24.480,admin@gmail.com
+P1.5UT,Hyster,3,'1-2 Ton MH LL Wlk CP',A3D1,Ruyi,C3 - Low Intensity,Warehouse,'',UDEuNVVUX0EzRDEucG5n_13032024153345.png,7242,,,2024-03-13 15:33:45.996,admin@gmail.com
+B60ZHD2,Hyster,3,,C262,Romas,,,,QjYwLTgwWkFDIDJfQjYwWkhEMl9CODBaSEQyX0UyMzBfQzI2Ml9DMjU3LnRpZg==_13032024153347.png,426,2024-02-29 11:57:25.210,admin@gmail.com,2024-03-13 15:33:47.826,admin@gmail.com
+PC1.5,Hyster,3,'1-2 Ton MH LL Wlk CP',A6W9,Staxx,C3 - Low Intensity,Warehouse,'',UEMxLjVfQTZXOS5wbmc=_13032024153349.png,7320,,,2024-03-13 15:33:49.426,admin@gmail.com
+W25ZA2,Hyster,3,,B495,Greenville,,,,VzI1LTMwWkEyX0I0OTVfVzQwWkFfQzQ1My50aWY=_13032024153352.png,436,2024-02-29 11:57:25.210,admin@gmail.com,2024-03-13 15:33:52.187,admin@gmail.com
+R30XM3,Hyster,2,'',E118,Greenville,'','','',UjMwWE0zX1IzMFhNQTNfUjMwWE1GM19SMzBYTVMzLnRpZg==_13032024153517.png,7100,,,2024-03-13 15:35:19.540,admin@gmail.com
+R30XMA3,Hyster,2,,A185,Greenville,,,,UjMwWE0zX1IzMFhNQTNfUjMwWE1GM19SMzBYTVMzLnRpZg==_13032024153517.png,400,2024-02-29 11:57:25.208,admin@gmail.com,2024-03-13 15:35:19.540,admin@gmail.com
+N40ZRS3,Hyster,3,,C265,Greenville,,,,TjM1LTQwWlJTM19DMjY1X040NVpSM19FMjY0LmpwZw==_13032024153519.png,357,2024-02-29 11:57:25.205,admin@gmail.com,2024-03-13 15:35:19.586,admin@gmail.com
+N45ZR3,Hyster,2,'',E264,Greenville,'','','',TjM1LTQwWlJTM19DMjY1X040NVpSM19FMjY0LmpwZw==_13032024153519.png,7013,,,2024-03-13 15:35:19.586,admin@gmail.com
+GP30UX,Yale,6,'2-3 Ton ICE Pneu - LCT',A7S1,Maximal,C5 1-3.5T - Low Intensity,Counterbalance,'',R1AyMC0zNVVYX0E3UzEudGlm_13032024153203.png,6993,,,2024-03-27 10:11:24.480,admin@gmail.com
+H16XD9,Hyster,5,'',R007,Nijmegen,'','','',,7202,,,2024-03-13 14:59:21.786,admin@gmail.com
+H16XDS12,Hyster,5,'',R007,Nijmegen,'','','',,6985,,,2024-03-13 14:59:21.786,admin@gmail.com
+H12XD12,Hyster,5,'',R007,Nijmegen,'','','',,6990,,,2024-03-13 14:59:21.786,admin@gmail.com
+H10XD12,Hyster,5,'',R007,Nijmegen,'','','',,7085,,,2024-03-13 14:59:21.787,admin@gmail.com
+H14XD12,Hyster,5,'',R007,Nijmegen,'','','',,7298,,,2024-03-13 14:59:21.787,admin@gmail.com
+H16XD6,Hyster,5,'',R007,Nijmegen,'','','',,7314,,,2024-03-13 14:59:21.787,admin@gmail.com
+MS16ES,Yale,3,,D852,Masate,,,,,374,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+MOMP20,Yale,3,,A428,Masate,,,,,375,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+J16SWB,Hyster,2,,K160,Craigavon,,,,,376,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+J2.0GXS,Hyster,1,'',C225,SN,'','','',,6909,,,,
+H35XTC,Hyster,7,'',D466,'','','','',,6911,,,,
+W40ZC,Hyster,3,'1-2 Ton MH CB Stack',C454,Greenville,C3 - Standard and Premium,Warehouse,'',VzI1LTQwWkNfQzQ1NC5wbmc=_13032024153347.png,7130,,,2024-03-13 15:33:49.202,admin@gmail.com
+T5ZAC,Hyster,3,MH Tractor,D476,Ramos,C3 - Standard and Premium,Warehouse,'',VDUtN1pBQ19ENDc2X0M0NzcudGlm_13032024153349.png,7001,,,2024-03-13 15:33:49.878,admin@gmail.com
+P2.0UTE,Hyster,3,'',A3B5,Ruyi,'','','',UDIuMFVURV9BM0I1LnBuZw==_13032024153349.png,7305,,,2024-03-13 15:33:49.753,admin@gmail.com
+GP40VX5,Yale,6,'',K813,Craigavon,'','','',,6912,,,,
+H10XD-ECD8,Hyster,5,'',F214,Nijmegen,'','','',,7015,,,,
+MYMR16,Yale,,'',A7R4,unknown,'','',n8n8n8n8n,,6950,,,,
+H9XD-EC8,Hyster,5,'',F214,Nijmegen,'','','',,7126,,,,
+YGDP16,Yale,5,'',K876,Nijmegen,'','','',,7128,,,,
+MS50FT,Hyster,4,'',H187,Berea,'','','',,7131,,,,
+ERP80V,Yale,1,'',A410,Craigavon,'','','',,7232,,,,
+GC050V,Yale,4,'',C910,Berea,'','','',,7234,,,,
+H30XTC,Hyster,7,'',D466,'','','','',,7337,,,,
+GDF140EF,Yale,5,,K876,Nijmegen,,,,,418,2024-02-29 11:57:25.209,admin@gmail.com,2024-02-29 11:57:25.209,admin@gmail.com
+MODP22,Hyster,3,,A418,Masate,,,,,419,2024-02-29 11:57:25.209,admin@gmail.com,2024-02-29 11:57:25.209,admin@gmail.com
+GDP160EF9,Yale,5,,K876,Nijmegen,,,,,420,2024-02-29 11:57:25.209,admin@gmail.com,2024-02-29 11:57:25.209,admin@gmail.com
+MS12EL,Hyster,3,,D456,Masate,,,,,422,2024-02-29 11:57:25.209,admin@gmail.com,2024-02-29 11:57:25.209,admin@gmail.com
+GDP12F,Yale,5,'',K876,Nijmegen,'','','',,6892,,,,
+GDP140EF12,Yale,5,,K876,Nijmegen,,,,,435,2024-02-29 11:57:25.210,admin@gmail.com,2024-02-29 11:57:25.210,admin@gmail.com
+J2.0XN MWB,Hyster,1,,A935,Craigavon,,,,,438,2024-02-29 11:57:25.211,admin@gmail.com,2024-02-29 11:57:25.211,admin@gmail.com
+MS16IL,Yale,3,,D852,Masate,,,,,439,2024-02-29 11:57:25.211,admin@gmail.com,2024-02-29 11:57:25.211,admin@gmail.com
+E16MWB,Yale,1,,A955,Craigavon,,,,,441,2024-02-29 11:57:25.211,admin@gmail.com,2024-02-29 11:57:25.211,admin@gmail.com
+M16ILY,Yale,3,,D852,Masate,,,,,443,2024-02-29 11:57:25.211,admin@gmail.com,2024-02-29 11:57:25.211,admin@gmail.com
+MH14IL,Hyster,3,,D456,Masate,,,,,447,2024-02-29 11:57:25.212,admin@gmail.com,2024-02-29 11:57:25.212,admin@gmail.com
+E18LWB,Yale,1,,A955,Craigavon,,,,,448,2024-02-29 11:57:25.212,admin@gmail.com,2024-02-29 11:57:25.212,admin@gmail.com
+MS10EL,Hyster,3,,D456,Masate,,,,,449,2024-02-29 11:57:25.212,admin@gmail.com,2024-02-29 11:57:25.212,admin@gmail.com
+M10ELY,Yale,3,,D852,Masate,,,,,450,2024-02-29 11:57:25.212,admin@gmail.com,2024-02-29 11:57:25.212,admin@gmail.com
+E18LW3,Yale,2,,G807,Craigavon,,,,,453,2024-02-29 11:57:25.212,admin@gmail.com,2024-02-29 11:57:25.212,admin@gmail.com
+H7XDEC,Hyster,5,,N019,Nijmegen,,,,,455,2024-02-29 11:57:25.212,admin@gmail.com,2024-02-29 11:57:25.212,admin@gmail.com
+E16LW3,Yale,2,,G807,Craigavon,,,,,456,2024-02-29 11:57:25.212,admin@gmail.com,2024-02-29 11:57:25.212,admin@gmail.com
+MODP18,Hyster,3,,A418,Masate,,,,,457,2024-02-29 11:57:25.212,admin@gmail.com,2024-02-29 11:57:25.212,admin@gmail.com
+MOMP18,Yale,3,,A428,Masate,,,,,458,2024-02-29 11:57:25.212,admin@gmail.com,2024-02-29 11:57:25.212,admin@gmail.com
+MP20XV,Yale,,,B979,unknown,,,,,459,2024-02-29 11:57:25.212,admin@gmail.com,2024-02-29 11:57:25.212,admin@gmail.com
+MS12IL,Hyster,3,,D456,Masate,,,,,460,2024-02-29 11:57:25.212,admin@gmail.com,2024-02-29 11:57:25.212,admin@gmail.com
+HS14IL,Hyster,3,,D456,Masate,,,,,461,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+S1.6,Hyster,3,,D456,Masate,,,,,462,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+E18MWB,Yale,1,,A955,Craigavon,,,,,464,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+GDP160EFS12,Yale,5,,K876,Nijmegen,,,,,465,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+M14ILY,Yale,3,,D852,Masate,,,,,466,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+GDP160EFS9,Yale,5,,K876,Nijmegen,,,,,469,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+GDF90DF,Yale,5,,K876,Nijmegen,,,,,470,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+MS14IL,Yale,3,,D852,Masate,,,,,471,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+MSW025-F,Yale,3,,B895,Greenville,,,,,472,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+E55XNM,Hyster,1,,A268,Greenville,,,,,474,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+H6.0UT6,Hyster,6,'',A3D0,Maximal,'','','',SDUuMC03LjBVVDZfQTNEMC5qcGc=_13032024153400.png,7011,,,2024-03-13 15:34:01.893,admin@gmail.com
+S1.0,Hyster,3,,D456,Masate,,,,UzEuMC0yLjBfRDQ1Ni5qcGc=_13032024152627.png,417,2024-02-29 11:57:25.209,admin@gmail.com,2024-03-13 15:26:28.277,admin@gmail.com
+H135FT,Hyster,6,'',P006,Berea,'','','',SDEzNS0xNTVGVF9IMTU1LTE3MEZUU19QMDA2LnRpZg==_13032024153432.png,6972,,,2024-03-13 15:34:33.709,admin@gmail.com
+F1.8UT4,Hyster,6,'',A3B8,Maximal,'','','',RjEuOC0zLjVVVF9GMS44LTMuNVVUNF9GNS4wVVRfQTNCNF9BM0I4X0EzQjkuanBn_13032024153502.png,6943,,,2024-03-13 15:35:03.035,admin@gmail.com
+P2.0UT,Hyster,3,,A3B0,Ruyi,,,,UDIuMFVUX0EzQjAucG5n_13032024153347.png,437,2024-02-29 11:57:25.210,admin@gmail.com,2024-03-13 15:33:47.594,admin@gmail.com
+B80ZHD2,Hyster,3,,C257,Ramos,,,,QjYwLTgwWkFDIDJfQjYwWkhEMl9CODBaSEQyX0UyMzBfQzI2Ml9DMjU3LnRpZg==_13032024153347.png,410,2024-02-29 11:57:25.209,admin@gmail.com,2024-03-13 15:33:47.827,admin@gmail.com
+W45ZHD2,Hyster,3,'',B419,Ramos,'','','',VzQ1WkhEMl9CNDE5LnBuZw==_13032024153352.png,7006,,,2024-03-13 15:33:52.902,admin@gmail.com
+E16MW3,Yale,2,,G807,Craigavon,,,,U2NyZWVuc2hvdCBmcm9tIDIwMjQtMDMtMTIgMTYtMDgtNDMucG5n_14032024172518.png,442,2024-02-29 11:57:25.211,admin@gmail.com,2024-03-14 17:25:46.057,admin@gmail.com
+ERP16UXT,Yale,1,'1-2 Ton 3 Whl FWD UT',A7S5,Maximal,C1 1-3.5T - Low Intensity,Warehouse,'98765',,6896,,,2024-03-27 10:11:24.481,admin@gmail.com
+MS16,Yale,3,,D852,Masate,,,,TVMxMC0yMF9EODUyLmpwZw==_13032024152405.png,328,2024-02-29 11:57:25.203,admin@gmail.com,2024-03-13 15:24:05.655,admin@gmail.com
+ERC050VG,Yale,1,,A968,Greenville,,,,RVJDMDQ1LTA3MFZHX0E5NjgudGlm_13032024153150.png,463,2024-02-29 11:57:25.213,admin@gmail.com,2024-03-13 15:31:50.186,admin@gmail.com
+MS20EL,Hyster,3,,D456,Masate,,,,,476,2024-02-29 11:57:25.213,admin@gmail.com,2024-02-29 11:57:25.213,admin@gmail.com
+FBR15SZ,Yale,2,'',C900,SN,'','',fffff,,6983,,,2024-02-29 08:41:01.106,admin@gmail.com
+S16ELS,Hyster,3,,D456,Masate,,,,,317,2024-02-29 11:57:25.202,admin@gmail.com,2024-02-29 11:57:25.202,admin@gmail.com
+GDP140EFS,Yale,5,,K876,Nijmegen,,,,,319,2024-02-29 11:57:25.202,admin@gmail.com,2024-02-29 11:57:25.202,admin@gmail.com
+J16LWB,Hyster,2,,K160,Craigavon,,,,,321,2024-02-29 11:57:25.202,admin@gmail.com,2024-02-29 11:57:25.202,admin@gmail.com
+H10XD6,Hyster,5,'',R007,Nijmegen,'','','',,6942,,,2024-03-13 14:59:21.785,admin@gmail.com
+M20ELY,Yale,3,,D852,Masate,,,,,325,2024-02-29 11:57:25.203,admin@gmail.com,2024-02-29 11:57:25.203,admin@gmail.com
+GDF180EF,Yale,5,,K876,Nijmegen,,,,,327,2024-02-29 11:57:25.203,admin@gmail.com,2024-02-29 11:57:25.203,admin@gmail.com
+J1.8XN LWB,Hyster,1,,A935,Craigavon,,,,,329,2024-02-29 11:57:25.203,admin@gmail.com,2024-02-29 11:57:25.203,admin@gmail.com
+M12ELY,Yale,3,,D852,Masate,,,,,331,2024-02-29 11:57:25.203,admin@gmail.com,2024-02-29 11:57:25.203,admin@gmail.com
+GDP100DFS,Yale,5,,K876,Nijmegen,,,,,332,2024-02-29 11:57:25.203,admin@gmail.com,2024-02-29 11:57:25.203,admin@gmail.com
+GDF120DF,Yale,5,,K876,Nijmegen,,,,,333,2024-02-29 11:57:25.204,admin@gmail.com,2024-02-29 11:57:25.204,admin@gmail.com
+MTC15 LWB,Yale,2,,B869,Masate,,,,,334,2024-02-29 11:57:25.204,admin@gmail.com,2024-02-29 11:57:25.204,admin@gmail.com
+MPE060-G,Yale,3,,E896,Ramos,,,,,335,2024-02-29 11:57:25.204,admin@gmail.com,2024-02-29 11:57:25.204,admin@gmail.com
+GDP180EF9,Yale,5,,K876,Nijmegen,,,,,336,2024-02-29 11:57:25.204,admin@gmail.com,2024-02-29 11:57:25.204,admin@gmail.com
+MPB045,Yale,3,,A245,Ramos,,,,,337,2024-02-29 11:57:25.204,admin@gmail.com,2024-02-29 11:57:25.204,admin@gmail.com
+MS12IL,Yale,3,,D852,Masate,,,,,339,2024-02-29 11:57:25.204,admin@gmail.com,2024-02-29 11:57:25.204,admin@gmail.com
+GDP90DFL,Yale,5,,K876,Nijmegen,,,,,340,2024-02-29 11:57:25.204,admin@gmail.com,2024-02-29 11:57:25.204,admin@gmail.com
+MS10,Yale,3,,D852,Masate,,,,,342,2024-02-29 11:57:25.204,admin@gmail.com,2024-02-29 11:57:25.204,admin@gmail.com
+J16MWB,Hyster,2,,K160,Craigavon,,,,,343,2024-02-29 11:57:25.204,admin@gmail.com,2024-02-29 11:57:25.204,admin@gmail.com
+S16SLH,Hyster,3,,D456,Masate,,,,,347,2024-02-29 11:57:25.204,admin@gmail.com,2024-02-29 11:57:25.204,admin@gmail.com
+MTC15 MWB,Yale,2,,B869,Masate,,,,,348,2024-02-29 11:57:25.204,admin@gmail.com,2024-02-29 11:57:25.204,admin@gmail.com
+MS12,Yale,3,,D852,Masate,,,,,349,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+H16XD9,Hyster,5,,C238,Nijmegen,,,,,350,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+GDP120EF12,Yale,5,,K876,Nijmegen,,,,,352,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+NR035DC,Yale,2,,C295,Greenville,,,,,353,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+R1.6 406,Hyster,2,,A406,Maximal,,,,,354,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+J2.0XN LWB,Hyster,1,,A935,Craigavon,,,,,355,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+MPE060-VH,Yale,3,,C292,Romas,,,,,356,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+MTC15 SWB,Yale,2,,B869,Masate,,,,,359,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+GDF100DF,Yale,5,,K876,Nijmegen,,,,,360,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+GDP130EFS,Yale,5,,K876,Nijmegen,,,,,361,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+E20MWB,Yale,1,,A955,Craigavon,,,,,362,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+MS16EL,Hyster,3,,D456,Masate,,,,,363,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+MTC13 MWB,Yale,2,,B868,Masate,,,,,364,2024-02-29 11:57:25.205,admin@gmail.com,2024-02-29 11:57:25.205,admin@gmail.com
+E20LWB,Yale,1,,A955,Craigavon,,,,,366,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+J18MWB,Hyster,2,,K160,Craigavon,,,,,371,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+E20LW3,Yale,2,,G807,Craigavon,,,,,372,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+GDF160EF,Yale,5,,K876,Nijmegen,,,,,373,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+W45ZHD,Hyster,3,'2-3 Ton MH LL Walkie',A419,Ramos,C3 - Standard and Premium,Warehouse,,,320,2024-02-29 11:57:25.202,admin@gmail.com,2024-03-06 12:00:35.999,admin@gmail.com
+N35ZRS3,Hyster,2,,C265,Greenville,,,,,367,2024-02-29 11:57:25.206,admin@gmail.com,2024-03-11 16:15:57.686,admin@gmail.com
+MCW040-E,Yale,3,'1-2 Ton MH CB Stack',D819,Greenville,C3 - Standard and Premium,Warehouse,www,,7204,,,,
+GP190VX,Yale,6,'8-9 Ton ICE Pneu',D909,Berea,Big Forklift Trucks 10-16T,Big Trucks,llllll,,7233,,,,
+ERC080VH,Yale,1,'3.2-5.5 Ton Elec 4Wh',A938,Greenville,C1 4-9T - Standard and Premium,Counterbalance,'9999',,7179,,,,
+GP60UX6,Yale,6,,A7T0,Maximal,,,,R1A1MC03MFVYNl9BN1QwLnRpZg==_13032024153205.png,452,2024-02-29 11:57:25.212,admin@gmail.com,2024-03-13 15:32:10.508,admin@gmail.com
+GP50UX6,Yale,6,,A7T0,Maximal,,,,R1A1MC03MFVYNl9BN1QwLnRpZg==_13032024152440.png,341,2024-02-29 11:57:25.204,admin@gmail.com,2024-03-13 15:24:45.767,admin@gmail.com
+ERP18UXT,Yale,1,'1-2 Ton 3 Whl FWD UT',A7S5,Maximal,C1 1-3.5T - Low Intensity,Warehouse,'a
+s
+d
+f
+g
+h
+h
+h
+hhh
+h
+h
+h
+h
+',,7027,,,2024-03-27 10:11:24.482,admin@gmail.com
+J1.5UT,Hyster,1,'2-3 Ton Elec 4 Wh UT',A3C4,Maximal,C1 1-3.5T - Low Intensity,Warehouse,'',,6891,,,2024-03-27 10:11:24.482,admin@gmail.com
+J40XNT,Hyster,2,'1-2 Ton 3 Wheel FWD',K160,Craigavon,C1 1-3.5T - Standard and Premium,Warehouse,eeeeee,,7009,,,2024-03-13 16:06:35.109,admin@gmail.com
+S1.5C,Hyster,3,'1-2 Ton MH CB Stack',C447,Masate,C3 - Standard and Premium,Warehouse,,,365,2024-02-29 11:57:25.205,admin@gmail.com,2024-03-27 10:11:24.482,admin@gmail.com
+MO10E AC,Yale,2,,C862,Masate,,,,TU8xMEUgQUNfQzg2Mi5qcGc=_13032024153222.png,384,2024-02-29 11:57:25.207,admin@gmail.com,2024-03-13 15:32:22.757,admin@gmail.com
+MRW030-E,Yale,3,'1-2 Ton MH Reach Stk',D821,Greenville,C3 - Standard and Premium,Warehouse,'',,7260,,,,
+H9XM-EC7,Hyster,5,'16-25 Ton ICE Pneu CH',A3C0,Maximal,Port Equipment - Empty Container Handlers,Big Trucks,'',,6937,,,,
+MSL15WUX,Yale,3,'1-2 Ton MH Strad Stk',A7R6,Ruyi,C3 - Low Intensity,Warehouse,'',,6910,,,,
+MR14E,Yale,2,NA  Small Reach,A942,Masate,C2 - Standard and Premium,Warehouse,'',,7021,,,,
+GTP2XB,Yale,7,'',D871,'','','','',,7089,,,,
+H1.6FT,Hyster,6,'',G001,Craigavon,'','','',,6884,,,,
+GP16VX,Yale,6,'',D810,Craigavon,'','','',,6885,,,,
+MP25X,Yale,3,'',A3D9,Maximal,'','','',,6887,,,,
+G16EF9,Yale,5,'',K876,Nijmegen,'','','',,6888,,,,
+H18XDS9,Hyster,5,'',D236,Nijmegen,'','','',,6890,,,,
+E120XN,Hyster,1,'',A099,Greenville,'','','1234567890',,7175,,,2024-03-13 15:00:29.400,admin@gmail.com
+R2.0HD,Hyster,2,'',D435,Masate,'','','',,6894,,,,
+S1.2S,Hyster,3,'',D442,Masate,'','','',,6897,,,,
+ME70XN,Hyster,1,'',A268,Greenville,'','','',,6899,,,,
+GP 20MX,Yale,6,'',D871,SN,'','','',,6900,,,,
+GLP25MX,Yale,6,'',D871,SN,'','','',,6902,,,,
+GDP8F9,Yale,5,'',K876,Nijmegen,'','','',,6903,,,,
+MR14 961,Yale,2,,A961,Maximal,,,,,379,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+GP70UX6,Yale,6,,A7T0,Maximal,,,,,380,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+MPW060-E,Yale,3,,B897,Greenville,,,,,381,2024-02-29 11:57:25.206,admin@gmail.com,2024-02-29 11:57:25.206,admin@gmail.com
+MS16SL,Yale,3,,D852,Masate,,,,,382,2024-02-29 11:57:25.207,admin@gmail.com,2024-02-29 11:57:25.207,admin@gmail.com
+M16ELY,Yale,3,,D852,Masate,,,,,383,2024-02-29 11:57:25.207,admin@gmail.com,2024-02-29 11:57:25.207,admin@gmail.com
+ERC050VGL,Yale,1,,A968,Greenville,,,,,386,2024-02-29 11:57:25.207,admin@gmail.com,2024-02-29 11:57:25.207,admin@gmail.com
+MPE080-VH,Yale,3,,C287,Ramos,,,,,387,2024-02-29 11:57:25.207,admin@gmail.com,2024-02-29 11:57:25.207,admin@gmail.com
+J15SWB,Hyster,2,,K160,Craigavon,,,,,388,2024-02-29 11:57:25.207,admin@gmail.com,2024-02-29 11:57:25.207,admin@gmail.com
+E50XNM,Hyster,1,,A268,Greenville,,,,,389,2024-02-29 11:57:25.207,admin@gmail.com,2024-02-29 11:57:25.207,admin@gmail.com
+H3.5A,Hyster,6,,R177,Craigavon,,,,,385,2024-02-29 11:57:25.207,admin@gmail.com,2024-03-12 14:25:48.614,admin@gmail.com
+H10XD6,Hyster,5,'',P007,Nijmegen,'','','',,6914,,,,
+H11XD-ECD8,Hyster,5,'',F214,Nijmegen,'','','',,6916,,,,
+GDP10D,Yale,5,'',K876,Nijmegen,'','','',,6919,,,,
+H2.0FTS,Hyster,6,'',G001,Craigavon,'','','',,6923,,,,
+GP40VX6,Yale,6,'',K813,Craigavon,'','','',,6926,,,,
+H44XDS12,Hyster,5,'',D917,Nijmegen,'','','',,6928,,,,
+ERP30VLL,Yale,2,'',A976,Craigavon,'','','',,6929,,,,
+J80XNS,Hyster,1,'',A250,Craigavon,'','','',,6930,,,,
+H11XD-ECD9,Hyster,5,'',F214,Nijmegen,'','','',,6931,,,,
+ERC060VG,Yale,1,'',A968,Greenville,'','','',,6932,,,,
+GP2.5N,Yale,6,'',E875,Craigavon,'','','',,6933,,,,
+H25XD12,Hyster,5,'',J008,Nijmegen,'','','',,6934,,,,
+GP70UX6,Yale,6,'',A3D0,Maximal,'','','',,6936,,,,
+MS12XI,Yale,3,'',D847,Masate,'','','',,6938,,,,
+K1.0H,Hyster,2,'',B460,Masate,'','','',,6940,,,,
+MR25,Yale,2,'',D849,Masate,'','','',,6941,,,,
+ERC120VH,Yale,1,'',A938,Greenville,'','','',,6944,,,,
+GDP90F,Yale,5,'',K876,Nijmegen,'','','',,6945,,,,
+J3.5GXS,Hyster,1,'',C225,SN,'','','',,6948,,,,
+ME60XN,Hyster,1,'',A268,Greenville,'','','',,6949,,,,
+GP2.5N6,Yale,6,'',E875,Craigavon,'','','',,6951,,,,
+GP20SVX,Yale,6,'',D810,Craigavon,'','','',,6952,,,,
+MPW080-E,Yale,3,'',B891,Greenville,'','','',,6954,,,,
+GLP15MX,Yale,6,'',E812,SN,'','','',,6955,,,,
+E100XNS,Hyster,1,'',A099,Greenville,'','','',,6957,,,,
+N40ZR3,Hyster,2,'',E264,Greenville,'','','',,6960,,,,
+S120FTPRS,Hyster,4,'',J004,Berea,'','','',,6961,,,,
+MR14,Yale,2,'',D849,Masate,'','','',,6962,,,,
+MO20P,Yale,2,'',E857,Masate,'','','',,6963,,,,
+GDP12F,Yale,5,'',J876,Nijmegen,'','','',,6966,,,,
+GDP13E,Yale,5,'',K876,Nijmegen,'','','',,6967,,,,
+R1.6N,Hyster,2,'',D435,Masate,'','','',,6968,,,,
+GDP35MX,Yale,6,'',D871,SN,'','','',,6975,,,,
+S1.4S,Hyster,3,'',D442,Masate,'','','',,6977,,,,
+H16XD6,Hyster,5,'',N019,Nijmegen,'','','',,6979,,,,
+H1.8FT,Hyster,6,'',G001,Craigavon,'','','',,6980,,,,
+ERP25VL,Yale,2,'',A976,Craigavon,'','','',,6982,,,,
+H30XD9,Hyster,5,'',J008,Nijmegen,'','','',,6984,,,,
+MS70FT,Hyster,4,'',H187,Berea,'','','',,6986,,,,
+H8XD-EC6,Hyster,5,'',F214,Nijmegen,'','','',,6988,,,,
+H36XDS12,Hyster,5,'',D917,Nijmegen,'','','',,6989,,,,
+H9XM-EC8,Hyster,5,'',A3C0,Maximal,'','','',,6991,,,,
+H4.5FTS5,Hyster,6,'',U005,Craigavon,'','','',,6992,,,,
+ERC070VG,Yale,1,'',A968,Greenville,'','','',,6994,,,,
+MR16,Yale,2,'',D849,Masate,'','','',,6996,,,,
+H2XTBD,Hyster,7,'',D466,'','','','',,6997,,,,
+GDP10D,Yale,5,'',J876,Nijmegen,'','','',,6998,,,,
+MO12C (SPED),Yale,2,'',E857,Masate,'','','',,6999,,,,
+ERP50VM,Yale,3,'',A985,Craigavon,'','','',,6898,,,2024-03-13 14:58:21.745,admin@gmail.com
+H20XDS9,Hyster,5,'',D236,Nijmegen,'','','',,7012,,,,
+G130DP,Yale,5,'',K876,Nijmegen,'','','',,7014,,,,
+FBR18WZ,Yale,2,'',C900,SN,'','','',,6995,,,,
+G14DPE,Yale,5,'',K876,Nijmegen,'','','',,6958,,,,
+P2.0S,Hyster,3,'2-3 Ton MH LL Rider',E439,Masate,C3 - Standard and Premium,Warehouse,'',,6935,,,,
+P2.0S,Hyster,3,'2-3 Ton MH LL Rider',A3D9,Maximal,C3 - Standard and Premium,Warehouse,'',,6918,,,2024-03-27 10:11:24.482,admin@gmail.com
+ERP40VM,Yale,3,'',A985,Craigavon,'','','',RVJQNDAtNTVWTV9BOTg1LmpwZw==_13032024153150.png,6953,,,2024-03-13 15:31:51.171,admin@gmail.com
+J2.0GX,Hyster,1,,C225,SN,,,,SjEuNS0zLjVHWF9DMjI1LmpwZw==_13032024152634.png,318,2024-02-29 11:57:25.202,admin@gmail.com,2024-03-13 15:26:34.295,admin@gmail.com
+J1.8GX,Hyster,1,,C225,SN,,,,SjEuNS0zLjVHWF9DMjI1LmpwZw==_13032024153358.png,322,2024-02-29 11:57:25.202,admin@gmail.com,2024-03-13 15:33:58.475,admin@gmail.com
+ESC040AD,Yale,1,'',C883,Greenville,'','','',RVNDMDMwLTA0MEFEX0M4ODMuSlBH_13032024153147.png,6974,,,2024-03-13 15:31:47.692,admin@gmail.com
+GP55VX,Yale,6,'',K813,Craigavon,'','','',R1A0MC01NVZYX0s4MTMucG5n_13032024153205.png,6879,,,2024-03-13 15:32:05.294,admin@gmail.com
+J2.5XN,Hyster,2,'',A276,Craigavon,'','','',SjIuMi0zLjVYTl9BMjc2LnRpZg==_13032024153358.png,6927,,,2024-03-13 15:33:59.400,admin@gmail.com
+RS 45-27 CH,Hyster,5,'',A404,Maximal,'','','',UlM0NV9BNDA0X0E5MjEucG5n_13032024153338.png,6889,,,2024-03-13 15:33:39.021,admin@gmail.com
+P3.0S,Hyster,3,'',E439,Masate,'','','',,7016,,,,
+GC060V,Yale,4,'',C910,Berea,'','','',,7019,,,,
+S12SIL,Hyster,3,'',D442,Masate,'','','',,7022,,,,
+S100FTBCS,Hyster,4,'',J004,Berea,'','','',,7023,,,,
+NR035EC,Yale,2,'',E861,Greenville,'','','',,7025,,,,
+S55FTS,Hyster,4,'',H187,Berea,'','','',,7030,,,,
+GP175VX,Yale,6,'',D909,Berea,'','','',,7031,,,,
+H155FT,Hyster,6,'',P006,Berea,'','','',,7033,,,,
+ERP7S9,Yale,1,'',A410,Craigavon,'','','',,7036,,,,
+GLP20SMX,Yale,6,'',E812,SN,'','','',,7037,,,,
+H9XD-ECD8,Hyster,5,'',F214,Nijmegen,'','','',,7038,,,,
+G12DPE,Yale,5,'',K876,Nijmegen,'','','',,7039,,,,
+MP20X,Yale,3,'',A3D9,Maximal,'','','',,7040,,,,
+GP 30MX,Yale,6,'',D871,SN,'','','',,7041,,,,
+FB35SRZ,Yale,1,'',C881,SN,'','','',,7042,,,,
+G90DPF,Yale,5,'',K876,Nijmegen,'','','',,7043,,,,
+ERP80S,Yale,1,'',A410,Craigavon,'','','',,7047,,,,
+H2.5A6,Hyster,6,'',R177,Craigavon,'','','',,7049,,,,
+S80FTBCS,Hyster,4,'',J004,Berea,'','','',,7050,,,,
+FB20SRZ,Yale,1,'',C881,SN,'','','',,7051,,,,
+J7XNS9,Hyster,1,'',A250,Craigavon,'','','',,7052,,,,
+MS60FT,Hyster,4,'',H187,Berea,'','','',,7054,,,,
+H12XD6,Hyster,5,'',P007,Nijmegen,'','','',,7055,,,,
+MR16HD,Yale,2,'',D849,Masate,'','','',,7056,,,,
+GDP2CD,Yale,7,'',D871,'','','','',,7057,,,,
+H18XD9,Hyster,5,'',D236,Nijmegen,'','','',,7058,,,,
+H2.5XT,Hyster,6,'',D466,SN,'','','',,7059,,,,
+ERC100VHS,Yale,1,'',A938,Greenville,'','','',,7060,,,,
+GDP25MX,Yale,6,'',D871,SN,'','','',,7061,,,,
+GLP25L,Yale,7,'',D871,'','','','',,7062,,,,
+GD30CD,Yale,7,'',D871,'','','','',,7063,,,,
+N30ZDR3,Hyster,2,'',E264,Greenville,'','','',,7065,,,,
+GC070V,Yale,4,'',C910,Berea,'','','',,7067,,,,
+H18XD7,Hyster,5,'',C238,Nijmegen,'','','',,7068,,,,
+H4.0FT6,Hyster,6,'',U005,Craigavon,'','','',,7069,,,,
+GDP25A,Yale,7,'',D871,'','','','',,7070,,,,
+MS40FT,Hyster,4,'',H187,Berea,'','','',,7072,,,,
+W30ZC,Hyster,3,'',C454,Greenville,'','','',,7073,,,,
+S120FTS,Hyster,4,'',J004,Berea,'','','',,7074,,,,
+H20XTC,Hyster,7,'',D466,'','','','',,7075,,,,
+H6XDEC,Hyster,5,'',N019,Nijmegen,'','','',,7076,,,,
+J80XNL,Hyster,1,'',A250,Craigavon,'','','',,7077,,,,
+ERP50VM6,Yale,4,'',A985,Craigavon,'','','',,7079,,,,
+G140DP,Yale,5,'',K876,Nijmegen,'','','',,7080,,,,
+GDP15MX,Yale,6,'',E812,SN,'','','',,7081,,,,
+GC120VXPRS,Yale,4,'',G818,Berea,'','','',,7082,,,,
+GDP10F,Yale,5,'',K876,Nijmegen,'','','',,7083,,,,
+FBR13SZ,Yale,2,'',C900,SN,'','','',,7084,,,,
+MO10L,Yale,2,'',E857,Masate,'','','',,7086,,,,
+MR12E,Yale,2,'',A942,Masate,'','','',,7088,,,,
+GLP35MX,Yale,6,'',D871,SN,'','','',,7096,,,,
+MP30X,Yale,3,'',A3D9,Maximal,'','','',,7099,,,,
+MP15UX,Yale,3,'',A3D1,Ruyi,'','','',,7103,,,,
+MTC10,Yale,2,'',B868,Masate,'','','',,7104,,,,
+H28XD12,Hyster,5,'',J008,Nijmegen,'','','',,7107,,,,
+H18XD9,Hyster,5,'',C238,Nijmegen,'','','',,7111,,,,
+H9XD-EC7,Hyster,5,'',F214,Nijmegen,'','','',,7112,,,,
+H25XBT,Hyster,7,'',D466,'','','','',,7113,,,,
+FBR15WZ,Yale,2,'',C900,SN,'','','',,7117,,,,
+H48XD12,Hyster,5,'',D917,Nijmegen,'','','',,7118,,,,
+K1.0M,Hyster,2,'',B460,Masate,'','','',,7123,,,,
+MS20X,Yale,3,'',D847,Masate,'','','',,7124,,,,
+MS12X,Yale,3,'',D847,Masate,'','','',,6976,,,2024-03-13 14:58:16.641,admin@gmail.com
+H3.5XT,Hyster,6,'',D466,SN,'','','',,6978,,,2024-03-13 15:01:30.222,admin@gmail.com
+E20MW3,Yale,2,'',G807,Craigavon,'','',qqq,,7034,,,,
+GTP30MX,Yale,6,'',D871,SN,'','',qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq,,7093,,,,
+N35ZR3,Hyster,2,'',E264,Greenville,'','','',,7134,,,,
+H25XD9,Hyster,5,'',J008,Nijmegen,'','','',,7135,,,,
+KDP5.0UX,Yale,6,'',A7R9,Maximal,'','','',,7137,,,,
+S14SIL,Hyster,3,'',D442,Masate,'','','',,7139,,,,
+MCW030-E,Yale,3,'',D819,Greenville,'','','',,7143,,,,
+C1.3,Hyster,2,'',B463,Masate,'','','',,7144,,,,
+J3.0XNL,Hyster,2,'',A276,Craigavon,'','','',,7145,,,,
+MTC13,Yale,2,'',B868,Masate,'','','',,7146,,,,
+H20XMD,Hyster,5,'',P007,Nijmegen,'','','',,7147,,,,
+MH8XD6,Hyster,5,'',P007,Nijmegen,'','','',,7149,,,,
+MTC13,Yale,2,'',B869,Masate,'','','',,7150,,,,
+W25ZC,Hyster,3,'',C454,Greenville,'','','',,7151,,,,
+MR10E,Yale,2,'',A942,Masate,'','','',,7156,,,,
+GP50VX,Yale,6,'',K813,Craigavon,'','','',,7158,,,,
+GC155VX,Yale,4,'',G879,Berea,'','','',,7159,,,,
+RP2.0N,Hyster,3,,C449,Masate,,,,UlAyLjAtMi41Tl9DNDQ5LnRpZg==_13032024153533.png,378,2024-02-29 11:57:25.206,admin@gmail.com,2024-03-13 15:35:35.673,admin@gmail.com
+ERP25UX,Yale,1,'',A7S4,Maximal,'','',wwwww,,7020,,,2024-03-13 16:06:35.109,admin@gmail.com
+P2.5S,Hyster,3,'2-3 Ton MH LL Rider',A3D9,Maximal,C3 - Standard and Premium,Warehouse,'',,7109,,,2024-03-27 10:11:24.484,admin@gmail.com
+MS14X,Yale,3,'',D847,Masate,'','','',TVMxMi0yMFhfRDg0Ny5qcGc=_13032024153146.png,6906,,,2024-03-13 15:31:46.087,admin@gmail.com
+GP35UX,Yale,6,'2-3 Ton ICE Pneu - LCT',A7S1,Maximal,C5 1-3.5T - Low Intensity,Counterbalance,'',,7133,,,2024-03-27 10:11:24.484,admin@gmail.com
+GC120SVX,Yale,4,'',G818,Berea,'','','',,7161,,,,
+GLP2BL,Yale,7,'',D871,'','','','',,7162,,,,
+H4.0UT,Hyster,6,'3.5-5.5 Ton ICE P UT',A3C6,Maximal,C5 4-9T - Low Intensity,Counterbalance,'',,7167,,,2024-03-27 10:11:24.484,admin@gmail.com
+MO20,Yale,2,'',E857,Masate,'','','',TU8yMC0yNV9NTzEyQ19FODU3LnBuZw==_13032024152421.png,7176,,,2024-03-13 15:24:21.819,admin@gmail.com
+H28XD-16CH,Hyster,5,'',J008,Nijmegen,'','','',,7163,,,,
+MS16XS,Yale,3,'',D847,Masate,'','','',,7164,,,,
+MO50T,Yale,2,'',E857,Masate,'','','',TU81MC03MFRfRTg1Ny5wbmc=_13032024153145.png,7278,,,2024-03-13 15:31:45.691,admin@gmail.com
+J16XNL,Hyster,1,'',A935,Greenville,'','','',,7166,,,,
+ME65XN,Hyster,1,'',A268,Greenville,'','','',,7170,,,,
+GLP30MX,Yale,6,'',D871,SN,'','','',,7171,,,,
+GP 25MX,Yale,6,'',D871,SN,'','','',,7174,,,,
+GP2.0N,Yale,6,'',E875,Craigavon,'','','',,7177,,,,
+GDP3F9,Yale,5,'',K876,Nijmegen,'','','',,7178,,,,
+MT30XUX,Yale,3,'',A3C8,Ruyi,'','','',,7186,,,,
+H20XD9,Hyster,5,'',D236,Nijmegen,'','','',,7187,,,,
+H4.0FT5,Hyster,6,'',U005,Craigavon,'','','',,7188,,,,
+R1.50EX 2,Hyster,2,'',C915,SN,'','','',,7190,,,,
+H32XD-16CH,Hyster,5,'',J008,Nijmegen,'','','',,7191,,,,
+ERP45VM,Yale,3,'',A985,Craigavon,'','','',,7192,,,,
+J5.0XN6,Hyster,4,'',A970,Craigavon,'','','',,7193,,,,
+ESC035AD,Yale,1,'',C883,Greenville,'','','',,7194,,,,
+GTP35MX,Yale,6,'',D871,SN,'','','',,7195,,,,
+GP60UX6,Yale,6,'',A3D0,Maximal,'','','',,7196,,,,
+S16SSL,Hyster,3,'',D442,Masate,'','','',,7197,,,,
+S2.0,Hyster,3,'',D456,Masate,'','','',,7198,,,,
+MOMP16,Yale,3,'',A428,Masate,'','','',,7201,,,,
+H2XTBT,Hyster,7,'',D466,'','','','',,7205,,,,
+ERP15UX,Yale,1,'',A7S4,Maximal,'','','',,7206,,,,
+MSW040-E,Yale,3,'',D820,Greenville,'','','',,7207,,,,
+MH9XD6,Hyster,5,'',P007,Nijmegen,'','','',,7208,,,,
+G18DPE,Yale,5,'',K876,Nijmegen,'','','',,7209,,,,
+J5.0XN,Hyster,3,'',A970,Craigavon,'','','',,7210,,,,
+R1.80EX W2,Hyster,2,'',C915,SN,'','','',,7211,,,,
+MO10,Yale,2,'',B865,Masate,'','','',,7212,,,,
+P2.5S,Hyster,3,'',E439,Masate,'','','',,7214,,,,
+R1.50EX W2,Hyster,2,'',C915,SN,'','','',,7215,,,,
+ERC065VG,Yale,1,'',A968,Greenville,'','','',,7216,,,,
+MR20HD,Yale,2,'',D849,Masate,'','','',,7217,,,,
+H10XD2,Hyster,5,'',N019,Nijmegen,'','','',,7219,,,,
+FB25RZ,Yale,1,'',C881,SN,'','','',,7221,,,,
+H9XD-ECD7,Hyster,5,'',F214,Nijmegen,'','','',,7222,,,,
+GDP2BD,Yale,7,'',D871,'','','','',,7223,,,,
+MRW020-E,Yale,3,'',D821,Greenville,'','','',,7226,,,,
+GDP20SMX,Yale,6,'',E812,SN,'','','',,7227,,,,
+R1.25EX 2,Hyster,2,'',C915,SN,'','','',,7228,,,,
+GDP18MX,Yale,6,'',E812,SN,'','','',,7230,,,,
+NR045EC,Yale,2,'',E861,Greenville,'','','',,7231,,,,
+GP135VX,Yale,6,'',H878,Berea,'','','',,7140,,,2024-03-12 14:23:16.537,admin@gmail.com
+E35HSD3,Hyster,1,'',C219,Greenville,'','',fffffddd,,7110,,,2024-03-11 17:48:04.526,admin@gmail.com
+F3.5UT4,Hyster,6,'',A3B8,Maximal,'','','',,7235,,,,
+LO1.0F,Hyster,2,'',E444,Masate,'','','',,7236,,,,
+H40XDS12,Hyster,5,'',D917,Nijmegen,'','','',,7238,,,,
+J2.5GX,Hyster,1,'',C225,SN,'','','',,7239,,,,
+GLP20MX,Yale,6,'',D871,SN,'','','',,7240,,,,
+J3.0XN,Hyster,3,'',A276,Craigavon,'','','',,7119,,,2024-03-13 15:18:32.111,admin@gmail.com
+MS16XL,Yale,3,'',D847,Masate,'','','',,7244,,,,
+MTC15,Yale,2,'',B869,Masate,'','','',,7246,,,,
+H1.8XT,Hyster,6,'',D475,SN,'','','',,7048,,,2024-03-13 15:01:30.222,admin@gmail.com
+S135FT,Hyster,4,'',H024,Berea,'','','',,7127,,,2024-03-13 15:00:26.303,admin@gmail.com
+E40HSD3,Hyster,1,'',C219,Greenville,'','',ffff6666,,7203,,,,
+ERP90V,Yale,1,'',A410,Craigavon,'','',hhhh,,7160,,,,
+GC040V,Yale,4,'',C910,Berea,'','','',,7199,,,,
+LO5.0T,Hyster,2,'',E444,Masate,'','','',,7247,,,,
+H25XBL,Hyster,7,'',D466,'','','','',,7248,,,,
+GC100VXBCS,Yale,4,'',G818,Berea,'','','',,7250,,,,
+H3.0XT,Hyster,6,'',D466,SN,'','','',,7253,,,,
+RSTIL4,Hyster,5,'',C289,India,'','','',,7254,,,,
+M12ILY,Yale,3,'',D852,Masate,'','','',,7255,,,,
+LO2.5,Hyster,2,'',E444,Masate,'','','',,7257,,,,
+H2.0XTS,Hyster,6,'',D475,SN,'','','',,7258,,,,
+GC135VX,Yale,4,'',G879,Berea,'','','',,7261,,,,
+GTP25MX,Yale,6,'',D871,SN,'','','',,7262,,,,
+H40XD-CH,Hyster,5,'',K117,Nijmegen,'','','',,7264,,,,
+GDP16E,Yale,5,'',K876,Nijmegen,'','','',,7266,,,,
+RSTILC,Hyster,5,'',A366,India,'','','',,7267,,,,
+H44XD12,Hyster,5,'',D917,Nijmegen,'','','',,7269,,,,
+GP 35MX,Yale,6,'',D871,SN,'','','',,7275,,,,
+GDP14E,Yale,5,'',J877,Nijmegen,'','','',,7276,,,,
+H32XD12,Hyster,5,'',J008,Nijmegen,'','','',,7277,,,,
+H48XDS12,Hyster,5,'',D917,Nijmegen,'','','',,7279,,,,
+MR16N,Yale,2,'',D849,Masate,'','','',,7280,,,,
+GDP30MX,Yale,6,'',D871,SN,'','','',,7281,,,,
+J2.5XNL,Hyster,2,'',A276,Craigavon,'','','',,7283,,,,
+R2.5,Hyster,2,'',D435,Masate,'','','',,7284,,,,
+MT30UX,Yale,3,'',A3C9,Ruyi,'','','',,7285,,,,
+GDP90F,Yale,5,'',J876,Nijmegen,'','','',,7286,,,,
+H175FT,Hyster,6,'',D299,Berea,'','','',SDE3MC0xOTBGVF9EMjk5LnBuZw==_13032024152635.png,7168,,,2024-03-13 15:26:35.719,admin@gmail.com
+R2.0,Hyster,2,'',D435,Masate,'','','',UjEuMC0yLjVfQTQzMl9BNDA2X0EzRDJfRDQzNS5wbmc=_13032024152811.png,7172,,,2024-03-13 15:28:11.525,admin@gmail.com
+MO10S,Yale,2,'',B865,Masate,'','','',TU8xMFNfQjg2NS5wbmc=_13032024153210.png,7097,,,2024-03-13 15:32:10.606,admin@gmail.com
+GDP80F,Yale,5,'',K876,Nijmegen,'','','',,7287,,,,
+ERP35VL,Yale,3,'',A976,Craigavon,'','','',,7291,,,,
+MTR007-F,Yale,3,'',C903,Ramos,'','','',,7292,,,,
+S1.6S,Hyster,3,'',D442,Masate,'','','',,7293,,,,
+H30XD12,Hyster,5,'',J008,Nijmegen,'','','',,7294,,,,
+GP18VX,Yale,6,'',D810,Craigavon,'','','',,7295,,,,
+J2.2XN,Hyster,2,'',A276,Craigavon,'','','',,7297,,,,
+H25XTC,Hyster,7,'',D466,'','','','',,7300,,,,
+FB30RZ,Yale,1,'',C881,SN,'','','',,7301,,,,
+MODP16,Hyster,3,'',A418,Masate,'','','',,7303,,,,
+H52XD-CH,Hyster,5,'',K117,Nijmegen,'','','',,7304,,,,
+GDP13E,Yale,5,'',J877,Nijmegen,'','','',,7306,,,,
+NR040EC,Yale,2,'',E861,Greenville,'','','',,7308,,,,
+J3.0GX,Hyster,1,'',C225,SN,'','','',,7310,,,,
+E100XN,Hyster,1,'',A099,Greenville,'','','',,7311,,,,
+MS20,Yale,3,'',D852,Masate,'','','',,7312,,,,
+HS12IL,Hyster,3,'',D456,Masate,'','','',,7313,,,,
+H40XD12,Hyster,5,'',D917,Nijmegen,'','','',,7315,,,,
+F2.5UT,Hyster,6,'',A3B4,Maximal,'','','',,7316,,,,
+ME45XN,Hyster,1,'',A268,Greenville,'','','',,7317,,,,
+NDR030EC,Yale,2,'',E861,Greenville,'','','',,7318,,,,
+GDP14E,Yale,5,'',K876,Nijmegen,'','','',,7321,,,,
+J70XNS,Hyster,1,'',A250,Craigavon,'','','',,7323,,,,
+J90XNL,Hyster,1,'',A250,Craigavon,'','','',,7326,,,,
+GDP20MX,Yale,6,'',D871,SN,'','','',,7327,,,,
+H5.5FT,Hyster,6,'',U005,Craigavon,'','','',,7328,,,,
+GLP18MX,Yale,6,'',E812,SN,'','','',,7329,,,,
+R1.6HD,Hyster,2,'',D435,Masate,'','','',,7331,,,,
+H13XD6,Hyster,5,'',N019,Nijmegen,'','','',,7332,,,,
+J5.5XN6,Hyster,4,'',A970,Craigavon,'','','',,7333,,,,
+MO70T,Yale,2,'',E857,Masate,'','','',,7184,,,2024-03-13 15:16:17.627,admin@gmail.com
+MS14XL,Yale,3,'',D847,Masate,'','','',,7334,,,,
+GC100VX,Yale,4,'',G818,Berea,'','',ffff,,7189,,,2024-03-12 14:23:00.655,admin@gmail.com
+S80FT,Hyster,4,'',J004,Berea,'','','',,7263,,,2024-03-11 17:44:37.734,admin@gmail.com
+GDP16E,Yale,5,'',J877,Nijmegen,'','','',,7339,,,,
+H44XD-CH,Hyster,5,'',K117,Nijmegen,'','','',,7341,,,,
+GP50UX6,Yale,6,'',A3D0,Maximal,'','','',,7343,,,,
+ERP18UX,Yale,1,'',A7S4,Maximal,'','','',,7344,,,,
+R1.4,Hyster,2,'',D435,Masate,'','','',,7345,,,,
+MCW025-E,Yale,3,'',D819,Greenville,'','','',,7346,,,,
+ERC100VH,Yale,1,'',A938,Greenville,'','','',,7347,,,,
+J20MWB,Hyster,2,'',K160,Craigavon,'','','',,7348,,,,
+H32XD9,Hyster,5,'',J008,Nijmegen,'','','',,7349,,,,
+GP45VX6,Yale,6,'',K813,Craigavon,'','','',,7352,,,,
+MS16X,Yale,3,'',D847,Masate,'','','',,7354,,,,
+H2.0A,Hyster,6,'',R177,Craigavon,'','','',,7358,,,,
+ERC060VGL,Yale,1,'',A968,Greenville,'','','',,7359,,,,
+GC055S,Yale,4,'',C910,Berea,'','',eee,,7288,,,,
+GD35CD,Yale,7,'',D871,'','','','ffff
+',,7325,,,,
+GDP80F,Yale,5,'',J876,Nijmegen,'','','',,7360,,,,
+ERP55VM6,Yale,4,'',A985,Craigavon,'','','',,7361,,,,
+GP170VX,Yale,6,'',D909,Berea,'','','',,7362,,,,
+J3.5XN,Hyster,3,'',A276,Craigavon,'','','',,7363,,,,
+R1.80EX 2,Hyster,2,'',C915,SN,'','','',,7365,,,,
+H25XBD,Hyster,7,'',D466,'','','','',,7368,,,,
+H16XD12,Hyster,5,'',R007,Nijmegen,'','','',,7265,,,2024-03-13 14:59:21.786,admin@gmail.com
+S16SIL,Hyster,3,'',D442,Masate,'','','',,7378,,,,
+FBR18SZ,Yale,2,'',C900,SN,'','','',,7380,,,,
+ERP22VL,Yale,2,'',A976,Craigavon,'','','',,7381,,,,
+MR20,Yale,2,'',D849,Masate,'','','',,7382,,,,
+LO1.2C (SPED),Hyster,2,'',E444,Masate,'','','',,7383,,,,
+R1.6,Hyster,2,'',D435,Masate,'','','',,7384,,,,
+MP20XUX,Yale,3,'1-2 Ton MH LL Wlk UT',A7R1,Ruyi,C3 - Low Intensity,Warehouse,'',,7335,,,,
+ERP25VLL,Yale,2,'',A976,Craigavon,'','','qwdsddsdsssss
+asdfghjkwlls
+1w11
+2222
+2
+
+
+
+2222
+
+
+
+
+
+
+
+
+
+
+
+
+
+222
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2222',,7364,,,,
+G16DPE,Yale,5,'',K876,Nijmegen,'','',gggggg,,7379,,,,
+MTC13 LWB,Yale,2,,B868,Masate,,,,,390,2024-02-29 11:57:25.207,admin@gmail.com,2024-02-29 11:57:25.207,admin@gmail.com
+J1.6XN LWB,Hyster,1,,A935,Craigavon,,,,,391,2024-02-29 11:57:25.207,admin@gmail.com,2024-02-29 11:57:25.207,admin@gmail.com
+MS14EL,Hyster,3,,D456,Masate,,,,,392,2024-02-29 11:57:25.207,admin@gmail.com,2024-02-29 11:57:25.207,admin@gmail.com
+E50XNL,Hyster,1,,A268,Greenville,,,,,393,2024-02-29 11:57:25.207,admin@gmail.com,2024-02-29 11:57:25.207,admin@gmail.com
+J18LWB,Hyster,2,,K160,Craigavon,,,,,394,2024-02-29 11:57:25.207,admin@gmail.com,2024-02-29 11:57:25.207,admin@gmail.com
+S1.4,Hyster,3,,D456,Masate,,,,,396,2024-02-29 11:57:25.208,admin@gmail.com,2024-02-29 11:57:25.208,admin@gmail.com
+J1.6XN MWB,Hyster,1,,A935,Craigavon,,,,,397,2024-02-29 11:57:25.208,admin@gmail.com,2024-02-29 11:57:25.208,admin@gmail.com
+MH16IL,Hyster,3,,D456,Masate,,,,,398,2024-02-29 11:57:25.208,admin@gmail.com,2024-02-29 11:57:25.208,admin@gmail.com
+R1.4 406,Hyster,2,,A406,Maximal,,,,,401,2024-02-29 11:57:25.208,admin@gmail.com,2024-02-29 11:57:25.208,admin@gmail.com
+ERC055VG,Yale,1,,A968,Greenville,,,,,403,2024-02-29 11:57:25.208,admin@gmail.com,2024-02-29 11:57:25.208,admin@gmail.com
+NR040DC,Yale,3,,C295,Greenville,,,,,404,2024-02-29 11:57:25.208,admin@gmail.com,2024-02-29 11:57:25.208,admin@gmail.com
+MSW030-F,Yale,3,,B895,Greenville,,,,,405,2024-02-29 11:57:25.208,admin@gmail.com,2024-02-29 11:57:25.208,admin@gmail.com
+MC12,Yale,3,,C860,Masate,,,,,406,2024-02-29 11:57:25.208,admin@gmail.com,2024-02-29 11:57:25.208,admin@gmail.com
+H2.5UT,Hyster,6,'',A3C1,Maximal,'','','',SDIuMC0zLjVVVF9BM0MxLnRpZg==_13032024152710.png,7353,,,2024-03-13 15:27:11.247,admin@gmail.com
+GP155SVX,Yale,6,'',H878,Berea,'','','',,7372,,,2024-03-13 16:06:35.110,admin@gmail.com
+J2.5UT,Hyster,1,'2-3 Ton Elec 4 Wh UT',A3C4,Maximal,C1 1-3.5T - Low Intensity,Warehouse,'',,7268,,,2024-03-27 10:11:24.485,admin@gmail.com
+W60Z,Hyster,3,'3 Ton MH LL Walkie',B231,Greenville,C3 - Standard and Premium,Warehouse,,VzYwWl9CMjMxX1c4MFpfQjIzNC50aWY=_13032024153349.png,445,2024-02-29 11:57:25.211,admin@gmail.com,2024-03-13 15:33:50.186,admin@gmail.com
+BE80ZHD,Hyster,2,,A244,Greenville,,, 43rtr,QkU4MC0xMDBaSERfQTI0NC50aWY=_13032024153522.png,414,2024-02-29 11:57:25.209,admin@gmail.com,2024-03-13 15:35:22.612,admin@gmail.com
+T3.0UTS,Hyster,3,MH Tractor,A3C8,Ruyi,C3 - Low Intensity,Warehouse,'',VDMuMFVUU19BM0M4LnBuZw==_13032024153352.png,7046,,,2024-03-13 15:33:52.828,admin@gmail.com
+GDP160EF12,Yale,5,,K876,Nijmegen,,,,,407,2024-02-29 11:57:25.208,admin@gmail.com,2024-02-29 11:57:25.208,admin@gmail.com
+E15SW3,Yale,2,,G807,Craigavon,,,,,408,2024-02-29 11:57:25.208,admin@gmail.com,2024-02-29 11:57:25.208,admin@gmail.com
+GDF80DF,Yale,5,,K876,Nijmegen,,,,,411,2024-02-29 11:57:25.209,admin@gmail.com,2024-02-29 11:57:25.209,admin@gmail.com
+S1.2,Hyster,3,,D456,Masate,,,,,412,2024-02-29 11:57:25.209,admin@gmail.com,2024-02-29 11:57:25.209,admin@gmail.com
+MODP20,Hyster,3,,A418,Masate,,,,,413,2024-02-29 11:57:25.209,admin@gmail.com,2024-02-29 11:57:25.209,admin@gmail.com
+MP20X,Yale,3,'',E843,Masate,'','','',,7336,,,2024-03-12 11:26:06.771,admin@gmail.com
+MAMP20,Yale,,,A249,Hangcha,,,,,423,2024-02-29 11:57:25.209,admin@gmail.com,2024-02-29 11:57:25.209,admin@gmail.com
+MOMP22,Yale,3,,A428,Masate,,,,,424,2024-02-29 11:57:25.209,admin@gmail.com,2024-02-29 11:57:25.209,admin@gmail.com
+RP2.5N,Hyster,3,,C449,Masate,,,,,425,2024-02-29 11:57:25.209,admin@gmail.com,2024-02-29 11:57:25.209,admin@gmail.com
+HS16IL,Hyster,3,,D456,Masate,,,,,427,2024-02-29 11:57:25.210,admin@gmail.com,2024-02-29 11:57:25.210,admin@gmail.com
+FB15RZ,Yale,1,,C881,SN,,,,,428,2024-02-29 11:57:25.210,admin@gmail.com,2024-02-29 11:57:25.210,admin@gmail.com
+MR16 961,Yale,2,,A961,Maximal,,,,,429,2024-02-29 11:57:25.210,admin@gmail.com,2024-02-29 11:57:25.210,admin@gmail.com
+B60ZAC2,Hyster,3,,E230,Ramos,,, ooo,,344,2024-02-29 11:57:25.204,admin@gmail.com,2024-03-08 15:05:46.801,admin@gmail.com
+C1.5S,Hyster,2,'',B464,Masate,'','','',,6956,,,2024-03-01 16:36:43.035,admin@gmail.com
+C1.0,Hyster,2,'',B463,Masate,'','',kakaka,,7169,,,2024-03-04 15:37:46.236,admin@gmail.com
+C1.3,Hyster,2,'',B464,Masate,'','','',,7148,,,2024-03-04 16:27:16.726,admin@gmail.com
+MPR080VG,Yale,2,'3-4 Ton Rider Pallet',A284,Greenville,C2 - Standard and Premium,Warehouse,,,326,2024-02-29 11:57:25.203,admin@gmail.com,2024-03-06 12:00:35.999,admin@gmail.com
+W30ZA2,Hyster,3,'1-2 Ton MH Strad Stk',B495,Greenville,C3 - Standard and Premium,Warehouse,,,346,2024-02-29 11:57:25.204,admin@gmail.com,2024-03-06 12:00:35.999,admin@gmail.com
+F2.5UT4,Hyster,6,,A3B8,Maximal,,,,,315,2024-02-28 18:24:01.790,admin@gmail.com,2024-03-11 17:23:25.803,admin@gmail.com
+KDP18UX4,Yale,6,'',A7R8,Maximal,'','','',,7252,,,2024-03-11 17:31:18.788,admin@gmail.com
+W20ZR,Hyster,3,'',C455,Greenville,'','','',,7157,,,2024-03-13 15:18:19.904,admin@gmail.com
+MP30X,Yale,3,'',E843,Masate,'','','',,7386,,,2024-03-13 15:16:02.857,admin@gmail.com
+GC120VX,Yale,4,'3.5-5.5 Ton ICE Cush',G818,Berea,C4 4-9T - Standard and Premium,Counterbalance,'',,7008,,,2024-03-13 14:58:18.219,admin@gmail.com
+ESC030AD,Yale,1,'',C883,Greenville,'','','',,6913,,,2024-03-13 14:58:18.261,admin@gmail.com
+ERC045VG,Yale,1,'',A968,Greenville,'','','4444',,7105,,,2024-03-13 14:58:20.761,admin@gmail.com
+FB18RZ,Yale,1,,C881,SN,,,,,446,2024-02-29 11:57:25.211,admin@gmail.com,2024-03-13 14:58:22.252,admin@gmail.com
+MP20T,Yale,3,,C854,Masate,,,,,416,2024-02-29 11:57:25.209,admin@gmail.com,2024-03-13 14:58:53.920,admin@gmail.com
+J4.0XN,Hyster,3,'3.5-5.5 Ton Elect DBB',A970,Craigavon,C1 4-9T - Standard and Premium,Counterbalance,'',,7213,,,2024-03-13 15:00:27.190,admin@gmail.com
+MC15,Yale,3,,C860,Masate,,,,,430,2024-02-29 11:57:25.210,admin@gmail.com,2024-02-29 11:57:25.210,admin@gmail.com
+GDP10F,Yale,5,'',J876,Nijmegen,'','','',,6904,,,,
+GD25CD,Yale,7,'',D871,'','','',updateeee,,7282,,,,
+J1.8XN MWB,Hyster,1,,A935,Craigavon,,,,,316,2024-02-29 11:57:25.202,admin@gmail.com,2024-02-29 11:57:25.202,admin@gmail.com
+H4.5FT6,Hyster,6,'',U005,Craigavon,'','','',,6907,,,,
+E16SW3,Yale,2,,G807,Craigavon,,,,,431,2024-02-29 11:57:25.210,admin@gmail.com,2024-02-29 11:57:25.210,admin@gmail.com
+MP20SE,Hyster,,,B978,unknown,,,,,432,2024-02-29 11:57:25.210,admin@gmail.com,2024-02-29 11:57:25.210,admin@gmail.com
+GDF130EF,Yale,5,,K876,Nijmegen,,,,,434,2024-02-29 11:57:25.210,admin@gmail.com,2024-02-29 11:57:25.210,admin@gmail.com
+MS14,Yale,3,,D852,Masate,,,,,323,2024-02-29 11:57:25.203,admin@gmail.com,2024-02-29 11:57:25.203,admin@gmail.com
+GP3.5N,Yale,6,,E875,Craigavon,,,,,324,2024-02-29 11:57:25.203,admin@gmail.com,2024-02-29 11:57:25.203,admin@gmail.com
+S2.0S,Hyster,3,'',D442,Masate,'','','',,6893,,,,
+H16XD2,Hyster,5,'',C238,Nijmegen,'','','',,7003,,,,
+ERP70S,Yale,1,'',A410,Craigavon,'','','',,7005,,,,
+H2.5A,Hyster,6,'',R177,Craigavon,'','','',,7007,,,,
+H7.0UT6,Hyster,6,'',A3D0,Maximal,'','','',,7094,,,2024-03-12 14:25:17.460,admin@gmail.com
+H5.0UT6,Hyster,6,'',A3D0,Maximal,'','','',,7064,,,2024-03-12 11:28:40.705,admin@gmail.com
+C1.5M,Hyster,2,'',B464,Masate,'','',www,,7121,,,,
+E60XNL,Hyster,1,'',A268,Greenville,'','','tttttt
+',,7153,,,,
+H14XD6,Hyster,5,'',N019,Nijmegen,'','','',,7369,,,,
+GP45SVX5,Yale,6,'',K813,Craigavon,'','','',,7373,,,,
+C1.5L,Hyster,2,'',B464,Masate,'','','111',QzEuMC0xLjVMX0I0NjNfQjQ2NC5qcGc=_13032024153519.png,7066,,,2024-03-13 15:35:21.427,admin@gmail.com
+NDR030DC,Yale,2,,C295,Greenville,,,,TkRSMDMwRENfTkRSMDM1RUNfQzI5NV9FODYxLnBuZw==_13032024153222.png,402,2024-02-29 11:57:25.208,admin@gmail.com,2024-03-13 15:32:22.242,admin@gmail.com
+RS 45-27 CH,Hyster,5,'',A921,Maximal,'','','',UlM0NV9BNDA0X0E5MjEucG5n_13032024153338.png,7272,,,2024-03-13 15:33:39.021,admin@gmail.com
+W30ZR,Hyster,3,'1-2 Ton MH Reach Stk',C455,Greenville,C3 - Standard and Premium,Warehouse,'',VzIwLTMwWlJfQzQ1NS50aWY=_13032024153347.png,7350,,,2024-03-13 15:33:47.252,admin@gmail.com
+MP20UX,Yale,3,'',A7R5,Ruyi,'','','',TVAyMFVYX0E3UjUuanBn_13032024153145.png,7356,,,2024-03-13 15:31:45.611,admin@gmail.com
+T7ZAC,Hyster,3,MH Tractor,C477,Ramos,C3 - Standard and Premium,Warehouse,'',VDUtN1pBQ19ENDc2X0M0NzcudGlm_13032024153349.png,7351,,,2024-03-13 15:33:49.878,admin@gmail.com
+ERP030VT,Yale,2,'',G807,Craigavon,'','','',,7108,,,2024-03-13 16:06:35.109,admin@gmail.com
+E16LWB,Yale,1,'',A955,Greenville,'','','',,7330,,,2024-03-13 16:06:35.110,admin@gmail.com
+FB35PYE,Yale,1,'3.5-5.5 Ton Elect DBB',A901,SN,C1 4-9T - Standard and Premium,Counterbalance,'',,6905,,,2024-03-27 10:11:24.486,admin@gmail.com
+GP40UX,Yale,6,'3.5-5.5 Ton ICE P UT',A7S6,Maximal,C5 4-9T - Low Intensity,Counterbalance,'',,6920,,,2024-03-27 10:11:24.486,admin@gmail.com
+H2XTBL,Hyster,7,'',D466,'','','','',,7375,,,,
+LO2.0S,Hyster,2,'',E444,Masate,'','','',,7376,,,,
+MO25,Yale,2,'',E857,Masate,'','','',,7377,,,,
+S100FT,Hyster,4,'',J004,Berea,'','','',,7132,,,2024-03-11 15:34:04.643,admin@gmail.com
+BE100ZHD,Hyster,2,,A244,Greenville,,,,,475,2024-02-29 11:57:25.213,admin@gmail.com,2024-03-11 15:34:26.276,admin@gmail.com
+J1.5GX,Hyster,1,,C225,SN,,,,,444,2024-02-29 11:57:25.211,admin@gmail.com,2024-03-11 15:34:18.108,admin@gmail.com
+H170FT,Hyster,6,'',D299,Berea,'','','',,6924,,,2024-03-11 15:34:18.336,admin@gmail.com
+H3.5UT,Hyster,6,'',A3C1,Maximal,'','','',,7032,,,2024-03-11 15:34:20.497,admin@gmail.com
+F1.8UT,Hyster,6,'',A3B4,Maximal,'','',update passsss,,7087,,,2024-03-11 15:34:23.056,admin@gmail.com
+KDP18UX,Yale,6,'',A7S0,Maximal,'','','',,6946,,,2024-03-12 14:23:18.604,admin@gmail.com
+KDP25UX4,Yale,6,'',A7R8,Maximal,'','','',,7142,,,2024-03-11 17:19:14.424,admin@gmail.com
+KDP35UX,Yale,6,'',A7S0,Maximal,'','','',,7299,,,2024-03-11 17:19:14.424,admin@gmail.com
+H2.0UT,Hyster,6,'',A3C1,Maximal,'','','',,7122,,,2024-03-11 17:22:44.982,admin@gmail.com
+SL1.5UT,Hyster,3,'',A3B6,Ruyi,'','','',U0wxLjVVVF9BM0I2LnBuZw==_13032024153345.png,7270,,,2024-03-13 15:33:46.661,admin@gmail.com
