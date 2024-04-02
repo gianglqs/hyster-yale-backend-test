@@ -11,7 +11,6 @@ import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.repository.*;
 import com.hysteryale.repository.importFailure.ImportFailureRepository;
-import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.DirectoryStream;
@@ -47,8 +45,6 @@ import java.util.regex.Pattern;
 public class BookingService extends BasedService {
     @Resource
     BookingRepository bookingRepository;
-    @Resource
-    ProductService productService;
 
     @Resource
     ProductRepository productRepository;
@@ -75,16 +71,11 @@ public class BookingService extends BasedService {
     RegionService regionService;
 
     @Resource
-    CurrencyService currencyService;
-
-    @Resource
     RegionRepository regionRepository;
 
     @Resource
     DealerRepository dealerRepository;
 
-    @Resource
-    FileUploadRepository fileUploadRepository;
 
     @Resource
     CountryService countryService;
@@ -893,7 +884,7 @@ public class BookingService extends BasedService {
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable"));
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable"), null);
     }
 
     public int countBookingsWithFilter(FilterModel filterModel) throws ParseException {
@@ -927,7 +918,8 @@ public class BookingService extends BasedService {
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable")
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"), (Pageable) filterMap.get("pageable"),
+                (Integer) filterMap.get("dealerId")
         );
 
         // get currency for order -> get exchange_rate
@@ -966,7 +958,7 @@ public class BookingService extends BasedService {
                 (List<String>) filterMap.get("segmentFilter"), (List<String>) filterMap.get("dealerNameFilter"), (String) filterMap.get("aopMarginPercentageFilter"),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((String) ((List) filterMap.get("marginPercentageFilter")).get(0)),
                 ((List) filterMap.get("marginPercentageFilter")).isEmpty() ? null : ((Double) ((List) filterMap.get("marginPercentageFilter")).get(1)),
-                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter")
+                (LocalDate) filterMap.get("fromDateFilter"), (LocalDate) filterMap.get("toDateFilter"), (Integer) filterMap.get("dealerId")
         );
 
         Booking totalBooking = calculateTotal(getTotalBookings, exchangeRateList);
