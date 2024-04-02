@@ -98,7 +98,8 @@ public class IndicatorServiceTest {
                new ArrayList<>(),
                new ArrayList<>(),
                new ArrayList<>(),
-               "");
+               "",
+               null);
    }
 
     /**

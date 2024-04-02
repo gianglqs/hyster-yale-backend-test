@@ -9,68 +9,89 @@ Before you begin, ensure you have the following:
     Java Development Kit (JDK) installed.
     PostgreSQL database server installed and configured.
 
-## Steps
+## I. Configure environment
 
-### Step 1: Install Java Development Kit (JDK)
+### 1. Install Java Development Kit (JDK)
+
+- Update the package index
+```
+sudo apt update
+```
+
+- Install the default JDK (OpenJDK 17 or higher)
+```
+sudo apt install default-jdk 
+ ```
+
+- Verify the installation
+```
+java -version
+```
+
+### 2. Install PostgreSQL Database Server (13 or higher)
 
 #### Update the package index
-`sudo apt update`
-
-#### Install the default JDK (OpenJDK 17 or higher)
-`sudo apt install default-jdk`
-
-#### Verify the installation
-`java -version`
-
-### Step 2: Install PostgreSQL Database Server (13 or higher)
-
-#### Update the package index
-`sudo apt update`
+```
+sudo apt update
+```
 
 #### Install PostgreSQL
-`sudo apt install postgresql postgresql-contrib`
+```
+sudo apt install postgresql postgresql-contrib
+```
 
 #### Start and enable the PostgreSQL service
-`sudo systemctl start postgresql`
+```
+sudo systemctl start postgresql
 
-`sudo systemctl enable postgresql`
+sudo systemctl enable postgresql
+```
 
-### Step 3: Create a PostgreSQL Database and User
+### 3. Create a PostgreSQL Database and User
 
-#### Access the PostgreSQL interactive terminal
-`sudo -u postgres psql`
+- Access the PostgreSQL interactive terminal
+```
+sudo -u postgres psql
+```
 
-#### Create a new database
-`CREATE DATABASE hysteryale;`
+- Create a new database
+```
+CREATE DATABASE hysteryale
+```
+- Create a new database user and Grant privileges on the database
+```
+CREATE USER hysteryale WITH PASSWORD 'your_password'
 
-#### Create a new database user
-`CREATE USER hysteryale WITH PASSWORD 'your_password';`
+GRANT ALL PRIVILEGES ON DATABASE hysteryale TO hysteryale
+```
 
-#### Grant privileges to the user on the database
-`GRANT ALL PRIVILEGES ON DATABASE hysteryale TO hysteryale;`
-
-#### add extension to search  
-```angular2html
+- add extension to search  
+```
 \c hysteryale;
 
 CREATE EXTENSION pg_trgm;
 ```
-
-## Step 4: Clone the Spring Boot Application
-
-### Install Git
-`sudo apt install git`
-
-#### Navigate to the folder /opt
-`cd /opt`
-
-### create root folder for project
-
+### 4. Install Git
+- Install git
 ```
-mkdir hysteryale
-cd hysteryale
+sudo apt install git
 ```
-### create root folder for upload files
+- Config SSH: <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">See details here</a>
+## II. Configure Spring Boot Application
+
+- Create root folder for project and change ownership for current user
+```
+sudo mkdir /opt/hysteryale/
+
+sudo chown -R oem /opt/hysteryale/
+```
+
+- Clone repository
+```
+git clone git@github.com:Phoenix-Software-Development/hyster-yale-backend.git
+```
+
+- Create folder for upload files
 ```
 mkdir -p /opt/hysteryale/uploadFiles/forecast_pricing
 mkdir -p /opt/hysteryale/uploadFiles/booked
@@ -87,46 +108,33 @@ mkdir -p /opt/hysteryale/uploadFiles/booking_fpa
 mkdir -p /opt/hysteryale/images/product/
 mkdir -p /opt/hysteryale/images/part/
 ```
-
-### set permission
-
-```angular2html
-sudo chmod -R 777 /opt/hysteryale/images
-sudo chmod -R 777 /opt/hysteryale/uploadFiles
+- Copy folder `/opt/hysteryale/hyster-yale-backend/locale` to folder `/opt/hysteryale/`
+```
+cp -r /opt/hysteryale/hyster-yale-backend/locale /opt/hysteryale/
 ```
 
-### Update Github Deployment Key
-
-#### Clone your Spring Boot application repository
-`git clone https://github.com/Phoenix-Software-Development/hyster-yale-backend.git`
-
-`cd hyster-yale-backend`
-
-## Step 5: Configure the Spring Boot Application
-
-Edit the `application.properties` file in your Spring Boot application to configure the database connection:
-
+- Create file `.env` with template in `.env-template` and populate it
 ```
-spring.datasource.url=jdbc:postgresql://localhost:5432/hysteryale`
-spring.datasource.username=your_username`
-spring.datasource.password=your_password`
+cp /opt/hysteryale/hyster-yale-backend/.env-template /opt/hysteryale/hyster-yale-backend/.env
 ```
 
-## Step 6: Build and Package the Spring Boot Application
+## III. Build and Run Spring Boot Application
 
-#### install maven
-`sudo apt install maven`
+- install maven
+```
+sudo apt install maven
+```
 
-#### Build the application
-`mvn clean install`
+- Build the application
+```
+mvn clean install -DfileName=hysteryale
+```
 
-## Step 7: Run the Spring Boot Application
-
-#### Run the application
+- Run the application
 ```
 nohup java -Xmx12000m -Dspring.profiles.active=dev -jar hysteryale.war > log.txt 2>&1 & disown
 ```
 
-## Step 8: Access the Application
+### Access the Application
 
-If the frontend has been deployed successfully, try to open a web browser and navigate to http://localhost:8080 to access your Spring Boot application.
+Open a web browser and navigate to http://localhost:8080 to access your Spring Boot application.
