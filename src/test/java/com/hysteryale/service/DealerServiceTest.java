@@ -9,8 +9,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+
+
 
 @SpringBootTest
 public class DealerServiceTest {
@@ -23,10 +33,10 @@ public class DealerServiceTest {
     public void testGetDealerListing() {
         DealerPayload payload = new DealerPayload();
         int pageNo = 0;
-        int perPage = 15;
+        int perPage = 16;
 
         // Expected
-        Pageable pageable = PageRequest.of(pageNo, 15);
+        Pageable pageable = PageRequest.of(pageNo, 16);
         Page<Dealer> expected = dealerRepository.getDealerListingByFilter(payload.getDealerName(), pageable);
 
         // Actual
@@ -48,4 +58,20 @@ public class DealerServiceTest {
         Dealer result_notFound = dealerService.getDealerById(dealerId_notFound);
         Assertions.assertNull(result_notFound);
     }
+
+    @Test
+    public void testGetDealerColumnName() throws IOException {
+        String filePath = "";
+        XSSFWorkbook workbook = new XSSFWorkbook(filePath);
+        Sheet sheet = workbook.getSheetAt(0);
+        HashMap<String, Integer> dealerColumnsName = new HashMap<>();
+        for (Row row : sheet) {
+            dealerService.getDealerColumnName(row, dealerColumnsName);
+        }
+
+        Assertions.assertTrue(dealerColumnsName.containsKey(""));
+    }
 }
+
+
+
