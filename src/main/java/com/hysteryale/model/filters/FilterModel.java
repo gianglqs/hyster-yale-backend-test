@@ -36,6 +36,6 @@ public class FilterModel {
     //for productDimension detail
     private List<String> orderNumbers;
     private String metaSeriez;
-
+    private Integer dealerId;
 
 }

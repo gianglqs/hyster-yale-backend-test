@@ -63,7 +63,8 @@ public class TrendsServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                "");
+                "",
+                null);
     }
 
     private void assertCostValue(List<TrendData> bookingData, List<TrendData> shipmentData) throws ParseException {

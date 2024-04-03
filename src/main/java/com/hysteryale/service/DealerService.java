@@ -2,6 +2,11 @@ package com.hysteryale.service;
 
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.model.Dealer;
+import com.hysteryale.model.payLoad.DealerPayload;
+import com.hysteryale.repository.DealerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import com.hysteryale.repository.DealerRepository;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.ConvertDataExcelUtils;
@@ -12,6 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,11 +25,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DealerService {
     @Resource
     DealerRepository dealerRepository;
+
     public Dealer getDealerByName(List<Dealer> dealers, String name) {
         for (Dealer dealer : dealers) {
             if (keepLettersAndDigits(dealer.getName()).contains(keepLettersAndDigits(name)))
@@ -36,6 +44,15 @@ public class DealerService {
         return input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
     }
 
+    public Page<Dealer> getDealerListing(DealerPayload payload, int pageNo) {
+        Pageable pageable = PageRequest.of(pageNo - 1, 15);
+        return dealerRepository.getDealerListingByFilter(payload.getDealerName(), pageable);
+    }
+
+    public Dealer getDealerById(int dealerId) {
+        Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
+        return optionalDealer.orElse(null);
+    }
     //import and save dealer to dealer listing
     public void importNewDealerFileByFile(String filePath) throws IOException, MissingColumnException {
         InputStream is = new FileInputStream(filePath);

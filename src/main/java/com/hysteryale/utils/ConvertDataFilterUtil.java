@@ -38,6 +38,7 @@ public class ConvertDataFilterUtil {
         List<String> truckTypeFilter = checkListData(filterModel.getTruckType());
         List<String> orderNumberListFilter = checkListDataHaveNoneElement(filterModel.getOrderNumbers());
         String metaseriesFilter = checkStringData(filterModel.getMetaSeriez());
+        Integer dealerIdListFilter = filterModel.getDealerId();
 
         LocalDate calendar = LocalDate.now();
         Integer year = filterModel.getYear() == null ? calendar.getYear() : filterModel.getYear();
@@ -68,6 +69,7 @@ public class ConvertDataFilterUtil {
         // for ProductDimension detail
         result.put("orderNumberListFilter", orderNumberListFilter);
         result.put("metaseriesFilter", metaseriesFilter);
+        result.put("dealerId", dealerIdListFilter);
 
         return result;
     }
@@ -118,7 +120,7 @@ public class ConvertDataFilterUtil {
     }
 
     public static String convertFilter(String filter) {
-        if (filter == null || filter.trim().equals(""))
+        if (filter == null || filter.trim().isEmpty())
             return null;
         return filter;
     }
