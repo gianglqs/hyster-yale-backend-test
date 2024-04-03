@@ -275,7 +275,7 @@ public class ExchangeRateService extends BasedService {
             fromDate=toDate.minusDays(limit);
 
         if(ChronoUnit.MONTHS.between(fromDate, toDate) > 1){
-            throw new RuntimeException("Time exceeds 1 month, please choose a shorter range");
+            throw new Exception("Time exceeds 1 month, please choose a shorter range");
         }
 
         Map<String, Object> data = new HashMap<>();
