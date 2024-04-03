@@ -23,10 +23,10 @@ public class DealerServiceTest {
     public void testGetDealerListing() {
         DealerPayload payload = new DealerPayload();
         int pageNo = 0;
-        int perPage = 15;
+        int perPage = 16;
 
         // Expected
-        Pageable pageable = PageRequest.of(pageNo, 15);
+        Pageable pageable = PageRequest.of(pageNo, 16);
         Page<Dealer> expected = dealerRepository.getDealerListingByFilter(payload.getDealerName(), pageable);
 
         // Actual

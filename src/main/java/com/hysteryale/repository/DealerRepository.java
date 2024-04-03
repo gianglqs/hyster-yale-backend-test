@@ -18,7 +18,7 @@ public interface DealerRepository extends JpaRepository<Dealer, Integer> {
     @Query("SELECT d FROM Dealer d WHERE d.name = :name")
     Optional<Dealer> findByName(String name);
 
-    @Query("SELECT d FROM Dealer d WHERE LOWER(d.name) LIKE CONCAT('%', LOWER(:dealerName), '%')")
+    @Query("SELECT d FROM Dealer d WHERE LOWER(d.name) LIKE CONCAT('%', LOWER(:dealerName), '%') ORDER BY d.name ASC")
     Page<Dealer> getDealerListingByFilter(@Param(value = "dealerName") String dealerName, Pageable pageable);
 
 }

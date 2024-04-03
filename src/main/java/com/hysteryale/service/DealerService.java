@@ -30,7 +30,7 @@ public class DealerService {
     }
 
     public Page<Dealer> getDealerListing(DealerPayload payload, int pageNo) {
-        Pageable pageable = PageRequest.of(pageNo - 1, 15);
+        Pageable pageable = PageRequest.of(pageNo - 1, 16);
         return dealerRepository.getDealerListingByFilter(payload.getDealerName(), pageable);
     }
 
