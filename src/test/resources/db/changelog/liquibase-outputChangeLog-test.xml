@@ -51,7 +51,7 @@
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="freight_sequence" startValue="1"/>
     </changeSet>
     <changeSet author="oem (generated)" id="1711005719548-11">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="10"/>
     </changeSet>
     <changeSet author="oem (generated)" id="1711005719548-12">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalysisaoprateseq" startValue="1"/>

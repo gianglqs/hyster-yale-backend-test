@@ -7,7 +7,6 @@ import com.hysteryale.repository.CompetitorColorRepository;
 import com.hysteryale.repository.UserRepository;
 import com.hysteryale.service.ImportService;
 import com.hysteryale.service.IndicatorService;
-import com.hysteryale.service.UserService;
 import com.hysteryale.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -32,7 +31,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.annotation.Resource;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -53,8 +51,6 @@ public class IndicatorsControllerTest {
     private IndicatorService indicatorService;
     @MockBean
     private ImportService importService;
-    @MockBean
-    private UserService userService;
     @Resource
     private UserRepository userRepository;
 
@@ -235,7 +231,7 @@ public class IndicatorsControllerTest {
                         )
                         .andReturn();
         Assertions.assertEquals(404, result.getResponse().getStatus());
-        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("Competitor Color not found"));
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("Cannot found Competitor Color with id: " + 12837129));
     }
 
     @Test
@@ -280,11 +276,11 @@ public class IndicatorsControllerTest {
                         )
                         .andReturn();
         Assertions.assertEquals(404, result.getResponse().getStatus());
-        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("Competitor Color not found"));
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("Cannot found Competitor Color with id: " + competitorColor.getId()));
     }
 
     @Test
-    @WithMockUser(username = "user1@gmail.com", authorities = "ADMIN")
+    @WithMockUser(username = "admin@gmail.com", authorities = "ADMIN")
     public void testImportIndicatorsFile_notExcelFile() throws Exception {
         MockMultipartFile file =
                 new MockMultipartFile(
@@ -301,7 +297,7 @@ public class IndicatorsControllerTest {
                                         .file(file)
                         ).andReturn();
         Assertions.assertEquals(400, result.getResponse().getStatus());
-        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("Uploaded file is not an Excel file"));
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("File is not Excel"));
     }
 
     @Test
@@ -328,7 +324,7 @@ public class IndicatorsControllerTest {
                                         .file(file)
                         ).andReturn();
         Assertions.assertEquals(404, result.getResponse().getStatus());
-        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("Missing Forecast Dynamic Pricing Excel file"));
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("Missing Forecast Dynamic Pricing Excel file"));
     }
 
     @Test
