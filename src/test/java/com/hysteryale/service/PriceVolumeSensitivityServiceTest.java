@@ -22,7 +22,6 @@ import java.util.Map;
 @SpringBootTest
 @Slf4j
 public class PriceVolumeSensitivityServiceTest {
-
     PriceVolSensitivityFilterModel filters;
 
     @Resource

@@ -13,6 +13,7 @@
     <include file="classpath:db/changelog/liquibase-add-column-quote_number.xml" relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/liquibase-update-region.xml" relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/liquibase-create-table-importFailure.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/liquibase-update-country.xml"  relativeToChangelogFile="false"/>
 
 
 </databaseChangeLog>

@@ -10,7 +10,10 @@ public class CheckRequiredColumnUtils {
     // REQUIRED COLUMN
     public static final List<String> SHIPMENT_REQUIRED_COLUMN = List.of("Order number", "Series", "Model",
             "Serial Number", "Quantity", "Revenue", "Revenue - Other", "Discounts", "Additional Discounts",
-            "Cash Discounts", "Cost of Sales", "Dealer Commisions", "Warranty", "COS - Other", "Ship-to Country Code", "Created On");
+            "Cash Discounts", "Cost of Sales", "Dealer Commisions", "Warranty", "COS - Other", "End Customer Name","Ship-to Country Code","Created On");
+
+    public static final List<String> DEALEAR_REQUIRED_COLUMN = List.of("MkgGroup", "BilltoCode", "DealerDivison", "DealerName","TerritoryManager","AreaBusinesssDirector","BigTruckManager","AftermarketManager","AftermarketTechnicalServiceManager");
+
     public static final  List<String>  FORECAST_REQUIRED_COLUMN =List.of("Series /Segments","Description","Plant","Brand");
 
     public static final List<String> COMPETITOR_REQUIRED_COLUMN = List.of("Table Title", "Country", "Group", "Brand", "Region", "Class", "Origin", "Market Share", "Price (USD)");
