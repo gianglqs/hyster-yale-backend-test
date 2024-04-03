@@ -517,7 +517,7 @@ public class IMMarginAnalystDataService {
     /**
      * Read NOVO file and create populating values for showing on Dropdown box in Margin Screen
      */
-    public Map<String, Object> populateMarginFilters(String filePath, String fileName) throws IOException, MissingColumnException, IncorectFormatCellException {
+    public Map<String, Object> populateMarginFilters(String filePath, String fileName, String fileUUID) throws IOException, MissingColumnException, IncorectFormatCellException {
 
         FileInputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
@@ -531,7 +531,7 @@ public class IMMarginAnalystDataService {
         for(Row row : sheet) {
             if(row.getRowNum() == 0) {
                 getColumnName(row);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMN_NAME.keySet()), CheckRequiredColumnUtils.NOVO_REQUIRED_COLUMN, fileName);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMN_NAME.keySet()), CheckRequiredColumnUtils.NOVO_REQUIRED_COLUMN, fileUUID);
             }
             else if(!row.getCell(COLUMN_NAME.get("Model Code"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
                 // Check cells' format before reading value.

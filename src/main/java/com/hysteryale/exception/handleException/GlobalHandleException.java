@@ -71,7 +71,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         locale = locale == null ? "en" : locale;
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "missing_column");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
-        stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
+        stringBuilder.insert(baseMessage.length(), exception.getMessage());
         fileUploadService.handleUpdatedFailure(exception.getFileUUID(), stringBuilder.toString());
         logError(stringBuilder.toString(), exception);
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);

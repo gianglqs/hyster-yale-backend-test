@@ -387,10 +387,11 @@ public class ExchangeRateService extends BasedService {
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.exchange_rate");
         String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.EXCHANGE_RATE);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath))
-            throw new InvalidFileFormatException(file.getOriginalFilename() + " is not Excel", file.getOriginalFilename(), "Excel");
+            throw new InvalidFileFormatException("Uploaded file is not an Excel file " + fileName, fileUUID);
 
         // Verify whether file's name is null or not
         String originalFileName = file.getOriginalFilename();

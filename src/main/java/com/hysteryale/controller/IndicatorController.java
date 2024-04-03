@@ -144,7 +144,7 @@ public class IndicatorController {
 
         if (!FileUtils.isExcelFile(pathFile)) {
             fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
-            throw new Exception("Uploaded file is not an Excel file");
+            throw new InvalidFileFormatException("Uploaded file is not an Excel file " + savedFileName, fileUUID);
         }
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
