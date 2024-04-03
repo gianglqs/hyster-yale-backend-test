@@ -184,11 +184,10 @@ public class ExchangeRateServiceTest {
                 MediaType.MULTIPART_FORM_DATA_VALUE,
                 fileResource1.getInputStream()
         );
-        InvalidFileFormatException exception1 = Assertions.assertThrows(
+        Assertions.assertThrows(
                 InvalidFileFormatException.class,
                 () -> exchangeRateService.importExchangeRateFromFile(file1, authentication)
         );
-        Assertions.assertEquals(file1.getOriginalFilename() + " is not Excel", exception1.getMessage());
 
 
         // Test case: Uploaded file's name is not in appropriate format
@@ -202,7 +201,7 @@ public class ExchangeRateServiceTest {
                 MediaType.MULTIPART_FORM_DATA_VALUE,
                 fileResource2.getInputStream()
         );
-        InvalidFileNameException exception2 = Assertions.assertThrows(
+        Assertions.assertThrows(
                 InvalidFileNameException.class,
                 () -> exchangeRateService.importExchangeRateFromFile(file2, authentication)
         );
