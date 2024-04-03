@@ -1,5 +1,6 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.CompetitorException.MissingForecastFileException;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
@@ -17,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -26,7 +26,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -307,7 +306,7 @@ public class IndicatorsControllerTest {
         Assertions.assertNotNull(fileResource);
 
         when(importService.loadForecastForCompetitorPricingFromFile())
-                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Forecast Dynamic Pricing Excel file"));
+                .thenThrow(new MissingForecastFileException("Missing Forecast Dynamic Pricing Excel file"));
         MockMultipartFile file =
                 new MockMultipartFile(
                         "file",
@@ -328,7 +327,7 @@ public class IndicatorsControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = "USER")
+    @WithMockUser(username = "admin@gmail.com", authorities = "ADMIN")
     public void testImportIndicatorsFile() throws Exception {
         org.springframework.core.io.Resource fileResource = new ClassPathResource("/import_files/competitor_pricing/Competitor Pricing Database.xlsx");
         Assertions.assertNotNull(fileResource);
@@ -336,7 +335,7 @@ public class IndicatorsControllerTest {
         MockMultipartFile file =
                 new MockMultipartFile(
                         "file",
-                        fileResource.getFilename(),
+                        fileResource.getFilename() + 1,
                         MediaType.MULTIPART_FORM_DATA_VALUE,
                         fileResource.getInputStream()
                         );
