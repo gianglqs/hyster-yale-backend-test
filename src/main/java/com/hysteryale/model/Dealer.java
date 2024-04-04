@@ -26,4 +26,31 @@ public class Dealer {
     public boolean equals(String name) {
         return this.name.equals(name);
     }
+
+    @Column(name="bill_to_code")
+    private String billtoCode;
+
+    @Column(name = "mkg_group")
+    private String mkgGroup;
+
+    @Column(name = "dealer_divison")
+    private String dealerDivison;
+
+//    @Column(name = "dealer_name")
+//    private String dealerName;
+
+    @Column(name = "territory_manager")
+    private String territoryManager;
+
+    @Column(name = "area_businesss_director")
+    private String areaBusinesssDirector;
+
+    @Column(name = "big_truck_manager")
+    private String bigTruckManager;
+
+    @Column(name = "aftermarket_manager")
+    private String aftermarketManager;
+
+    @Column(name = "aftermarket_technical_service_manager")
+    private String AftermarketTechnicalServiceManager;
 }
