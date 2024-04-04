@@ -30,18 +30,19 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
         List<String> segmentFilter = (List<String>) filterMap.get("segmentFilter");
         List<String> metaSeriesFilter = (List<String>) filterMap.get("metaSeriesFilter");
         List<Booking> getListBookingByFilter;
+
+
         long countAll = 0;
         if (metaSeriesFilter == null) {
-            if (segmentFilter != null && segmentFilter.size() == 1) {
-                getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeries(segmentFilter, metaSeriesFilter);
-                countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeries(segmentFilter, new ArrayList<>());
-            } else {
-                getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySegment(segmentFilter);
-                countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySegment(segmentFilter == null ? new ArrayList<>() : segmentFilter);
-            }
+            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySegment(segmentFilter);
+            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySegment(segmentFilter == null ? new ArrayList<>() : segmentFilter);
+
+        }else if(segmentFilter==null) {
+            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeries(metaSeriesFilter);
+            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeries(metaSeriesFilter == null ? new ArrayList<>() : metaSeriesFilter);
         } else {
-            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeries(segmentFilter, metaSeriesFilter);
-            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeries(segmentFilter == null ? new ArrayList<>() : segmentFilter, metaSeriesFilter);
+            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeriesAndSegment(segmentFilter, metaSeriesFilter);
+            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeriesAndSegment(segmentFilter == null ? new ArrayList<>() : segmentFilter, metaSeriesFilter);
         }
         List<PriceVolSensitivityPayLoad> priceVolSensitivityPayLoadList = calculatePriceVolSensitivity(getListBookingByFilter, discountPercent, filters.isWithMarginVolumeRecovery());
         result.put("listOrder", priceVolSensitivityPayLoadList);
