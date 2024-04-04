@@ -10,7 +10,6 @@ import com.hysteryale.repository.CompetitorPricingRepository;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -28,7 +27,6 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -240,6 +238,7 @@ public class IndicatorService extends BasedService {
         HashMap<String, Integer> competitorColumnName = new HashMap<>();
         List<CompetitorPricing> competitorPricingList = new ArrayList<>();
         List<ForeCastValue> forecastValueList = importService.loadForecastForCompetitorPricingFromFile();
+
         if (forecastValueList == null) {
             throw new Exception("Missing Forecast Dynamic Pricing Excel file");
         }
@@ -249,21 +248,17 @@ public class IndicatorService extends BasedService {
         Row headerRow = sheet.getRow(0);
         for (int j = 0; j < CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN.size(); j++) {
             Cell cell = headerRow.getCell(j);
-            if (cell == null)
-                continue;
-            if (cell.getCellType() == CellType.STRING)
-                titleColumnCurrent.add(cell.getStringCellValue());
-            else
-                titleColumnCurrent.add(String.valueOf(cell.getNumericCellValue()));
-
+            titleColumnCurrent.add(ConvertDataExcelUtils.convertDataFromExcelToString(cell));
         }
         //Check format file competitor
         CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN, fileUUID);
 
+
+
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {
                 competitorColumnName = getCompetitorColumnName(row);
-            } else if (!row.getCell(competitorColumnName.get("Table Title"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
+            } else if (!ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(competitorColumnName.get("Table Title"))).isEmpty()) {
                 List<CompetitorPricing> competitorPricings = importService.mapExcelDataIntoCompetitorObject(row, competitorColumnName);
                 for (CompetitorPricing competitorPricing : competitorPricings) {
                     // if it has series -> assign ForeCastValue
@@ -287,7 +282,6 @@ public class IndicatorService extends BasedService {
                 }
             }
         }
-
 
         competitorPricingRepository.saveAll(competitorPricingList);
         importService.assigningCompetitorValues();
