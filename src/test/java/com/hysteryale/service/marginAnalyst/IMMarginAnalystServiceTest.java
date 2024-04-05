@@ -12,16 +12,22 @@ import com.hysteryale.repository.marginAnalyst.MarginAnalystMacroRepository;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.repository_h2.IMMarginAnalystDataRepository;
 import com.hysteryale.utils.CurrencyFormatUtils;
+import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -43,6 +49,23 @@ public class IMMarginAnalystServiceTest {
     @Resource
     FileUploadRepository fileUploadRepository;
 
+    @BeforeEach
+    public void setUp() throws IOException {
+        String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
+        String baseFolderUpload = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
+        String importFilePath = "import_files/novo/";
+
+        String[] fileList = new String[] { "SN_AUD.xlsx", "example 1_HYM.xlsx" };
+
+        for(String file : fileList) {
+            File SN_AUD_FILE = new File(baseFolder + baseFolderUpload + "novo/" + file);
+            FileInputStream fis = new FileInputStream(importFilePath + file);
+            if(SN_AUD_FILE.createNewFile())
+                FileUtils.copyInputStreamToFile(fis, SN_AUD_FILE);
+            else
+                log.error("Error on creating new file");
+        }
+    }
 
     @Test
     public void testGetManufacturingCost() {
@@ -139,6 +162,7 @@ public class IMMarginAnalystServiceTest {
         IMMarginAnalystData data = new IMMarginAnalystData();
         data.setFileUUID("UUID test file calculated");
         data.setCurrency("USD");
+        data.setRegion("");
         marginAnalystDataRepository.save(data);
 
         boolean result = marginAnalystDataService.isFileCalculated("UUID test file calculated", "USD", "");

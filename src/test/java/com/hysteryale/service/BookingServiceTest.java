@@ -410,7 +410,7 @@ public class BookingServiceTest {
     public void testGetBookingByFilter_marginPercentage() throws ParseException {
         resetFilters();
 
-        String marginPercentage = "<20% Margin";
+        String marginPercentage = ">=30% Margin";
         filters.setMarginPercentage(marginPercentage);
 
         List<Booking> listBooking = bookingService.findAllForTest();
@@ -431,7 +431,7 @@ public class BookingServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for (Booking bo : listResult) {
-            Assertions.assertTrue(bo.getMarginPercentageAfterSurcharge() < 0.2);
+            Assertions.assertTrue(bo.getMarginPercentageAfterSurcharge() >= 0.3);
 
             quantity += bo.getQuantity();
             if (bo.getCurrency().getCurrency().equals("AUD")) {
