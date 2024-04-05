@@ -140,7 +140,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "incorrect_cell_format");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
         stringBuilder.insert(baseMessage.length(), exception.getMessage());
-        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), stringBuilder.toString());
+        fileUploadService.handleUpdatedFailure(exception.getFileUUID(), stringBuilder.toString());
         logError(stringBuilder.toString(), exception);
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.BAD_REQUEST);
     }

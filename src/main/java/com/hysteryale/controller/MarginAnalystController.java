@@ -122,7 +122,7 @@ public class MarginAnalystController {
         if (!FileUtils.isExcelFile(filePath))
             throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
 
-        marginAnalystMacroService.importMarginAnalystMacroFromFile(file.getOriginalFilename(), filePath);
+        marginAnalystMacroService.importMarginAnalystMacroFromFile(file.getOriginalFilename(), filePath, fileUUID);
         fileUploadService.handleUpdatedSuccessfully(fileName);
     }
 
@@ -141,7 +141,7 @@ public class MarginAnalystController {
         if (!FileUtils.isExcelFile(filePath))
             throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
 
-        partService.importPartFromFile(file.getOriginalFilename(), filePath, savedFileName);
+        partService.importPartFromFile(file.getOriginalFilename(), filePath, fileUUID);
         fileUploadService.handleUpdatedSuccessfully(savedFileName);
     }
 }

@@ -92,7 +92,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importMarginAnalystMacro")
-    void importMarginAnalystMacro() {
+    void importMarginAnalystMacro() throws InvalidFileNameException {
         marginAnalystMacroService.importMarginAnalystMacro();
     }
 
