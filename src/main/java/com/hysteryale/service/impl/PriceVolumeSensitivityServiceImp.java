@@ -74,13 +74,18 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
             priceVolSensitivityPayLoad.setDiscountPercent(discountPercent);
 
             double revenue = booking.getDealerNetAfterSurcharge();
+
+            // resolve case if  / 0 when revenue=0
+            double fakeRevenue=1;
             long volume = booking.getQuantity();
             double COGS = booking.getTotalCost();
             double margin = revenue - COGS;
-            double marginPercent = margin / revenue;
+            double marginPercent = margin / (revenue!=0?revenue:fakeRevenue);
 
-            double ASP = revenue / volume;
-            double ACP = COGS / volume;
+            //resolve case if / 0 when volumn =0
+            long fakeVolumn=1;
+            double ASP = revenue / (volume!=0?volume:fakeVolumn);
+            double ACP = COGS / (volume!=0?volume:fakeVolumn);
             double AvSM = ASP - ACP;
 
             // discountPercent
@@ -97,12 +102,16 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
             double incrementalRevenueRecovery = unitVolumeOffset * newDN;
 
             long volumeAfterOffset = unitVolumeOffset + volume;
+
+
             double revenueAfterOffset = volume * newDN;
+
+            double fakeRevenueAfterOffset=1;
             if (withMarginVolumeRecovery)
                 revenueAfterOffset = incrementalRevenueRecovery + revenue;
             double COGSAfterOffset = volumeAfterOffset * ACP;
             double marginAfterOffset = revenueAfterOffset - COGSAfterOffset;
-            double marginPercentAfterOffset = marginAfterOffset / revenueAfterOffset;
+            double marginPercentAfterOffset = marginAfterOffset / (revenueAfterOffset!=0?revenueAfterOffset:fakeRevenueAfterOffset);
 
             priceVolSensitivityPayLoad.setVolume(volume);
             priceVolSensitivityPayLoad.setRevenue(revenue);
