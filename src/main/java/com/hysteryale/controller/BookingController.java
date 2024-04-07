@@ -88,7 +88,7 @@ public class BookingController {
             importFailures = bookingService.importCostDataNew(filePath, fileUUID);
             fileUploadService.handleUpdatedSuccessfully(savedFileName);
         } else {
-            throw new InvalidFileNameException(file.getOriginalFilename(), savedFileName);
+            throw new InvalidFileNameException(file.getOriginalFilename(), fileUUID);
         }
         String message = localeUtils.getMessageImportComplete(importFailures, ModelUtil.BOOKING, locale);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(message, fileUUID));

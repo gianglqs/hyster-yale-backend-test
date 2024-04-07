@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Transactional
@@ -105,4 +106,10 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     @Query(value = "SELECT m.latest_modified_at FROM product m WHERE m.latest_modified_at is not null ORDER BY m.latest_modified_at DESC LIMIT 1", nativeQuery = true)
     Optional<LocalDateTime> getLatestUpdatedTime();
+
+    @Query("SELECT DISTINCT p.modelType FROM Product p WHERE p.modelType IS NOT NULL AND p.modelType <> ''")
+    List<String> getAllModelType();
+
+    @Query("SELECT DISTINCT p.modelCode FROM Product p WHERE (:brand IS NULL OR p.brand = :brand) AND (:modelType IS NULL OR p.modelType= :modelType)")
+    List< String> getModelCodeByBranchAndModelTypeFilter(String brand, String modelType);
 }
