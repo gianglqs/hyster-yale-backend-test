@@ -1,5 +1,7 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.CompetitorException.CompetitorColorNotFoundException;
+import com.hysteryale.exception.CompetitorException.MissingForecastFileException;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.competitor.ForeCastValue;
@@ -10,7 +12,6 @@ import com.hysteryale.repository.CompetitorPricingRepository;
 import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -18,17 +19,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -148,12 +146,12 @@ public class IndicatorService extends BasedService {
             return optional.get();
     }
 
-    public CompetitorColor getCompetitorById(int id) {
+    public CompetitorColor getCompetitorById(int id) throws CompetitorColorNotFoundException {
         Optional<CompetitorColor> optional = competitorColorRepository.findById(id);
         if (optional.isPresent())
             return optional.get();
         else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Competitor Color not found");
+            throw new CompetitorColorNotFoundException("NOT FOUND Competitor Color " + id, id);
     }
 
     public Page<CompetitorColor> searchCompetitorColor(String search, int pageNo, int perPage) {
@@ -162,14 +160,10 @@ public class IndicatorService extends BasedService {
     }
 
     @Transactional
-    public void updateCompetitorColor(CompetitorColor modifyColor) {
-        Optional<CompetitorColor> optional = competitorColorRepository.findById(modifyColor.getId());
-        if (optional.isPresent()) {
-            CompetitorColor dbCompetitorColor = optional.get();
-
-            dbCompetitorColor.setGroupName(modifyColor.getGroupName());
-            dbCompetitorColor.setColorCode(modifyColor.getColorCode());
-        } else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Competitor Color not found");
+    public void updateCompetitorColor(CompetitorColor modifyColor) throws CompetitorColorNotFoundException {
+        CompetitorColor dbCompetitorColor = getCompetitorById(modifyColor.getId());
+        dbCompetitorColor.setGroupName(modifyColor.getGroupName());
+        dbCompetitorColor.setColorCode(modifyColor.getColorCode());
     }
 
     /**
@@ -240,8 +234,9 @@ public class IndicatorService extends BasedService {
         HashMap<String, Integer> competitorColumnName = new HashMap<>();
         List<CompetitorPricing> competitorPricingList = new ArrayList<>();
         List<ForeCastValue> forecastValueList = importService.loadForecastForCompetitorPricingFromFile();
+
         if (forecastValueList == null) {
-            throw new Exception("Missing Forecast Dynamic Pricing Excel file");
+            throw new MissingForecastFileException("Missing Forecast Dynamic Pricing Excel file");
         }
 
         Sheet sheet = workbook.getSheetAt(0);
@@ -249,13 +244,7 @@ public class IndicatorService extends BasedService {
         Row headerRow = sheet.getRow(0);
         for (int j = 0; j < CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN.size(); j++) {
             Cell cell = headerRow.getCell(j);
-            if (cell == null)
-                continue;
-            if (cell.getCellType() == CellType.STRING)
-                titleColumnCurrent.add(cell.getStringCellValue());
-            else
-                titleColumnCurrent.add(String.valueOf(cell.getNumericCellValue()));
-
+            titleColumnCurrent.add(ConvertDataExcelUtils.convertDataFromExcelToString(cell));
         }
         //Check format file competitor
         CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN, fileUUID);
@@ -263,7 +252,7 @@ public class IndicatorService extends BasedService {
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {
                 competitorColumnName = getCompetitorColumnName(row);
-            } else if (!row.getCell(competitorColumnName.get("Table Title"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
+            } else if (!ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(competitorColumnName.get("Table Title"))).isEmpty()) {
                 List<CompetitorPricing> competitorPricings = importService.mapExcelDataIntoCompetitorObject(row, competitorColumnName);
                 for (CompetitorPricing competitorPricing : competitorPricings) {
                     // if it has series -> assign ForeCastValue
@@ -288,10 +277,7 @@ public class IndicatorService extends BasedService {
             }
         }
 
-
         competitorPricingRepository.saveAll(competitorPricingList);
         importService.assigningCompetitorValues();
     }
-
-
 }

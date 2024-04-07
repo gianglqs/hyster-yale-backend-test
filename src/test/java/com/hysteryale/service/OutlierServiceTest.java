@@ -54,7 +54,8 @@ public class OutlierServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                "");
+                "",
+                null);
     }
 
     private void assertResultValue(Booking totalResult, long quantity, double totalCost, double totalDealerNet, double totalDNAfterSurcharge, double totalMargin) {

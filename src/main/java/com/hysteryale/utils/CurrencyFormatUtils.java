@@ -7,6 +7,7 @@ public class CurrencyFormatUtils {
 
     public static final DecimalFormat decimalFormatFourDigits = new DecimalFormat("0.0000");
     public static final DecimalFormat decimalFormatTwoDigits = new DecimalFormat("0.00");
+    public static final DecimalFormat decimalFormatThreeDigits = new DecimalFormat("0.000");
 
 
     /**

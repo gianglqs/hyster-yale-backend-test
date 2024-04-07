@@ -3,6 +3,7 @@ package com.hysteryale.utils;
 public class ModelUtil {
 
     public static final String BOOKING = "booking";
+    public static final String DEALER="dealer";
     public static final String COST_DATA = "cost_data";
     public static final String BOOKING_FPA = "booking_fpa";
     public static final String SHIPMENT = "shipment";

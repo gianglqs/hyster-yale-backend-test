@@ -41,6 +41,7 @@ public class BookingControllerTest {
     @WithMockUser(authorities = "USER")
     public void testGetDataBooking() throws Exception {
         FilterModel filters = new FilterModel();
+        filters.setOrderNo("");
         log.info(JsonUtils.toJSONString(filters));
 
         MvcResult result =

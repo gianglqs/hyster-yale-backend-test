@@ -1,6 +1,7 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.exception.*;
+import com.hysteryale.exception.CompetitorException.MissingForecastFileException;
 import com.hysteryale.service.*;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +38,7 @@ public class ImportController {
     ImportService importService;
 
     @PostMapping(path = "/importAllData")
-    void importAllData() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException, BlankSheetException, IncorectFormatCellException, ExchangeRatesException, InvalidFileNameException {
+    void importAllData() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException, BlankSheetException, IncorectFormatCellException, ExchangeRatesException, InvalidFileNameException, MissingForecastFileException {
         importApicDealer();
         importCurrencies();
         importPart();
@@ -91,13 +92,13 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importMarginAnalystMacro")
-    void importMarginAnalystMacro() {
+    void importMarginAnalystMacro() throws InvalidFileNameException {
         marginAnalystMacroService.importMarginAnalystMacro();
     }
 
 
     @PostMapping(path = "/importCompetitorPricing")
-    void importCompetitorPricing() throws IOException {
+    void importCompetitorPricing() throws IOException, MissingForecastFileException {
         importService.importCompetitorPricing();
     }
 

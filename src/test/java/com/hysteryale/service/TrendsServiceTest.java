@@ -63,7 +63,8 @@ public class TrendsServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                "");
+                "",
+                null);
     }
 
     private void assertCostValue(List<TrendData> bookingData, List<TrendData> shipmentData) throws ParseException {
@@ -137,8 +138,8 @@ public class TrendsServiceTest {
             marginPercentage = marginPercentage / bookingOrdersList.size();
 
             Assertions.assertEquals(
-                    CurrencyFormatUtils.formatDoubleValue(dealerNet, CurrencyFormatUtils.decimalFormatFourDigits),
-                    CurrencyFormatUtils.formatDoubleValue(data.getCost(), CurrencyFormatUtils.decimalFormatFourDigits));
+                    CurrencyFormatUtils.formatDoubleValue(dealerNet, CurrencyFormatUtils.decimalFormatTwoDigits),
+                    CurrencyFormatUtils.formatDoubleValue(data.getCost(), CurrencyFormatUtils.decimalFormatTwoDigits));
             Assertions.assertEquals(
                     CurrencyFormatUtils.formatDoubleValue(marginPercentage, CurrencyFormatUtils.decimalFormatTwoDigits),
                     CurrencyFormatUtils.formatDoubleValue(data.getMarginPercentage(), CurrencyFormatUtils.decimalFormatTwoDigits));

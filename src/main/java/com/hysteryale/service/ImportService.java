@@ -1,6 +1,7 @@
 package com.hysteryale.service;
 
 import com.hysteryale.exception.BlankSheetException;
+import com.hysteryale.exception.CompetitorException.MissingForecastFileException;
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Currency;
@@ -12,10 +13,7 @@ import com.hysteryale.model.enums.ImportFailureType;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.*;
 import com.hysteryale.repository.importFailure.ImportFailureRepository;
-import com.hysteryale.utils.CheckRequiredColumnUtils;
-import com.hysteryale.utils.EnvironmentUtils;
-import com.hysteryale.utils.LocaleUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -23,9 +21,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -111,9 +107,10 @@ public class ImportService extends BasedService {
 
                 if (row.getCell(i).getCellType() == CellType.STRING) {
                     columnName = row.getCell(i).getStringCellValue().trim();
-                } else {
+                } else if(row.getCell(i).getCellType()==CellType.NUMERIC){
                     columnName = String.valueOf(row.getCell(i).getNumericCellValue());
-
+                }else{
+                    columnName="";
                 }
 
                 if (ORDER_COLUMNS_NAME.containsKey(columnName))
@@ -265,7 +262,7 @@ public class ImportService extends BasedService {
         }
     }
 
-    public void importCompetitorPricing() throws IOException {
+    public void importCompetitorPricing() throws IOException, MissingForecastFileException {
 
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.competitor-pricing");
@@ -326,40 +323,35 @@ public class ImportService extends BasedService {
         return null;
     }
 
-    public List<ForeCastValue> loadForecastForCompetitorPricingFromFile() throws IOException {
+    public List<ForeCastValue> loadForecastForCompetitorPricingFromFile() throws IOException, MissingForecastFileException {
 
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String folderPath = baseFolder + baseFolderUploaded + EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
         List<String> fileList = getAllFilesInFolder(folderPath, -1);
         if (fileList.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Forecast Dynamic Pricing Excel file");
-
+            throw new MissingForecastFileException("Missing Forecast Dynamic Pricing Excel file");
 
         List<ForeCastValue> foreCastValues = new ArrayList<>();
 
         for (String fileName : fileList) {
             String pathFile = folderPath + "/" + fileName;
-
             InputStream is = new FileInputStream(pathFile);
             XSSFWorkbook workbook = new XSSFWorkbook(is);
-
-
             List<Integer> years = new ArrayList<>();
             HashMap<Integer, Integer> YEARS_COLUMN = new HashMap<>();
             HashMap<String, Integer> FORECAST_ORDER_COLUMN = new HashMap<>();
 
             for (Sheet sheet : workbook) {
                 Region region = getRegionBySheetName(sheet.getSheetName());
-                List<String> titleColumnFileCompetitor = List.of("Series /Segments", "Description", "Plant", "Brand", "Planform", "Qty", "DN", "M % ", "Book Rev", "Book Margin $");
                 for (Row row : sheet) {
                     if (row.getRowNum() == 0) {
                         getYearsInForeCast(YEARS_COLUMN, row, years);
 
                     } else if (row.getRowNum() == 1)
                         getOrderColumnsName(row, FORECAST_ORDER_COLUMN);
-                    else if (!row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() &&       // checking null
-                            row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().length() == 3 &&    // checking cell is whether metaSeries or not
+                    else if (!ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(0)).isEmpty() &&       // checking null
+                            ConvertDataExcelUtils.convertDataFromExcelToString(row.getCell(0)) .length() == 3 &&    // checking cell is whether metaSeries or not
                             row.getRowNum() > 1) {
 
                         // get all quantity value from 2021 to 2027
@@ -373,13 +365,12 @@ public class ImportService extends BasedService {
                         }
                     }
                 }
-
-
             }
         }
         log.info("Number of ForeCastValue: " + foreCastValues.size());
         return foreCastValues;
     }
+
 
     private void getYearsInForeCast(HashMap<Integer, Integer> YEARS_COLUMN, Row row, List<Integer> years) {
         for (Cell cell : row) {
@@ -565,7 +556,7 @@ public class ImportService extends BasedService {
 
             InputStream is = new FileInputStream(pathFile);
 
-            importShipmentFileOneByOne(is, "");// TODO: need check
+            importShipmentFileOneByOne(is,"");
 
             updateStateImportFile(pathFile);
         }
