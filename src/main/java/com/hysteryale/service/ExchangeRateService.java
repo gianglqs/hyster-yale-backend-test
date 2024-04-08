@@ -189,9 +189,7 @@ public class ExchangeRateService extends BasedService {
             }
         }
 
-
-
-        if(ChronoUnit.MONTHS.between(fromDate, toDate) > limit+1){
+        if(ChronoUnit.MONTHS.between(fromDate, toDate) > 12){
             throw new Exception("Time exceeds 12 month, please choose a shorter range");
         }
 
@@ -269,7 +267,7 @@ public class ExchangeRateService extends BasedService {
         } else if (fromDate == null)
             fromDate=toDate.minusDays(limit);
 
-        if(ChronoUnit.MONTHS.between(fromDate, toDate) > 1){
+        if(ChronoUnit.DAYS.between(fromDate, toDate) > 30){
             throw new Exception("Time exceeds 1 month, please choose a shorter range");
         }
 
