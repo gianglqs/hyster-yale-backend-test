@@ -681,12 +681,9 @@ public class ImportService extends BasedService {
         String ctryCode = row.getCell(shipmentColumnsName.get("Ship-to Country Code")).getStringCellValue();
         Country country = countryService.findByCountryCode(prepareCountries, ctryCode);
         if (country == null) {
-            // create new Country with ctry_code
-            country = new Country();
-            country.setCode(ctryCode);
-            newCountrySet.add(country);
             importFailureService.addIntoListImportFailure(importFailures, orderNo,
                     "not-find-country-with-code", ctryCode, ImportFailureType.WARNING);
+            return null;
         }
         shipment.setCountry(country);
 

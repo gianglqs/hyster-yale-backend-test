@@ -36,7 +36,7 @@ public class CountryServiceTest {
 
     @Test
     public void testAddCountry() {
-        String countryName = "New Country 123";
+        String countryName = "New Country 1234";
 
         countryService.addCountry(new Country(countryName, new Region(1, "Asia", "A")));
         Optional<Country> dbCountry = countryRepository.getCountryByName(countryName);

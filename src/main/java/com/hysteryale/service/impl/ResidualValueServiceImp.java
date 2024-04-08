@@ -15,6 +15,7 @@ import com.hysteryale.service.ImportFailureService;
 import com.hysteryale.service.ProductService;
 import com.hysteryale.service.ResidualValueService;
 import com.hysteryale.utils.*;
+import lombok.Getter;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -33,6 +34,7 @@ public class ResidualValueServiceImp implements ResidualValueService {
     @Resource
     private ProductRepository productRepository;
 
+    @Getter
     private final Map<String, Integer> RESIDUAL_COLUMN = new HashMap<>();
 
     @Resource
@@ -107,7 +109,7 @@ public class ResidualValueServiceImp implements ResidualValueService {
     public Map<String, Object> getDataByFilter(String modelCode) {
         Map<String, Object> result = new HashMap<>();
 
-        List<ResidualValue> residualValueList = residualValueRepository.getResidualValueByModelAndHours(modelCode);
+        List<ResidualValue> residualValueList = residualValueRepository.getResidualValueByModelCode(modelCode);
 
         // remove duplicate modelCode
         Set<ResidualValue> residualValueSet = new HashSet<>(residualValueList);
@@ -124,7 +126,7 @@ public class ResidualValueServiceImp implements ResidualValueService {
         return result;
     }
 
-    private void mapDataExcelIntoResidualValue(Row row, List<Product> prepareProducts, List<ImportFailure> importFailures, FormulaEvaluator evaluator, List<ResidualValue> residualValues, String modelType, int year) {
+    public void mapDataExcelIntoResidualValue(Row row, List<Product> prepareProducts, List<ImportFailure> importFailures, FormulaEvaluator evaluator, List<ResidualValue> residualValues, String modelType, int year) {
 
         String hysterModel = row.getCell(RESIDUAL_COLUMN.get("Hyster Model")).getStringCellValue();
         String yaleModel = row.getCell(RESIDUAL_COLUMN.get("Yale Model")).getStringCellValue();
@@ -189,7 +191,7 @@ public class ResidualValueServiceImp implements ResidualValueService {
                     residualValue.setId(id);
                     product.setModelType(modelType);
                     residualValue.setResidualValuePercent(residualValuePercent);
-                    residualValue.setYear(year);
+                    residualValue.setYears(year);
                     residualValues.add(residualValue);
 
                 }
@@ -199,19 +201,23 @@ public class ResidualValueServiceImp implements ResidualValueService {
         return residualValues;
     }
 
-    private void mapHeaderColumn(Sheet sheet, int headerNumRow) {
+    /**
+     * {@link }
+     */
+    public void mapHeaderColumn(Sheet sheet, int headerNumRow) {
         Row headerHoursRow = sheet.getRow(headerNumRow);
 
         for (Cell cell : headerHoursRow) {
             if (cell.getCellType() == CellType.NUMERIC)
-                RESIDUAL_COLUMN.put(String.valueOf(cell.getNumericCellValue()), cell.getColumnIndex());
+                RESIDUAL_COLUMN.put(String.valueOf((int) cell.getNumericCellValue()), cell.getColumnIndex());
             if (cell.getCellType() == CellType.STRING)
                 RESIDUAL_COLUMN.put(cell.getStringCellValue(), cell.getColumnIndex());
         }
 
     }
 
-    private Map<String, Integer> getIndexRangeOfNeedData(Sheet sheet) {
+
+    public Map<String, Integer> getIndexRangeOfNeedData(Sheet sheet) {
         Map<String, Integer> result = new HashMap<>();
         int headerRowNum = 0;
         loop:
@@ -250,4 +256,5 @@ public class ResidualValueServiceImp implements ResidualValueService {
 
         return result;
     }
+
 }

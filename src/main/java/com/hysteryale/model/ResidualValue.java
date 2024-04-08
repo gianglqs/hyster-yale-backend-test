@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -23,19 +22,20 @@ public class ResidualValue extends BaseModel implements Serializable  {
     private ResidualValueId id;
 
     private double residualValuePercent;
-    private int year;
+
+    private int years;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ResidualValue that = (ResidualValue) o;
-        return year == that.year && Objects.equals(id.getProduct().getModelCode(), that.id.getProduct().getModelCode())
+        return years == that.years && Objects.equals(id.getProduct().getModelCode(), that.id.getProduct().getModelCode())
                 && Objects.equals(id.getHours(), that.id.getHours());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id.getProduct().getModelCode(), id.getHours(), year);
+        return Objects.hash(id.getProduct().getModelCode(), id.getHours(), years);
     }
 }

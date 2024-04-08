@@ -112,4 +112,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     @Query("SELECT DISTINCT p.modelCode FROM Product p WHERE (:brand IS NULL OR p.brand = :brand) AND (:modelType IS NULL OR p.modelType= :modelType)")
     List< String> getModelCodeByBranchAndModelTypeFilter(String brand, String modelType);
+
+    @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode")
+    List<Product> findAllByModelCode(String modelCode);
 }
