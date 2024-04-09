@@ -61,6 +61,7 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
         return result;
     }
 
+
     public List<PriceVolSensitivityPayLoad> calculatePriceVolSensitivity(List<Booking> bookings, double discountPercent, boolean withMarginVolumeRecovery) {
         List<PriceVolSensitivityPayLoad> result = new ArrayList<>();
         int id = 1;
@@ -86,7 +87,7 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
             long fakeVolumn=1;
             double ASP = revenue / (volume!=0?volume:fakeVolumn);
             double ACP = COGS / (volume!=0?volume:fakeVolumn);
-            double AvSM = ASP - ACP;
+            double AvSM = (ASP - ACP)!=0?(ASP-ACP):1;
 
             // discountPercent
 
