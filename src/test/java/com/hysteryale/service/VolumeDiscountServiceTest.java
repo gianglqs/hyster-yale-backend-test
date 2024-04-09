@@ -17,6 +17,7 @@ public class VolumeDiscountServiceTest {
     @Resource
     VolumeDiscountService volumeDiscountService;
 
+
     @Test
     public void testCalculateVolumeDiscount() {
         VolumeDiscountRequest request = new VolumeDiscountRequest();

@@ -160,9 +160,9 @@ public class ExchangeRateService extends BasedService {
         return optionalExchangeRate.orElse(null);
     }
 
-    /**
-     * Compare Currencies for reporting in Reports page
-     */
+
+
+
     public Map<String, Object> compareCurrency(CompareCurrencyRequest request) throws Exception {
         Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
         List<String> comparisonCurrencies = request.getComparisonCurrencies();

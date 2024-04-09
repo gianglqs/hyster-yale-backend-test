@@ -86,7 +86,7 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
             long fakeVolumn=1;
             double ASP = revenue / (volume!=0?volume:fakeVolumn);
             double ACP = COGS / (volume!=0?volume:fakeVolumn);
-            double AvSM = ASP - ACP;
+            double AvSM = (ASP - ACP)!=0?(ASP-ACP):1;
 
             // discountPercent
 
