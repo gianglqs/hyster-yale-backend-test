@@ -1,5 +1,8 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.UserException.EmailNotFoundException;
+import com.hysteryale.exception.UserException.ExistingEmailException;
+import com.hysteryale.exception.UserException.UserIdNotFoundException;
 import com.hysteryale.model.User;
 import com.hysteryale.repository.UserRepository;
 import com.hysteryale.service.impl.EmailServiceImpl;
@@ -9,20 +12,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -38,23 +37,14 @@ public class UserService extends BasedService implements UserDetailsService {
     }
 
     /**
-     * Retrieving all the users
-     * @return List of existed user
-     */
-    public List<User> getAllUsers(){
-        return (List<User>) userRepository.findAll();
-    }
-
-    /**
-     * Getting an user by the given Id
+     * Getting a user by the given ID
      * @param userId: given Id
      * @return an User
      */
-    public User getUserById(Integer userId) {
+    public User getUserById(Integer userId) throws UserIdNotFoundException {
         Optional<User> user = userRepository.findById(userId);
         if(user.isEmpty()){
-            logError("NOT_FOUND: userId " + userId );
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No user with id: " + userId);
+            throw new UserIdNotFoundException("NOT_FOUND: userId " + userId, userId);
         }
         return user.get();
     }
@@ -63,15 +53,14 @@ public class UserService extends BasedService implements UserDetailsService {
      * Adding new user with the encrypted password if the registered email is not existed
      * @param user : new registered User
      */
-    public void addUser(User user){
-        if(!userRepository.isEmailExisted(user.getEmail()))
-        {
+    public void addUser(User user) throws ExistingEmailException {
+        if(!userRepository.isEmailExisted(user.getEmail())) {
             // encrypt password
             user.setPassword(passwordEncoder().encode(user.getPassword()));
             userRepository.save(user);
         }
         else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email has been already taken");
+            throw new ExistingEmailException("EXISTING EMAIL " + user.getEmail(), user.getEmail());
     }
 
     /**
@@ -79,23 +68,18 @@ public class UserService extends BasedService implements UserDetailsService {
      * @param email: given email
      * @return an User
      */
-    public User getUserByEmail(String email) {
+    public User getUserByEmail(String email) throws EmailNotFoundException {
         Optional<User> optionalUser = userRepository.getUserByEmail(email);
         if(optionalUser.isPresent())
             return optionalUser.get();
         else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No email found with " + email);
+            throw new EmailNotFoundException("NOT FOUND EMAIL " + email, email);
     }
 
     /**
-     * Getting an user which is still active by email
+     * Getting a user which is still active by email
      */
     public Optional<User> getActiveUserByEmail(String email) {return userRepository.getActiveUserByEmail(email); }
-
-    @Transactional
-    public void changeDefaultLocale(User user, String locale) {
-        user.setDefaultLocale(locale);
-    }
 
     /**
      * Set user's isActive state (isActive: true or false)
@@ -125,7 +109,7 @@ public class UserService extends BasedService implements UserDetailsService {
         user.setLastLogin(LocalDate.now());
     }
     @Transactional
-    public void resetUserPassword(String email) throws MailjetSocketTimeoutException, MailjetException {
+    public void resetUserPassword(String email) throws MailjetSocketTimeoutException, MailjetException, EmailNotFoundException {
         User user = getUserByEmail(email);
         StringBuilder newPassword = new StringBuilder();
 

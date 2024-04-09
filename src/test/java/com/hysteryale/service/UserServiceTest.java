@@ -1,5 +1,8 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.UserException.EmailNotFoundException;
+import com.hysteryale.exception.UserException.ExistingEmailException;
+import com.hysteryale.exception.UserException.UserIdNotFoundException;
 import com.hysteryale.model.Role;
 import com.hysteryale.model.User;
 import com.hysteryale.repository.UserRepository;
@@ -35,7 +38,7 @@ public class UserServiceTest {
         return new BCryptPasswordEncoder();
     }
     @Test
-    public void testGetUserById() {
+    public void testGetUserById() throws UserIdNotFoundException {
         User newUser = userRepository.save(new User("New User", "newuser@gmail.com", "12345678", new Role(2, "USER")));
 
         int userId = newUser.getId();
@@ -47,14 +50,13 @@ public class UserServiceTest {
     @Test
     public void testGetUserById_notFound() {
         int userId = 123123123;
-        ResponseStatusException responseStatusException = Assertions.assertThrows(ResponseStatusException.class, () -> userService.getUserById(userId));
-
-        Assertions.assertEquals(404, responseStatusException.getStatus().value());
-        Assertions.assertEquals("No user with id: " + userId, responseStatusException.getReason());
+        UserIdNotFoundException exception = Assertions.assertThrows(UserIdNotFoundException.class, () -> userService.getUserById(userId));
+        Assertions.assertEquals("NOT_FOUND: userId " + userId, exception.getMessage());
+        Assertions.assertEquals(userId, exception.getUserId());
     }
 
     @Test
-    public void testAddUser() {
+    public void testAddUser() throws ExistingEmailException {
         User newUser = new User("New User", "newuser@gmail.com", "12345678", new Role(2, "USER"));
         userService.addUser(newUser);
 
@@ -66,14 +68,14 @@ public class UserServiceTest {
     @Test
     public void testAddUser_emailTaken() {
         User newUser = new User("admin", "admin@gmail.com", "12345678", new Role(2, "ADMIN"));
-        ResponseStatusException responseStatusException = Assertions.assertThrows(ResponseStatusException.class, () -> userService.addUser(newUser));
+        ExistingEmailException exception = Assertions.assertThrows(ExistingEmailException.class, () -> userService.addUser(newUser));
 
-        Assertions.assertEquals(400, responseStatusException.getStatus().value());
-        Assertions.assertEquals("Email has been already taken", responseStatusException.getReason());
+        Assertions.assertEquals("EXISTING EMAIL " + exception.getEmail(), exception.getMessage());
+        Assertions.assertEquals(newUser.getEmail(), exception.getEmail());
     }
 
     @Test
-    public void testGetUserByEmail() {
+    public void testGetUserByEmail() throws EmailNotFoundException {
         String email = "admin@gmail.com";
 
         User dbUser = userService.getUserByEmail(email);
@@ -84,11 +86,11 @@ public class UserServiceTest {
     public void testGetUserByEmail_notFound() {
         String email = "2137hdgdyete21@gmail.com";
 
-        ResponseStatusException responseStatusException =
-                Assertions.assertThrows(ResponseStatusException.class, () -> userService.getUserByEmail(email));
+        EmailNotFoundException exception =
+                Assertions.assertThrows(EmailNotFoundException.class, () -> userService.getUserByEmail(email));
 
-        Assertions.assertEquals(404, responseStatusException.getStatus().value());
-        Assertions.assertEquals("No email found with " + email, responseStatusException.getReason());
+        Assertions.assertEquals("NOT FOUND EMAIL " + email, exception.getMessage());
+        Assertions.assertEquals(email, exception.getEmail());
     }
 
     @Test
@@ -109,7 +111,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testSetActiveState() {
+    public void testSetActiveState() throws UserIdNotFoundException {
         boolean isActive = true;
         User newUser = userRepository.save(new User("New User", "admin@gmail.com", "12345678", new Role(2, "ADMIN"), isActive));
 
@@ -119,7 +121,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUpdateUserInformation() {
+    public void testUpdateUserInformation() throws UserIdNotFoundException {
         String updatedUsername = "New User 123456";
         User newUser = userRepository.save(new User("New User", "newuser@gmail.com", "12345678", new Role(1, "ADMIN"), true));
         userService.updateUserInformation(newUser, new User("New User 123456", "newuser@gmail.com", "123456789", new Role(1, "ADMIN")));
@@ -129,7 +131,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testChangeUserPassword() {
+    public void testChangeUserPassword() throws UserIdNotFoundException {
         String originalPassword = "123456789";
         String updatedPassword = "Newuser123456;";
         User newUser = userRepository.save(new User("New User", "newuser@gmail.com", "12345678", new Role(1, "ADMIN"), true));
@@ -142,7 +144,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testResetUserPassword() throws MailjetSocketTimeoutException, MailjetException {
+    public void testResetUserPassword() throws MailjetSocketTimeoutException, MailjetException, UserIdNotFoundException, EmailNotFoundException {
         String originalPassword = "123456789";
         User newUser = userRepository.save(new User("New User", "newuser@gmail.com", originalPassword, new Role(1, "ADMIN"), true));
         userService.resetUserPassword(newUser.getEmail());

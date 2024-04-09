@@ -230,7 +230,8 @@
       "missing_sheet": "未找到工作表：''",
       "blank_sheet": "工作表是空白的：''",
       "invalid_fileName": "无效的文件名：''",
-      "file-is-not-excel": "文件不是 Excel"
+      "file-is-not-excel": "文件不是 Excel",
+      "can-not-extract-year-from-file-name": "无法从文件名获取年份: ''"
     },
     "warning": {
       "not-find-booking-with-orderNo": "未找到订单号为“%s”的Booking.",

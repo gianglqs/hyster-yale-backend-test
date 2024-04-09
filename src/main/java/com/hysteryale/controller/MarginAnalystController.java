@@ -91,14 +91,16 @@ public class MarginAnalystController {
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.NOVO);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath))
-            throw new InvalidFileFormatException(file.getOriginalFilename() + " is not Excel", file.getOriginalFilename(), "Excel");
+            throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
 
-        Map<String, Object> marginFilters = IMMarginAnalystDataService.populateMarginFilters(filePath, fileName);
-        fileUploadService.handleUpdatedSuccessfully(fileName);
         String uuid = fileUploadRepository.getUUIDByName(fileName);
+        Map<String, Object> marginFilters = IMMarginAnalystDataService.populateMarginFilters(filePath, fileName, uuid);
+        fileUploadService.handleUpdatedSuccessfully(fileName);
+
         return Map.of(
                 "marginFilters", marginFilters,
                 "fileUUID", uuid
@@ -114,12 +116,13 @@ public class MarginAnalystController {
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.MACRO);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath))
-            throw new InvalidFileFormatException(file.getOriginalFilename() + " is not Excel", file.getOriginalFilename(), "Excel");
+            throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
 
-        marginAnalystMacroService.importMarginAnalystMacroFromFile(file.getOriginalFilename(), filePath);
+        marginAnalystMacroService.importMarginAnalystMacroFromFile(file.getOriginalFilename(), filePath, fileUUID);
         fileUploadService.handleUpdatedSuccessfully(fileName);
     }
 
@@ -132,12 +135,13 @@ public class MarginAnalystController {
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.PART);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath))
-            throw new InvalidFileFormatException(file.getOriginalFilename() + " is not Excel", file.getOriginalFilename(), "Excel");
+            throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
 
-        partService.importPartFromFile(file.getOriginalFilename(), filePath, savedFileName);
+        partService.importPartFromFile(file.getOriginalFilename(), filePath, fileUUID);
         fileUploadService.handleUpdatedSuccessfully(savedFileName);
     }
 }

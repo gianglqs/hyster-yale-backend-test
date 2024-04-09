@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -76,7 +77,7 @@ public class ExchangeRateService extends BasedService {
     /**
      * Get List of Currencies rates based on a toCurrency
      */
-    public List<ExchangeRate> mapExcelDataToExchangeRate(Row row, LocalDate date, String fileName) throws IncorectFormatCellException, ExchangeRatesException {
+    public List<ExchangeRate> mapExcelDataToExchangeRate(Row row, LocalDate date, String fileUUID) throws IncorectFormatCellException, ExchangeRatesException {
         List<ExchangeRate> exchangeRateList = new ArrayList<>();
 
         String strToCurrency = row.getCell(0).getStringCellValue().toUpperCase().strip();
@@ -87,7 +88,7 @@ public class ExchangeRateService extends BasedService {
 
             ExchangeRate exchangeRate = new ExchangeRate();
             if(cell.getCellType() != CellType.FORMULA)
-                throw new IncorectFormatCellException(cell.getRowIndex() + ":" + cell.getColumnIndex(), fileName);
+                throw new IncorectFormatCellException(cell.getRowIndex() + ":" + cell.getColumnIndex(), fileUUID);
             double rate = cell.getNumericCellValue();
             String strFromCurrency = fromCurrenciesTitle.get(cell.getColumnIndex()).toUpperCase().strip();
 
@@ -159,38 +160,37 @@ public class ExchangeRateService extends BasedService {
         return optionalExchangeRate.orElse(null);
     }
 
-    /**
-     * Compare Currencies for reporting in Reports page
-     */
+
+
+
     public Map<String, Object> compareCurrency(CompareCurrencyRequest request) throws Exception {
         Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
         List<String> comparisonCurrencies = request.getComparisonCurrencies();
-
-        if(currentCurrency==null||comparisonCurrencies.size()<1){
-            throw new RuntimeException("User must select currency units and comparison currencyy");
-        }
-
-        LocalDate fromDate = parseDateFromRequestGetMonthYear(request.getFromDate());
+        LocalDate fromDate = parseDateFromRequestGetMonthYear(request.getFromDate()) ;
         LocalDate toDate = parseDateFromRequestGetMonthYear(request.getToDate());
-        if(fromDate!=null)
-            fromDate = fromDate.minusMonths(1);
 
         // if fromDate and toDate is not set then limit will be 12
         // if toDate is not set => set current month & year
         // fromDate will be: toDate - limit (limit can be 12 or 60)
         int limit = fromDate == null || toDate == null ? 12 : 60;
-
-        if (toDate == null && fromDate == null) {
-            toDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 1);
-            fromDate =toDate.minusMonths(limit);
+        if(toDate == null){
+            if(fromDate == null){
+                toDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 1);
+                fromDate = toDate.minusMonths(limit);
+            }else{
+                fromDate = fromDate.minusMonths(1);
+                toDate=fromDate.plusMonths(limit);
+            }
+        }else{
+            if(fromDate == null){
+                fromDate = toDate.minusMonths(limit);
+            }else{
+                fromDate = fromDate.minusMonths(1);
+            }
         }
-        else if (toDate == null){
-            toDate = fromDate.plusMonths(limit);
-        } else if (fromDate == null)
-            fromDate=toDate.minusMonths(limit);
 
         if(ChronoUnit.MONTHS.between(fromDate, toDate) > 12){
-            throw new Exception("Time exceeds 12 months, please choose a shorter range");
+            throw new Exception("Time exceeds 12 month, please choose a shorter range");
         }
 
         Map<String, Object> data = new HashMap<>();
@@ -198,32 +198,26 @@ public class ExchangeRateService extends BasedService {
         List<String> weakerCurrencies = new ArrayList<>();
         List<String> strongerCurrencies = new ArrayList<>();
 
-        for (String currency : comparisonCurrencies) {
-            data.put(currency, new ArrayList<>());
-        }
-        LocalDate queryDate = toDate;
         for (String strCurrency : comparisonCurrencies) {
-            List<ExchangeRate> exchangeRateList = (List<ExchangeRate>) data.get(strCurrency);
-
+            Currency currency = currencyService.getCurrenciesByName(strCurrency);
+            List<ExchangeRate> exchangeRateList = new ArrayList<>();
+            LocalDate queryDate = toDate;
 
             double nearestRate = 0;
             double farthestRate = 0;
             int numberOfMonths = 1;
             boolean isSetNearestRate = false;
 
-            while (queryDate.isAfter(fromDate) && numberOfMonths <= limit) {
-                Currency currency = currencyService.getCurrenciesByName(strCurrency);
-
+            while(queryDate.isAfter(fromDate) && numberOfMonths <= limit) {
                 Optional<ExchangeRate> optional = exchangeRateRepository.getExchangeRateByFromToCurrencyAndDate(currentCurrency.getCurrency(), strCurrency, queryDate);
 
                 // if Exchange Rate in the month & year does not exist then the RATE value will be null
-                if (optional.isEmpty())
-                    exchangeRateList.add(new ExchangeRate(currentCurrency, currency, null, queryDate));
+                if (optional.isEmpty()) exchangeRateList.add(new ExchangeRate(currentCurrency, currency, null, queryDate));
                 else exchangeRateList.add(optional.get());
 
                 // Set the nearest and farthest Exchange Rates to calculate difference
-                if (optional.isPresent()) {
-                    if (!isSetNearestRate) {
+                if(optional.isPresent()) {
+                    if(!isSetNearestRate) {
                         nearestRate = optional.get().getRate();
                         isSetNearestRate = true;
                     }
@@ -242,11 +236,10 @@ public class ExchangeRateService extends BasedService {
             if (Math.abs(differentRatePercentage) > 5) {
                 StringBuilder sb = formatNumericValue(differentRate);
                 if (differentRatePercentage < 0)
-                    weakerCurrencies.add(strCurrency + ": " + sb + " (" + differentRatePercentage + "%)");
-                else
-                    strongerCurrencies.add(strCurrency+ ": +" + sb + " (+" + differentRatePercentage + "%)");
-            } else stableCurrencies.add(strCurrency);
-            data.put(strCurrency , exchangeRateList);
+                    weakerCurrencies.add(currency.getCurrency() + ": " + sb + " (" + differentRatePercentage + "%)");
+                else strongerCurrencies.add(currency.getCurrency() + ": +" + sb + " (+" + differentRatePercentage + "%)");
+            } else stableCurrencies.add(currency.getCurrency());
+            data.put(currency.getCurrency(), exchangeRateList);
         }
 
         data.put("stable", stableCurrencies);
@@ -274,7 +267,7 @@ public class ExchangeRateService extends BasedService {
         } else if (fromDate == null)
             fromDate=toDate.minusDays(limit);
 
-        if(ChronoUnit.MONTHS.between(fromDate, toDate) > 1){
+        if(ChronoUnit.DAYS.between(fromDate, toDate) > 30){
             throw new Exception("Time exceeds 1 month, please choose a shorter range");
         }
 
@@ -288,7 +281,7 @@ public class ExchangeRateService extends BasedService {
         List<String> strongerCurrencies = new ArrayList<>();
 
         LocalDate queryDate = toDate;
-        int numberOfDays = 1;
+
 
 
         for (String currency : comparisonCurrencies) {
@@ -306,6 +299,7 @@ public class ExchangeRateService extends BasedService {
                     else strongerCurrencies.add(currency + ": +" + sb + " (+" + differentRatePercentage + "%)");
                 } else stableCurrencies.add(currency);
             }
+            int numberOfDays = 1;
             while (queryDate.isAfter(fromDate) && numberOfDays <= limit) {
                 Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
                 getExchangeRatesFromAPI(currentCurrency.getCurrency(), comparisonCurrencies, queryDate, data);
@@ -392,10 +386,11 @@ public class ExchangeRateService extends BasedService {
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.exchange_rate");
         String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.EXCHANGE_RATE);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath))
-            throw new InvalidFileFormatException(file.getOriginalFilename() + " is not Excel", file.getOriginalFilename(), "Excel");
+            throw new InvalidFileFormatException("Uploaded file is not an Excel file " + fileName, fileUUID);
 
         // Verify whether file's name is null or not
         String originalFileName = file.getOriginalFilename();
@@ -413,14 +408,14 @@ public class ExchangeRateService extends BasedService {
             int year = Integer.parseInt(matcher.group(2));
             date = LocalDate.of(year, DateUtils.getMonth(month), 1);
         } else
-            throw new InvalidFileNameException(file.getOriginalFilename(), fileName);
+            throw new InvalidFileNameException(file.getOriginalFilename(), fileUUID);
 
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         // Check the existence of sheet's name
         Sheet sheet = workbook.getSheet("Summary Current Interlocking");
-        if(sheet == null) throw new MissingSheetException("Summary Current Interlocking", fileName);
+        if(sheet == null) throw new MissingSheetException("Summary Current Interlocking", fileUUID);
 
         List<ExchangeRate> exchangeRatesList = new ArrayList<>();
         for (int i = 3; i <= 34; i++) {
@@ -428,7 +423,7 @@ public class ExchangeRateService extends BasedService {
             if (i == 3)
                 fromCurrenciesTitle = getFromCurrencyTitle(row);
             else
-                exchangeRatesList.addAll(mapExcelDataToExchangeRate(row, date, fileName));
+                exchangeRatesList.addAll(mapExcelDataToExchangeRate(row, date, fileUUID));
         }
 
         exchangeRateRepository.saveAll(exchangeRatesList);

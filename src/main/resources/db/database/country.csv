@@ -7,9 +7,8 @@
 326,Malaysia,1,MY
 335,Vietnam,1,VN
 274,Thailand,1,TH
-341,India,1,IN
 342,Taiwan,1,TW
-343,Sri Lanka,1,LK
+34,New Country 123,1,
 336,Papua New Guinea,2,PG
 337,Australia,2,AU
 338,New Zealand,2,NZ
@@ -17,3 +16,10 @@
 340,New Caledonia,2,NC
 344,Bangladesh,1,BD
 345,Guam,2,GU
+341,India,4,IN
+343,Sri Lanka,4,LK
+346,Fiji,2,FJ
+347,Bhutan,4,BT
+348,Pakistan,4,PAK
+349,China,5,CN
+350,Hong Kong,5,HKG

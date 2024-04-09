@@ -94,7 +94,7 @@ public class MarginAnalystControllerTest {
                         )
                         .andReturn();
         Assertions.assertEquals(400, result.getResponse().getStatus());
-        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("Uploaded file is not an Excel file"));
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("File is not Excel"));
     }
 
     @Test
@@ -139,7 +139,7 @@ public class MarginAnalystControllerTest {
                         )
                         .andReturn();
         Assertions.assertEquals(400, result.getResponse().getStatus());
-        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("Uploaded file is not an Excel file"));
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("File is not Excel"));
     }
 
     @Test

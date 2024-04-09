@@ -372,9 +372,46 @@ public class FilterService {
     public List<FilterRow> getCurrencyFilter() {
         List<String> currencyList = currencyRepository.getExistingCurrencies();
         List<FilterRow> filters = new ArrayList<>();
-        for(String c : currencyList)
+        for (String c : currencyList)
             filters.add(new FilterRow(c));
 
         return filters;
+    }
+
+    public List<Map<String, String>> getResidualValueFilter(String modelType, String brand) {
+        List<Map<String, String>> listModelCodeOfBranchAndModelTypeMap = new ArrayList<>();
+        if(modelType.isEmpty())
+            modelType = null;
+
+        if(brand.isEmpty())
+            brand = null;
+
+        List<String> getListModelCodeByBranchAndModelType = productRepository.getModelCodeByBranchAndModelTypeFilter(brand, modelType);
+        getListModelCodeByBranchAndModelType.sort(String::compareTo);
+        for (String m : getListModelCodeByBranchAndModelType) {
+            Map<String, String> mMap = new HashMap<>();
+            mMap.put("value", m);
+            listModelCodeOfBranchAndModelTypeMap.add(mMap);
+        }
+        return listModelCodeOfBranchAndModelTypeMap;
+    }
+
+    public List<Map<String, String>> getModelType() {
+        List<Map<String, String>> modelTypeMap = new ArrayList<>();
+        List<String> modelTypes = productRepository.getAllModelType();
+        modelTypes.sort(String::compareTo);
+        for (String m : modelTypes) {
+            Map<String, String> mMap = new HashMap<>();
+            mMap.put("value", m);
+            modelTypeMap.add(mMap);
+        }
+        return modelTypeMap;
+    }
+
+    public Map<String, Object> getModelTypeAndBrand() {
+        Map<String, Object> modelTypeAndBrandFilterMap = new HashMap<>();
+        modelTypeAndBrandFilterMap.put("modelTypes", getModelType());
+        modelTypeAndBrandFilterMap.put("brands", getAllBrands());
+        return modelTypeAndBrandFilterMap;
     }
 }

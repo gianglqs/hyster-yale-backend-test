@@ -1,6 +1,7 @@
 package com.hysteryale.service;
 
-import com.hysteryale.exception.ExchangeRatesException;
+import com.hysteryale.exception.InvalidFileFormatException;
+import com.hysteryale.exception.InvalidFileNameException;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.reports.CompareCurrencyRequest;
@@ -183,12 +184,10 @@ public class ExchangeRateServiceTest {
                 MediaType.MULTIPART_FORM_DATA_VALUE,
                 fileResource1.getInputStream()
         );
-        ResponseStatusException exception1 = Assertions.assertThrows(
-                ResponseStatusException.class,
+        Assertions.assertThrows(
+                InvalidFileFormatException.class,
                 () -> exchangeRateService.importExchangeRateFromFile(file1, authentication)
         );
-        Assertions.assertEquals(400, exception1.getStatus().value());
-        Assertions.assertEquals("Uploaded file is not an Excel file", exception1.getReason());
 
 
         // Test case: Uploaded file's name is not in appropriate format
@@ -202,12 +201,10 @@ public class ExchangeRateServiceTest {
                 MediaType.MULTIPART_FORM_DATA_VALUE,
                 fileResource2.getInputStream()
         );
-        ResponseStatusException exception2 = Assertions.assertThrows(
-                ResponseStatusException.class,
+        Assertions.assertThrows(
+                InvalidFileNameException.class,
                 () -> exchangeRateService.importExchangeRateFromFile(file2, authentication)
         );
-        Assertions.assertEquals(400, exception2.getStatus().value());
-        Assertions.assertEquals("File's name is not in appropriate format", exception2.getReason());
     }
 
     private Map<Integer, String> getFromCurrencyTitle(Row row) {
@@ -222,6 +219,9 @@ public class ExchangeRateServiceTest {
     }
 
     @Test
+    /**
+     * {@link ExchangeRateService#compareCurrency(CompareCurrencyRequest)}
+     */
     public void testCompareExchangeRate() throws Exception {
         String currency1 = "USD";
         String currency2 = "JPY";
