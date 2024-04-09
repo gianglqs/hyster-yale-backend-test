@@ -228,7 +228,15 @@
       "unsupported_currency": "Unsupported Currency: ",
       "unsupported_currency_before_2020": "Unsupported Currency before 31/12/2020: ",
       "inactive_api_key": "Inactive API Keys. Please check API Keys expired date",
-      "plan_update_required": "Plan updated required"
+      "plan_update_required": "Plan updated required",
+      "existing_email": "This email has been registered: ",
+      "not_found_email": "Cannot found user with email: ",
+      "user_id_not_found": "Cannot found user with id: ",
+      "wrong_old_password": "Old password is not correct.",
+      "weak_password": "Password must consist of at least 12 characters and has at least one Uppercase character, one Lowercase character, a Digit and a Special character or Symbol",
+      "competitor_color_not_found": "Cannot found Competitor Color with id: ",
+      "cannot_create_file": "Cannot create file: ",
+      "missing_forecast_file": "Missing Forecast Dynamic Pricing Excel file"
     },
     "warning": {
       "not-find-country-with-code": "Country with Code '%s' not found. Automatically creating a new country using the code.",

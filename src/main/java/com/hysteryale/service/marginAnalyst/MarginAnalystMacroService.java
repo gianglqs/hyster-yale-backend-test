@@ -1,6 +1,7 @@
 package com.hysteryale.service.marginAnalyst;
 
 import com.hysteryale.exception.ExchangeRatesException;
+import com.hysteryale.exception.InvalidFileNameException;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
@@ -20,13 +21,14 @@ import com.hysteryale.utils.XLSB.Row;
 import com.hysteryale.utils.XLSB.Sheet;
 import com.hysteryale.utils.XLSB.XLSBWorkbook;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -108,7 +110,7 @@ public class MarginAnalystMacroService {
     }
 
     // Import Macro from a file
-    public void importMarginAnalystMacroFromFile(String fileName, String filePath) {
+    public void importMarginAnalystMacroFromFile(String fileName, String filePath, String fileUUID) throws InvalidFileNameException {
         // Extract monthYear from fileName pattern
         Pattern pattern = Pattern.compile(".* Macro_(\\w{3})\\s*(\\d{4}).*");
         Matcher matcher = pattern.matcher(fileName);
@@ -120,7 +122,7 @@ public class MarginAnalystMacroService {
             year = Integer.parseInt(matcher.group(2));
         }
         else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is not in appropriate format");
+            throw new InvalidFileNameException(fileName, fileUUID);
 
         LocalDate monthYear = LocalDate.of(year, DateUtils.getMonth(month), 1);
 
@@ -315,12 +317,12 @@ public class MarginAnalystMacroService {
 
 
     // Import all Macro file in directory
-    public void importMarginAnalystMacro() {
+    public void importMarginAnalystMacro() throws InvalidFileNameException {
         String folderPath = EnvironmentUtils.getEnvironmentValue("import-files.base-folder") + EnvironmentUtils.getEnvironmentValue("import-files.margin_macro");
 
         List<String> files = FileUtils.getAllFilesInFolder(folderPath);
         for(String fileName : files) {
-            importMarginAnalystMacroFromFile(fileName, folderPath + "/" + fileName);
+            importMarginAnalystMacroFromFile(fileName, folderPath + "/" + fileName, "");
         }
     }
 

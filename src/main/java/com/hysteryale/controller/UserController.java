@@ -3,6 +3,10 @@ package com.hysteryale.controller;
 import com.hysteryale.authentication.AuthenticationService;
 import com.hysteryale.authentication.JwtService;
 import com.hysteryale.authentication.payload.TokenRefreshRequest;
+import com.hysteryale.exception.UserException.EmailNotFoundException;
+import com.hysteryale.exception.UserException.ExistingEmailException;
+import com.hysteryale.exception.UserException.PasswordException;
+import com.hysteryale.exception.UserException.UserIdNotFoundException;
 import com.hysteryale.model.User;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.UserService;
@@ -12,12 +16,10 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -42,7 +44,7 @@ public class UserController {
      * Get user's details by userId
      */
     @GetMapping(path = "users/getDetails/{userId}")
-    public Map<String, User> getUserDetailsById(@PathVariable int userId) {
+    public Map<String, User> getUserDetailsById(@PathVariable int userId) throws UserIdNotFoundException {
         Map<String, User> userMap = new HashMap<>();
         userMap.put("userDetails", userService.getUserById(userId));
         return userMap;
@@ -53,7 +55,7 @@ public class UserController {
      */
     @PutMapping(path = "users/activate/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void activateUser(@PathVariable int userId) {
+    public void activateUser(@PathVariable int userId) throws UserIdNotFoundException {
         User user = userService.getUserById(userId);
         userService.setUserActiveState(user, !user.isActive());
     }
@@ -65,12 +67,11 @@ public class UserController {
      */
     @PostMapping(path = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void addUser(@Valid @RequestBody User user) {
+    public void addUser(@Valid @RequestBody User user) throws ExistingEmailException {
         String password = user.getPassword();
 
         user.setActive(true);
         userService.addUser(user);
-
         try {
             emailService.sendRegistrationEmail(user.getName(), password, user.getEmail());
         } catch (MailjetSocketTimeoutException | MailjetException e) {
@@ -82,7 +83,7 @@ public class UserController {
      * Update user's information
      */
     @PutMapping(path = "/users/updateUser/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateUserInformation(@RequestBody User updateUser, @PathVariable int userId) {
+    public ResponseEntity<?> updateUserInformation(@RequestBody User updateUser, @PathVariable int userId) throws UserIdNotFoundException {
         User dbUser = userService.getUserById(userId);
         userService.updateUserInformation(dbUser, updateUser);
         return ResponseEntity.ok("Update user's information successfully");
@@ -117,7 +118,7 @@ public class UserController {
     @PostMapping(path = "/users/changePassword", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> changePassword(@RequestParam("oldPassword") String oldPassword,
                                             @RequestParam("newPassword") String newPassword,
-                                            @RequestHeader("Authorization") String accessToken) {
+                                            @RequestHeader("Authorization") String accessToken) throws PasswordException, EmailNotFoundException {
 
         String email = jwtService.extractUsername(accessToken.split(" ")[1].trim());
         User dbUser = userService.getUserByEmail(email);
@@ -126,26 +127,21 @@ public class UserController {
         if(userService.isPasswordMatched(oldPassword, dbUser)) {
             // Check the strength of the new password
             if (!StringUtils.checkPasswordStreng(newPassword))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must consist of at least 12 characters and has at least\n" +
-                        "\n" +
-                        "    one Uppercase character,\n" +
-                        "    one Lowercase character,\n" +
-                        "    a Digit and\n" +
-                        "    a Special character or Symbol.");
+                throw new PasswordException("Weak password", "weak_password");
             else {
                 userService.changeUserPassword(dbUser, newPassword);
                 return ResponseEntity.ok("Password has been changed successfully");
             }
         }
         else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Old password is not correct.");
+            throw new PasswordException("Old password is not correct", "wrong_old_password");
     }
 
     /**
      * Reset user's password specified by email (if email is existed), then send informing email for user.
      */
     @PostMapping(path = "/users/resetPassword")
-    public void resetPassword(@RequestBody User user) throws MailjetSocketTimeoutException, MailjetException {
+    public void resetPassword(@RequestBody User user) throws MailjetSocketTimeoutException, MailjetException, EmailNotFoundException {
         userService.resetUserPassword(user.getEmail());
     }
 

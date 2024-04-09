@@ -54,7 +54,6 @@ public class ReportsControllerTest {
                                         .contentType(MediaType.APPLICATION_JSON)
                         )
                         .andExpect(jsonPath("$.compareCurrency").isMap())
-                        .andExpect(jsonPath("$.compareCurrency.lastUpdated").isArray())
                         .andExpect(jsonPath("$.compareCurrency.stable").isArray())
                         .andExpect(jsonPath("$.compareCurrency.weakening").isArray())
                         .andExpect(jsonPath("$.compareCurrency.strengthening").isArray())

@@ -51,7 +51,8 @@ public class PriceVolumeSensitivityServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                "", null);
+                "",
+                null);
         filters = new PriceVolSensitivityFilterModel();
         filters.setDataFilter(filterModel);
 

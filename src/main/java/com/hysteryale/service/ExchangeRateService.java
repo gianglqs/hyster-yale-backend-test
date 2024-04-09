@@ -76,7 +76,7 @@ public class ExchangeRateService extends BasedService {
     /**
      * Get List of Currencies rates based on a toCurrency
      */
-    public List<ExchangeRate> mapExcelDataToExchangeRate(Row row, LocalDate date, String fileName) throws IncorectFormatCellException, ExchangeRatesException {
+    public List<ExchangeRate> mapExcelDataToExchangeRate(Row row, LocalDate date, String fileUUID) throws IncorectFormatCellException, ExchangeRatesException {
         List<ExchangeRate> exchangeRateList = new ArrayList<>();
 
         String strToCurrency = row.getCell(0).getStringCellValue().toUpperCase().strip();
@@ -87,7 +87,7 @@ public class ExchangeRateService extends BasedService {
 
             ExchangeRate exchangeRate = new ExchangeRate();
             if(cell.getCellType() != CellType.FORMULA)
-                throw new IncorectFormatCellException(cell.getRowIndex() + ":" + cell.getColumnIndex(), fileName);
+                throw new IncorectFormatCellException(cell.getRowIndex() + ":" + cell.getColumnIndex(), fileUUID);
             double rate = cell.getNumericCellValue();
             String strFromCurrency = fromCurrenciesTitle.get(cell.getColumnIndex()).toUpperCase().strip();
 
@@ -392,10 +392,11 @@ public class ExchangeRateService extends BasedService {
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.exchange_rate");
         String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.EXCHANGE_RATE);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath))
-            throw new InvalidFileFormatException(file.getOriginalFilename() + " is not Excel", file.getOriginalFilename(), "Excel");
+            throw new InvalidFileFormatException("Uploaded file is not an Excel file " + fileName, fileUUID);
 
         // Verify whether file's name is null or not
         String originalFileName = file.getOriginalFilename();
@@ -413,14 +414,14 @@ public class ExchangeRateService extends BasedService {
             int year = Integer.parseInt(matcher.group(2));
             date = LocalDate.of(year, DateUtils.getMonth(month), 1);
         } else
-            throw new InvalidFileNameException(file.getOriginalFilename(), fileName);
+            throw new InvalidFileNameException(file.getOriginalFilename(), fileUUID);
 
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
         // Check the existence of sheet's name
         Sheet sheet = workbook.getSheet("Summary Current Interlocking");
-        if(sheet == null) throw new MissingSheetException("Summary Current Interlocking", fileName);
+        if(sheet == null) throw new MissingSheetException("Summary Current Interlocking", fileUUID);
 
         List<ExchangeRate> exchangeRatesList = new ArrayList<>();
         for (int i = 3; i <= 34; i++) {
@@ -428,7 +429,7 @@ public class ExchangeRateService extends BasedService {
             if (i == 3)
                 fromCurrenciesTitle = getFromCurrencyTitle(row);
             else
-                exchangeRatesList.addAll(mapExcelDataToExchangeRate(row, date, fileName));
+                exchangeRatesList.addAll(mapExcelDataToExchangeRate(row, date, fileUUID));
         }
 
         exchangeRateRepository.saveAll(exchangeRatesList);

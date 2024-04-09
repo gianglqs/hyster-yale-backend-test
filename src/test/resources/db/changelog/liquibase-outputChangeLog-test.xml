@@ -51,7 +51,7 @@
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="freight_sequence" startValue="1"/>
     </changeSet>
     <changeSet author="oem (generated)" id="1711005719548-11">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="10"/>
     </changeSet>
     <changeSet author="oem (generated)" id="1711005719548-12">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalysisaoprateseq" startValue="1"/>
@@ -264,6 +264,15 @@
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="VARCHAR"/>
+            <column name="aftermarket_technical_service_manager" type="VARCHAR"/>
+            <column name="aftermarket_manager" type="VARCHAR"/>
+            <column name="area_businesss_director" type="VARCHAR"/>
+            <column name="big_truck_manager" type="VARCHAR"/>
+            <column name="bill_to_code" type="VARCHAR"/>
+            <column name="dealer_divison" type="VARCHAR"/>
+            <column name="mkg_group" type="VARCHAR"/>
+            <column name="territory_manager" type="VARCHAR"/>
+
         </createTable>
     </changeSet>
     <changeSet author="oem (generated)" id="1711005719548-31">

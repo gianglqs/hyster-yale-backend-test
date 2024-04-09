@@ -1,5 +1,7 @@
 package com.hysteryale.controller;
 
+import com.hysteryale.exception.CompetitorException.CompetitorColorNotFoundException;
+import com.hysteryale.exception.InvalidFileFormatException;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.filters.FilterModel;
@@ -96,12 +98,12 @@ public class IndicatorController {
     }
 
     @GetMapping("/competitorColors/getDetails")
-    public Map<String, Object> getCompetitorColorDetails(@RequestParam("id") int id) {
+    public Map<String, Object> getCompetitorColorDetails(@RequestParam("id") int id) throws CompetitorColorNotFoundException {
         return Map.of("competitorColorDetail", indicatorService.getCompetitorById(id));
     }
 
     @PutMapping("/competitorColors")
-    public void updateCompetitorColor(@RequestBody CompetitorColor competitorColor) {
+    public void updateCompetitorColor(@RequestBody CompetitorColor competitorColor) throws CompetitorColorNotFoundException {
         indicatorService.updateCompetitorColor(competitorColor);
     }
 
@@ -118,7 +120,7 @@ public class IndicatorController {
 
         if (!FileUtils.isExcelFile(pathFile)) {
             fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
-            throw new Exception("Uploaded file is not an Excel file");
+            throw new InvalidFileFormatException("Uploaded file is not an Excel file " + savedFileName, fileUUID);
         }
 
         try {
@@ -142,7 +144,7 @@ public class IndicatorController {
 
         if (!FileUtils.isExcelFile(pathFile)) {
             fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
-            throw new Exception("Uploaded file is not an Excel file");
+            throw new InvalidFileFormatException("Uploaded file is not an Excel file " + savedFileName, fileUUID);
         }
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);

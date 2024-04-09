@@ -1,5 +1,6 @@
 package com.hysteryale.service.marginAnalyst;
 
+import com.hysteryale.exception.InvalidFileNameException;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Region;
 import com.hysteryale.model.marginAnalyst.Freight;
@@ -53,10 +54,10 @@ public class MarginAnalystMacroServiceTest {
     HashMap<String, String> MACRO_COLUMNS = new HashMap<>();
 
     @Test
-    public void testImportMarginAnalystMacroFromFile() throws OpenXML4JException, IOException, SAXException {
+    public void testImportMarginAnalystMacroFromFile() throws OpenXML4JException, IOException, SAXException, InvalidFileNameException {
         String fileName = "USD AUD Margin Analysis Template Macro_Oct  2023 Rev.xlsb";
         String filePath = "import_files/margin_analyst_data/USD AUD Margin Analysis Template Macro_Oct  2023 Rev.xlsb";
-        marginAnalystMacroService.importMarginAnalystMacroFromFile(fileName, filePath);
+        marginAnalystMacroService.importMarginAnalystMacroFromFile(fileName, filePath, "");
 
         Pattern pattern = Pattern.compile(".* Macro_(\\w{3})\\s*(\\d{4}).*");
         Matcher matcher = pattern.matcher(fileName);
