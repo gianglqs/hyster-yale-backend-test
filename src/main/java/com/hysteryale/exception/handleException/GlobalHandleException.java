@@ -1,6 +1,12 @@
 package com.hysteryale.exception.handleException;
 
 import com.hysteryale.exception.*;
+import com.hysteryale.exception.CompetitorException.CompetitorColorNotFoundException;
+import com.hysteryale.exception.CompetitorException.MissingForecastFileException;
+import com.hysteryale.exception.UserException.EmailNotFoundException;
+import com.hysteryale.exception.UserException.ExistingEmailException;
+import com.hysteryale.exception.UserException.PasswordException;
+import com.hysteryale.exception.UserException.UserIdNotFoundException;
 import com.hysteryale.response.ErrorResponse;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.LocaleUtils;
@@ -65,7 +71,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         locale = locale == null ? "en" : locale;
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "missing_column");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
-        stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
+        stringBuilder.insert(baseMessage.length(), exception.getMessage());
         fileUploadService.handleUpdatedFailure(exception.getFileUUID(), stringBuilder.toString());
         logError(stringBuilder.toString(), exception);
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
@@ -118,6 +124,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         ServletRequestAttributes attributes = (ServletRequestAttributes) request;
         HttpServletRequest servletRequest = attributes.getRequest();
         String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "file-is-not-excel");
         fileUploadService.handleUpdatedFailure(exception.getFileUUID(), baseMessage);
         logError(baseMessage, exception);
@@ -133,7 +140,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "incorrect_cell_format");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
         stringBuilder.insert(baseMessage.length(), exception.getMessage());
-        fileUploadService.handleUpdatedFailure(exception.getSavedFileName(), stringBuilder.toString());
+        fileUploadService.handleUpdatedFailure(exception.getFileUUID(), stringBuilder.toString());
         logError(stringBuilder.toString(), exception);
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.BAD_REQUEST);
     }
@@ -178,6 +185,101 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(baseMessage), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ExistingEmailException.class)
+    public ResponseEntity<ErrorResponse> handleExistingEmailException(ExistingEmailException exception, WebRequest request) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "existing_email");
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length(), exception.getEmail());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEmailNotFoundException(EmailNotFoundException exception, WebRequest request) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "not_found_email");
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length(), exception.getEmail());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserIdNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserIdNotFoundException(UserIdNotFoundException exception, WebRequest request) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "user_id_not_found");
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length(), exception.getUserId());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PasswordException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordException(PasswordException exception, WebRequest request) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+
+        // wrong_old_password
+        // weak_password
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", exception.getType());
+        log.error(exception.getMessage(), exception);
+        return new ResponseEntity<>(new ErrorResponse(baseMessage), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CompetitorColorNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCompetitorColorNotFoundException(CompetitorColorNotFoundException exception, WebRequest request) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "competitor_color_not_found");
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length(), exception.getId());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CannotCreateFileException.class)
+    public ResponseEntity<ErrorResponse> handleCannotCreateFileException(CannotCreateFileException exception, WebRequest request) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "cannot_create_file");
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length(), exception.getFileName());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MissingForecastFileException.class)
+    public ResponseEntity<ErrorResponse> handleMissingForecastFileException(MissingForecastFileException exception, WebRequest request) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "missing_forecast_file");
+        logError(baseMessage, exception);
+        return new ResponseEntity<>(new ErrorResponse(baseMessage), HttpStatus.NOT_FOUND);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception exception, WebRequest request) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) request;
@@ -186,7 +288,7 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         locale = locale == null ? "en" : locale;
         String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "unexpected_error");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
-        stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
+        stringBuilder.insert(baseMessage.length(), exception.getMessage());
         logError(stringBuilder.toString(), exception);
         return new ResponseEntity<>(new ErrorResponse(baseMessage), HttpStatus.INTERNAL_SERVER_ERROR);
     }

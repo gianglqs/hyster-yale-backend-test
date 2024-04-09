@@ -30,11 +30,10 @@ public class CurrencyServiceTest {
     @Test
     public void testGetCurrencyByName_notFound() {
         String currencyName = "asdfnbbf";
-        ResponseStatusException exception =
-                Assertions.assertThrows(ResponseStatusException.class, () -> currencyService.getCurrenciesByName(currencyName));
+        ExchangeRatesException exception =
+                Assertions.assertThrows(ExchangeRatesException.class, () -> currencyService.getCurrenciesByName(currencyName));
 
-        Assertions.assertEquals(404, exception.getStatus().value());
-        Assertions.assertEquals("No currencies found with " + currencyName, exception.getReason());
+        Assertions.assertEquals("Unsupported currency " + currencyName, exception.getMessage());
     }
 
     @Test

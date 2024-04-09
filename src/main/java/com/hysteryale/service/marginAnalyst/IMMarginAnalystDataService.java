@@ -84,39 +84,39 @@ public class IMMarginAnalystDataService {
                 : dealerNet * 0.9);
     }
 
-    private void verifyNOVOCellFormat(Row row, String fileName) throws IncorectFormatCellException {
+    private void verifyNOVOCellFormat(Row row, String fileUUID) throws IncorectFormatCellException {
         // Verify the cells' format
         Cell modelCodeCell = row.getCell(COLUMN_NAME.get("Model Code"));
         if(modelCodeCell.getCellType() != CellType.STRING)
-            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Model Code") + 1), fileName);
+            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Model Code") + 1), fileUUID);
 
         Cell partNumberCell = row.getCell(COLUMN_NAME.get("Part Number"));
         if(partNumberCell.getCellType() != CellType.STRING)
-            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Part Number") + 1), fileName);
+            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Part Number") + 1), fileUUID);
 
         Cell descriptionCell = row.getCell(COLUMN_NAME.get("Part Description"));
         if(descriptionCell.getCellType() != CellType.STRING)
-            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Part Description") + 1), fileName);
+            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Part Description") + 1), fileUUID);
 
         Cell listPriceCell = row.getCell(COLUMN_NAME.get("List Price"));
         if(listPriceCell.getCellType() != CellType.NUMERIC)
-            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("List Price") + 1), fileName);
+            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("List Price") + 1), fileUUID);
 
         Cell netPriceCell = row.getCell(COLUMN_NAME.get("Net Price Each"));
         if(netPriceCell.getCellType() != CellType.NUMERIC)
-            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Net Price Each") + 1), fileName);
+            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Net Price Each") + 1), fileUUID);
 
         Cell typeCell = row.getCell(COLUMN_NAME.get("#"));
         if(typeCell.getCellType() != CellType.NUMERIC)
-            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("#") + 1), fileName);
+            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("#") + 1), fileUUID);
 
         Cell seriesCodeCell = row.getCell(COLUMN_NAME.get("Series Code"));
         if(seriesCodeCell.getCellType() != CellType.STRING)
-            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Series Code") + 1), fileName);
+            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Series Code") + 1), fileUUID);
 
         Cell quoteNumberCell = row.getCell(COLUMN_NAME.get("Quote Number:"));
         if(quoteNumberCell.getCellType() != CellType.STRING)
-            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Quote Number:") + 1), fileName);
+            throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Quote Number:") + 1), fileUUID);
     }
 
     /**
@@ -431,7 +431,7 @@ public class IMMarginAnalystDataService {
                 }
 
                 // Verify cells' format
-                verifyNOVOCellFormat(row, fileName);
+                verifyNOVOCellFormat(row, fileUUID);
 
                 IMMarginAnalystData imMarginAnalystData;
                 if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
@@ -517,7 +517,7 @@ public class IMMarginAnalystDataService {
     /**
      * Read NOVO file and create populating values for showing on Dropdown box in Margin Screen
      */
-    public Map<String, Object> populateMarginFilters(String filePath, String fileName) throws IOException, MissingColumnException, IncorectFormatCellException {
+    public Map<String, Object> populateMarginFilters(String filePath, String fileName, String fileUUID) throws IOException, MissingColumnException, IncorectFormatCellException {
 
         FileInputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
@@ -531,21 +531,21 @@ public class IMMarginAnalystDataService {
         for(Row row : sheet) {
             if(row.getRowNum() == 0) {
                 getColumnName(row);
-                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMN_NAME.keySet()), CheckRequiredColumnUtils.NOVO_REQUIRED_COLUMN, fileName);
+                CheckRequiredColumnUtils.checkRequiredColumn(new ArrayList<>(COLUMN_NAME.keySet()), CheckRequiredColumnUtils.NOVO_REQUIRED_COLUMN, fileUUID);
             }
             else if(!row.getCell(COLUMN_NAME.get("Model Code"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty()) {
                 // Check cells' format before reading value.
                 Cell modelCodeCell = row.getCell(COLUMN_NAME.get("Model Code"));
                 if(modelCodeCell.getCellType() != CellType.STRING)
-                    throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Model Code") + 1), fileName);
+                    throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Model Code") + 1), fileUUID);
 
                 Cell seriesCodeCell = row.getCell(COLUMN_NAME.get("Series Code"));
                 if(seriesCodeCell.getCellType() != CellType.STRING)
-                    throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Series Code") + 1), fileName);
+                    throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("Series Code") + 1), fileUUID);
 
                 Cell typeCell = row.getCell(COLUMN_NAME.get("#"));
                 if(typeCell.getCellType() != CellType.NUMERIC)
-                    throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("#") + 1), fileName);
+                    throw new IncorectFormatCellException((row.getRowNum() + 1) + ":" + (COLUMN_NAME.get("#") + 1), fileUUID);
 
                 // Reading cells' value
                 String orderIDCellValue = row.getCell(COLUMN_NAME.get("Order ID"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();

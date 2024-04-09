@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.CompetitorException.CompetitorColorNotFoundException;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.filters.FilterModel;
@@ -575,7 +576,7 @@ public class IndicatorServiceTest {
     }
 
     @Test
-    public void testGetCompetitorById() {
+    public void testGetCompetitorById() throws CompetitorColorNotFoundException {
         String groupName = "HYG 123 123";
         String colorCode = "#000000";
         CompetitorColor competitorColor = competitorColorRepository.save(new CompetitorColor(groupName, colorCode));
@@ -590,13 +591,12 @@ public class IndicatorServiceTest {
 
     @Test
     public void testGetCompetitorById_notFound() {
-        ResponseStatusException exception =  Assertions.assertThrows(
-                ResponseStatusException.class,
+        CompetitorColorNotFoundException exception =  Assertions.assertThrows(
+                CompetitorColorNotFoundException.class,
                 () -> indicatorService.getCompetitorById(123123123)
         );
 
-        Assertions.assertEquals(404, exception.getStatus().value());
-        Assertions.assertEquals("Competitor Color not found", exception.getReason());
+        Assertions.assertEquals("NOT FOUND Competitor Color " + 123123123, exception.getMessage());
     }
 
     @Test
@@ -623,7 +623,7 @@ public class IndicatorServiceTest {
     }
 
     @Test
-    public void testUpdateCompetitorColor() {
+    public void testUpdateCompetitorColor() throws CompetitorColorNotFoundException {
         // Expected value
         CompetitorColor newCompetitorColor = competitorColorRepository.save(new CompetitorColor("HYG", "#000000"));
         CompetitorColor modifiedCompetitorColor = new CompetitorColor(newCompetitorColor.getId(), "HYG", "#111111");
@@ -639,14 +639,13 @@ public class IndicatorServiceTest {
     public void testUpdateCompetitorColor_notFoundId() {
         CompetitorColor modifiedCompetitorColor = new CompetitorColor(123123123, "HYG", "#111111");
 
-        ResponseStatusException exception =
+        CompetitorColorNotFoundException exception =
                 Assertions.assertThrows(
-                        ResponseStatusException.class,
+                        CompetitorColorNotFoundException.class,
                         () -> indicatorService.updateCompetitorColor( modifiedCompetitorColor)
                 );
 
-        Assertions.assertEquals(404, exception.getStatus().value());
-        Assertions.assertEquals("Competitor Color not found", exception.getReason());
+        Assertions.assertEquals("NOT FOUND Competitor Color " + modifiedCompetitorColor.getId(), exception.getMessage());
     }
     @Test
     public void testUploadForecastFile() throws IOException {

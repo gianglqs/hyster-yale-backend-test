@@ -2,6 +2,8 @@ package com.hysteryale.dbConfiguration;
 
 public class H2Function {
     public static double similarity(String s1, String s2){
+        if(s1 == null || s2 == null)
+            return 0;
 
         int[][] dp = new int[s1.length() + 1][s2.length() + 1];
 
@@ -20,7 +22,6 @@ public class H2Function {
         }
 
         int maxLen = Math.max(s1.length(), s2.length());
-        double similarityRatio = (double) (maxLen - dp[s1.length()][s2.length()]) / maxLen;
-        return similarityRatio;
+        return (double) (maxLen - dp[s1.length()][s2.length()]) / maxLen;
     }
 }

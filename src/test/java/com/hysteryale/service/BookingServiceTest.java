@@ -112,7 +112,7 @@ public class BookingServiceTest {
         );
     }
 
-    //  @Test
+    @Test
     public void testGetBookingByFilter_region() throws ParseException {
         resetFilters();
 
@@ -154,7 +154,7 @@ public class BookingServiceTest {
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
     }
 
-    //  @Test
+    @Test
     public void testGetBookingByFilter_plant() throws ParseException {
         resetFilters();
 
@@ -196,7 +196,7 @@ public class BookingServiceTest {
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
     }
 
-    //   @Test
+    @Test
     public void testGetBookingByFilter_metaSeries() throws ParseException {
         resetFilters();
 
@@ -238,7 +238,7 @@ public class BookingServiceTest {
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
     }
 
-    //    @Test
+    @Test
     public void testGetBookingByFilter_dealer() throws ParseException {
         resetFilters();
 
@@ -280,7 +280,7 @@ public class BookingServiceTest {
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
     }
 
-    //   @Test
+    @Test
     public void testGetBookingByFilter_class() throws ParseException {
         resetFilters();
 
@@ -322,7 +322,7 @@ public class BookingServiceTest {
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
     }
 
-    //   @Test
+    @Test
     public void testGetBookingByFilter_model() throws ParseException {
         resetFilters();
 
@@ -364,7 +364,7 @@ public class BookingServiceTest {
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
     }
 
-    //    @Test
+    @Test
     public void testGetBookingByFilter_segment() throws ParseException {
         resetFilters();
 
@@ -406,11 +406,11 @@ public class BookingServiceTest {
         assertTotalResultValue(totalResult, quantity, totalDealerNet, totalDNAfterSurcharge, totalCost, totalMarginAfterSurcharge, totalMarginPercentage);
     }
 
-      @Test
+    @Test
     public void testGetBookingByFilter_marginPercentage() throws ParseException {
         resetFilters();
 
-        String marginPercentage = "<20% Margin";
+        String marginPercentage = ">=30% Margin";
         filters.setMarginPercentage(marginPercentage);
 
         List<Booking> listBooking = bookingService.findAllForTest();
@@ -431,7 +431,7 @@ public class BookingServiceTest {
         double totalMarginAfterSurcharge = 0.0;
 
         for (Booking bo : listResult) {
-            Assertions.assertTrue(bo.getMarginPercentageAfterSurcharge() < 0.2);
+            Assertions.assertTrue(bo.getMarginPercentageAfterSurcharge() >= 0.3);
 
             quantity += bo.getQuantity();
             if (bo.getCurrency().getCurrency().equals("AUD")) {
