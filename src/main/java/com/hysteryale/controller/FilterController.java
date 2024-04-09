@@ -2,10 +2,7 @@ package com.hysteryale.controller;
 
 import com.hysteryale.service.CountryService;
 import com.hysteryale.service.FilterService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -74,6 +71,16 @@ public class FilterController {
     @GetMapping("/bookingMarginTrialTest")
     public Map<String, Object> getBookingMarginTrialTest() {
         return filterService.getOrderFilter();
+    }
+
+    @GetMapping("/modelCodeOfResidualValue")
+    public List<Map<String, String>> getModelCodeForResidualValueFilter(@RequestParam String modelType, @RequestParam String brand){
+        return filterService.getResidualValueFilter(modelType, brand);
+    }
+
+    @GetMapping("/getAllModelTypeAndBrand")
+    public Map<String, Object> getAllModelTypeAndBrandForResidualValueFilter(){
+        return filterService.getModelTypeAndBrand();
     }
 
 }

@@ -40,6 +40,7 @@ public class CheckRequiredColumnUtils {
     public static final String PRODUCT_DIMENSION_REQUIRED_SHEET = "Data";
     public static final String PART_REQUIRED_SHEET = "Export";
     public static final String AOP_MARGIN_REQUIRED_SHEET = "aop,dn,margin,%";
+    public static final String RESIDUAL_VALUE_REQUIRED_SHEET = "RV APIC";
 
 
     public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns, String fileUUID) throws MissingColumnException {

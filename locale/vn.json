@@ -222,6 +222,7 @@
       "unsupported_currency_before_2020": "Đơn vị tiền tệ không được hỗ trợ trước ngày 31/12/2020: ",
       "inactive_api_key": "API key chưa được kích hoạt. Hãy kiểm tra lại!",
       "plan_update_required": "Gói cước cần được cập nhật",
+      "can-not-extract-year-from-file-name": "Không thể lấy ra năm từ tên file: ''",
       "existing_email": "Email này đã được đăng kí: ",
       "not_found_email": "Không thể tìm thấy người dùng với email: ",
       "user_id_not_found": "Không thể tìm thấy người dùng với id: ",
@@ -243,7 +244,8 @@
       "not-find-clazz-with-clazzName": "Không tìm thấy Class với tên '%s'.",
       "incorrect-format-at-cell": "Lỗi định dạng tại ô %s",
       "file-is-not-excel": "File không phải là Excel",
-      "not-find-region-with-name": "Không tìm thấy khu vực nào với tên: '%s'."
+      "not-find-region-with-name": "Không tìm thấy khu vực nào với tên: '%s'.",
+      "not-find-product-with-modelCode": "Không tìm thấy Sản phẩm nào với ModelCode: '%s'."
     }
   },
   "yes": "Có",

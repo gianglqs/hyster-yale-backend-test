@@ -1,6 +1,6 @@
 package com.hysteryale.utils;
 
-import com.hysteryale.exception.CannotExtractDateException;
+import com.hysteryale.exception.CannotExtractYearException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -119,13 +119,13 @@ public class DateUtils {
         return date;
     }
 
-    public static int extractYear(String fileName) throws CannotExtractDateException {
+    public static int extractYearFromFileName(String fileName, String fileUUID) throws CannotExtractYearException {
         String dateRegex = "\\d{4}";
         Matcher m = Pattern.compile(dateRegex).matcher(fileName);
         if (m.find()) {
             return Integer.parseInt(m.group());
         }
-        throw new CannotExtractDateException("Can not extract Year from file name: '" + fileName + "'");
+        throw new CannotExtractYearException(fileName , fileUUID);
     }
 
     public static String convertLocalDateTimeToString(LocalDateTime localDateTime) {

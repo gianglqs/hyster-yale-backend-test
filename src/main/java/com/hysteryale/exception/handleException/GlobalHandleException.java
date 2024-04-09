@@ -131,6 +131,20 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(baseMessage), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CannotExtractYearException.class)
+    public ResponseEntity<ErrorResponse> handleExtractYearFromFileNameException(CannotExtractYearException exception, WebRequest request) throws CanNotUpdateException {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "Can not extract Year from file name: ''");
+        StringBuilder stringBuilder = new StringBuilder(baseMessage);
+        stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
+        fileUploadService.handleUpdatedFailure(exception.getFileUUID(), stringBuilder.toString());
+        logError(stringBuilder.toString(), exception);
+        return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(IncorectFormatCellException.class)
     public ResponseEntity<ErrorResponse> handleIncorrectFormatCellException(IncorectFormatCellException exception, WebRequest request) throws CanNotUpdateException {
         ServletRequestAttributes attributes = (ServletRequestAttributes) request;

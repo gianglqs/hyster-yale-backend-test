@@ -39,6 +39,7 @@ public class Product extends BaseModel{
     private String truckType;
     private String image;
     private String description;
+    private String modelType;
 
     public Product(String plant, Clazz clazz, String modelCode) {
         this.plant = plant;

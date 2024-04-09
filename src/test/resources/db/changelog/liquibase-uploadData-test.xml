@@ -117,5 +117,18 @@
                 tableName="marginanalysisaoprate">
         </loadUpdateData>
 
+<!--        <loadUpdateData-->
+<!--                file="classpath:db/database/residual_value.csv"-->
+<!--                primaryKey="hours"-->
+<!--                quotchar="'"-->
+<!--                tableName="residual_value">-->
+<!--        </loadUpdateData>-->
+    </changeSet>
+
+    <changeSet id="load_data_from_csv" author="songiang">
+        <sql>
+            INSERT INTO residual_value (hours,created_at,created_by,latest_modified_at,latest_modified_by,residualvaluepercent,years,product)
+            SELECT * FROM CSVREAD('classpath:db/database/residual_value.csv');
+        </sql>
     </changeSet>
 </databaseChangeLog>

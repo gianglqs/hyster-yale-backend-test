@@ -83,5 +83,14 @@ public class StringUtils {
         return false;
     }
 
+    public static Integer isNumber(String str) {
+        String regex = "\\d+";
+        Matcher matcher = Pattern.compile(regex).matcher(str);
+        if (matcher.matches()) {
+            return Integer.parseInt(matcher.group(0));
+        } else {
+            return null;
+        }
+    }
 
 }
