@@ -208,18 +208,19 @@ public class ExchangeRateService extends BasedService {
 
             double nearestRate = 0;
             double farthestRate = 0;
-            int numberOfMonths = 1;
             boolean isSetNearestRate = false;
 
+            int numberOfMonths = 1;
             while (queryDate.isAfter(fromDate) && numberOfMonths <= limit) {
-                Currency currency = currencyService.getCurrenciesByName(strCurrency);
+                Currency currency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
 
-                Optional<ExchangeRate> optional = exchangeRateRepository.getExchangeRateByFromToCurrencyAndDate(currentCurrency.getCurrency(), strCurrency, queryDate);
+                Optional<ExchangeRate> optional = exchangeRateRepository.getExchangeRateByFromToCurrencyAndDate(currency.getCurrency(), strCurrency, queryDate);
 
                 // if Exchange Rate in the month & year does not exist then the RATE value will be null
                 if (optional.isEmpty())
                     exchangeRateList.add(new ExchangeRate(currentCurrency, currency, null, queryDate));
-                else exchangeRateList.add(optional.get());
+                else
+                    exchangeRateList.add(optional.get());
 
                 // Set the nearest and farthest Exchange Rates to calculate difference
                 if (optional.isPresent()) {
@@ -288,7 +289,7 @@ public class ExchangeRateService extends BasedService {
         List<String> strongerCurrencies = new ArrayList<>();
 
         LocalDate queryDate = toDate;
-        int numberOfDays = 1;
+
 
 
         for (String currency : comparisonCurrencies) {
@@ -306,6 +307,7 @@ public class ExchangeRateService extends BasedService {
                     else strongerCurrencies.add(currency + ": +" + sb + " (+" + differentRatePercentage + "%)");
                 } else stableCurrencies.add(currency);
             }
+            int numberOfDays = 1;
             while (queryDate.isAfter(fromDate) && numberOfDays <= limit) {
                 Currency currentCurrency = currencyService.getCurrenciesByName(request.getCurrentCurrency());
                 getExchangeRatesFromAPI(currentCurrency.getCurrency(), comparisonCurrencies, queryDate, data);
