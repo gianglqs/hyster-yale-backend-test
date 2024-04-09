@@ -251,7 +251,7 @@
       "not-find-clazz-with-clazzName": "Class with the Class name '%s' not found.",
       "incorrect-format-at-cell": "Incorrect format at Cell %s",
       "not-find-region-with-name": "Region with name: '%s' not found.",
-      "not-find-product-with-modelCode": "Product with modelCode: '%s' not found."
+      "not-find-product-with-modelCode": "Product with modelCode: '%s' not found.",
     }
   },
   "yes": "Yes",
