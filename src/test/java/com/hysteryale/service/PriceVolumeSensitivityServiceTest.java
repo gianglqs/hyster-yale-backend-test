@@ -72,6 +72,7 @@ public class PriceVolumeSensitivityServiceTest {
 
     }
 
+
     @Test
     public void testGetPriceVolumeSensitivity_WithOneSegment() throws ParseException {
         resetFilters();
@@ -98,10 +99,29 @@ public class PriceVolumeSensitivityServiceTest {
         Assertions.assertEquals(listOrder.size(), 2);
     }
 
+    /**
+     * {@link com.hysteryale.service.impl.PriceVolumeSensitivityServiceImp#getDataByFilter(PriceVolSensitivityFilterModel)}
+     */
     @Test
     public void testGetPriceVolumeSensitivity_WithMetaSeries() throws ParseException {
         resetFilters();
-        filters.getDataFilter().setMetaSeries(List.of("3C4", "3C5", "543"));
+        filters.getDataFilter().setMetaSeries(List.of("3C4"));
+
+        // if filter with Series -> group  booking by Series, has 2 metaSeries valid -> result has 2 record
+        Map<String, Object> result = priceVolumeSensitivityService.getDataByFilter(filters);
+        Assertions.assertNotNull(result.get("totalItems"));
+        Assertions.assertEquals((long) result.get("totalItems"), 1);
+        List<PriceVolSensitivityPayLoad> listOrder = (ArrayList<PriceVolSensitivityPayLoad>) result.get("listOrder");
+        Assertions.assertEquals(listOrder.size(), 1);
+    }
+
+    /**
+     * {@link com.hysteryale.service.impl.PriceVolumeSensitivityServiceImp#getDataByFilter(PriceVolSensitivityFilterModel)}
+     */
+    @Test
+    public void testGetPriceVolumeSensitivity_WithManyMetaSeries() throws ParseException {
+        resetFilters();
+        filters.getDataFilter().setMetaSeries(List.of("3C4","005"));
 
         // if filter with Series -> group  booking by Series, has 2 metaSeries valid -> result has 2 record
         Map<String, Object> result = priceVolumeSensitivityService.getDataByFilter(filters);
