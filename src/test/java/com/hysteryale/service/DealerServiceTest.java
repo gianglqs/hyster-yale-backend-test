@@ -1,6 +1,6 @@
 package com.hysteryale.service;
 
-import com.hysteryale.model.Dealer;
+import com.hysteryale.model.dealer.Dealer;
 import com.hysteryale.model.payLoad.DealerPayload;
 import com.hysteryale.repository.DealerRepository;
 import org.junit.jupiter.api.Assertions;
@@ -15,8 +15,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 

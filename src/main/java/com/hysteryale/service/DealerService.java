@@ -1,13 +1,12 @@
 package com.hysteryale.service;
 
 import com.hysteryale.exception.MissingColumnException;
-import com.hysteryale.model.Dealer;
+import com.hysteryale.model.dealer.Dealer;
 import com.hysteryale.model.payLoad.DealerPayload;
 import com.hysteryale.repository.DealerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import com.hysteryale.repository.DealerRepository;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.ConvertDataExcelUtils;
 
@@ -16,7 +15,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.IOException;

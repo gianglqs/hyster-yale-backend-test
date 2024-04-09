@@ -1,6 +1,6 @@
 package com.hysteryale.controller;
 
-import com.hysteryale.model.Dealer;
+import com.hysteryale.model.dealer.Dealer;
 import com.hysteryale.model.payLoad.DealerPayload;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.DealerService;

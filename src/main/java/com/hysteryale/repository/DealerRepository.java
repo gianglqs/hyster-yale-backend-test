@@ -1,6 +1,6 @@
 package com.hysteryale.repository;
 
-import com.hysteryale.model.Dealer;
+import com.hysteryale.model.dealer.Dealer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -8,6 +8,7 @@ import com.hysteryale.model.*;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.competitor.ForeCastValue;
+import com.hysteryale.model.dealer.Dealer;
 import com.hysteryale.model.enums.ImportFailureType;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.*;
