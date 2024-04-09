@@ -61,6 +61,7 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
         return result;
     }
 
+
     public List<PriceVolSensitivityPayLoad> calculatePriceVolSensitivity(List<Booking> bookings, double discountPercent, boolean withMarginVolumeRecovery) {
         List<PriceVolSensitivityPayLoad> result = new ArrayList<>();
         int id = 1;
