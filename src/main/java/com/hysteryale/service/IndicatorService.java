@@ -1,5 +1,7 @@
 package com.hysteryale.service;
 
+import com.hysteryale.exception.CompetitorException.CompetitorColorNotFoundException;
+import com.hysteryale.exception.CompetitorException.MissingForecastFileException;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.competitor.ForeCastValue;
@@ -17,11 +19,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -146,12 +146,12 @@ public class IndicatorService extends BasedService {
             return optional.get();
     }
 
-    public CompetitorColor getCompetitorById(int id) {
+    public CompetitorColor getCompetitorById(int id) throws CompetitorColorNotFoundException {
         Optional<CompetitorColor> optional = competitorColorRepository.findById(id);
         if (optional.isPresent())
             return optional.get();
         else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Competitor Color not found");
+            throw new CompetitorColorNotFoundException("NOT FOUND Competitor Color " + id, id);
     }
 
     public Page<CompetitorColor> searchCompetitorColor(String search, int pageNo, int perPage) {
@@ -160,14 +160,10 @@ public class IndicatorService extends BasedService {
     }
 
     @Transactional
-    public void updateCompetitorColor(CompetitorColor modifyColor) {
-        Optional<CompetitorColor> optional = competitorColorRepository.findById(modifyColor.getId());
-        if (optional.isPresent()) {
-            CompetitorColor dbCompetitorColor = optional.get();
-
-            dbCompetitorColor.setGroupName(modifyColor.getGroupName());
-            dbCompetitorColor.setColorCode(modifyColor.getColorCode());
-        } else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Competitor Color not found");
+    public void updateCompetitorColor(CompetitorColor modifyColor) throws CompetitorColorNotFoundException {
+        CompetitorColor dbCompetitorColor = getCompetitorById(modifyColor.getId());
+        dbCompetitorColor.setGroupName(modifyColor.getGroupName());
+        dbCompetitorColor.setColorCode(modifyColor.getColorCode());
     }
 
     /**
@@ -240,7 +236,7 @@ public class IndicatorService extends BasedService {
         List<ForeCastValue> forecastValueList = importService.loadForecastForCompetitorPricingFromFile();
 
         if (forecastValueList == null) {
-            throw new Exception("Missing Forecast Dynamic Pricing Excel file");
+            throw new MissingForecastFileException("Missing Forecast Dynamic Pricing Excel file");
         }
 
         Sheet sheet = workbook.getSheetAt(0);
@@ -252,8 +248,6 @@ public class IndicatorService extends BasedService {
         }
         //Check format file competitor
         CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN, fileUUID);
-
-
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {
@@ -286,6 +280,4 @@ public class IndicatorService extends BasedService {
         competitorPricingRepository.saveAll(competitorPricingList);
         importService.assigningCompetitorValues();
     }
-
-
 }

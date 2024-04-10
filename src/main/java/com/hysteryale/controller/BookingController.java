@@ -96,7 +96,7 @@ public class BookingController {
             importFailures = bookingService.importCostDataNew(filePath, fileUUID);
             fileUploadService.handleUpdatedSuccessfully(savedFileName);
         } else {
-            throw new InvalidFileNameException(file.getOriginalFilename(), savedFileName);
+            throw new InvalidFileNameException(file.getOriginalFilename(), fileUUID);
         }
         // update ImportTracking
         importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.MONTHLY);

@@ -454,9 +454,9 @@ public class ProductService extends BasedService {
             List<Product> mappedProduct = getListProductByRangeModelCodeAndMetaSeries(listProductInDB, p.getModelCode(), p.getSeries());
 
             if (mappedProduct.isEmpty()) {
-                String primaryKey = p.getModelCode() + ", "+ p.getSeries();
-                String reasonValue = p.getModelCode() + "###"+ p.getSeries();
-                importFailureService.addIntoListImportFailure(importFailures,primaryKey, "not-find-product-with-modelCode-series", reasonValue,  ImportFailureType.WARNING);
+                String primaryKey = p.getModelCode() + ", " + p.getSeries();
+                String reasonValue = p.getModelCode() + "###" + p.getSeries();
+                importFailureService.addIntoListImportFailure(importFailures, primaryKey, "not-find-product-with-modelCode-series", reasonValue, ImportFailureType.WARNING);
                 continue;
             }
 
@@ -638,7 +638,7 @@ public class ProductService extends BasedService {
         return result;
     }
 
-    public static List<Product> getProductByModelCode(List<Product> products, String modelCode) {
+    public List<Product> getProductByModelCode(List<Product> products, String modelCode) {
         List<Product> result = new ArrayList<>();
         for (Product product : products) {
             if (StringUtils.compareString(modelCode, product.getModelCode()))

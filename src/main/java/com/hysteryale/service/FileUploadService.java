@@ -1,6 +1,9 @@
 package com.hysteryale.service;
 
 import com.hysteryale.exception.CanNotUpdateException;
+import com.hysteryale.exception.CannotCreateFileException;
+import com.hysteryale.exception.InvalidFileFormatException;
+import com.hysteryale.exception.UserException.EmailNotFoundException;
 import com.hysteryale.model.ModelType;
 import com.hysteryale.model.User;
 import com.hysteryale.model.filters.AdminFilter;
@@ -125,7 +128,7 @@ public class FileUploadService {
             return encodedFileName;
         } else {
             log.info("Can not create new file: " + encodedFileName);
-            throw new Exception("Can not create new file: " + encodedFileName);
+            throw new CannotCreateFileException("Can not save new file: " + multipartFile.getOriginalFilename(), multipartFile.getOriginalFilename());
         }
     }
 
@@ -154,7 +157,7 @@ public class FileUploadService {
             return encodedFileName;
         } else {
             log.info("Can not create new file: " + encodedFileName);
-            throw new Exception("Can not save file: " + multipartFile.getOriginalFilename());
+            throw new CannotCreateFileException("Can not save new file: " + multipartFile.getOriginalFilename(), multipartFile.getOriginalFilename());
         }
 
     }
@@ -188,24 +191,10 @@ public class FileUploadService {
             return encodedFileName;
         } else {
             log.info("Can not create new file: " + encodedFileName);
-            throw new Exception("Can not save file: " + imageFile.getName());
+            throw new CannotCreateFileException("Can not save new file: " + imageFile.getName(), imageFile.getName());
         }
 
     }
-
-
-//    public static void main(String[] args) throws IOException {
-//
-////        Tinify.setKey("L7MczDTDq2NMGwDgHJxcXL76S02JWgv6");
-////
-////        for (int i = 2; i < 10; i++) {
-////            Tinify.fromFile("/home/oem/Documents/" + i + ".png").toFile("/home/oem/Documents/" + (i + 1) + ".png");
-////        }
-//        File file = new File("/home/oem/Downloads/Product Photos/Class 2/R1.25-1.8EX(W)2_C915_R2.00-3.00EX2_B925.jpg");
-//
-//        compressedFile(file, "/home/oem/Downloads/test-compressed-image/1.png", 1f);
-//    }
-
 
     private void compressedImage(File input, String des) throws IOException {
         File fileCompressed = new File(des);
@@ -264,7 +253,7 @@ public class FileUploadService {
 
             return fileUpload.getUuid();
         } else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot find user with email: " + uploadedByEmail);
+            throw new EmailNotFoundException("NOT FOUND Email " + uploadedByEmail, uploadedByEmail);
     }
 
 

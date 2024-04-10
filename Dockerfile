@@ -31,6 +31,7 @@ RUN mkdir -p /opt/hysteryale/uploadFiles/novo
 RUN mkdir -p /opt/hysteryale/uploadFiles/competitor
 RUN mkdir -p /opt/hysteryale/uploadFiles/product
 RUN mkdir -p /opt/hysteryale/uploadFiles/exchange_rate
+RUN mkdir -p /opt/hysteryale/uploadFiles/residual_value
 
 RUN mkdir -p /opt/hysteryale/images/product/
 RUN mkdir -p /opt/hysteryale/images/part/

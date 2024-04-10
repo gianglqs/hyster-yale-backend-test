@@ -1,6 +1,7 @@
 package com.hysteryale.service;
 
 import com.hysteryale.exception.BlankSheetException;
+import com.hysteryale.exception.CompetitorException.MissingForecastFileException;
 import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Currency;
@@ -21,9 +22,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -264,7 +263,7 @@ public class ImportService extends BasedService {
         }
     }
 
-    public void importCompetitorPricing() throws IOException {
+    public void importCompetitorPricing() throws IOException, MissingForecastFileException {
 
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.competitor-pricing");
@@ -325,14 +324,14 @@ public class ImportService extends BasedService {
         return null;
     }
 
-    public  List<ForeCastValue> loadForecastForCompetitorPricingFromFile() throws IOException {
+    public List<ForeCastValue> loadForecastForCompetitorPricingFromFile() throws IOException, MissingForecastFileException {
 
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String folderPath = baseFolder + baseFolderUploaded + EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
         List<String> fileList = getAllFilesInFolder(folderPath, -1);
         if (fileList.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Missing Forecast Dynamic Pricing Excel file");
+            throw new MissingForecastFileException("Missing Forecast Dynamic Pricing Excel file");
 
         List<ForeCastValue> foreCastValues = new ArrayList<>();
 
@@ -683,12 +682,9 @@ public class ImportService extends BasedService {
         String ctryCode = row.getCell(shipmentColumnsName.get("Ship-to Country Code")).getStringCellValue();
         Country country = countryService.findByCountryCode(prepareCountries, ctryCode);
         if (country == null) {
-            // create new Country with ctry_code
-            country = new Country();
-            country.setCode(ctryCode);
-            newCountrySet.add(country);
             importFailureService.addIntoListImportFailure(importFailures, orderNo,
                     "not-find-country-with-code", ctryCode, ImportFailureType.WARNING);
+            return null;
         }
         shipment.setCountry(country);
 

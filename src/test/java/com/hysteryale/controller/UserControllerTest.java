@@ -76,7 +76,8 @@ public class UserControllerTest {
                         .perform(get("/users/getDetails/" + notFoundUserId))
                         .andReturn();
         Assertions.assertEquals(404, response.getResponse().getStatus());
-        Assertions.assertTrue(Objects.requireNonNull(response.getResolvedException()).getMessage().contains("No user with id: " + notFoundUserId));
+        log.info(response.getResponse().getContentAsString());
+        Assertions.assertTrue(response.getResponse().getContentAsString().contains("Cannot found user with id: " + notFoundUserId));
     }
 
     @Test
@@ -102,7 +103,7 @@ public class UserControllerTest {
                         .andReturn();
 
         Assertions.assertEquals(400, result.getResponse().getStatus());
-        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("Email has been already taken"));
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("This email has been registered: " + user.getEmail()));
     }
 
     @Test
@@ -200,7 +201,7 @@ public class UserControllerTest {
         ).andReturn();
 
         Assertions.assertEquals(400, result.getResponse().getStatus());
-        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("Old password is not correct."));
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("Old password is not correct."));
     }
 
     @Test
@@ -218,9 +219,9 @@ public class UserControllerTest {
 
         Assertions.assertEquals(400, result.getResponse().getStatus());
         Assertions.assertTrue(
-                Objects
-                        .requireNonNull(result.getResolvedException())
-                        .getMessage()
+                result
+                        .getResponse()
+                        .getContentAsString()
                         .contains("Password must consist of at least 12 characters and has at least"));
     }
 
@@ -268,7 +269,7 @@ public class UserControllerTest {
                         ).andReturn();
 
         Assertions.assertEquals(404, result.getResponse().getStatus());
-        Assertions.assertTrue(Objects.requireNonNull(result.getResolvedException()).getMessage().contains("No email found with " + user.getEmail()));
+        Assertions.assertTrue(result.getResponse().getContentAsString().contains("Cannot found user with email: " + user.getEmail()));
     }
 
     @Test
