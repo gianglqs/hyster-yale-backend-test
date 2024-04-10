@@ -108,6 +108,7 @@ public class FilterService {
         filters.put("brands", getAllBrands());
         filters.put("truckType", getAllTruckTypes());
         filters.put("family", getAllFamily());
+        filters.put("series", getAllSeries());
 
         return filters;
     }
@@ -376,5 +377,14 @@ public class FilterService {
             filters.add(new FilterRow(c));
 
         return filters;
+    }
+
+    public List<Map<String, String>> getAllSeries() {
+        List<Map<String, String>> listSeries = new ArrayList<>();
+        List<String> series = productRepository.getAllSeries();
+        for (String s : series) {
+            listSeries.add(Map.of("value", s));
+        }
+        return listSeries;
     }
 }
