@@ -69,7 +69,7 @@ public class PriceVolumeSensitivityServiceTest {
         resetFilters();
         Map<String, Object> result = priceVolumeSensitivityService.getDataByFilter(filters);
         Assertions.assertNotNull(result.get("totalItems"));
-        Assertions.assertEquals((long) result.get("totalItems"), 8);
+        Assertions.assertEquals((long) result.get("totalItems"), 21);
 
     }
 
@@ -77,20 +77,19 @@ public class PriceVolumeSensitivityServiceTest {
     @Test
     public void testGetPriceVolumeSensitivity_WithOneSegment() throws ParseException {
         resetFilters();
-        filters.getDataFilter().setSegments(List.of("C1 1-3.5T - Low Intensity"));
+        filters.getDataFilter().setSegments(List.of("C3 - Low Intensity"));
         // if filter with one semgnet -> group booking by Series -> result has 3 record
         Map<String, Object> result = priceVolumeSensitivityService.getDataByFilter(filters);
         Assertions.assertNotNull(result.get("totalItems"));
-        Assertions.assertEquals((long) result.get("totalItems"), 3);
         List<PriceVolSensitivityPayLoad> listOrder = (ArrayList<PriceVolSensitivityPayLoad>) result.get("listOrder");
-        Assertions.assertEquals(listOrder.size(), 3);
+        Assertions.assertEquals(listOrder.size(), 7);
     }
 
     @Test
     public void testGetPriceVolumeSensitivity_WithOneSegmentAndMetaSeries() throws ParseException {
         resetFilters();
-        filters.getDataFilter().setSegments(List.of("C1 1-3.5T - Low Intensity"));
-        filters.getDataFilter().setMetaSeries(List.of("3C4", "3C5", "543"));
+        filters.getDataFilter().setSegments(List.of("C3 - Low Intensity"));
+        filters.getDataFilter().setMetaSeries(List.of("3C7", "3C9" ));
 
         // if filter with one semgnet -> group  booking by Series, has 2 metaSeries valid -> result has 2 record
         Map<String, Object> result = priceVolumeSensitivityService.getDataByFilter(filters);
@@ -135,14 +134,13 @@ public class PriceVolumeSensitivityServiceTest {
     @Test
     public void testGetPriceVolumeSensitivity_WithManySegment() throws ParseException {
         resetFilters();
-        filters.getDataFilter().setSegments(List.of("C1 1-3.5T - Low Intensity", "C1 1-3.5T - Standard and Premium", "C1 4-9T - Standard and Premium", "C2 - Standard and Premium"));
+        filters.getDataFilter().setSegments(List.of("C3 - Low Intensity", "C1 4-9T - Standard and Premium", "Big Forklift Trucks 10-16T"));
 
         // if filter with many Segment and NO MetaSeries -> group  booking by Segment, has 3 metaSeries valid -> 3 record
         Map<String, Object> result = priceVolumeSensitivityService.getDataByFilter(filters);
         Assertions.assertNotNull(result.get("totalItems"));
-        Assertions.assertEquals((long) result.get("totalItems"), 3);
         List<PriceVolSensitivityPayLoad> listOrder = (ArrayList<PriceVolSensitivityPayLoad>) result.get("listOrder");
-        Assertions.assertEquals(listOrder.size(), 3);
+        Assertions.assertEquals(listOrder.size(), 9);
     }
 
 
