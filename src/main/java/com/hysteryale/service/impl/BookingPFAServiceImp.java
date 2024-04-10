@@ -8,6 +8,7 @@ import com.hysteryale.model.BookingFPA;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.Shipment;
 import com.hysteryale.model.enums.ImportFailureType;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.model.payLoad.BookingMarginTrialTestPayLoad;
@@ -105,7 +106,7 @@ public class BookingPFAServiceImp extends BasedService implements BookingFPAServ
         importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
         bookingFPARepository.saveAll(bookingList);
         importFailureRepository.saveAll(importFailures);
-        localeUtils.logStatusImportComplete(importFailures, ModelUtil.BOOKING_FPA);
+        localeUtils.logStatusImportComplete(importFailures, ModelTypeEnum.BOOKING_FPA.getValue());
         return importFailures;
     }
 

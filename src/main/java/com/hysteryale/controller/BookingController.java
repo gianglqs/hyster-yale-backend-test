@@ -2,16 +2,18 @@ package com.hysteryale.controller;
 
 import com.hysteryale.exception.InvalidFileFormatException;
 import com.hysteryale.exception.InvalidFileNameException;
+import com.hysteryale.model.enums.FrequencyImport;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.BookingService;
 import com.hysteryale.service.FileUploadService;
+import com.hysteryale.service.ImportTrackingService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.LocaleUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,6 +40,8 @@ public class BookingController {
     @Resource
     FileUploadRepository fileUploadRepository;
 
+    @Resource
+    ImportTrackingService importTrackingService;
 
     @Resource
     LocaleUtils localeUtils;
@@ -68,9 +72,13 @@ public class BookingController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.booked");
 
+        String modelType = ModelTypeEnum.BOOKING.getValue();
+        if (FileUtils.checkFileNameValid(file, "cost_data")) {
+            modelType = ModelTypeEnum.COST_DATA.getValue();
+        }
         //save file on disk
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.BOOKING);
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, modelType);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
@@ -90,7 +98,9 @@ public class BookingController {
         } else {
             throw new InvalidFileNameException(file.getOriginalFilename(), savedFileName);
         }
-        String message = localeUtils.getMessageImportComplete(importFailures, ModelUtil.BOOKING, locale);
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.MONTHLY);
+        String message = localeUtils.getMessageImportComplete(importFailures, modelType, locale);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(message, fileUUID));
 
     }

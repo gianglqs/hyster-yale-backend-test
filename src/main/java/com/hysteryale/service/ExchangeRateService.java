@@ -3,6 +3,8 @@ package com.hysteryale.service;
 import com.hysteryale.exception.*;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
+import com.hysteryale.model.enums.FrequencyImport;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.reports.CompareCurrencyRequest;
 import com.hysteryale.repository.ExchangeRateRepository;
 import com.hysteryale.repository.upload.FileUploadRepository;
@@ -42,6 +44,9 @@ public class ExchangeRateService extends BasedService {
     @Resource
     FileUploadRepository fileUploadRepository;
     public static Map<Integer, String> fromCurrenciesTitle = new HashMap<>();
+
+    @Resource
+    ImportTrackingService importTrackingService;
 
     public Map<Integer, String> getFromCurrencyTitle(Row row) {
         int end = 31;
@@ -390,8 +395,9 @@ public class ExchangeRateService extends BasedService {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.exchange_rate");
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.EXCHANGE_RATE);
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelTypeEnum.EXCHANGE_RATE.getValue());
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath))
@@ -435,6 +441,8 @@ public class ExchangeRateService extends BasedService {
         log.info("ExchangeRate are newly saved or updated: " + exchangeRatesList.size());
         exchangeRatesList.clear();
         fileUploadService.handleUpdatedSuccessfully(fileName);
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.MONTHLY);
     }
 
 

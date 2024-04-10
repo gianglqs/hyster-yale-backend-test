@@ -1,5 +1,6 @@
 package com.hysteryale.model.upload;
 
+import com.hysteryale.model.ModelType;
 import com.hysteryale.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +38,11 @@ public class FileUpload {
     @Column
     private String message;
 
-    private String screen;
+    //private String screen;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="model_type")
+    private ModelType modelType;
 
     @Column(name = "path")
     private String path;

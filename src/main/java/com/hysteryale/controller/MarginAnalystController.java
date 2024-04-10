@@ -1,16 +1,18 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.exception.InvalidFileFormatException;
+import com.hysteryale.model.enums.FrequencyImport;
 import com.hysteryale.model.marginAnalyst.CalculatedMargin;
 import com.hysteryale.model_h2.IMMarginAnalystData;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.service.FileUploadService;
+import com.hysteryale.service.ImportTrackingService;
 import com.hysteryale.service.PartService;
 import com.hysteryale.service.marginAnalyst.IMMarginAnalystDataService;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,6 +41,9 @@ public class MarginAnalystController {
 
     @Resource
     FileUploadRepository fileUploadRepository;
+
+    @Resource
+    ImportTrackingService importTrackingService;
 
     /**
      * Calculate MarginAnalystData and MarginAnalystSummary based on user's uploaded file
@@ -89,7 +94,7 @@ public class MarginAnalystController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.novo");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.NOVO);
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelTypeEnum.NOVO.getValue());
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
 
         // Verify the Excel file
@@ -112,8 +117,9 @@ public class MarginAnalystController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.macro");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.MACRO);
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelTypeEnum.MACRO.getValue());
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(fileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath))
@@ -121,6 +127,8 @@ public class MarginAnalystController {
 
         marginAnalystMacroService.importMarginAnalystMacroFromFile(file.getOriginalFilename(), filePath);
         fileUploadService.handleUpdatedSuccessfully(fileName);
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.MONTHLY);
     }
 
     @PostMapping(path = "/importPowerBiFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -130,8 +138,9 @@ public class MarginAnalystController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.part");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.PART);
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelTypeEnum.PART.getValue());
         String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
         // Verify the Excel file
         if (!FileUtils.isExcelFile(filePath))
@@ -139,5 +148,7 @@ public class MarginAnalystController {
 
         partService.importPartFromFile(file.getOriginalFilename(), filePath, savedFileName);
         fileUploadService.handleUpdatedSuccessfully(savedFileName);
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.MONTHLY);
     }
 }

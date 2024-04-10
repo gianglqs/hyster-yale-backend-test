@@ -4,6 +4,7 @@ import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.model.AOPMargin;
 import com.hysteryale.model.Region;
 import com.hysteryale.model.enums.ImportFailureType;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.AOPMarginRepository;
 import com.hysteryale.repository.RegionRepository;
@@ -203,7 +204,7 @@ public class AOPMarginService extends BasedService {
                 saveOrUpdateAOPMargin(aopMarginListInDB, newAOPMarginList);
                 importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
                 importFailureRepository.saveAll(importFailures);
-                localeUtils.logStatusImportComplete(importFailures, ModelUtil.BOOKING_FPA);
+                localeUtils.logStatusImportComplete(importFailures, ModelTypeEnum.BOOKING_FPA.getValue());
                 return importFailures;
             }
 

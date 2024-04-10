@@ -2,15 +2,17 @@ package com.hysteryale.controller;
 
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
+import com.hysteryale.model.enums.FrequencyImport;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.service.FileUploadService;
+import com.hysteryale.service.ImportTrackingService;
 import com.hysteryale.service.IndicatorService;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -41,7 +43,8 @@ public class IndicatorController {
     @Resource
     FileUploadRepository fileUploadRepository;
 
-
+    @Resource
+    ImportTrackingService importTrackingService;
 
     @PostMapping("/getCompetitorData")
     public Map<String, Object> getCompetitorData(@RequestBody FilterModel filters,
@@ -112,7 +115,7 @@ public class IndicatorController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.competitor");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.COMPETITOR);
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelTypeEnum.COMPETITOR.getValue());
         String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
@@ -124,6 +127,8 @@ public class IndicatorController {
         try {
             indicatorService.importIndicatorsFromFile(pathFile, fileUUID);
             fileUploadService.handleUpdatedSuccessfully(savedFileName);
+            // update ImportTracking
+            importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.AD_HOC_IMPORT);
         } catch (Exception e) {
             fileUploadService.handleUpdatedFailure(fileUUID, e.getMessage());
             throw e;
@@ -136,7 +141,7 @@ public class IndicatorController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.FORECAST_PRICING);
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelTypeEnum.FORECAST_PRICING.getValue());
         String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
@@ -165,6 +170,7 @@ public class IndicatorController {
             }
         }
         CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.FORECAST_REQUIRED_COLUMN, fileUUID);
-
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.AD_HOC_IMPORT);
     }
 }

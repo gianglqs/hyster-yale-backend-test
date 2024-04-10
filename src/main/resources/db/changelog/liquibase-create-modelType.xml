@@ -1,0 +1,193 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-table-model_type" author="songiang">
+        <createTable tableName="model_type">
+            <column type="SERIAL" name="id">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column type="VARCHAR(255)" name="type"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="insert-data-model_type" author="songiang">
+        <sql>
+            INSERT INTO model_type(id, type)
+            VALUES (1, 'booking'),
+                   (2, 'dealer'),
+                   (3, 'cost_data'),
+                   (4, 'booking_fpa'),
+                   (5, 'shipment'),
+                   (6, 'product'),
+                   (7, 'exchange_rate'),
+                   (8, 'competitor'),
+                   (9, 'part'),
+                   (10, 'macro'),
+                   (11, 'novo'),
+                   (12, 'forecast_pricing'),
+                   (13, 'aop_margin'),
+                   (14, 'residual_value')
+        </sql>
+    </changeSet>
+
+    <changeSet id="update-model_type-in-upload_file" author="songiang">
+        <addColumn tableName="file_upload">
+            <column name="model_type" type="INT"/>
+        </addColumn>
+        <sql>
+            update file_upload f
+            set model_type = (select m.id from model_type m where f.screen = m.type)
+        </sql>
+    </changeSet>
+
+    <changeSet id="add-foreinkey" author="songiang">
+        <addForeignKeyConstraint baseTableName="file_upload" baseColumnNames="model_type"
+                                 constraintName="contraint_file_upload_and_model_type"
+                                 referencedTableName="model_type"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="drop-column-screen-in-file_upload" author="songiang">
+        <dropColumn tableName="file_upload" columnName="screen"/>
+    </changeSet>
+
+    <changeSet id="create-table-frequency" author="songiang">
+        <createTable tableName="frequency">
+            <column type="serial" name="id">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column type="VARCHAR(255)" name="type"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="insert-data-into-frequency" author="songiang">
+        <sql>
+            INSERT INTO frequency(id, type)
+            VALUES (1, 'annual'),
+                   (2, 'monthly'),
+                   (3, 'ad hoc import')
+        </sql>
+    </changeSet>
+
+    <changeSet id="addClumn-frequency-in-model_type" author="songiang">
+        <addColumn tableName="model_type">
+            <column name="frequency" type="int"/>
+        </addColumn>
+
+        <sql>
+            update model_type
+            set frequency = 1
+            WHERE type = 'aop_margin'
+               or type = 'product'
+               or type = 'residual_value'
+        </sql>
+        <sql>
+            update model_type
+            set frequency = 2
+            WHERE type = 'booking'
+               or type = 'cost_data'
+               or type = 'part'
+               or type = 'macro'
+               or type = 'exchange_rate'
+               or type = 'shipment'
+        </sql>
+
+        <sql>
+            update model_type
+            set frequency = 3
+            WHERE type = 'dealer'
+               or type = 'booking_fpa'
+               or type = 'competitor'
+               or type = 'forecast_pricing'
+        </sql>
+    </changeSet>
+
+    <changeSet id="adjust-modelType-of-product" author="songiang">
+        <sql>UPDATE model_type
+             SET type = 'product apac'
+             where type = 'product'</sql>
+
+        <sql>INSERT INTO model_type(id, type, frequency)
+             VALUES (15, 'product dimension', 1)</sql>
+    </changeSet>
+
+
+    <changeSet id="insert-mode_type-product_image" author="songiang">
+        <sql>INSERT INTO model_type(id, type, frequency)
+             VALUES (16, 'product image', 3)</sql>
+    </changeSet>
+
+    <changeSet id="update-frequen-of-modelType" author="songiang">
+        <sql> UPDATE model_type
+              SET frequency = 3
+              WHERE type = 'shipment'</sql>
+    </changeSet>
+
+
+    <changeSet id="format-name-of-modeltype" author="songiang">
+        <sql> UPDATE model_type
+              SET type = 'Shipment'
+              WHERE type = 'shipment'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Booking'
+              WHERE type = 'booking'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Booking FPA'
+              WHERE type = 'booking_fpa'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Cost Data'
+              WHERE type = 'cost_data'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Product APAC'
+              WHERE type = 'product apac'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Exchange Rate'
+              WHERE type = 'exchange_rate'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Competitor'
+              WHERE type = 'competitor'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Part'
+              WHERE type = 'part'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Macro'
+              WHERE type = 'macro'</sql>
+        <sql> UPDATE model_type
+              SET type = 'NOVO'
+              WHERE type = 'novo'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Forecast Pricing'
+              WHERE type = 'forecast_pricing'</sql>
+        <sql> UPDATE model_type
+              SET type = 'AOP Margin'
+              WHERE type = 'aop_margin'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Residual Value'
+              WHERE type = 'residual_value'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Product Dimension'
+              WHERE type = 'product dimension'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Product Image'
+              WHERE type = 'product image'</sql>
+        <sql> UPDATE model_type
+              SET type = 'Dealer'
+              WHERE type = 'dealer'</sql>
+    </changeSet>
+
+    <changeSet id="update-frequency-of-NOVO" author="songiang">
+        <sql> UPDATE model_type
+              SET frequency = '3'
+              WHERE type = 'NOVO'</sql>
+    </changeSet>
+
+    <changeSet id="modify-name-of-type-in-frequency" author="songiang">
+        <sql>UPDATE frequency SET type = 'Ad hoc import' WHERE type = 'ad hoc import'</sql>
+        <sql>UPDATE frequency SET type = 'Annual' WHERE type = 'annual'</sql>
+        <sql>UPDATE frequency SET type = 'Monthly' WHERE type = 'monthly'</sql>
+    </changeSet>
+
+</databaseChangeLog>

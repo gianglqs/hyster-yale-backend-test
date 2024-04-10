@@ -2,6 +2,7 @@ package com.hysteryale.service;
 
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
 import com.hysteryale.repository.CompetitorColorRepository;
@@ -675,7 +676,7 @@ public class IndicatorServiceTest {
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.forecast_pricing");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         // Assertions
-        Assertions.assertDoesNotThrow(() -> fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.FORECAST_PRICING));
+        Assertions.assertDoesNotThrow(() -> fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelTypeEnum.FORECAST_PRICING.getValue()));
     }
 
     @Test

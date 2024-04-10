@@ -1,9 +1,11 @@
 package com.hysteryale.service;
 
 import com.hysteryale.exception.CanNotUpdateException;
+import com.hysteryale.model.ModelType;
 import com.hysteryale.model.User;
 import com.hysteryale.model.filters.AdminFilter;
 import com.hysteryale.model.upload.FileUpload;
+import com.hysteryale.repository.ModelTypeRepository;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.utils.ConvertDataFilterUtil;
 import com.hysteryale.utils.EnvironmentUtils;
@@ -37,6 +39,9 @@ public class FileUploadService {
     FileUploadRepository fileUploadRepository;
     @Resource
     UserService userService;
+
+    @Resource
+    private ModelTypeRepository modelTypeRepository;
 
     /**
      * Save uploaded excel into disk and file information into db
@@ -232,7 +237,7 @@ public class FileUploadService {
     }
 
 
-    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName, String screen, String path, long fileSize) {
+    private String saveFileUpLoadIntoDB(Authentication authentication, String encodeFileName, String modelType, String path, long fileSize) throws Exception {
         String uploadedByEmail = authentication.getName();
         Optional<User> optionalUploadedBy = userService.getActiveUserByEmail(uploadedByEmail);
 
@@ -247,7 +252,10 @@ public class FileUploadService {
 
             // append suffix into fileName
             fileUpload.setFileName(encodeFileName);
-            fileUpload.setScreen(screen);
+            Optional<ModelType> optionalModelType =modelTypeRepository.findByType(modelType);
+            if(optionalModelType.isEmpty())
+                throw new Exception("Cannot find ModelType with type:"+ modelType);
+            fileUpload.setModelType(optionalModelType.get());
             fileUpload.setPath(path);
             fileUpload.setLoading(true);
             fileUpload.setSize(fileSize);

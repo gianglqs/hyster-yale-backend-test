@@ -92,7 +92,7 @@ public class ConvertDataFilterUtil {
         return data.equals("Chinese Brand");
     }
 
-    private static LocalDate checkDateData(String data) throws ParseException {
+    public static LocalDate checkDateData(String data) throws ParseException {
         if (data == null || data.isEmpty())
             return null;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
