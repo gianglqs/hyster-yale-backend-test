@@ -5,6 +5,7 @@ import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Product;
 import com.hysteryale.model.ResidualValue;
 import com.hysteryale.model.enums.ImportFailureType;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.repository.ResidualValueRepository;
@@ -12,7 +13,6 @@ import com.hysteryale.service.impl.ResidualValueServiceImp;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
-import com.hysteryale.utils.ModelUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -110,7 +110,7 @@ public class ResidualValueServiceTest {
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.residual_value");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
         // Assertions
-        Assertions.assertDoesNotThrow(() -> fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.RESIDUAL_VALUE));
+        Assertions.assertDoesNotThrow(() -> fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelTypeEnum.RESIDUAL_VALUE.getValue()));
 
     }
 
@@ -129,7 +129,7 @@ public class ResidualValueServiceTest {
         Sheet sheet = workbook.getSheet(sheetName);
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         List<ImportFailure> importFailures = new ArrayList<>();
-        String modelType = ModelUtil.RESIDUAL_VALUE;
+        String modelType = ModelTypeEnum.RESIDUAL_VALUE.getValue();
         int year = 2023;
         Row row = sheet.getRow(308);
         Map<String, Integer> indexRangeOfNeedDataMap = residualValueServiceImp.getIndexRangeOfNeedData(sheet);
@@ -199,7 +199,7 @@ public class ResidualValueServiceTest {
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         List<ImportFailure> importFailures = new ArrayList<>();
         List<ResidualValue> residualValues = new ArrayList<>();
-        String modelType = ModelUtil.RESIDUAL_VALUE;
+        String modelType = ModelTypeEnum.RESIDUAL_VALUE.getValue();
         List<Product> products = productRepository.findAll();
 
         int year = 2023;

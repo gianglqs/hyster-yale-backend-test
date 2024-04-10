@@ -63,7 +63,7 @@ public class AOPMarginController {
 
 
         String fileName = file.getOriginalFilename();
-        int year = DateUtils.extractYearFromFileName(fileName, fileUUID);
+        int year = DateUtils.extractYear(fileName, fileUUID);
         InputStream is = new FileInputStream(filePath);
         List<ImportFailure> importFailures = aopMarginService.importAOPMarginFromGUM(is, year, fileUUID);
 

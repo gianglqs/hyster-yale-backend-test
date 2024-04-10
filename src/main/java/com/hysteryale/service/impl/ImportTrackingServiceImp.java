@@ -140,7 +140,7 @@ public class ImportTrackingServiceImp implements ImportTrackingService {
             date = DateUtils.extractMonthAndYear(originalFileName);
 
         } else if (frequency.equals(FrequencyImport.ANNUAL)) {
-            date = DateUtils.extractYearFromFileName(originalFileName);
+            date = DateUtils.extractYearFromFileName(originalFileName,fileUUID);
         }
 
         ImportTracking importTracking = new ImportTracking();

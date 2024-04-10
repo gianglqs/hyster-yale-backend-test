@@ -151,17 +151,17 @@ public class DateUtils {
     }
 
 
-    public static int extractYear(String fileName) throws CannotExtractDateException {
+    public static int extractYear(String fileName, String fileUUID) throws CannotExtractDateException {
         String dateRegex = "\\d{4}";
         Matcher m = Pattern.compile(dateRegex).matcher(fileName);
         if (m.find()) {
             return Integer.parseInt(m.group());
         }
-        throw new CannotExtractDateException("Can not extract Year from file name: '" + fileName + "'");
+        throw new CannotExtractDateException("Can not extract Year from file name: '" + fileName + "'", fileUUID);
     }
 
-    public static LocalDate extractYearFromFileName(String fileName) throws CannotExtractDateException {
-        int year = extractYear(fileName);
+    public static LocalDate extractYearFromFileName(String fileName, String fileUUID) throws CannotExtractDateException {
+        int year = extractYear(fileName, fileUUID);
         return LocalDate.of(year, 1, 1);
     }
 

@@ -21,6 +21,7 @@ public enum ModelTypeEnum {
     MACRO("Macro"),
     NOVO("NOVO"),
     FORECAST_PRICING("Forecast Pricing"),
+    RESIDUAL_VALUE("Residual Value"),
     AOP_MARGIN("AOP Margin");
 
 
