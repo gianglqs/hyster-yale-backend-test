@@ -1,0 +1,21 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-table-import_tracking" author="songiang">
+        <createTable tableName="import_tracking">
+            <column type="SERIAL" name="id">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column type="INT" name="file_upload"/>
+            <column type="date" name="belong_to_time"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="import_tracking" baseColumnNames="file_upload" constraintName="contraint_import_tracking_and_file_upload"
+                                 referencedTableName="file_upload"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+
+</databaseChangeLog>

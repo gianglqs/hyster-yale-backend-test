@@ -14,6 +14,8 @@
     <include file="classpath:db/changelog/liquibase-update-region.xml" relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/liquibase-create-table-importFailure.xml" relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/liquibase-update-country.xml"  relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/liquibase-create-importTracking.xml"  relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/liquibase-create-modelType.xml"  relativeToChangelogFile="false"/>
 
 
 </databaseChangeLog>

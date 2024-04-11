@@ -6,7 +6,7 @@ import com.hysteryale.service.DealerService;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,7 +42,7 @@ public class DearlerController {
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
 
 
-        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.DEALER);
+        String fileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelTypeEnum.DEALER.getValue());
         String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
 
         if (!FileUtils.isExcelFile(filePath)) {

@@ -7,6 +7,7 @@ import com.hysteryale.model.Currency;
 import com.hysteryale.model.*;
 import com.hysteryale.model.dealer.Dealer;
 import com.hysteryale.model.enums.ImportFailureType;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
@@ -452,7 +453,7 @@ public class BookingService extends BasedService {
         importFailureRepository.saveAll(importFailures);
         countryRepository.saveAll(newCountrySet);
 
-        localeUtils.logStatusImportComplete(importFailures, ModelUtil.SHIPMENT);
+        localeUtils.logStatusImportComplete(importFailures, ModelTypeEnum.SHIPMENT.getValue());
 
         return importFailures;
 
@@ -754,7 +755,7 @@ public class BookingService extends BasedService {
         }
         importFailureService.setFileUUIDForListImportFailure(listImportFailure, fileUUID);
         importFailureRepository.saveAll(listImportFailure);
-        localeUtils.logStatusImportComplete(listImportFailure, ModelUtil.COST_DATA);
+        localeUtils.logStatusImportComplete(listImportFailure, ModelTypeEnum.COST_DATA.getValue());
         return listImportFailure;
     }
 

@@ -1,17 +1,19 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.exception.InvalidFileFormatException;
+import com.hysteryale.model.enums.FrequencyImport;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.ImportService;
+import com.hysteryale.service.ImportTrackingService;
 import com.hysteryale.service.ShipmentService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.LocaleUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +46,9 @@ public class ShipmentController {
     @Resource
     LocaleUtils localeUtils;
 
+    @Resource
+    ImportTrackingService importTrackingService;
+
     @PostMapping("/getShipmentData")
     public Map<String, Object> getDataFinancialShipment(@RequestBody FilterModel filters,
                                                         @RequestParam(defaultValue = "1") int pageNo,
@@ -63,7 +68,7 @@ public class ShipmentController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.shipment");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.SHIPMENT);
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelTypeEnum.SHIPMENT.getValue());
         String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
@@ -73,8 +78,10 @@ public class ShipmentController {
 
         InputStream inputStream = new FileInputStream(pathFile);
         List<ImportFailure> importFailures = importService.importShipmentFileOneByOne(inputStream, fileUUID);
-        String message = localeUtils.getMessageImportComplete(importFailures, ModelUtil.SHIPMENT, locale);
+        String message = localeUtils.getMessageImportComplete(importFailures, ModelTypeEnum.SHIPMENT.getValue(), locale);
         fileUploadService.handleUpdatedSuccessfully(savedFileName);
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.AD_HOC_IMPORT);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(message, fileUUID));
 
 

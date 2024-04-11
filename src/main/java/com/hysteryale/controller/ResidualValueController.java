@@ -1,6 +1,7 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.exception.InvalidFileFormatException;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
@@ -39,7 +40,7 @@ public class ResidualValueController {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.residual_value");
-        String modelType = ModelUtil.RESIDUAL_VALUE;
+        String modelType = ModelTypeEnum.RESIDUAL_VALUE.getValue();
 
         //save file on disk
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
@@ -52,7 +53,7 @@ public class ResidualValueController {
             throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
         }
 
-        int year = DateUtils.extractYearFromFileName(file.getOriginalFilename(), fileUUID);
+        int year = DateUtils.extractYear(file.getOriginalFilename(), fileUUID);
         System.out.println(year);
         List<ImportFailure> importFailures = residualValueService.importResidualValue(filePath, fileUUID, year);
         String message = localeUtils.getMessageImportComplete(importFailures, modelType, locale);

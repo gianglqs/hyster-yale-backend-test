@@ -1,16 +1,18 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.exception.InvalidFileFormatException;
+import com.hysteryale.model.enums.FrequencyImport;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.BookingFPAService;
 import com.hysteryale.service.FileUploadService;
+import com.hysteryale.service.ImportTrackingService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.LocaleUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +43,9 @@ public class BookingFPAController {
     @Resource
     LocaleUtils localeUtils;
 
+    @Resource
+    ImportTrackingService importTrackingService;
+
     @PostMapping("/getBookingMarginTrialTest")
     public Map<String, Object> getDataFinancialShipment(@RequestBody FilterModel filters,
                                                         @RequestParam(defaultValue = "1") int pageNo,
@@ -59,7 +64,7 @@ public class BookingFPAController {
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.bookingFPA");
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.BOOKING_FPA);
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelTypeEnum.BOOKING_FPA.getValue());
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
         String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
@@ -71,6 +76,8 @@ public class BookingFPAController {
         List<ImportFailure> importFailures = bookingPFAService.importBookingFPA(inputStream, fileUUID);
         String message = localeUtils.getMessageImportComplete(importFailures, "Booking FP&A", locale);
         fileUploadService.handleUpdatedSuccessfully(savedFileName);
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.AD_HOC_IMPORT);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(message, fileUUID));
     }
 }

@@ -1,5 +1,6 @@
 package com.hysteryale.service;
 
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
@@ -69,7 +70,7 @@ public class FileUploadServiceTest {
                 fileResource.getInputStream()
         );
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String filePath = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension,"Test");
+        String filePath = fileUploadService.saveFileUploaded(file, authentication, baseFolder, excelFileExtension, ModelTypeEnum.NOVO.getValue());
         String encodedFileName = FileUtils.encoding(file.getOriginalFilename());
 
         Assertions.assertTrue(filePath.contains(encodedFileName));
