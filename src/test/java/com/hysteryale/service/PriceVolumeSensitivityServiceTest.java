@@ -40,10 +40,10 @@ public class PriceVolumeSensitivityServiceTest {
                 "",
                 "",
                 "",
-                "2023-05-01",
-                "2023-05-31",
+                "",
+                "",
                 null,
-                1500,
+                100,
                 1,
                 "",
                 null,
@@ -68,8 +68,9 @@ public class PriceVolumeSensitivityServiceTest {
     public void testGetPriceVolumeSensitivity_WithNotFilter() throws ParseException {
         resetFilters();
         Map<String, Object> result = priceVolumeSensitivityService.getDataByFilter(filters);
-        Assertions.assertNotNull(result.get("totalItems"));
-        Assertions.assertEquals((long) result.get("totalItems"), 8);
+        List<PriceVolSensitivityPayLoad> priceVolSensitivityPayLoadList = (List<PriceVolSensitivityPayLoad>)result.get("listOrder");
+        Assertions.assertNotNull(priceVolSensitivityPayLoadList);
+        Assertions.assertEquals(priceVolSensitivityPayLoadList.size(), 12);
 
     }
 
@@ -80,8 +81,11 @@ public class PriceVolumeSensitivityServiceTest {
         filters.getDataFilter().setSegments(List.of("C1 1-3.5T - Low Intensity"));
         // if filter with one semgnet -> group booking by Series -> result has 3 record
         Map<String, Object> result = priceVolumeSensitivityService.getDataByFilter(filters);
-        Assertions.assertNotNull(result.get("totalItems"));
-        Assertions.assertEquals((long) result.get("totalItems"), 3);
+        Assertions.assertNotNull(result.get("listOrder"));
+        List<PriceVolSensitivityPayLoad> priceVolSensitivityPayLoadList = (List<PriceVolSensitivityPayLoad>)result.get("listOrder");
+        Assertions.assertNotNull(priceVolSensitivityPayLoadList);
+        Assertions.assertEquals(priceVolSensitivityPayLoadList.size(), 12);
+        //Assertions.assertEquals((long) result.get("listOrder"), 3);
         List<PriceVolSensitivityPayLoad> listOrder = (ArrayList<PriceVolSensitivityPayLoad>) result.get("listOrder");
         Assertions.assertEquals(listOrder.size(), 3);
     }

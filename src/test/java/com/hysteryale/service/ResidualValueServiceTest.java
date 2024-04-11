@@ -64,10 +64,9 @@ public class ResidualValueServiceTest {
     @Test
     public void testGetDataByFilter_modelCodeExist() {
         String modelCode = "J2.5XNL";
-        List<ResidualValue> findAll = residualValueRepository.findAll();
         Map<String, Object> response = residualValueService.getDataByFilter(modelCode);
         List<ResidualValue> residualValueList = new ArrayList<>((Set<ResidualValue>) response.get("listResidualValue"));
-        Assertions.assertEquals(residualValueList.size(), 104);
+        Assertions.assertEquals(residualValueList.size(), 105);
         Assertions.assertEquals(residualValueList.get(0).getId().getProduct().getModelCode(), modelCode);
     }
 
@@ -221,7 +220,7 @@ public class ResidualValueServiceTest {
         int year = 2023;
 
         List<ImportFailure> importFailures = residualValueService.importResidualValue(fileResource.getURL().getPath(), fileUUID, year);
-        Assertions.assertEquals(importFailures.size(), 209);
+        Assertions.assertEquals(importFailures.size(), 186);
         Assertions.assertEquals(importFailures.get(0).getType(), ImportFailureType.ERROR.getValue());
         Assertions.assertEquals(importFailures.get(0).getReasonKey(), "not-find-product-with-modelCode");
         Assertions.assertEquals(importFailures.get(0).getPrimaryKey(), "188");

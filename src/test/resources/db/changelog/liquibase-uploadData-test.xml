@@ -116,19 +116,41 @@
                 quotchar="'"
                 tableName="marginanalysisaoprate">
         </loadUpdateData>
+        <loadUpdateData
+                file="classpath:db/database/frequency.csv"
+                primaryKey="id"
+                quotchar="'"
+                tableName="frequency">
+        </loadUpdateData>
+        <loadUpdateData
+                file="classpath:db/database/model_type.csv"
+                primaryKey="id"
+                quotchar="'"
+                tableName="model_type">
+        </loadUpdateData>
 
-<!--        <loadUpdateData-->
-<!--                file="classpath:db/database/residual_value.csv"-->
-<!--                primaryKey="hours"-->
-<!--                quotchar="'"-->
-<!--                tableName="residual_value">-->
-<!--        </loadUpdateData>-->
+        <loadUpdateData
+                file="classpath:db/database/file_upload.csv"
+                primaryKey="id"
+                quotchar="'"
+                tableName="file_upload">
+        </loadUpdateData>
+
+        <loadUpdateData
+                file="classpath:db/database/import_tracking.csv"
+                primaryKey="id"
+                quotchar="'"
+                tableName="import_tracking">
+        </loadUpdateData>
+
     </changeSet>
 
     <changeSet id="load_data_from_csv" author="songiang">
         <sql>
-            INSERT INTO residual_value (hours,created_at,created_by,latest_modified_at,latest_modified_by,residualvaluepercent,years,product)
-            SELECT * FROM CSVREAD('classpath:db/database/residual_value.csv');
+            INSERT INTO residual_value (hours, created_at, created_by, latest_modified_at, latest_modified_by,
+                                        residualvaluepercent, years, product)
+            SELECT *
+            FROM CSVREAD('classpath:db/database/residual_value.csv');
         </sql>
     </changeSet>
 </databaseChangeLog>

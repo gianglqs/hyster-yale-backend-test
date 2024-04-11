@@ -14,7 +14,7 @@ public interface FileUploadRepository extends JpaRepository<FileUpload, Integer>
     @Query("SELECT m.fileName FROM FileUpload m WHERE m.uuid = ?1")
     String getFileNameByUUID(String uuid);
 
-    @Query(value = "SELECT m.uploaded_time FROM file_upload m where m.success is true AND m.screen = :modelType ORDER BY m.uploaded_time DESC LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT m.uploaded_time FROM file_upload m left join model_type t on m.model_type = t.id where m.success is true AND t.type = :modelType ORDER BY m.uploaded_time DESC LIMIT 1", nativeQuery = true)
     Optional<LocalDateTime> getLatestUpdatedTimeByModelType(String modelType);
 
     @Query("SELECT f FROM FileUpload f WHERE f.fileName = :fileName")
