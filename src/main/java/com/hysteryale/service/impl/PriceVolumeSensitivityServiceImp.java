@@ -30,18 +30,19 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
         List<String> segmentFilter = (List<String>) filterMap.get("segmentFilter");
         List<String> metaSeriesFilter = (List<String>) filterMap.get("metaSeriesFilter");
         List<Booking> getListBookingByFilter;
+
+
         long countAll = 0;
         if (metaSeriesFilter == null) {
-            if (segmentFilter != null && segmentFilter.size() == 1) {
-                getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeries(segmentFilter, metaSeriesFilter);
-                countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeries(segmentFilter, new ArrayList<>());
-            } else {
-                getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySegment(segmentFilter);
-                countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySegment(segmentFilter == null ? new ArrayList<>() : segmentFilter);
-            }
+            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySegment(segmentFilter);
+            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySegment(segmentFilter == null ? new ArrayList<>() : segmentFilter);
+
+        }else if(segmentFilter==null) {
+            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeries(metaSeriesFilter);
+            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeries(metaSeriesFilter == null ? new ArrayList<>() : metaSeriesFilter);
         } else {
-            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeries(segmentFilter, metaSeriesFilter);
-            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeries(segmentFilter == null ? new ArrayList<>() : segmentFilter, metaSeriesFilter);
+            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeriesAndSegment(segmentFilter, metaSeriesFilter);
+            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeriesAndSegment(segmentFilter == null ? new ArrayList<>() : segmentFilter, metaSeriesFilter);
         }
         List<PriceVolSensitivityPayLoad> priceVolSensitivityPayLoadList = calculatePriceVolSensitivity(getListBookingByFilter, discountPercent, filters.isWithMarginVolumeRecovery());
         result.put("listOrder", priceVolSensitivityPayLoadList);
@@ -60,6 +61,7 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
         return result;
     }
 
+
     public List<PriceVolSensitivityPayLoad> calculatePriceVolSensitivity(List<Booking> bookings, double discountPercent, boolean withMarginVolumeRecovery) {
         List<PriceVolSensitivityPayLoad> result = new ArrayList<>();
         int id = 1;
@@ -73,14 +75,19 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
             priceVolSensitivityPayLoad.setDiscountPercent(discountPercent);
 
             double revenue = booking.getDealerNetAfterSurcharge();
+
+            // resolve case if  / 0 when revenue=0
+            double fakeRevenue=1;
             long volume = booking.getQuantity();
             double COGS = booking.getTotalCost();
             double margin = revenue - COGS;
-            double marginPercent = margin / revenue;
+            double marginPercent = margin / (revenue!=0?revenue:fakeRevenue);
 
-            double ASP = revenue / volume;
-            double ACP = COGS / volume;
-            double AvSM = ASP - ACP;
+            //resolve case if / 0 when volumn =0
+            long fakeVolumn=1;
+            double ASP = revenue / (volume!=0?volume:fakeVolumn);
+            double ACP = COGS / (volume!=0?volume:fakeVolumn);
+            double AvSM = (ASP - ACP)!=0?(ASP-ACP):1;
 
             // discountPercent
 
@@ -96,12 +103,16 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
             double incrementalRevenueRecovery = unitVolumeOffset * newDN;
 
             long volumeAfterOffset = unitVolumeOffset + volume;
+
+
             double revenueAfterOffset = volume * newDN;
+
+            double fakeRevenueAfterOffset=1;
             if (withMarginVolumeRecovery)
                 revenueAfterOffset = incrementalRevenueRecovery + revenue;
             double COGSAfterOffset = volumeAfterOffset * ACP;
             double marginAfterOffset = revenueAfterOffset - COGSAfterOffset;
-            double marginPercentAfterOffset = marginAfterOffset / revenueAfterOffset;
+            double marginPercentAfterOffset = marginAfterOffset / (revenueAfterOffset!=0?revenueAfterOffset:fakeRevenueAfterOffset);
 
             priceVolSensitivityPayLoad.setVolume(volume);
             priceVolSensitivityPayLoad.setRevenue(revenue);

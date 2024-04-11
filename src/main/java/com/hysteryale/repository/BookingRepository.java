@@ -435,20 +435,19 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             " ((:segments) IS NULL OR b.product.segment in (:segments)) " +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             " GROUP BY b.series, b.product.segment ")
-    List<Booking> getBookingForPriceVolumeSensitivityGroupBySeries(List<String> segments, List<String> metaSeries);
+    List<Booking> getBookingForPriceVolumeSensitivityGroupBySeriesAndSegment(List<String> segments, List<String> metaSeries);
 
-    @Query("SELECT new Booking(b.product.segment, SUM(b.totalCost), SUM(b.dealerNetAfterSurcharge), SUM(b.quantity)) FROM Booking b " +
-            " WHERE b.product.segment IS NOT NULL AND b.product.segment <> '' AND " +
-            " ((:segments) IS NULL OR b.product.segment in (:segments)) " +
-            " GROUP BY b.product.segment ")
+    @Query("SELECT new Booking( b.series, SUM(b.totalCost), SUM(b.dealerNetAfterSurcharge), SUM(b.quantity)) FROM Booking b " +
+            " WHERE b.series IS NOT NULL AND b.series <> '' AND " +
+            " ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
+            " GROUP BY b.series ")
+    List<Booking> getBookingForPriceVolumeSensitivityGroupBySeries( List<String> metaSeries);
+
+    @Query("SELECT new Booking(p.segment, COALESCE(SUM(b.totalCost),0), COALESCE(SUM(b.dealerNetAfterSurcharge),0), COALESCE(SUM(b.quantity),0))" +
+            "FROM Product p LEFT JOIN Booking b ON p.id=b.product.id   WHERE  NULLIF(p.segment, '') IS NOT NULL " +
+            " GROUP BY p.segment")
     List<Booking> getBookingForPriceVolumeSensitivityGroupBySegment(List<String> segments);
 
-//    @Query("SELECT COUNT(b) FROM Booking b " +
-//            " WHERE b.product.segment IS NOT NULL AND b.product.segment <> '' AND " +
-//            " ((:segments) IS NULL OR b.product.segment in (:segments)) " +
-//            " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
-//            " GROUP BY b.series, b.product.segment ")
-//    long countAllForPriceVolSensitivityGroupBySeries(List<String> segments, List<String> metaSeries);
 
     @Query(value = "select count(*) from (select p.series from "+
             " booking b inner join product p on b.product = p.id "+
@@ -456,7 +455,14 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             " and ((:segments) is null or p.segment in (:segments))"+
             " and ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
             "group by p.series) as groupbySegment", nativeQuery = true)
-    long countAllForPriceVolSensitivityGroupBySeries(List<String> segments, List<String> metaSeries);
+    long countAllForPriceVolSensitivityGroupBySeriesAndSegment(List<String> segments, List<String> metaSeries);
+
+
+    @Query(value = "select count(*) from (select p.series from "+
+            " booking b inner join product p on b.product = p.id "+
+            " where ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
+            "group by p.series) as groupbySeries", nativeQuery = true)
+    long countAllForPriceVolSensitivityGroupBySeries(List<String> metaSeries);
 
     @Query(value = "select count(*) from (select p.segment from "+
             " booking b inner join product p on b.product = p.id "+

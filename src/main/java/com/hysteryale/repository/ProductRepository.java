@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Transactional
@@ -111,4 +112,13 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     @Query("SELECT p FROM Product p ORDER BY p.modelCode")
     List<Product> getAllProducts();
+
+    @Query("SELECT DISTINCT p.modelType FROM Product p WHERE p.modelType IS NOT NULL AND p.modelType <> ''")
+    List<String> getAllModelType();
+
+    @Query("SELECT DISTINCT p.modelCode FROM Product p WHERE (:brand IS NULL OR p.brand = :brand) AND (:modelType IS NULL OR p.modelType= :modelType)")
+    List< String> getModelCodeByBranchAndModelTypeFilter(String brand, String modelType);
+
+    @Query("SELECT p FROM Product p WHERE p.modelCode = :modelCode")
+    List<Product> findAllByModelCode(String modelCode);
 }

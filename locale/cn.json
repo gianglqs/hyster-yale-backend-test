@@ -230,7 +230,8 @@
       "missing_sheet": "未找到工作表：''",
       "blank_sheet": "工作表是空白的：''",
       "invalid_fileName": "无效的文件名：''",
-      "file-is-not-excel": "文件不是 Excel"
+      "file-is-not-excel": "文件不是 Excel",
+      "can-not-extract-year-from-file-name": "无法从文件名获取年份: ''"
     },
     "warning": {
       "not-find-country-with-code": "未找到代码为“%s”的国家/地区。 使用代码自动创建一个新国家.",
@@ -242,7 +243,8 @@
       "not-find-Dealer-with-name": "未找到名为“%s”的经销商。",
       "not-find-AOPMargin-with-region-series-plant-year": "未找到区域“%s”、MestaSeries“%s”、工厂“%s”和年份“%s”的 AOPMargin。",
       "incorrect-format-at-cell": "单元格格式不正确 %s",
-      "not-find-region-with-name": "未找到名称为“%s”的区域."
+      "not-find-region-with-name": "未找到名称为“%s”的区域.",
+      "not-find-product-with-modelCode":"\n未找到型号代码为“%s”的产品."
     }
   },
   "yes": "是",

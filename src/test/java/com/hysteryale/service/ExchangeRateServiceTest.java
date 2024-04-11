@@ -219,6 +219,9 @@ public class ExchangeRateServiceTest {
     }
 
     @Test
+    /**
+     * {@link ExchangeRateService#compareCurrency(CompareCurrencyRequest)}
+     */
     public void testCompareExchangeRate() throws Exception {
         String currency1 = "USD";
         String currency2 = "JPY";
