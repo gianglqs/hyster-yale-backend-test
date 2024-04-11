@@ -206,6 +206,8 @@ public class DealerService {
                 }
             }
         }
+        dealerProductRepository.saveAll(dealerProductList);
+        dealerProductList.clear();
     }
 
     /**
@@ -234,8 +236,8 @@ public class DealerService {
      * @return true if either one of both containing no data
      */
     private boolean isRowNoData(Row row, HashMap<String, Integer> columns) {
-        return row.getCell(columns.get("Created By")).getStringCellValue().isEmpty() ||
-                row.getCell(columns.get("Serial Number")).getStringCellValue().isEmpty();
+        return row.getCell(columns.get("Created By"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty() ||
+                row.getCell(columns.get("Serial Number"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue().isEmpty();
     }
 
     public Map<String, Object> getDealerProductByFilters(FilterModel filters) throws ParseException {

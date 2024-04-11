@@ -59,7 +59,7 @@ public class DealerController {
 
         //save file on disk
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, ModelUtil.BOOKING);
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, "dealer_product");
         String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
