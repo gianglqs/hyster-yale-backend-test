@@ -29,21 +29,41 @@ public class PriceVolumeSensitivityServiceImp implements PriceVolumeSensitivityS
 
         List<String> segmentFilter = (List<String>) filterMap.get("segmentFilter");
         List<String> metaSeriesFilter = (List<String>) filterMap.get("metaSeriesFilter");
-        List<Booking> getListBookingByFilter;
+        List<Booking> getListBookingByFilter=null;
 
 
         long countAll = 0;
-        if (metaSeriesFilter == null) {
-            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySegment(segmentFilter);
-            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySegment(segmentFilter == null ? new ArrayList<>() : segmentFilter);
-
-        }else if(segmentFilter==null) {
-            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeries(metaSeriesFilter);
-            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeries(metaSeriesFilter == null ? new ArrayList<>() : metaSeriesFilter);
-        } else {
-            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeriesAndSegment(segmentFilter, metaSeriesFilter);
-            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeriesAndSegment(segmentFilter == null ? new ArrayList<>() : segmentFilter, metaSeriesFilter);
+        if(metaSeriesFilter==null&segmentFilter==null){
+            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeriesAndSegmentDefault();
+            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeriesAndSegmentDefault();
         }
+        if(segmentFilter!=null&&metaSeriesFilter==null){
+            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySegment(segmentFilter);
+            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySegment( segmentFilter);
+        }
+        if(metaSeriesFilter!=null && segmentFilter==null){
+            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeries(metaSeriesFilter);
+            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeries(metaSeriesFilter);
+        }
+        if(metaSeriesFilter!=null && segmentFilter!=null){
+            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeriesAndSegment(segmentFilter, metaSeriesFilter);
+            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeriesAndSegment(segmentFilter, metaSeriesFilter);
+        }
+
+
+
+//        if (metaSeriesFilter == null) {
+//            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySegment(segmentFilter);
+//            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySegment(segmentFilter == null ? new ArrayList<>() : segmentFilter);
+//
+//        }else if(segmentFilter==null) {
+//            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeries(metaSeriesFilter);
+//            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeries(metaSeriesFilter == null ? new ArrayList<>() : metaSeriesFilter);
+//        } else {
+//            getListBookingByFilter = bookingRepository.getBookingForPriceVolumeSensitivityGroupBySeriesAndSegment(segmentFilter, metaSeriesFilter);
+//            countAll = bookingRepository.countAllForPriceVolSensitivityGroupBySeriesAndSegment(segmentFilter == null ? new ArrayList<>() : segmentFilter, metaSeriesFilter);
+//        }
+
         List<PriceVolSensitivityPayLoad> priceVolSensitivityPayLoadList = calculatePriceVolSensitivity(getListBookingByFilter, discountPercent, filters.isWithMarginVolumeRecovery());
         result.put("listOrder", priceVolSensitivityPayLoadList);
         result.put("totalItems", countAll);
