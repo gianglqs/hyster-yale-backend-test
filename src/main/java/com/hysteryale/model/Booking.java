@@ -1,5 +1,6 @@
 package com.hysteryale.model;
 
+import com.hysteryale.model.dealer.Dealer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

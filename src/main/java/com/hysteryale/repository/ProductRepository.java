@@ -107,6 +107,12 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query(value = "SELECT m.latest_modified_at FROM product m WHERE m.latest_modified_at is not null ORDER BY m.latest_modified_at DESC LIMIT 1", nativeQuery = true)
     Optional<LocalDateTime> getLatestUpdatedTime();
 
+    @Query("SELECT DISTINCT p.series FROM Product p ORDER BY p.series")
+    List<String> getAllSeries();
+
+    @Query("SELECT p FROM Product p ORDER BY p.modelCode")
+    List<Product> getAllProducts();
+
     @Query("SELECT DISTINCT p.modelType FROM Product p WHERE p.modelType IS NOT NULL AND p.modelType <> ''")
     List<String> getAllModelType();
 

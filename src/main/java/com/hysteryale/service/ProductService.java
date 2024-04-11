@@ -664,4 +664,11 @@ public class ProductService extends BasedService {
         return productList;
     }
 
+    /**
+     * Load all Product information for assigning Dealer field in saving DealerProduct
+     */
+    public List<Product> getAllProducts() {
+        return productRepository.getAllProducts();
+    }
+
 }
