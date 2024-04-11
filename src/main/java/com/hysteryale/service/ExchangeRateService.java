@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -436,7 +437,7 @@ public class ExchangeRateService extends BasedService {
         exchangeRatesList.clear();
         fileUploadService.handleUpdatedSuccessfully(fileName);
         // update ImportTracking
-        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.MONTHLY);
+        importTrackingService.updateImport(fileUUID, date.format(DateTimeFormatter.ofPattern("MM_dd_yyy")), FrequencyImport.MONTHLY);
     }
 
 

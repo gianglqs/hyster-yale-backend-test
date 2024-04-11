@@ -237,7 +237,10 @@
       "weak_password": "Password must consist of at least 12 characters and has at least one Uppercase character, one Lowercase character, a Digit and a Special character or Symbol",
       "competitor_color_not_found": "Cannot found Competitor Color with id: ",
       "cannot_create_file": "Cannot create file: ",
-      "missing_forecast_file": "Missing Forecast Dynamic Pricing Excel file"
+      "missing_forecast_file": "Missing Forecast Dynamic Pricing Excel file",
+      "can-not-extract-month-and-year": "Cannot extract Month and Year from: '%s'",
+      "can-not-extract-year": "Can not extract Year from file name: '%s'"
+
     },
     "warning": {
       "not-find-country-with-code": "Country with Code '%s' not found. Automatically creating a new country using the code.",

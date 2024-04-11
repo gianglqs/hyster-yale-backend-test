@@ -231,7 +231,9 @@
       "blank_sheet": "工作表是空白的：''",
       "invalid_fileName": "无效的文件名：''",
       "file-is-not-excel": "文件不是 Excel",
-      "can-not-extract-year-from-file-name": "无法从文件名获取年份: ''"
+      "can-not-extract-year-from-file-name": "无法从文件名获取年份: ''",
+      "can-not-extract-month-and-year": "无法从“%s”中提取月份和年份",
+      "can-not-extract-year": "无法提取单词年份：“%s”"
     },
     "warning": {
       "not-find-country-with-code": "未找到代码为“%s”的国家/地区。 使用代码自动创建一个新国家.",

@@ -1,6 +1,8 @@
 package com.hysteryale.service.impl;
 
+import com.hysteryale.exception.CanNotExtractMonthAnhYearException;
 import com.hysteryale.exception.CannotExtractDateException;
+import com.hysteryale.exception.CannotExtractYearException;
 import com.hysteryale.model.ImportTracking;
 import com.hysteryale.model.ModelType;
 import com.hysteryale.model.enums.FrequencyImport;
@@ -132,7 +134,7 @@ public class ImportTrackingServiceImp implements ImportTrackingService {
 
 
     @Override
-    public void updateImport(String fileUUID, String originalFileName, FrequencyImport frequency) throws CannotExtractDateException {
+    public void updateImport(String fileUUID, String originalFileName, FrequencyImport frequency) throws CannotExtractDateException, CanNotExtractMonthAnhYearException, CannotExtractYearException {
         Optional<FileUpload> fileUpload = fileUploadRepository.getFileUploadByUUID(fileUUID);
         if (fileUpload.isEmpty())
             throw new NoSuchElementException("Not found FileUpload with fileUUID: " + fileUUID);
@@ -140,7 +142,7 @@ public class ImportTrackingServiceImp implements ImportTrackingService {
         LocalDate date = null;
         if (frequency.equals(FrequencyImport.MONTHLY)) {
             //get month and year
-            date = DateUtils.extractMonthAndYear(originalFileName);
+            date = DateUtils.extractMonthAndYear(originalFileName, fileUUID);
 
         } else if (frequency.equals(FrequencyImport.ANNUAL)) {
             date = DateUtils.extractYearFromFileName(originalFileName,fileUUID);
