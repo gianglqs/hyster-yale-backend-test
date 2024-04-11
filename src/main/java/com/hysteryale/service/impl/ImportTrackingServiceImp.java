@@ -98,6 +98,9 @@ public class ImportTrackingServiceImp implements ImportTrackingService {
         List<ModelType> missingModels = getListMissingModel(listAllModelType, listCompletedModel);
         insertImportTrackingMissingModel(result, missingModels);
 
+        //sort
+        result.sort(ImportTrackingPayload::compareTo);
+
         return result;
     }
 
