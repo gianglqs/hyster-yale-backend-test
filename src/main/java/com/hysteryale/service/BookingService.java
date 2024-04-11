@@ -5,6 +5,7 @@ import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.*;
+import com.hysteryale.model.dealer.Dealer;
 import com.hysteryale.model.enums.ImportFailureType;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.importFailure.ImportFailure;

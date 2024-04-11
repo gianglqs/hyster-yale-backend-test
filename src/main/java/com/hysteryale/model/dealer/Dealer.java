@@ -1,4 +1,4 @@
-package com.hysteryale.model;
+package com.hysteryale.model.dealer;
 
 
 import lombok.Getter;
