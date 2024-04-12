@@ -1,8 +1,12 @@
 package com.hysteryale.service.marginAnalyst;
 
+import com.hysteryale.exception.CanNotExtractMonthAnhYearException;
+import com.hysteryale.exception.CannotExtractDateException;
+import com.hysteryale.exception.CannotExtractYearException;
 import com.hysteryale.exception.InvalidFileNameException;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Region;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.marginAnalyst.Freight;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.model.marginAnalyst.TargetMargin;
@@ -12,8 +16,12 @@ import com.hysteryale.repository.marginAnalyst.FreightRepository;
 import com.hysteryale.repository.marginAnalyst.MarginAnalystMacroRepository;
 import com.hysteryale.repository.marginAnalyst.TargetMarginRepository;
 import com.hysteryale.repository.marginAnalyst.WarrantyRepository;
+import com.hysteryale.repository.upload.FileUploadRepository;
+import com.hysteryale.service.FileUploadService;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import com.hysteryale.utils.DateUtils;
+import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.XLSB.Cell;
 import com.hysteryale.utils.XLSB.Row;
 import com.hysteryale.utils.XLSB.Sheet;
@@ -24,9 +32,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.xml.sax.SAXException;
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
@@ -51,13 +66,28 @@ public class MarginAnalystMacroServiceTest {
     MarginAnalystMacroRepository marginAnalystMacroRepository;
     @Resource
     ClazzRepository clazzRepository;
+    @Resource
+    FileUploadService fileUploadService;
+    @Resource
+    FileUploadRepository fileUploadRepository;
+
     HashMap<String, String> MACRO_COLUMNS = new HashMap<>();
 
     @Test
-    public void testImportMarginAnalystMacroFromFile() throws OpenXML4JException, IOException, SAXException, InvalidFileNameException {
+    @WithMockUser(username = "admin@gmail.com")
+    public void testImportMarginAnalystMacroFromFile() throws Exception {
         String fileName = "USD AUD Margin Analysis Template Macro_Oct  2023 Rev.xlsb";
         String filePath = "import_files/margin_analyst_data/USD AUD Margin Analysis Template Macro_Oct  2023 Rev.xlsb";
-        marginAnalystMacroService.importMarginAnalystMacroFromFile(fileName, filePath, "");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.residual_value");
+        MultipartFile file = new MockMultipartFile(fileName, new FileInputStream(filePath));
+        String modelType = ModelTypeEnum.RESIDUAL_VALUE.getValue();
+
+        //save file on disk
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, modelType);
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
+        marginAnalystMacroService.importMarginAnalystMacroFromFile(fileName, filePath, fileUUID);
 
         Pattern pattern = Pattern.compile(".* Macro_(\\w{3})\\s*(\\d{4}).*");
         Matcher matcher = pattern.matcher(fileName);
