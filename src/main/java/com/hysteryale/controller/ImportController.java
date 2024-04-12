@@ -38,7 +38,7 @@ public class ImportController {
     ImportService importService;
 
     @PostMapping(path = "/importAllData")
-    void importAllData() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException, BlankSheetException, IncorectFormatCellException, ExchangeRatesException, InvalidFileNameException, MissingForecastFileException {
+    void importAllData() throws IOException, IllegalAccessException, MissingColumnException, MissingSheetException, BlankSheetException, IncorectFormatCellException, ExchangeRatesException, InvalidFileNameException, MissingForecastFileException, CannotExtractYearException, CannotExtractDateException, CanNotExtractMonthAnhYearException {
         importApicDealer();
         importCurrencies();
         importPart();
@@ -62,7 +62,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importPart")
-    void importPart() throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException, InvalidFileNameException, IncorectFormatCellException {
+    void importPart() throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException, CannotExtractYearException, CannotExtractDateException, CanNotExtractMonthAnhYearException {
         partService.importPart();
     }
 
@@ -92,7 +92,7 @@ public class ImportController {
     }
 
     @PostMapping(path = "/importMarginAnalystMacro")
-    void importMarginAnalystMacro() throws InvalidFileNameException {
+    void importMarginAnalystMacro() throws InvalidFileNameException, CannotExtractYearException, CannotExtractDateException, CanNotExtractMonthAnhYearException {
         marginAnalystMacroService.importMarginAnalystMacro();
     }
 

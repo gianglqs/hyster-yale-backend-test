@@ -42,8 +42,7 @@ public class MarginAnalystController {
     @Resource
     FileUploadRepository fileUploadRepository;
 
-    @Resource
-    ImportTrackingService importTrackingService;
+
 
     /**
      * Calculate MarginAnalystData and MarginAnalystSummary based on user's uploaded file
@@ -129,8 +128,7 @@ public class MarginAnalystController {
 
         marginAnalystMacroService.importMarginAnalystMacroFromFile(file.getOriginalFilename(), filePath, fileUUID);
         fileUploadService.handleUpdatedSuccessfully(fileName);
-        // update ImportTracking
-        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.MONTHLY);
+
     }
 
     @PostMapping(path = "/importPowerBiFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -150,7 +148,6 @@ public class MarginAnalystController {
 
         partService.importPartFromFile(file.getOriginalFilename(), filePath, fileUUID);
         fileUploadService.handleUpdatedSuccessfully(savedFileName);
-        // update ImportTracking
-        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.MONTHLY);
+
     }
 }

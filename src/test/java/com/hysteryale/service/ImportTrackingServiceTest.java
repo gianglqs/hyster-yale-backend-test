@@ -56,7 +56,7 @@ public class ImportTrackingServiceTest {
         Assertions.assertEquals(result.size(), 2);
 
         List<ImportTrackingPayload> importTrackingPayloads = (List<ImportTrackingPayload>) result.get("listImportTracking");
-        Assertions.assertEquals(importTrackingPayloads.size(), 14);
+        Assertions.assertEquals(importTrackingPayloads.size(), 15);
         compareDataImportTracking(importTrackingPayloads, true);
     }
 
@@ -74,7 +74,7 @@ public class ImportTrackingServiceTest {
                 if (importTrackingPayload.getStatus().equals(ImportTrackingStatus.UNFINISHED.getValue()))
                     countImportTrackingPayloadHaveStatusUnfinished++;
             }
-            Assertions.assertEquals(countImportTrackingPayloadHaveStatusUnfinished, 9);
+            Assertions.assertEquals(countImportTrackingPayloadHaveStatusUnfinished, 8);
         }
     }
 
@@ -85,7 +85,7 @@ public class ImportTrackingServiceTest {
         Assertions.assertEquals(result.size(), 2);
 
         List<ImportTrackingPayload> importTrackingPayloads = (List<ImportTrackingPayload>) result.get("listImportTracking");
-        Assertions.assertEquals(importTrackingPayloads.size(), 14);
+        Assertions.assertEquals(importTrackingPayloads.size(), 15);
         compareDataImportTracking(importTrackingPayloads, false);
 
     }

@@ -2,12 +2,15 @@ package com.hysteryale.controller;
 
 import com.hysteryale.exception.InvalidFileFormatException;
 import com.hysteryale.model.dealer.Dealer;
+import com.hysteryale.model.enums.FrequencyImport;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.payLoad.DealerPayload;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.DealerService;
 import com.hysteryale.service.FileUploadService;
+import com.hysteryale.service.ImportTrackingService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import org.springframework.data.domain.Page;
@@ -30,6 +33,8 @@ public class DealerController {
     FileUploadService fileUploadService;
     @Resource
     FileUploadRepository fileUploadRepository;
+    @Resource
+    ImportTrackingService importTrackingService;
 
     @PostMapping()
     public Map<String, Object> getDealerListing(@RequestBody DealerPayload dealerPayload, @RequestParam(defaultValue = "1") int pageNo) {
@@ -44,7 +49,7 @@ public class DealerController {
     @GetMapping()
     public ResponseEntity<ResponseObject> getDealerDetails(@RequestParam int dealerId) {
         Dealer dealer = dealerService.getDealerById(dealerId);
-        if(dealer != null)
+        if (dealer != null)
             return ResponseEntity.status(200).body(new ResponseObject("", dealer));
         else
             return ResponseEntity.status(404).body(new ResponseObject("Dealer not found", null));
@@ -55,10 +60,11 @@ public class DealerController {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.dealer_product");
+        String modelType = ModelTypeEnum.DEALER_PRODUCT.getValue();
 
         //save file on disk
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
-        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, "dealer_product");
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, modelType);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
@@ -66,6 +72,8 @@ public class DealerController {
             throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
         }
         dealerService.importDealerProductFromFile(fileUUID, filePath);
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.AD_HOC_IMPORT);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("Import successfully", fileUUID));
     }
 
