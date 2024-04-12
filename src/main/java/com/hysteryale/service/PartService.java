@@ -1,11 +1,10 @@
 package com.hysteryale.service;
 
-import com.hysteryale.exception.ExchangeRatesException;
-import com.hysteryale.exception.MissingColumnException;
-import com.hysteryale.exception.MissingSheetException;
+import com.hysteryale.exception.*;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.Part;
+import com.hysteryale.model.enums.FrequencyImport;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.PartRepository;
@@ -28,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,6 +41,8 @@ public class PartService extends BasedService {
     CurrencyService currencyService;
     @Resource
     ClazzRepository clazzRepository;
+    @Resource
+    ImportTrackingService importTrackingService;
 
     private static final HashMap<String, Integer> powerBIExportColumns = new HashMap<>();
 
@@ -120,7 +122,7 @@ public class PartService extends BasedService {
         return isPartExisted == 1;
     }
 
-    public void importPartFromFile(String fileName, String filePath, String fileUUID) throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException {
+    public void importPartFromFile(String fileName, String filePath, String fileUUID) throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException, CannotExtractYearException, CannotExtractDateException, CanNotExtractMonthAnhYearException {
         logInfo("==== Importing " + fileName + " ====");
         InputStream is = new FileInputStream(filePath);
         IOUtils.setByteArrayMaxOverride(700000000);
@@ -169,9 +171,11 @@ public class PartService extends BasedService {
         partRepository.saveAll(partList);
         partList.clear();
         updateStateImportFile(filePath);
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, recordedTime.format(DateTimeFormatter.ofPattern("MM_dd_yyy")), FrequencyImport.MONTHLY);
     }
 
-    public void importPart() throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException {
+    public void importPart() throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException, CannotExtractYearException, CannotExtractDateException, CanNotExtractMonthAnhYearException {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("import-files.base-folder");
         String folderPath = baseFolder + EnvironmentUtils.getEnvironmentValue("import-files.bi-download");
         List<String> files = FileUtils.getAllFilesInFolder(folderPath);

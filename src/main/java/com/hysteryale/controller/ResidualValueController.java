@@ -1,11 +1,13 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.exception.InvalidFileFormatException;
+import com.hysteryale.model.enums.FrequencyImport;
 import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
+import com.hysteryale.service.ImportTrackingService;
 import com.hysteryale.service.ResidualValueService;
 import com.hysteryale.utils.*;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,8 @@ public class ResidualValueController {
     ResidualValueService residualValueService;
     @Resource
     LocaleUtils localeUtils;
+    @Resource
+    ImportTrackingService importTrackingService;
 
     @PostMapping(path = "/importData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -58,6 +62,8 @@ public class ResidualValueController {
         List<ImportFailure> importFailures = residualValueService.importResidualValue(filePath, fileUUID, year);
         String message = localeUtils.getMessageImportComplete(importFailures, modelType, locale);
         fileUploadService.handleUpdatedSuccessfully(savedFileName);
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.ANNUAL);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(message, fileUUID));
     }
 

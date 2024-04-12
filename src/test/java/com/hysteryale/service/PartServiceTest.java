@@ -4,10 +4,14 @@ import com.hysteryale.exception.*;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.Part;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.PartRepository;
+import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import com.hysteryale.utils.DateUtils;
+import com.hysteryale.utils.EnvironmentUtils;
+import com.hysteryale.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -18,6 +22,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
@@ -41,12 +50,28 @@ public class PartServiceTest {
     CurrencyService currencyService;
     @Resource
     ClazzRepository clazzRepository;
+    @Resource
+    FileUploadService fileUploadService;
+    @Resource
+    FileUploadRepository fileUploadRepository;
+
 
     @Test
-    public void testImportPartFromFile() throws IOException, MissingColumnException, MissingSheetException, ExchangeRatesException, InvalidFileNameException, IncorectFormatCellException {
+    @WithMockUser(username = "admin@gmail.com")
+    public void testImportPartFromFile() throws Exception {
         String fileName = "power bi Oct 23.xlsx";
         String filePath = "import_files/bi_download/power bi Oct 23.xlsx";
-        partService.importPartFromFile(fileName, filePath, "");
+        String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.residual_value");
+        MultipartFile file = new MockMultipartFile(fileName, new FileInputStream(filePath));
+        String modelType = ModelTypeEnum.RESIDUAL_VALUE.getValue();
+
+        //save file on disk
+        String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, excelFileExtension, modelType);
+        String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
+
+        partService.importPartFromFile(fileName, filePath, fileUUID);
 
         Pattern pattern = Pattern.compile("\\w{5} \\w{2} (\\w{3}) (\\d{2}).xlsx");
         Matcher matcher = pattern.matcher(fileName);
