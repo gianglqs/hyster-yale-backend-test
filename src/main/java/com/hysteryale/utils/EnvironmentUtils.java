@@ -35,9 +35,6 @@ public class EnvironmentUtils implements EnvironmentAware {
         System.setProperty("DATABASE_URL", dotenv().get("DATABASE_URL"));
         System.setProperty("DATABASE_USERNAME", dotenv().get("DATABASE_USERNAME"));
         System.setProperty("DATABASE_PASSWORD", dotenv().get("DATABASE_PASSWORD"));
-//        System.setProperty("ROLBAR_KEY", dotenv().get("ROLBAR_KEY"));
-//        System.setProperty("ROLBAR_ENVIROMENT", dotenv().get("ROLBAR_ENVIROMENT"));
-//        System.setProperty("ROLBAR_CODE_VERSION", dotenv().get("ROLBAR_CODE_VERSION"));
         System.setProperty("BASE_FOLDER_IMPORT_POSTMAN", dotenv().get("BASE_FOLDER_IMPORT_POSTMAN"));
         System.setProperty("IMPORTED_FILES", dotenv().get("IMPORTED_FILES"));
         System.setProperty("MJ_API_KEY", dotenv().get("MJ_API_KEY"));
@@ -46,7 +43,6 @@ public class EnvironmentUtils implements EnvironmentAware {
         System.setProperty("PUBLIC_FOLDER", dotenv().get("PUBLIC_FOLDER"));
         System.setProperty("EXCHANGE_RATE_API_KEY", dotenv().get("EXCHANGE_RATE_API_KEY"));
         System.setProperty("FOLDER_PRODUCT_IMAGES", dotenv().get("FOLDER_PRODUCT_IMAGES"));
-        System.setProperty("BASE_FOLDER-LOCALE", dotenv().get("BASE_FOLDER-LOCALE"));
     }
 
 }

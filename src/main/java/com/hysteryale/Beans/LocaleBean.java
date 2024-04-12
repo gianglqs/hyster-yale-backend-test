@@ -36,7 +36,7 @@ public class LocaleBean {
     }
 
     private void loadMessage() throws IOException {
-        String localFolder = EnvironmentUtils.getEnvironmentValue("locale.base-folder");
+        String localFolder = "locale";
         File messageFolder = new File(localFolder);
         if (!messageFolder.exists())
             throw new FileNotFoundException("Not found folder " + localFolder);

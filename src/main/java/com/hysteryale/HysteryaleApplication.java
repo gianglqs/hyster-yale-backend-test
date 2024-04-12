@@ -7,9 +7,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class HysteryaleApplication extends RollbarInitializer {
+public class HysteryaleApplication {
 
 	public static void main(String[] args) {
+
+
 
 		SpringApplication.run(HysteryaleApplication.class, args);
 
