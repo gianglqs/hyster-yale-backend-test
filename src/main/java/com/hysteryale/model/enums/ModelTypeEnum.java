@@ -10,7 +10,7 @@ public enum ModelTypeEnum {
     BOOKING("Booking"),
     DEALER("Dealer"),
     COST_DATA("Cost Data"),
-    BOOKING_FPA("Booking FP&A"),
+    BOOKING_FPA("Booking FPA"),
     SHIPMENT("Shipment"),
     PRODUCT_APAC("Product APAC"),
     PRODUCT_DIMENSION("Product Dimension"),
@@ -22,7 +22,8 @@ public enum ModelTypeEnum {
     NOVO("NOVO"),
     FORECAST_PRICING("Forecast Pricing"),
     RESIDUAL_VALUE("Residual Value"),
-    AOP_MARGIN("AOP Margin");
+    AOP_MARGIN("AOP Margin"),
+    DEALER_PRODUCT("Dealer Product");
 
 
     private final String value;

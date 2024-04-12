@@ -1,16 +1,17 @@
 package com.hysteryale.service.marginAnalyst;
 
-import com.hysteryale.exception.ExchangeRatesException;
-import com.hysteryale.exception.InvalidFileNameException;
+import com.hysteryale.exception.*;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.ExchangeRate;
 import com.hysteryale.model.Region;
+import com.hysteryale.model.enums.FrequencyImport;
 import com.hysteryale.model.marginAnalyst.*;
 import com.hysteryale.repository.ClazzRepository;
 import com.hysteryale.repository.marginAnalyst.*;
 import com.hysteryale.service.CurrencyService;
 import com.hysteryale.service.ExchangeRateService;
+import com.hysteryale.service.ImportTrackingService;
 import com.hysteryale.service.RegionService;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import com.hysteryale.utils.DateUtils;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +55,8 @@ public class MarginAnalystMacroService {
     RegionService regionService;
     @Resource
     ClazzRepository clazzRepository;
+    @Resource
+    ImportTrackingService importTrackingService;
 
     static HashMap<String, String> MACRO_COLUMNS = new HashMap<>();
     static List<MarginAnalystMacro> listMarginData = new ArrayList<>();
@@ -110,7 +114,7 @@ public class MarginAnalystMacroService {
     }
 
     // Import Macro from a file
-    public void importMarginAnalystMacroFromFile(String fileName, String filePath, String fileUUID) throws InvalidFileNameException {
+    public void importMarginAnalystMacroFromFile(String fileName, String filePath, String fileUUID) throws InvalidFileNameException, CannotExtractYearException, CannotExtractDateException, CanNotExtractMonthAnhYearException {
         // Extract monthYear from fileName pattern
         Pattern pattern = Pattern.compile(".* Macro_(\\w{3})\\s*(\\d{4}).*");
         Matcher matcher = pattern.matcher(fileName);
@@ -191,12 +195,14 @@ public class MarginAnalystMacroService {
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
-
             listMarginData.clear();
         }
         importFreightFromFile(filePath, monthYear);
         importTargetMarginFromFile(filePath, monthYear);
         importWarrantyFromFile(filePath, monthYear);
+
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, monthYear.format(DateTimeFormatter.ofPattern("MM_dd_yyy")), FrequencyImport.MONTHLY);
     }
 
     /**
@@ -317,7 +323,7 @@ public class MarginAnalystMacroService {
 
 
     // Import all Macro file in directory
-    public void importMarginAnalystMacro() throws InvalidFileNameException {
+    public void importMarginAnalystMacro() throws InvalidFileNameException, CannotExtractYearException, CannotExtractDateException, CanNotExtractMonthAnhYearException {
         String folderPath = EnvironmentUtils.getEnvironmentValue("import-files.base-folder") + EnvironmentUtils.getEnvironmentValue("import-files.margin_macro");
 
         List<String> files = FileUtils.getAllFilesInFolder(folderPath);

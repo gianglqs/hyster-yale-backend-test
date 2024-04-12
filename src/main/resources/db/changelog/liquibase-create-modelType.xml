@@ -190,4 +190,9 @@
         <sql>UPDATE frequency SET type = 'Monthly' WHERE type = 'monthly'</sql>
     </changeSet>
 
+    <changeSet id="insert-new-modeType" author="songiang">
+        <sql>INSERT INTO model_type(id, type, frequency)
+             VALUES (17, 'Dealer Product', 3)</sql>
+    </changeSet>
+
 </databaseChangeLog>
