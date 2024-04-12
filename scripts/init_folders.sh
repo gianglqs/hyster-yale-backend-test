@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#
+# Copyright (c) 2024. Hyster-Yale Group
+# All rights reserved.
+#
+
 sudo mkdir -p /opt/hysteryale/uploadFiles/forecast_pricing
 sudo mkdir -p /opt/hysteryale/uploadFiles/booked
 sudo mkdir -p /opt/hysteryale/uploadFiles/shipment

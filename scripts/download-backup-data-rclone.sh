@@ -1,4 +1,9 @@
 #!/bin/bash
+#
+# Copyright (c) 2024. Hyster-Yale Group
+# All rights reserved.
+#
+
 # Folder local
 folder_local="/home/oem/backup-data-local"
 

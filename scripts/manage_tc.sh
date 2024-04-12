@@ -1,5 +1,10 @@
 #!/bin/sh
 
+#
+# Copyright (c) 2024. Hyster-Yale Group
+# All rights reserved.
+#
+
 echo "Restarting Tomcat Server"
 sudo service tomcat stop
 

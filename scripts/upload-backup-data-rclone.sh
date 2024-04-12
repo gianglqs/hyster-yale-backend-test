@@ -1,3 +1,8 @@
+#
+# Copyright (c) 2024. Hyster-Yale Group
+# All rights reserved.
+#
+
 # move into /backup-data
 cd /backup-data
 
