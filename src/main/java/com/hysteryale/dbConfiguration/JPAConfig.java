@@ -21,7 +21,7 @@ public class JPAConfig {
             if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() == null) {
                 return Optional.empty();
             }
-            return Optional.of(((User) authentication.getPrincipal()).getUsername());
+            return Optional.of( authentication.getName());
         };
     }
 }

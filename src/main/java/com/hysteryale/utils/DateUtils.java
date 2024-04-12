@@ -1,6 +1,10 @@
 package com.hysteryale.utils;
 
+import com.hysteryale.exception.CanNotExtractMonthAnhYearException;
+import com.hysteryale.exception.CannotExtractDateException;
 import com.hysteryale.exception.CannotExtractYearException;
+import com.hysteryale.exception.InvalidFileFormatException;
+import com.hysteryale.model.enums.FrequencyImport;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,30 +37,31 @@ public class DateUtils {
     }
 
     public static Month getMonth(String monthString) {
+        monthString = monthString.toLowerCase();
         switch (monthString) {
-            case "Jan":
+            case "jan":
                 return Month.JANUARY;
-            case "Feb":
+            case "feb":
                 return Month.FEBRUARY;
-            case "Mar":
+            case "mar":
                 return Month.MARCH;
-            case "Apr":
+            case "apr":
                 return Month.APRIL;
-            case "May":
+            case "may":
                 return Month.MAY;
-            case "Jun":
+            case "jun":
                 return Month.JUNE;
-            case "Jul":
+            case "jul":
                 return Month.JULY;
-            case "Aug":
+            case "aug":
                 return Month.AUGUST;
-            case "Sep":
+            case "sep":
                 return Month.SEPTEMBER;
-            case "Oct":
+            case "oct":
                 return Month.OCTOBER;
-            case "Nov":
+            case "nov":
                 return Month.NOVEMBER;
-            case "Dec":
+            case "dec":
                 return Month.DECEMBER;
         }
 
@@ -119,17 +124,65 @@ public class DateUtils {
         return date;
     }
 
-    public static int extractYearFromFileName(String fileName, String fileUUID) throws CannotExtractYearException {
+    public static LocalDate extractMonthAndYear(String fileName, String fileUUID) throws CanNotExtractMonthAnhYearException {
+        //regex for type: Jar 2034
+        String regex = "\\b(Jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\\b.*\\b(\\d{4})\\b";
+
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(fileName);
+
+        if (matcher.find()) {
+            String monthStr = matcher.group(1);
+            int year = Integer.parseInt(matcher.group(2));
+            Month month = getMonth(monthStr);
+            return LocalDate.of(year, month, 1);
+        } else {
+            //regex for type:  03_18_2034
+            regex = "\\d{2}_\\d{2}_\\d{4}";
+            pattern = Pattern.compile(regex);
+            matcher = pattern.matcher(fileName);
+            if (matcher.find()) {
+                String dateString = matcher.group();
+                return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("MM_dd_yyyy"));
+            }
+        }
+        throw new CanNotExtractMonthAnhYearException(fileName, fileUUID);
+    }
+
+
+    public static int extractYear(String fileName, String fileUUID) throws CannotExtractYearException {
         String dateRegex = "\\d{4}";
         Matcher m = Pattern.compile(dateRegex).matcher(fileName);
         if (m.find()) {
             return Integer.parseInt(m.group());
         }
-        throw new CannotExtractYearException(fileName , fileUUID);
+        throw new CannotExtractYearException(fileName, fileUUID);
+    }
+
+    public static LocalDate extractYearFromFileName(String fileName, String fileUUID) throws CannotExtractYearException {
+        String dateRegex = "\\d{4}";
+        Matcher m = Pattern.compile(dateRegex).matcher(fileName);
+        if (m.find()) {
+            return LocalDate.of(Integer.parseInt(m.group()), 1, 1);
+        }
+        throw new CannotExtractYearException(fileName, fileUUID);
+
     }
 
     public static String convertLocalDateTimeToString(LocalDateTime localDateTime) {
         return localDateTime.format(DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    public static String convertLocalDateToString(LocalDate localDate, String frequency) {
+        if (frequency.equals(FrequencyImport.ANNUAL.getValue())) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");
+            return localDate.format(formatter);
+        }
+        if (frequency.equals(FrequencyImport.MONTHLY.getValue())) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-yyyy");
+            return localDate.format(formatter);
+        }
+        return "Ad hoc import";
     }
 
     public static LocalDateTime getLastUpdatedTime(List<LocalDateTime> times) {

@@ -6,6 +6,7 @@ import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.Clazz;
 import com.hysteryale.model.Product;
 import com.hysteryale.model.enums.ImportFailureType;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.ClazzRepository;
@@ -408,7 +409,7 @@ public class ProductService extends BasedService {
         }
         saveListDimensionProduct(listDimensionProduct, importFailures);
         importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
-        localeUtils.logStatusImportComplete(importFailures, ModelUtil.PRODUCT);
+        localeUtils.logStatusImportComplete(importFailures, ModelTypeEnum.PRODUCT_DIMENSION.getValue());
         return importFailures;
     }
 
@@ -440,7 +441,7 @@ public class ProductService extends BasedService {
         saveListBaseProduct(listProduct);
 
         importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
-        localeUtils.logStatusImportComplete(importFailures, ModelUtil.PRODUCT);
+        localeUtils.logStatusImportComplete(importFailures, ModelTypeEnum.PRODUCT_APAC.getValue());
 
         return importFailures;
     }
@@ -575,7 +576,7 @@ public class ProductService extends BasedService {
             String fileName = FilenameUtils.removeExtension(file.getName());
 
             // save image in disk and DB
-            String savedImageName = fileUploadService.upLoadImage(imagePath, targetFolder, authentication, ModelUtil.PRODUCT);
+            String savedImageName = fileUploadService.upLoadImage(imagePath, targetFolder, authentication, ModelTypeEnum.PRODUCT_IMAGE.getValue());
             String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedImageName);
             List<Product> mappingProducts = new ArrayList<>();
 
@@ -661,6 +662,13 @@ public class ProductService extends BasedService {
                 productList.add(product);
         }
         return productList;
+    }
+
+    /**
+     * Load all Product information for assigning Dealer field in saving DealerProduct
+     */
+    public List<Product> getAllProducts() {
+        return productRepository.getAllProducts();
     }
 
 }

@@ -2,6 +2,7 @@ package com.hysteryale.controller;
 
 import com.hysteryale.exception.InvalidFileFormatException;
 import com.hysteryale.model.Product;
+import com.hysteryale.model.enums.FrequencyImport;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.UserRepository;
@@ -9,11 +10,12 @@ import com.hysteryale.repository.importFailure.ImportFailureRepository;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
+import com.hysteryale.service.ImportTrackingService;
 import com.hysteryale.service.ProductService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.utils.LocaleUtils;
-import com.hysteryale.utils.ModelUtil;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,9 @@ public class ProductController {
 
     @Resource
     ImportFailureRepository importFailureRepository;
+
+    @Resource
+    ImportTrackingService importTrackingService;
 
     @PostMapping("/getData")
     public Map<String, Object> getDataByFilter(@RequestBody FilterModel filters,
@@ -81,7 +85,7 @@ public class ProductController {
         try {
             if (image != null) {
                 String targetFolder = EnvironmentUtils.getEnvironmentValue("image-folder.product");
-                savedImageName = fileUploadService.upLoadImage(image, targetFolder, authentication, ModelUtil.PRODUCT);
+                savedImageName = fileUploadService.upLoadImage(image, targetFolder, authentication, ModelTypeEnum.PRODUCT_IMAGE.getValue());
                 fileUUID = fileUploadRepository.getFileUUIDByFileName(savedImageName);
             }
             productService.updateImageAndDescription(modelCode, series, savedImageName, description);
@@ -104,7 +108,12 @@ public class ProductController {
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.product");
-        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, ModelUtil.PRODUCT);
+
+        String modelType = ModelTypeEnum.PRODUCT_APAC.getValue();
+         if (file.getOriginalFilename().toLowerCase().contains("dimension")) {
+             modelType  = ModelTypeEnum.PRODUCT_DIMENSION.getValue();
+         }
+        String savedFileName = fileUploadService.saveFileUploaded(file, authentication, targetFolder, FileUtils.EXCEL_FILE_EXTENSION, modelType);
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
         String filePath = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
 
@@ -133,8 +142,10 @@ public class ProductController {
 
         fileUploadService.handleUpdatedSuccessfully(savedFileName);
         importFailureRepository.saveAll(importFailures);
+        // update ImportTracking
+        importTrackingService.updateImport(fileUUID, file.getOriginalFilename(), FrequencyImport.ANNUAL);
 
-        String message = localeUtils.getMessageImportComplete(importFailures, ModelUtil.PRODUCT, locale);
+        String message = localeUtils.getMessageImportComplete(importFailures, modelType, locale);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(message, fileUUID));
     }
 

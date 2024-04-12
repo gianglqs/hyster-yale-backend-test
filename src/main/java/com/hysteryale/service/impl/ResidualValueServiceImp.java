@@ -6,6 +6,7 @@ import com.hysteryale.model.Product;
 import com.hysteryale.model.ResidualValue;
 import com.hysteryale.model.embedId.ResidualValueId;
 import com.hysteryale.model.enums.ImportFailureType;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.repository.ResidualValueRepository;
@@ -100,7 +101,7 @@ public class ResidualValueServiceImp implements ResidualValueService {
         importFailureService.setFileUUIDForListImportFailure(importFailures, fileUUID);
         importFailureRepository.saveAll(importFailures);
         productRepository.saveAll(products);
-        localeUtils.logStatusImportComplete(importFailures, ModelUtil.RESIDUAL_VALUE);
+        localeUtils.logStatusImportComplete(importFailures, ModelTypeEnum.RESIDUAL_VALUE.getValue());
         return importFailures;
     }
 
@@ -116,7 +117,7 @@ public class ResidualValueServiceImp implements ResidualValueService {
         result.put("listResidualValue", residualValueSet);
 
         // last update time
-        Optional<LocalDateTime> lastUpdateTimeOptional = fileUploadRepository.getLatestUpdatedTimeByModelType(ModelUtil.RESIDUAL_VALUE);
+        Optional<LocalDateTime> lastUpdateTimeOptional = fileUploadRepository.getLatestUpdatedTimeByModelType(ModelTypeEnum.RESIDUAL_VALUE.getValue());
         String latestUpdatedTime = null;
         if (lastUpdateTimeOptional.isPresent()) {
             latestUpdatedTime = DateUtils.convertLocalDateTimeToString(lastUpdateTimeOptional.get());

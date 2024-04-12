@@ -137,12 +137,25 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         HttpServletRequest servletRequest = attributes.getRequest();
         String locale = servletRequest.getHeader("locale");
         locale = locale == null ? "en" : locale;
-        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "Can not extract Year from file name: ''");
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure",  "can-not-extract-year");
         StringBuilder stringBuilder = new StringBuilder(baseMessage);
         stringBuilder.insert(baseMessage.length() - 1, exception.getMessage());
         fileUploadService.handleUpdatedFailure(exception.getFileUUID(), stringBuilder.toString());
         logError(stringBuilder.toString(), exception);
         return new ResponseEntity<>(new ErrorResponse(stringBuilder.toString()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CanNotExtractMonthAnhYearException.class)
+    public ResponseEntity<ErrorResponse> handleCannotExtractMonthAndYearException(CanNotExtractMonthAnhYearException exception, WebRequest request) throws CanNotUpdateException {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) request;
+        HttpServletRequest servletRequest = attributes.getRequest();
+        String locale = servletRequest.getHeader("locale");
+        locale = locale == null ? "en" : locale;
+        String baseMessage = LocaleUtils.getMessage(messagesMap, locale, "failure", "can-not-extract-month-and-year");
+        String message = String.format(baseMessage, exception.getMessage());
+        fileUploadService.handleUpdatedFailure(exception.getFileUUID(), message);
+        logError(message, exception);
+        return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IncorectFormatCellException.class)

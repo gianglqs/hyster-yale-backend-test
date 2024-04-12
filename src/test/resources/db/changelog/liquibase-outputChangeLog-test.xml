@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.6.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
-    <changeSet author="oem (generated)" id="1712543738530-1">
+    <changeSet author="oem (generated)" id="1712748506211-1">
         <createTable tableName="product">
             <column name="model_code" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -25,25 +25,25 @@
             <column name="modeltype" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712543738530-2">
+    <changeSet author="oem (generated)" id="1712748506211-2">
         <addUniqueConstraint columnNames="series, model_code" constraintName="uk_1onsrfub7tpmstil3s7amjw1g" tableName="product"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712543738530-3">
+    <changeSet author="oem (generated)" id="1712748506211-3">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="aopmargin_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712543738530-4">
+    <changeSet author="oem (generated)" id="1712748506211-4">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="apacserial_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712543738530-5">
+    <changeSet author="oem (generated)" id="1712748506211-5">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="clazz_seq" startValue="7"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712543738530-6">
+    <changeSet author="oem (generated)" id="1712748506211-6">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="clazz_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712543738530-7">
+    <changeSet author="oem (generated)" id="1712748506211-7">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="competitorpricing_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712543738530-8">
+    <changeSet author="oem (generated)" id="1712748506211-8">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="cost_uplift_seq" startValue="1"/>
     </changeSet>
     <changeSet author="oem (generated)" id="1712543738530-9">

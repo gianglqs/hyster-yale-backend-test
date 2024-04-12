@@ -9,7 +9,9 @@ import com.hysteryale.model.*;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.competitor.ForeCastValue;
+import com.hysteryale.model.dealer.Dealer;
 import com.hysteryale.model.enums.ImportFailureType;
+import com.hysteryale.model.enums.ModelTypeEnum;
 import com.hysteryale.model.importFailure.ImportFailure;
 import com.hysteryale.repository.*;
 import com.hysteryale.repository.importFailure.ImportFailureRepository;
@@ -526,7 +528,7 @@ public class ImportService extends BasedService {
         importFailureRepository.saveAll(importFailures);
         shipmentRepository.saveAll(shipmentListAfterCalculate);
 
-        localeUtils.logStatusImportComplete(importFailures, ModelUtil.SHIPMENT);
+        localeUtils.logStatusImportComplete(importFailures, ModelTypeEnum.SHIPMENT.getValue());
 
         return importFailures;
     }
