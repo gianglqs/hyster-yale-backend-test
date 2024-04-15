@@ -50,6 +50,8 @@ public class BookingController {
 
     @Resource
     LocaleUtils localeUtils;
+    
+
 
     /**
      * Get BookingOrders based on filters and pagination
@@ -58,6 +60,7 @@ public class BookingController {
      * @param pageNo  current page
      * @param perPage number of items per page
      */
+
 
     @PostMapping(path = "/bookingOrders", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> getDataBooking(@RequestBody FilterModel filters,
