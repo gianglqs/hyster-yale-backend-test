@@ -7,6 +7,7 @@ COPY import_files/ import_files/
 COPY src/ src/
 COPY pom.xml .
 COPY .env .
+COPY locale/ locale/
 
 # create folder to save file when import file excel
 RUN mkdir -p /tmp/UploadFiles/forecast_pricing
