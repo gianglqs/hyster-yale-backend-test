@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024. Hyster-Yale Group
+ * All rights reserved.
+ */
+
 package com.hysteryale.Beans;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -36,7 +41,7 @@ public class LocaleBean {
     }
 
     private void loadMessage() throws IOException {
-        String localFolder = EnvironmentUtils.getEnvironmentValue("locale.base-folder");
+        String localFolder = "locale";
         File messageFolder = new File(localFolder);
         if (!messageFolder.exists())
             throw new FileNotFoundException("Not found folder " + localFolder);

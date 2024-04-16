@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024. Hyster-Yale Group
+ * All rights reserved.
+ */
+
 package com.hysteryale.model.filters;
 
 import lombok.AllArgsConstructor;

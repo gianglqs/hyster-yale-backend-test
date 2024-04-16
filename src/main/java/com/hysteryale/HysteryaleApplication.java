@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024. Hyster-Yale Group
+ * All rights reserved.
+ */
+
 package com.hysteryale;
 
 import com.hysteryale.rollbar.RollbarInitializer;
@@ -7,9 +12,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class HysteryaleApplication extends RollbarInitializer {
+public class HysteryaleApplication {
 
 	public static void main(String[] args) {
+
+
 
 		SpringApplication.run(HysteryaleApplication.class, args);
 

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024. Hyster-Yale Group
+ * All rights reserved.
+ */
+
 package com.hysteryale.repository.importFailure;
 
 import com.hysteryale.model.importFailure.ImportFailure;

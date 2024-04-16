@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024. Hyster-Yale Group
+ * All rights reserved.
+ */
+
 package com.hysteryale.repository;
 
 import com.hysteryale.model.Booking;
@@ -434,25 +439,38 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             " WHERE b.product.segment IS NOT NULL AND b.product.segment <> '' AND " +
             " ((:segments) IS NULL OR b.product.segment in (:segments)) " +
             " AND ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
+            " AND (cast(:fromDate as date) IS NULL OR b.date >= (:fromDate))" +
+            " AND (cast(:toDate as date) IS NULL OR b.date <= (:toDate))" +
             " GROUP BY b.series, b.product.segment ")
-    List<Booking> getBookingForPriceVolumeSensitivityGroupBySeriesAndSegment(List<String> segments, List<String> metaSeries);
+    List<Booking> getBookingForPriceVolumeSensitivityGroupBySeriesAndSegment(List<String> segments, List<String> metaSeries,@Param("fromDate") LocalDate fromDate,
+                                                                             @Param("toDate") LocalDate toDate);
 
-    @Query("SELECT new Booking(p.segment,b.series, COALESCE(SUM(b.totalCost),0), COALESCE(SUM(b.dealerNetAfterSurcharge),0), COALESCE(SUM(b.quantity),0))\n" +
+    @Query("SELECT new Booking(p.segment, COALESCE(SUM(b.totalCost),0), COALESCE(SUM(b.dealerNetAfterSurcharge),0), COALESCE(SUM(b.quantity),0))\n" +
             "            FROM Product p LEFT JOIN Booking b ON p.id=b.product.id   WHERE  NULLIF(p.segment, '') IS NOT NULL \n" +
-            "            GROUP BY b.series, p.segment")
-    List<Booking> getBookingForPriceVolumeSensitivityGroupBySeriesAndSegmentDefault();
+            " AND (cast(:fromDate as date) IS NULL OR b.date >= (:fromDate))" +
+            " AND (cast(:toDate as date) IS NULL OR b.date <= (:toDate))" +
+            "            GROUP BY  p.segment")
+    List<Booking> getBookingForPriceVolumeSensitivityGroupBySeriesAndSegmentDefault(  @Param("fromDate") LocalDate fromDate,
+                                                                                      @Param("toDate") LocalDate toDate);
+
 
     @Query("SELECT new Booking( p.segment,b.series, SUM(b.totalCost), SUM(b.dealerNetAfterSurcharge), SUM(b.quantity))  " +
             "FROM Product p JOIN Booking b ON p.id=b.product.id WHERE NULLIF(b.series, '') IS NOT NULL AND " +
             " SUBSTRING(b.series, 2,3) IN (:metaSeries)" +
+            " AND (cast(:fromDate as date) IS NULL OR b.date >= (:fromDate))" +
+            " AND (cast(:toDate as date) IS NULL OR b.date <= (:toDate))" +
             " GROUP BY p.segment, b.series ")
-    List<Booking> getBookingForPriceVolumeSensitivityGroupBySeries( List<String> metaSeries);
+    List<Booking> getBookingForPriceVolumeSensitivityGroupBySeries( List<String> metaSeries,@Param("fromDate") LocalDate fromDate,
+                                                                    @Param("toDate") LocalDate toDate);
 
     @Query("SELECT new Booking(p.segment,b.series, SUM(b.totalCost), SUM(b.dealerNetAfterSurcharge), SUM(b.quantity))" +
             "FROM Product p  JOIN Booking b ON p.id=b.product.id   WHERE  NULLIF(p.segment, '') IS NOT NULL " +
             "AND p.segment in (:segments)"+
+            " AND (cast(:fromDate as date) IS NULL OR b.date >= (:fromDate))" +
+            " AND (cast(:toDate as date) IS NULL OR b.date <= (:toDate))" +
             " GROUP BY p.segment,b.series")
-    List<Booking> getBookingForPriceVolumeSensitivityGroupBySegment(List<String> segments);
+    List<Booking> getBookingForPriceVolumeSensitivityGroupBySegment(List<String> segments,@Param("fromDate") LocalDate fromDate,
+                                                                    @Param("toDate") LocalDate toDate);
 
 
     @Query(value = "select count(*) from (select p.series from "+
@@ -460,25 +478,37 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
             " where p.segment is not null and trim(p.segment) <> '' "+
             " and ((:segments) is null or p.segment in (:segments))"+
             " and ((:metaSeries) IS NULL OR SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
+            " AND (cast(:fromDate as date) IS NULL OR b.date >= (:fromDate))" +
+            " AND (cast(:toDate as date) IS NULL OR b.date <= (:toDate))" +
             "group by p.series) as groupbySegment", nativeQuery = true)
-    long countAllForPriceVolSensitivityGroupBySeriesAndSegment(List<String> segments, List<String> metaSeries);
+    long countAllForPriceVolSensitivityGroupBySeriesAndSegment(List<String> segments, List<String> metaSeries,@Param("fromDate") LocalDate fromDate,
+                                                               @Param("toDate") LocalDate toDate);
 
-    @Query(value = " select count(*) from (SELECT p.segment,b.series, COALESCE(SUM(b.total_cost),0), COALESCE(SUM(b.dealer_net_after_surcharge),0), COALESCE(SUM(b.quantity),0)\n" +
+    @Query(value = " select count(*) from (SELECT p.segment, COALESCE(SUM(b.total_cost),0), COALESCE(SUM(b.dealer_net_after_surcharge),0), COALESCE(SUM(b.quantity),0)\n" +
             "   FROM Product p LEFT JOIN Booking b ON p.id=b.product   WHERE  NULLIF(p.segment, '') IS NOT NULL " +
-            "   GROUP BY b.series, p.segment) as groupbyAllSegmentAndSeries", nativeQuery = true)
-    long countAllForPriceVolSensitivityGroupBySeriesAndSegmentDefault();
+            " AND (cast(:fromDate as date) IS NULL OR b.date >= (:fromDate))" +
+            " AND (cast(:toDate as date) IS NULL OR b.date <= (:toDate))" +
+            "   GROUP BY p.segment) as groupbyAllSegmentAndSeries", nativeQuery = true)
+    long countAllForPriceVolSensitivityGroupBySeriesAndSegmentDefault(@Param("fromDate") LocalDate fromDate,
+                                                                      @Param("toDate") LocalDate toDate);
 
 
     @Query(value = "select count(*) from (select p.series from "+
             " booking b inner join product p on b.product = p.id "+
-            " where (SUBSTRING(b.series, 2,3) IN (:metaSeries))" +
+            " where SUBSTRING(b.series, 2,3) IN (:metaSeries)" +
+            " AND (cast(:fromDate as date) IS NULL OR b.date >= (:fromDate))" +
+            " AND (cast(:toDate as date) IS NULL OR b.date <= (:toDate))" +
             "group by p.series) as groupbySeries", nativeQuery = true)
-    long countAllForPriceVolSensitivityGroupBySeries(List<String> metaSeries);
+    long countAllForPriceVolSensitivityGroupBySeries(List<String> metaSeries,@Param("fromDate") LocalDate fromDate,
+                                                     @Param("toDate") LocalDate toDate);
 
     @Query(value = "select count(*) from (select p.segment from "+
             " booking b inner join product p on b.product = p.id "+
-            " where ( p.segment in (:segments))"+
+            " where p.segment in (:segments)"+
+            " AND (cast(:fromDate as date) IS NULL OR b.date >= (:fromDate))" +
+            " AND (cast(:toDate as date) IS NULL OR b.date <= (:toDate))" +
             "group by p.segment) as groupbySegment", nativeQuery = true)
-    long countAllForPriceVolSensitivityGroupBySegment(List<String> segments);
+    long countAllForPriceVolSensitivityGroupBySegment(List<String> segments,@Param("fromDate") LocalDate fromDate,
+                                                      @Param("toDate") LocalDate toDate);
 
 }
