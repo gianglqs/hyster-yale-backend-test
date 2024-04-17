@@ -1,0 +1,23 @@
+<!--
+  ~ Copyright (c) 2024. Hyster-Yale Group
+  ~ All rights reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-table-import_failure" author="baonguyen">
+        <createTable tableName="interest_rate">
+            <column name="id" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column type="varchar(255)" name="bank_name"/>
+            <column type="varchar(255)" name="country"/>
+            <column type="double" name="current_rate"/>
+            <column type="double" name="previous_rate"/>
+            <column type="date" name="update_date"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

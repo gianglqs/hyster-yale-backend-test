@@ -20,4 +20,15 @@ public class ConvertDataExcelUtils {
 
         return result;
     }
+
+    public static  double convertDataFromExcelToDouble(Cell cell){
+        double result=0;
+        if(cell==null)
+            return result;
+        if(cell.getCellType()==CellType.NUMERIC){
+            result=cell.getNumericCellValue();
+        }
+
+        return result;
+    }
 }
