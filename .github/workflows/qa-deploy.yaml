@@ -86,4 +86,10 @@ jobs:
           export timezone_hy=$(cat /etc/timezone)
           
           docker run -p 8080:8080 -d --name=hysteryale-be --network=host -v /opt/hysteryale:/opt/hysteryale -e TZ=$timezone_hy  --restart unless-stopped ghcr.io/phoenix-software-development/hyster-yale-backend:latest
-
+          
+          sleep 60
+          
+          if [[ $(lsof -i:8080 | grep "java") != "" ]]
+          then
+            curl 'http://localhost:8080/hysteryale/version/updateVersion?version={{github.event.release.tag_name}}&type=backend'
+          fi
