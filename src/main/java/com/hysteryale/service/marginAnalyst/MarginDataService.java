@@ -10,11 +10,12 @@ import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.SeriesNotFoundException;
 import com.hysteryale.model.Booking;
 import com.hysteryale.model.marginAnalyst.MarginAnalysisAOPRate;
-import com.hysteryale.model_h2.IMMarginAnalystData;
+import com.hysteryale.model_h2.MarginData;
 import com.hysteryale.model_h2.IMMarginAnalystSummary;
+import com.hysteryale.model_h2.MarginDataId;
 import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.repository.marginAnalyst.MarginAnalysisAOPRateRepository;
-import com.hysteryale.repository_h2.IMMarginAnalystDataRepository;
+import com.hysteryale.repository_h2.MarginDataRepository;
 import com.hysteryale.service.BookingService;
 import com.hysteryale.service.ExchangeRateService;
 import com.hysteryale.service.FileUploadService;
@@ -39,9 +40,9 @@ import java.util.*;
 @Service
 @Slf4j
 @EnableTransactionManagement
-public class IMMarginAnalystDataService {
+public class MarginDataService {
     @Resource
-    IMMarginAnalystDataRepository imMarginAnalystDataRepository;
+    MarginDataRepository marginDataRepository;
     @Resource
     MarginAnalystMacroService marginAnalystMacroService;
     @Resource
@@ -61,7 +62,7 @@ public class IMMarginAnalystDataService {
             String columnName = cell.getStringCellValue();
             COLUMN_NAME.put(columnName, cell.getColumnIndex());
         }
-        log.info("Column Name: " + COLUMN_NAME);
+        log.info("Column Name: {}", COLUMN_NAME);
     }
 
     /**
@@ -127,7 +128,7 @@ public class IMMarginAnalystDataService {
     /**
      * Mapping the data from uploaded files / template files as SN_AUD ... into a model
      */
-    private IMMarginAnalystData mapIMMarginAnalystData(Row row, String plant, String strCurrency, String region) {
+    private MarginData mapIMMarginAnalystData(Row row, String plant, String strCurrency, String region, int userId) {
         // Initialize variables
         double aopRate = 1;
         double costUplift = 0.0;
@@ -150,15 +151,12 @@ public class IMMarginAnalystDataService {
         String series = row.getCell(COLUMN_NAME.get("Series Code"), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
         String quoteNumber = row.getCell(COLUMN_NAME.get("Quote Number:")).getStringCellValue();
 
-        IMMarginAnalystData imMarginAnalystData =
-                new IMMarginAnalystData(
-                        plant, modelCode, partNumber, description,
-                        CurrencyFormatUtils.formatDoubleValue(listPrice, CurrencyFormatUtils.decimalFormatFourDigits),
-                        strCurrency,
+        MarginData marginData = new MarginData(
+                        new MarginDataId(quoteNumber, type, modelCode, partNumber, strCurrency, userId),
+                        plant, CurrencyFormatUtils.formatDoubleValue(listPrice, CurrencyFormatUtils.decimalFormatFourDigits),
                         CurrencyFormatUtils.formatDoubleValue(netPrice, CurrencyFormatUtils.decimalFormatFourDigits),
                         series
                 );
-        imMarginAnalystData.setQuoteNumber(quoteNumber);
 
         // Assign ManufacturingCost
         // if Part is marked as SPED then
@@ -167,19 +165,14 @@ public class IMMarginAnalystDataService {
         // ManufacturingCost must be multiplied by aopRate (to exchange the currency)
         // ManufacturingCost can be in RMB(CNY), USD or AUD -> then it must be exchanged to be the same as the currency of DealerNet
         double manufacturingCost = getManufacturingCost(modelCode, partNumber, strCurrency, queryPlant, netPrice, aopRate, region);
-        boolean isSPED = false;
         if(description.contains("SPED")) {
-            isSPED = true;
             manufacturingCost = manufacturingCost * aopRate * (1 + costUplift) + 0.9 * netPrice;
+            manufacturingCost = manufacturingCost /aopRate;
         }
 
-        // after finishing calculation => exchange manufacturingCost back to based currency (for HYM is RMB; for SN is USD)
-        manufacturingCost = isSPED ? (manufacturingCost / aopRate) : manufacturingCost;
-
-        imMarginAnalystData.setManufacturingCost(CurrencyFormatUtils.formatDoubleValue(manufacturingCost, CurrencyFormatUtils.decimalFormatFourDigits));
-        imMarginAnalystData.setType(type);
-        imMarginAnalystData.setRegion(region);
-        return imMarginAnalystData;
+        marginData.setManufacturingCost(CurrencyFormatUtils.formatDoubleValue(manufacturingCost, CurrencyFormatUtils.decimalFormatFourDigits));
+        marginData.setRegion(region);
+        return marginData;
     }
 
     /**
@@ -200,21 +193,21 @@ public class IMMarginAnalystDataService {
     public IMMarginAnalystSummary calculateNonUSMarginAnalystSummary(String fileUUID, String plant, String strCurrency, String durationUnit, Integer type, String series, String modelCode, String orderNumber, String region) {
         // Prepare Model Code for calculation if Model Code is null then --> use Series to find List of Mode Codes in a file with FileUUID
         List<String> modelCodeList = Collections.singletonList(modelCode);
-        if(modelCode == null) modelCodeList = imMarginAnalystDataRepository.getModelCodesBySeries(fileUUID, series);
+        if(modelCode == null) modelCodeList = marginDataRepository.getModelCodesBySeries(fileUUID, series);
 
-        log.info("Calculating " + durationUnit + " summary");
-        log.info("List of Model Codes in a summary: " + modelCodeList);
+        log.info("Calculating {} summary", durationUnit);
+        log.info("List of Model Codes in a summary: {}", modelCodeList);
 
         double totalListPrice = 0, totalManufacturingCost = 0, dealerNet = 0;
         for(String mc : modelCodeList) {
-            List<IMMarginAnalystData> imMarginAnalystDataList =
-                    imMarginAnalystDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series, region);
+            List<MarginData> marginDataList =
+                    marginDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series, region);
 
-            log.info("Data in a Summary: " + imMarginAnalystDataList.size());
+            log.info("Data in a Summary: {}", marginDataList.size());
             // If the Model Code does not have any Margin Analysis Data then ignore it.
-            if(imMarginAnalystDataList.isEmpty()) continue;
+            if(marginDataList.isEmpty()) continue;
 
-            for(IMMarginAnalystData data : imMarginAnalystDataList) {
+            for(MarginData data : marginDataList) {
                 totalListPrice += data.getListPrice();
                 totalManufacturingCost += data.getManufacturingCost();
                 dealerNet += data.getDealerNet();
@@ -297,8 +290,8 @@ public class IMMarginAnalystDataService {
     /**
      * Get the In-memory Data which has already been calculated in the uploaded file
      */
-    public List<IMMarginAnalystData> getIMMarginAnalystData(String modelCode, String strCurrency, String fileUUID, String orderNumber, Integer type, String series, String region) {
-        return imMarginAnalystDataRepository.getIMMarginAnalystData(modelCode, orderNumber, strCurrency, type, fileUUID, series, region);
+    public List<MarginData> getIMMarginAnalystData(String modelCode, String strCurrency, String fileUUID, String orderNumber, Integer type, String series, String region) {
+        return marginDataRepository.getIMMarginAnalystData(modelCode, orderNumber, strCurrency, type, fileUUID, series, region);
     }
 
     public IMMarginAnalystSummary calculateUSPlantMarginSummary(String modelCode, String series, String strCurrency, String durationUnit, String orderNumber, Integer type, String fileUUID) {
@@ -328,14 +321,14 @@ public class IMMarginAnalystDataService {
 
 
         List<String> modelCodeList = Collections.singletonList(modelCode);
-        if(modelCode == null) modelCodeList = imMarginAnalystDataRepository.getModelCodesBySeries(fileUUID, series);
+        if(modelCode == null) modelCodeList = marginDataRepository.getModelCodesBySeries(fileUUID, series);
 
         // calculate total of List Price, Manufacturing Cost and Dealer Net of Model Codes in a Series Code
         double totalListPrice = 0.0, dealerNet = 0.0, totalManufacturingCost = defMFGCost;
         for(String mc : modelCodeList) {
-            List<IMMarginAnalystData> imMarginAnalystDataList =
-                    imMarginAnalystDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series, null);
-            for(IMMarginAnalystData data : imMarginAnalystDataList) {
+            List<MarginData> marginDataList =
+                    marginDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series, null);
+            for(MarginData data : marginDataList) {
                 totalListPrice += data.getListPrice();
                 dealerNet += data.getDealerNet();
                 if(data.isSPED())
@@ -397,16 +390,16 @@ public class IMMarginAnalystDataService {
         return imMarginAnalystSummary;
     }
 
-    public void calculateMarginAnalysisData(String fileUUID, String currency, String region) throws IOException, IncorectFormatCellException {
+    public void calculateMarginAnalysisData(String fileUUID, String currency, String region, int userId) throws IOException, IncorectFormatCellException {
         String fileName = fileUploadService.getFileNameByUUID(fileUUID); // fileName has been hashed
         String baseFolder = EnvironmentUtils.getEnvironmentValue("public-folder");
         String baseFolderUploaded = EnvironmentUtils.getEnvironmentValue("upload_files.base-folder");
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.novo");
-        String filePath = baseFolder + baseFolderUploaded + targetFolder+ fileName;
+        String filePath = baseFolder + baseFolderUploaded + targetFolder + fileName;
         FileInputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
         Sheet sheet = workbook.getSheetAt(0);
-        List<IMMarginAnalystData> imMarginAnalystDataList = new ArrayList<>();
+        List<MarginData> marginDataList = new ArrayList<>();
 
         String orderNumber = "";
         for(Row row : sheet) {
@@ -438,25 +431,25 @@ public class IMMarginAnalystDataService {
                 // Verify cells' format
                 verifyNOVOCellFormat(row, fileUUID);
 
-                IMMarginAnalystData imMarginAnalystData;
+                MarginData marginData;
                 if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
                     // calculate non US plant Margin Analysis Data
-                    imMarginAnalystData = mapIMMarginAnalystData(row, plant, currency, region);
+                    marginData = mapIMMarginAnalystData(row, plant, currency, region, userId);
                 }
                 else {
                     // calculate US plant Margin Analysis Data
                     Optional<Booking> optionalBookingOrder = bookingService.getBookingOrderByOrderNumber(orderNumber);
                     if(optionalBookingOrder.isEmpty()) continue;
                     double manufacturingCost = optionalBookingOrder.get().getTotalCost();
-                    imMarginAnalystData = mapUSPlantMarginAnalysisData(row, manufacturingCost, currency, orderNumber, plant);
+                    marginData = mapUSPlantMarginAnalysisData(row, manufacturingCost, currency, orderNumber, plant, userId);
                 }
-                imMarginAnalystData.setOrderNumber(orderNumber);
-                imMarginAnalystData.setFileUUID(fileUUID);
-                imMarginAnalystDataList.add(imMarginAnalystData);
+                marginData.setOrderNumber(orderNumber);
+                marginData.setFileUUID(fileUUID);
+                marginDataList.add(marginData);
             }
         }
-        log.info("Save Margin Analysis Data: " + imMarginAnalystDataList.size());
-        imMarginAnalystDataRepository.saveAll(imMarginAnalystDataList);
+        log.info("Save Margin Analysis Data: {}", marginDataList.size());
+        marginDataRepository.saveAll(marginDataList);
 
     }
 
@@ -484,7 +477,7 @@ public class IMMarginAnalystDataService {
         );
     }
 
-    public IMMarginAnalystData mapUSPlantMarginAnalysisData(Row row, double manufacturingCost, String strCurrency, String orderNumber, String plant) {
+    public MarginData mapUSPlantMarginAnalysisData(Row row, double manufacturingCost, String strCurrency, String orderNumber, String plant, int userId) {
         String modelCode = row.getCell(COLUMN_NAME.get("Model Code")).getStringCellValue();
         String partNumber = row.getCell(COLUMN_NAME.get("Part Number")).getStringCellValue();
         double listPrice = row.getCell(COLUMN_NAME.get("List Price")).getNumericCellValue();
@@ -503,20 +496,16 @@ public class IMMarginAnalystDataService {
         }
 
         // Assigning value for imMarginAnalystData
-        IMMarginAnalystData imMarginAnalystData = new IMMarginAnalystData(
-                plant, modelCode, partNumber, partDescription,
-                CurrencyFormatUtils.formatDoubleValue(listPrice, CurrencyFormatUtils.decimalFormatFourDigits),
-                strCurrency,
+        MarginData marginData = new MarginData(
+                new MarginDataId(quoteNumber, type, modelCode, partNumber, strCurrency, userId),
+                plant, CurrencyFormatUtils.formatDoubleValue(listPrice, CurrencyFormatUtils.decimalFormatFourDigits),
                 CurrencyFormatUtils.formatDoubleValue(netPrice, CurrencyFormatUtils.decimalFormatFourDigits),
                 series
         );
-        imMarginAnalystData.setQuoteNumber(quoteNumber);
-        imMarginAnalystData.setOrderNumber(orderNumber);
-        imMarginAnalystData.setManufacturingCost(CurrencyFormatUtils.formatDoubleValue(manufacturingCostWithSPED, CurrencyFormatUtils.decimalFormatFourDigits));
-        imMarginAnalystData.setSPED(isSPED);
-        imMarginAnalystData.setType(type);
-
-        return imMarginAnalystData;
+        marginData.setOrderNumber(orderNumber);
+        marginData.setManufacturingCost(CurrencyFormatUtils.formatDoubleValue(manufacturingCostWithSPED, CurrencyFormatUtils.decimalFormatFourDigits));
+        marginData.setSPED(isSPED);
+        return marginData;
     }
 
     /**
@@ -595,6 +584,13 @@ public class IMMarginAnalystDataService {
      * Check a file which has fileUUID has already been calculated Margin Data or not
      */
     public boolean isFileCalculated(String fileUUID, String currency, String region) {
-        return imMarginAnalystDataRepository.isFileCalculated(fileUUID, currency, region);
+        return marginDataRepository.isFileCalculated(fileUUID, currency, region);
+    }
+
+    /**
+     * View the history calculated Quotation Margin % Data
+     */
+    public List<MarginData> viewHistoryMargin(MarginDataId id) {
+        return marginDataRepository.viewHistoryMarginData(id.getQuoteNumber(), id.getType(), id.getModelCode(), id.getCurrency(), id.getUserId());
     }
 }
