@@ -1,6 +1,7 @@
 package com.hysteryale.controller;
 import com.hysteryale.model.InterestRate;
 import com.hysteryale.model.User;
+import com.hysteryale.model.filters.InterestRateFilterModel;
 import com.hysteryale.service.InterestRateService;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
@@ -26,33 +27,46 @@ public class InterestRateController {
         }
     }
 
+//    @GetMapping("/getAllInterestRate")
+//    public ResponseEntity<List<InterestRate>> getAllInterestRate(InterestRateFilterModel filterModel) throws Exception {
+//        try{
+//            List<InterestRate> interestRates=interestRateService.getAllInterestRate();
+//            if(interestRates!=null){
+//                return ResponseEntity.status(HttpStatus.OK).body(interestRates);
+//            }else{
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//            }
+//        }catch(Exception e){
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//    }
+
     @GetMapping("/getAllInterestRate")
-    public ResponseEntity<List<InterestRate>> getAllInterestRate() throws Exception {
-        try{
-            List<InterestRate> interestRates=interestRateService.getAllInterestRate();
-            if(interestRates!=null){
-                return ResponseEntity.status(HttpStatus.OK).body(interestRates);
-            }else{
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-            }
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    public Map<String, Object> getAllInterestRate(
+                                                 @RequestParam(defaultValue = "") String search,
+                                                 @RequestParam(defaultValue = "1") int pageNo,
+                                                 @RequestParam(defaultValue = "100") int perPage) throws Exception {
+        InterestRateFilterModel filterModel = new InterestRateFilterModel();
+        filterModel.setBankName(search);
+        filterModel.setPageNo(pageNo);
+        filterModel.setPerPage(perPage);
+        return  interestRateService.getListInterestRateByFilter(filterModel);
+
     }
 
 
-    @GetMapping("/getInterestRateByBankName")
-    public ResponseEntity<List<InterestRate>> getInterestRateByBankName(@RequestParam("bankName") String bankName) {
-        try {
-            List<InterestRate> interestRates = interestRateService.getInterestRateByBankName(bankName);
-            if (interestRates != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(interestRates);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
+//    @GetMapping("/getInterestRateByBankName")
+//    public ResponseEntity<List<InterestRate>> getInterestRateByBankName(@RequestParam("bankName") String bankName) {
+//        try {
+//            List<InterestRate> interestRates = interestRateService.getInterestRateByBankName(bankName);
+//            if (interestRates != null) {
+//                return ResponseEntity.status(HttpStatus.OK).body(interestRates);
+//            } else {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//    }
 
 }

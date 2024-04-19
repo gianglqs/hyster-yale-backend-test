@@ -7,6 +7,7 @@ package com.hysteryale.utils;
 
 import com.hysteryale.model.filters.FilterModel;
 
+import com.hysteryale.model.filters.InterestRateFilterModel;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -76,6 +77,16 @@ public class ConvertDataFilterUtil {
         result.put("metaseriesFilter", metaseriesFilter);
         result.put("dealerId", dealerIdListFilter);
 
+        return result;
+    }
+
+    public static Map<String, Object> loadInterestRateDataFilterIntoMap(InterestRateFilterModel filterModel) throws ParseException {
+        Map<String, Object> result = new HashMap<>();
+        String bankNameFilter = checkStringData(filterModel.getBankName());
+//        List<String> regionFilter = checkListData(filterModel);
+        Pageable pageable = PageRequest.of(filterModel.getPageNo() == 0 ? filterModel.getPageNo() : filterModel.getPageNo() - 1, filterModel.getPerPage() == 0 ? 100 : filterModel.getPerPage());
+//        result.put("regionFilter", regionFilter);
+        result.put("pageable", pageable);
         return result;
     }
 

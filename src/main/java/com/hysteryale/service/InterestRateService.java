@@ -1,30 +1,28 @@
 package com.hysteryale.service;
 
-import com.hysteryale.exception.CompetitorException.MissingForecastFileException;
-import com.hysteryale.model.Clazz;
-import com.hysteryale.model.Country;
-import com.hysteryale.model.InterestRate;
-import com.hysteryale.model.competitor.CompetitorColor;
-import com.hysteryale.model.competitor.CompetitorPricing;
-import com.hysteryale.model.competitor.ForeCastValue;
+import com.hysteryale.model.*;
+import com.hysteryale.model.filters.FilterModel;
+import com.hysteryale.model.filters.InterestRateFilterModel;
 import com.hysteryale.repository.InterestRateRepository;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.ConvertDataExcelUtils;
+import com.hysteryale.utils.ConvertDataFilterUtil;
+import com.hysteryale.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.text.DateFormat;
+import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -39,11 +37,19 @@ public class InterestRateService {
     public List<InterestRate> getAllInterestRate() {
         return interestRateRepository.findAll();
     }
-
-    public List<InterestRate> getInterestRateByBankName(String bankName) {
-        return interestRateRepository.getInterestRateByBankName(bankName);
+    public Map<String, Object> getListInterestRateByFilter(InterestRateFilterModel filter) throws ParseException {
+        Map<String, Object> result = new HashMap<>();
+        result.put("listInterestRate", interestRateRepository.selectAllForInterestRate(filter.getBankName()));
+        return result;
     }
 
+
+
+//    public List<InterestRate> getInterestRateByBankName(String bankName) {
+//        return interestRateRepository.getInterestRateByBankName(bankName);
+//    }
+
+    // import data from file excel world bank to databse
     public void importInterestRateFromFile(String filePath) throws Exception {
         InputStream is = new FileInputStream(filePath);
         HSSFWorkbook workbook = new HSSFWorkbook(is);
@@ -84,45 +90,57 @@ public class InterestRateService {
         List<InterestRate> interestRateList = new ArrayList<>();
         String countryName =row.getCell(ORDER_COLUMNS_NAME.get("Country Name"),Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
 
-        double interestRate2020 =ConvertDataExcelUtils.convertDataFromExcelToDouble(row.getCell(ORDER_COLUMNS_NAME.get("2020")));
-        double interestRate2021 =ConvertDataExcelUtils.convertDataFromExcelToDouble(row.getCell(ORDER_COLUMNS_NAME.get("2021")));
-        double interestRate2022 =ConvertDataExcelUtils.convertDataFromExcelToDouble(row.getCell(ORDER_COLUMNS_NAME.get("2022")));
+        int lastCellNum = row.getLastCellNum();
+        double interestRateBefore = ConvertDataExcelUtils.convertDataFromExcelToDouble(row.getCell(lastCellNum - 2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
+        double interestRateCurrent = ConvertDataExcelUtils.convertDataFromExcelToDouble(row.getCell(lastCellNum - 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
 
         Optional<InterestRate> existingInterestRate = interestRateRepository.getInterestRateByCountry(countryName);
         if(CheckRequiredColumnUtils.INTEREST_RATE_COUNTRY_ROW.contains(countryName)){
             if(existingInterestRate.isPresent()) {
-                // assigning values for CompetitorPricing
+                // assigning values for InterestRate
+                if(countryName.equals("Hong Kong SAR, China")){
+                    countryName="Hong Kong";
+                }
+                if(countryName.equals("Korea, Rep.")){
+                    countryName="South Korea";
+                }
+                if(countryName.equals("Viet Nam")){
+                    countryName="Vietnam";
+                }
                 InterestRate ir = existingInterestRate.get();
                 ir.setBankName(countryName+" Central Bank");
                 ir.setCountry(countryName);
 //            ir.setCurrentRate(((interestRate2022-interestRate2021)/2000)*100);
 //            ir.setPreviousRate(((interestRate2021-interestRate2020)/1000)*100);
-                ir.setCurrentRate(interestRate2022);
-                ir.setPreviousRate(interestRate2021);
+                ir.setCurrentRate(interestRateCurrent);
+                ir.setPreviousRate(interestRateBefore);
 
                 ir.setUpdateDate(lastUpdatedDate);
                 interestRateList.add(ir);
             }else{
-                // assigning values for CompetitorPricing
+                // assigning values for InterestRate
+                if(countryName.equals("Hong Kong SAR, China")){
+                    countryName="Hong Kong";
+                }
+                if(countryName.equals("Korea, Rep.")){
+                    countryName="South Korea";
+                }
+                if(countryName.equals("Viet Nam")){
+                    countryName="Vietnam";
+                }
                 InterestRate ir = new InterestRate();
                 ir.setBankName(countryName+" Central Bank");
                 ir.setCountry(countryName);
 //            ir.setCurrentRate(((interestRate2022-interestRate2021)/2000)*100);
 //            ir.setPreviousRate(((interestRate2021-interestRate2020)/1000)*100);
-                ir.setCurrentRate(interestRate2022);
-                ir.setPreviousRate(interestRate2021);
+                ir.setCurrentRate(interestRateCurrent);
+                ir.setPreviousRate(interestRateBefore);
                 ir.setUpdateDate(lastUpdatedDate);
-
                 interestRateList.add(ir);
             }
         }
         return interestRateList;
     }
 
-    private InterestRate checkExistAndUpdateInterestRate(InterestRate interestRate) {
-        Optional<InterestRate> dbInterestRate = interestRateRepository.getInterestRateByCountry(interestRate.getCountry());
-        dbInterestRate.ifPresent(ir -> interestRate.setCountry(ir.getCountry()));
-        return interestRate;
-    }
 
 }
