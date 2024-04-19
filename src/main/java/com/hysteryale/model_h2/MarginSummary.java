@@ -10,67 +10,78 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class IMMarginAnalystSummary {
+public class MarginSummary {
+    @EmbeddedId
+    private MarginSummaryId id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "marginAnalystSummarySequence")
-    private int id;
-
-    private String modelCode;
-
-    private String durationUnit;
-    private String currency;
-
+    @Column(name = "total_manufacturing_cost")
     private double totalManufacturingCost;
+
+    @Column(name = "cost_uplift")
     private double costUplift;
+
+    @Column(name = "add_warranty_percentage")
     private double addWarranty;
     private double surcharge;
     private double duty;
     private double freight;
+
+    @Column(name = "li_ion_included")
     private boolean liIonIncluded;
+
+    @Column(name = "total_cost")
     private double totalCost;
 
+    @Column(name = "full_cost_aop_rate")
+    private double fullCostAOPRate;
+
+    @Column(name = "total_list_price")
     private double totalListPrice;
+
+    @Column(name = "blended_discount_percentage")
     private double blendedDiscountPercentage;
+
+    @Column(name = "dealer_net")
     private double dealerNet;
     private double margin;
 
-    private double marginAopRate;
-    private double fullCostAopRate;
-    private double marginPercentAopRate;
+    @Column(name = "margin_aop_rate")
+    private double marginAOPRate;
 
-    private double marginMonthlyRate;
-    private double fullMonthlyRate;
-    private double marginPercentMonthlyRate;
+    @Column(name = "margin_percentage_aop_rate")
+    private double marginPercentageAOPRate;
 
+    @Column(name = "manufacturing_cost_usd")
     private double manufacturingCostUSD;
-    private double warrantyCost;
-    private double surchargeCost;
-    private double dutyCost;
-    private double totalCostWithoutFreight;
-    private double totalCostWithFreight;
 
-    private double manufacturingCostAop;
-    private double manufacturingCostMonthly;
+    @Column(name = "warranty_cost")
+    private double warrantyCost;
+
+    @Column(name = "surcharge_cost")
+    private double surchargeCost;
+
+    @Column(name = "duty_cost")
+    private double dutyCost;
+
+    @Column(name = "total_cost_without_freight")
+    private double totalCostWithoutFreight;
+
+    @Column(name = "total_cost_with_freight")
+    private double totalCostWithFreight;
 
     private String fileUUID;
     private String orderNumber;
     private String plant;
-    private int type;
 
-    public IMMarginAnalystSummary(String modelCode, String currency, double totalManufacturingCost, double costUplift, double addWarranty, double surcharge, double duty, double freight, boolean liIonIncluded, double totalCost, double totalListPrice, double blendedDiscountPercentage, double dealerNet, double margin, double marginAopRate, double manufacturingCostUSD, double warrantyCost, double surchargeCost, double dutyCost, double totalCostWithoutFreight, double totalCostWithFreight, String fileUUID, String plant) {
-        this.modelCode = modelCode;
-        this.currency = currency;
+    public MarginSummary(MarginSummaryId id, double totalManufacturingCost, double costUplift, double addWarranty, double surcharge, double duty, double freight, boolean liIonIncluded, double totalCost, double totalListPrice, double blendedDiscountPercentage, double dealerNet, double margin, double marginAOPRate, double manufacturingCostUSD, double warrantyCost, double surchargeCost, double dutyCost, double totalCostWithoutFreight, double totalCostWithFreight, String fileUUID, String plant) {
+        this.id = id;
         this.totalManufacturingCost = totalManufacturingCost;
         this.costUplift = costUplift;
         this.addWarranty = addWarranty;
@@ -83,7 +94,7 @@ public class IMMarginAnalystSummary {
         this.blendedDiscountPercentage = blendedDiscountPercentage;
         this.dealerNet = dealerNet;
         this.margin = margin;
-        this.marginAopRate = marginAopRate;
+        this.marginAOPRate = marginAOPRate;
         this.manufacturingCostUSD = manufacturingCostUSD;
         this.warrantyCost = warrantyCost;
         this.surchargeCost = surchargeCost;
