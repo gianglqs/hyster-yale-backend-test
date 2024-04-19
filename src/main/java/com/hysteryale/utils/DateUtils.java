@@ -131,7 +131,7 @@ public class DateUtils {
 
     public static LocalDate extractMonthAndYear(String fileName, String fileUUID) throws CanNotExtractMonthAnhYearException {
         //regex for type: Jar 2034
-        String regex = "\\b(Jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\\b.*\\b(\\d{4})\\b";
+        String regex = "\\b(Jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec).*\\b(\\d{4})\\b";
 
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(fileName);
