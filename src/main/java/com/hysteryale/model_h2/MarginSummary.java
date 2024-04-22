@@ -104,4 +104,8 @@ public class MarginSummary {
         this.fileUUID = fileUUID;
         this.plant = plant;
     }
+
+    public MarginSummary(String quoteNumber, int type, String modelCode, String series, String currency, int userId, String region) {
+        this.id = new MarginSummaryId(quoteNumber, type, modelCode, series, currency, userId, region);
+    }
 }

@@ -42,7 +42,6 @@ public class MarginData {
     private boolean isSPED;
 
     private String series;
-    private String region;
 
     public MarginData(MarginDataId id, String plant, double listPrice, double dealerNet, String series) {
         this.id = id;

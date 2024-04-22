@@ -36,6 +36,26 @@ public class MarginSummaryId implements Serializable {
 
     @Column(name = "duration_unit")
     private String durationUnit;
+    private String region;
+
+    public MarginSummaryId (String quoteNumber, int type, String modelCode, String series, String currency, String region) {
+        this.quoteNumber = quoteNumber;
+        this.type = type;
+        this.modelCode = modelCode;
+        this.series = series;
+        this.currency = currency;
+        this.region = region;
+    }
+
+    public MarginSummaryId (String quoteNumber, int type, String modelCode, String series, String currency, int userId, String region) {
+        this.quoteNumber = quoteNumber;
+        this.type = type;
+        this.modelCode = modelCode;
+        this.series = series;
+        this.currency = currency;
+        this.userId = userId;
+        this.region = region;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -49,11 +69,12 @@ public class MarginSummaryId implements Serializable {
                 series.equals(castedObject.getSeries()) &&
                 currency.equals(castedObject.getCurrency()) &&
                 userId == castedObject.getUserId() &&
-                durationUnit.equals(castedObject.getDurationUnit());
+                durationUnit.equals(castedObject.getDurationUnit()) &&
+                region.equals(castedObject.getRegion());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(quoteNumber, type, modelCode, series, currency, userId, durationUnit);
+        return Objects.hash(quoteNumber, type, modelCode, series, currency, userId, durationUnit, region);
     }
 }

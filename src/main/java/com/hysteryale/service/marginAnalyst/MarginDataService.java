@@ -157,7 +157,7 @@ public class MarginDataService {
         String quoteNumber = row.getCell(COLUMN_NAME.get("Quote Number:")).getStringCellValue();
 
         MarginData marginData = new MarginData(
-                        new MarginDataId(quoteNumber, type, modelCode, partNumber, strCurrency, userId),
+                        new MarginDataId(quoteNumber, type, modelCode, partNumber, strCurrency, userId, region),
                         plant, CurrencyFormatUtils.formatDoubleValue(listPrice, CurrencyFormatUtils.decimalFormatFourDigits),
                         CurrencyFormatUtils.formatDoubleValue(netPrice, CurrencyFormatUtils.decimalFormatFourDigits),
                         series
@@ -176,7 +176,6 @@ public class MarginDataService {
         }
 
         marginData.setManufacturingCost(CurrencyFormatUtils.formatDoubleValue(manufacturingCost, CurrencyFormatUtils.decimalFormatFourDigits));
-        marginData.setRegion(region);
         return marginData;
     }
 
@@ -196,30 +195,20 @@ public class MarginDataService {
      * Calculate MarginAnalystSummary and save into In-memory database
      */
     public MarginSummary calculateNonUSMarginAnalystSummary(String fileUUID, String plant, String strCurrency, String durationUnit, Integer type, String series,
-                                                            String modelCode, String orderNumber, String region, int userId) {
-        // Prepare Model Code for calculation if Model Code is null then --> use Series to find List of Mode Codes in a file with FileUUID
-        List<String> modelCodeList = Collections.singletonList(modelCode);
-        if(modelCode == null) modelCodeList = marginDataRepository.getModelCodesBySeries(fileUUID, series);
-
+                                                            String modelCode, String region, int userId, List<MarginData> marginDataList) {
         log.info("Calculating {} summary", durationUnit);
-        log.info("List of Model Codes in a summary: {}", modelCodeList);
+        log.info("Data in a Summary: {}", marginDataList.size());
 
-        String quoteNumber = "";
+        String quoteNumber = !marginDataList.isEmpty() ? marginDataList.get(0).getId().getQuoteNumber() : "";
+
+        // Calculate Total List Price, Total Manufacturing Cost and Total Dealer Net
         double totalListPrice = 0, totalManufacturingCost = 0, dealerNet = 0;
-        for(String mc : modelCodeList) {
-            List<MarginData> marginDataList =
-                    marginDataRepository.getIMMarginAnalystData(mc, orderNumber, strCurrency, type, fileUUID, series, region);
-
-            log.info("Data in a Summary: {}", marginDataList.size());
-            // If the Model Code does not have any Margin Analysis Data then ignore it.
-            if(marginDataList.isEmpty()) continue;
-            quoteNumber = marginDataList.get(0).getId().getQuoteNumber();
-            for(MarginData data : marginDataList) {
-                totalListPrice += data.getListPrice();
-                totalManufacturingCost += data.getManufacturingCost();
-                dealerNet += data.getDealerNet();
-            }
+        for(MarginData data : marginDataList) {
+            totalListPrice += data.getListPrice();
+            totalManufacturingCost += data.getManufacturingCost();
+            dealerNet += data.getDealerNet();
         }
+
         double costUplift = 0.0, surcharge = 0.015, aopRate = 1;
         boolean liIonIncluded = false;
 
@@ -267,7 +256,7 @@ public class MarginDataService {
 
         MarginSummary marginSummary = new MarginSummary
                 (
-                        new MarginSummaryId(quoteNumber, type, modelCode, series, strCurrency, userId, durationUnit),
+                        new MarginSummaryId(quoteNumber, type, modelCode, series, strCurrency, userId, durationUnit, region),
                         CurrencyFormatUtils.formatDoubleValue(totalManufacturingCost, CurrencyFormatUtils.decimalFormatFourDigits),
                         costUplift, warranty, surcharge, duty, freight, liIonIncluded,
                         CurrencyFormatUtils.formatDoubleValue(totalCost, CurrencyFormatUtils.decimalFormatFourDigits),
@@ -364,7 +353,7 @@ public class MarginDataService {
 
         MarginSummary marginSummary = new MarginSummary
                 (
-                        new MarginSummaryId(quoteNumber, type, modelCode, series, strCurrency, userId, durationUnit),
+                        new MarginSummaryId(quoteNumber, type, modelCode, series, strCurrency, userId, durationUnit, ""),
                         CurrencyFormatUtils.formatDoubleValue(totalManufacturingCost, CurrencyFormatUtils.decimalFormatFourDigits),
                         costUplift, warranty, surcharge, duty, freight, liIonIncluded,
                         CurrencyFormatUtils.formatDoubleValue(totalCost, CurrencyFormatUtils.decimalFormatFourDigits),
@@ -448,7 +437,7 @@ public class MarginDataService {
     }
 
     public Map<String, Object> calculateMarginAnalysisSummary(String fileUUID, Integer type, String modelCode, String series, String orderNumber,
-                                                              String currency, String region, int userId) throws SeriesNotFoundException {
+                                                              String currency, String region, int userId, List<MarginData> marginDataList) throws SeriesNotFoundException {
         String plant = marginAnalystMacroService.getPlantBySeries(series);
         if(plant == null) {
             plant = productRepository.getPlantBySeries(series);
@@ -459,8 +448,8 @@ public class MarginDataService {
         MarginSummary monthly;
         MarginSummary annually;
         if(plant.equals("Maximal") || plant.equals("Staxx") || plant.equals("Ruyi") || plant.equals("SN")) {
-            monthly = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "monthly", type, series, modelCode, orderNumber, region, userId);
-            annually = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "annually", type, series, modelCode, orderNumber, region, userId);
+            monthly = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "monthly", type, series, modelCode, region, userId,marginDataList);
+            annually = calculateNonUSMarginAnalystSummary(fileUUID, plant, currency, "annually", type, series, modelCode, region, userId, marginDataList);
         }
         else {
             monthly = calculateUSPlantMarginSummary(modelCode, series, currency, "monthly", orderNumber, type, fileUUID, userId);
@@ -495,7 +484,7 @@ public class MarginDataService {
 
         // Assigning value for imMarginAnalystData
         MarginData marginData = new MarginData(
-                new MarginDataId(quoteNumber, type, modelCode, partNumber, strCurrency, userId),
+                new MarginDataId(quoteNumber, type, modelCode, partNumber, strCurrency, userId, ""),
                 plant, CurrencyFormatUtils.formatDoubleValue(listPrice, CurrencyFormatUtils.decimalFormatFourDigits),
                 CurrencyFormatUtils.formatDoubleValue(netPrice, CurrencyFormatUtils.decimalFormatFourDigits),
                 series
@@ -588,7 +577,14 @@ public class MarginDataService {
     /**
      * View the history calculated Quotation Margin % Data
      */
-    public List<MarginData> viewHistoryMargin(MarginDataId id) {
-        return marginDataRepository.viewHistoryMarginData(id.getQuoteNumber(), id.getType(), id.getModelCode(), id.getCurrency(), id.getUserId());
+    public List<MarginSummaryId> listHistoryMarginSummary(int userId) {
+        return marginSummaryRepository.listHistoryMarginSummary(userId);
+    }
+
+    public Optional<MarginSummary> viewHistoryMarginSummary(MarginSummaryId id) {
+        return marginSummaryRepository.viewHistoryMarginSummary(
+                id.getQuoteNumber(), id.getType(), id.getModelCode(), id.getSeries(),
+                id.getCurrency(), id.getUserId(), id.getRegion(), id.getDurationUnit()
+        );
     }
 }

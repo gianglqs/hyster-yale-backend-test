@@ -21,7 +21,7 @@ public interface MarginDataRepository extends JpaRepository<MarginData, Integer>
             "AND m.id.currency = :currency " +
             "AND ((:type) IS NULL OR m.id.type = (:type)) " +
             "AND m.fileUUID = :fileuuid " +
-            "AND ((:region) IS NULL OR m.region = (:region))")
+            "AND ((:region) IS NULL OR m.id.region = (:region))")
     List<MarginData> getIMMarginAnalystData(@Param("model_code") String modelCode, @Param("order_number") String orderNumber,
                                             @Param("currency") String currency, @Param("type") Integer type,
                                             @Param("fileuuid") String fileUUID, @Param("series") String series,
@@ -34,7 +34,7 @@ public interface MarginDataRepository extends JpaRepository<MarginData, Integer>
             "FROM MarginData m " +
             "WHERE m.fileUUID = ?1 " +
             "AND m.id.currency = ?2 " +
-            "AND m.region = ?3")
+            "AND m.id.region = ?3")
     boolean isFileCalculated(String fileUIID, String currency, String region);
 
     @Query("SELECT m from MarginData m " +
@@ -43,12 +43,4 @@ public interface MarginDataRepository extends JpaRepository<MarginData, Integer>
             "AND m.id.type = ?3 " +
             "AND m.fileUUID = ?4")
     Optional<MarginData> getIMMarginAnalystDataForTesting(String modelCode, String partNumber, int type, String fileUUID);
-
-    @Query("SELECT m FROM MarginData m " +
-            "WHERE m.id.quoteNumber = ?1 " +
-            "AND m.id.type = ?2 " +
-            "AND m.id.modelCode = ?3 " +
-            "AND m.id.currency = ?4 " +
-            "AND m.id.userId = ?5")
-    List<MarginData> viewHistoryMarginData(String quoteNumber, int type, String modelCode, String currency, int userId);
 }

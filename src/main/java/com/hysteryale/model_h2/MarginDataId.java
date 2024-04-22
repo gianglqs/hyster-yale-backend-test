@@ -34,6 +34,7 @@ public class MarginDataId implements Serializable {
 
     @Column(name = "user_id")
     private int userId;
+    private String region;
 
     @Override
     public boolean equals(Object o) {
@@ -47,11 +48,12 @@ public class MarginDataId implements Serializable {
                 modelCode.equals(castedObject.getModelCode()) &&
                 partNumber.equals(castedObject.getPartNumber()) &&
                 currency.equals(castedObject.getCurrency()) &&
-                userId == castedObject.getUserId();
+                userId == castedObject.getUserId() &&
+                region.equals(castedObject.getRegion());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(quoteNumber, type, modelCode, partNumber, currency, userId);
+        return Objects.hash(quoteNumber, type, modelCode, partNumber, currency, userId, region);
     }
 }
