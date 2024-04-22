@@ -14,9 +14,11 @@ import com.hysteryale.model.upload.FileUpload;
 import com.hysteryale.model_h2.MarginData;
 import com.hysteryale.model_h2.MarginDataId;
 import com.hysteryale.model_h2.MarginSummary;
+import com.hysteryale.model_h2.MarginSummaryId;
 import com.hysteryale.repository.marginAnalyst.MarginAnalystMacroRepository;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.repository_h2.MarginDataRepository;
+import com.hysteryale.repository_h2.MarginSummaryRepository;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +54,8 @@ public class IMMarginAnalystServiceTest {
     MarginAnalystMacroService marginAnalystMacroService;
     @Resource
     FileUploadRepository fileUploadRepository;
+    @Resource
+    MarginSummaryRepository marginSummaryRepository;
 
     @BeforeEach
     public void setUp() throws IOException {
@@ -163,16 +167,18 @@ public class IMMarginAnalystServiceTest {
 
     @Test
     public void testIsFileCalculated() {
+        String fileUUID = "UUID test file calculated";
+        String currency = "USD";
+        String region = "region";
+
         MarginData data = new MarginData();
-        MarginDataId id = new MarginDataId();
-        id.setCurrency("USD");
-        id.setRegion("");
+        MarginDataId id = new MarginDataId("", 0, "", "", currency, 1, region);
 
         data.setId(id);
-        data.setFileUUID("UUID test file calculated");
+        data.setFileUUID(fileUUID);
         marginAnalystDataRepository.save(data);
 
-        boolean result = marginAnalystDataService.isFileCalculated("UUID test file calculated", "USD", "");
+        boolean result = marginAnalystDataService.isFileCalculated(fileUUID, currency, region);
         Assertions.assertTrue(result);
     }
 
@@ -253,8 +259,10 @@ public class IMMarginAnalystServiceTest {
                 manufacturingCost = manufacturingCost * exchangeRate + 0.9 * data.getDealerNet();
                 manufacturingCost = manufacturingCost / exchangeRate;
             }
-            Assertions.assertEquals(manufacturingCost, data.getManufacturingCost());
-
+            Assertions.assertEquals(
+                    CurrencyFormatUtils.formatDoubleValue(manufacturingCost, CurrencyFormatUtils.decimalFormatFourDigits),
+                    CurrencyFormatUtils.formatDoubleValue(data.getManufacturingCost(), CurrencyFormatUtils.decimalFormatFourDigits)
+            );
         }
     }
 
@@ -277,9 +285,9 @@ public class IMMarginAnalystServiceTest {
         List<MarginData> dataList = marginAnalystDataService.getIMMarginAnalystData(modelCode, strCurrency, fileUUID, orderNumber, type, series, "");
         Assertions.assertEquals(34, dataList.size());
 
-        Map<String, Object> result = marginAnalystDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, strCurrency, "", userId, new ArrayList<>());
-        MarginSummary monthlyResult = (MarginSummary) result.get("MarginAnalystSummaryMonthly");
-        MarginSummary annuallyResult = (MarginSummary) result.get("MarginAnalystSummaryAnnually");
+        Map<String, Object> result = marginAnalystDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, strCurrency, "", userId, dataList);
+        MarginSummary monthlyResult = (MarginSummary) result.get("monthly");
+        MarginSummary annuallyResult = (MarginSummary) result.get("annually");
 
         assertMarginAnalystSummary(monthlyResult, dataList, series, true);
         assertMarginAnalystSummary(annuallyResult, dataList, series, false);
@@ -329,5 +337,89 @@ public class IMMarginAnalystServiceTest {
         // consider monthly and annually rate
         Assertions.assertEquals(CurrencyFormatUtils.formatDoubleValue(fullCostAOPRate, CurrencyFormatUtils.decimalFormatFourDigits),result.getFullCostAOPRate());
         Assertions.assertEquals(CurrencyFormatUtils.formatDoubleValue(marginPercentAopRate, CurrencyFormatUtils.decimalFormatFourDigits),result.getMarginPercentageAOPRate());
+    }
+
+    @Test
+    public void testListHistoryMargin() {
+        int numberOfSummaries = 10;
+        List<MarginSummary> marginSummaryList = new ArrayList<>();
+        for(int i = 0; i < numberOfSummaries; i++) {
+            MarginSummaryId id = new MarginSummaryId(
+                    Integer.valueOf(i).toString(), 0, "List History Margin", "List History Margin",
+                    "USD", 1, "annually", "List History Margin"
+            );
+            MarginSummary marginSummary = new MarginSummary();
+            marginSummary.setId(id);
+            marginSummaryList.add(marginSummary);
+        }
+        marginSummaryRepository.saveAll(marginSummaryList);
+
+        List<MarginSummaryId> result = marginAnalystDataService.listHistoryMarginSummary(1);
+        Assertions.assertEquals(numberOfSummaries, result.size());
+    }
+
+    @Test
+    public void testViewHistoryMarginSummary() {
+        MarginSummaryId id = new MarginSummaryId(
+                "Quote Number", 0, "List History Margin", "List History Margin",
+                "USD", 3, "annually", "List History Margin"
+        );
+        MarginSummary marginSummary = new MarginSummary();
+        marginSummary.setId(id);
+        marginSummaryRepository.save(marginSummary);
+
+        Optional<MarginSummary> result = marginAnalystDataService.viewHistoryMarginSummary(id);
+        Assertions.assertTrue(result.isPresent());
+    }
+
+    @Test
+    public void testSaveMarginSummary() {
+        MarginSummaryId monthlyId = new MarginSummaryId(
+                "Quote Number Save", 0, "List History Margin", "List History Margin",
+                "USD", 4, "monthly", "List History Margin"
+        );
+        MarginSummary monthly = new MarginSummary();
+        monthly.setId(monthlyId);
+        marginSummaryRepository.save(monthly);
+
+        MarginSummaryId annuallyId = new MarginSummaryId(
+                "Quote Number Save", 0, "List History Margin", "List History Margin",
+                "USD", 4, "annually", "List History Margin"
+        );
+        MarginSummary annually = new MarginSummary();
+        annually.setId(annuallyId);
+        marginSummaryRepository.save(annually);
+
+        Optional<MarginSummary> resultMonthly = marginAnalystDataService.viewHistoryMarginSummary(monthlyId);
+        Optional<MarginSummary> resultAnnually = marginAnalystDataService.viewHistoryMarginSummary(annuallyId);
+
+        Assertions.assertTrue(resultMonthly.isPresent());
+        Assertions.assertTrue(resultAnnually.isPresent());
+    }
+
+    @Test
+    public void testDeleteMarginSummary() {
+        MarginSummaryId monthlyId = new MarginSummaryId(
+                "Quote Number Delete", 0, "List History Margin", "List History Margin",
+                "USD", 2, "monthly", "List History Margin"
+        );
+        MarginSummary monthly = new MarginSummary();
+        monthly.setId(monthlyId);
+        marginSummaryRepository.save(monthly);
+
+        MarginSummaryId annuallyId = new MarginSummaryId(
+                "Quote Number Delete 1", 0, "List History Margin", "List History Margin",
+                "USD", 2, "annually", "List History Margin"
+        );
+        MarginSummary annually = new MarginSummary();
+        annually.setId(annuallyId);
+        marginSummaryRepository.save(annually);
+
+        List<MarginSummaryId> dataBeforeDeleting = marginAnalystDataService.listHistoryMarginSummary(2);
+        Assertions.assertEquals(2, dataBeforeDeleting.size());
+
+        marginAnalystDataService.deleteMarginSummary(monthlyId);
+        List<MarginSummaryId> dataAfterDeleting = marginAnalystDataService.listHistoryMarginSummary(2);
+        Assertions.assertEquals(1, dataAfterDeleting.size());
     }
 }
