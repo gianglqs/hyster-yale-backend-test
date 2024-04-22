@@ -6,6 +6,7 @@
 package com.hysteryale.repository_h2;
 
 import com.hysteryale.model_h2.MarginData;
+import com.hysteryale.model_h2.MarginDataId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +14,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface MarginDataRepository extends JpaRepository<MarginData, Integer> {
+public interface MarginDataRepository extends JpaRepository<MarginData, MarginDataId> {
     @Query("SELECT m from MarginData m " +
             "WHERE ((:model_code) IS NULL OR m.id.modelCode = (:model_code)) " +
             "AND ((:series) IS NULL OR m.series = (:series)) " +
