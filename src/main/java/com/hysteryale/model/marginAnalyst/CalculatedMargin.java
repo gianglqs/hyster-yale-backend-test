@@ -5,7 +5,7 @@
 
 package com.hysteryale.model.marginAnalyst;
 
-import com.hysteryale.model_h2.IMMarginAnalystData;
+import com.hysteryale.model_h2.MarginData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class CalculatedMargin {
-    private IMMarginAnalystData marginData;
+    private MarginData marginData;
     private String region;
 }
