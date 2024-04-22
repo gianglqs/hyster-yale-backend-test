@@ -11,6 +11,7 @@ import com.hysteryale.model.User;
 import com.hysteryale.model.marginAnalyst.CalculatedMargin;
 import com.hysteryale.model_h2.MarginData;
 import com.hysteryale.model_h2.MarginDataId;
+import com.hysteryale.model_h2.MarginSummaryId;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.PartService;
@@ -88,7 +89,7 @@ public class MarginAnalystController {
         assert series != null;
         return Map.of(
                 "MarginAnalystData", marginDataList,
-                "MarginAnalystSummary", marginDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, currency, region),
+                "MarginAnalystSummary", marginDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, currency, region, user.getId(), marginDataList),
                 "TargetMargin", targetMargin
         );
     }
@@ -111,7 +112,7 @@ public class MarginAnalystController {
             throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
 
         String uuid = fileUploadRepository.getUUIDByName(fileName);
-        Map<String, Object> marginFilters = marginDataService.populateMarginFilters(filePath, fileName, uuid);
+        Map<String, Object> marginFilters = marginDataService.populateMarginFilters(filePath, uuid);
         fileUploadService.handleUpdatedSuccessfully(fileName);
 
         return Map.of(
@@ -160,10 +161,22 @@ public class MarginAnalystController {
 
     }
 
-    @PostMapping(path = "/view-history-margin")
-    public List<MarginData> viewHistoryMargin(@RequestBody MarginDataId id, Authentication authentication) throws EmailNotFoundException {
+    @PostMapping(path = "/list-history-margin")
+    public Map<String, Object> ListHistoryMarginSummary(Authentication authentication) throws EmailNotFoundException {
+        User user = userService.getUserByEmail(authentication.getName());
+        return Map.of(
+                "historicalMargin", marginDataService.listHistoryMarginSummary(user.getId())
+        );
+    }
+
+    @PostMapping(path = "/view-history-margin", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> viewHistoryMargin(@RequestBody MarginSummaryId id, Authentication authentication) throws EmailNotFoundException {
         User user = userService.getUserByEmail(authentication.getName());
         id.setUserId(user.getId());
-        return marginDataService.viewHistoryMargin(id);
+        log.info("{}", id.getType());
+        log.info("{}", id.getSeries());
+        return Map.of(
+                "margin", marginDataService.viewHistoryMarginSummary(id)
+        );
     }
 }
