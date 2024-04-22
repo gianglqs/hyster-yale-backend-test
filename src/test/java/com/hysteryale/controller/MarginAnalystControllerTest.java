@@ -6,8 +6,9 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.model.marginAnalyst.CalculatedMargin;
-import com.hysteryale.model_h2.IMMarginAnalystData;
-import com.hysteryale.service.marginAnalyst.IMMarginAnalystDataService;
+import com.hysteryale.model_h2.MarginData;
+import com.hysteryale.model_h2.MarginDataId;
+import com.hysteryale.service.marginAnalyst.MarginDataService;
 import com.hysteryale.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -28,8 +29,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Objects;
-
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,7 +43,7 @@ public class MarginAnalystControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private IMMarginAnalystDataService imMarginAnalystDataService;
+    private MarginDataService marginDataService;
 
     @BeforeEach
     public void setUp() {
@@ -151,16 +150,19 @@ public class MarginAnalystControllerTest {
     @WithMockUser(authorities = "USER")
     public void testEstimateMarginAnalystData() throws Exception {
 
-        IMMarginAnalystData marginData = new IMMarginAnalystData();
-        marginData.setModelCode("");
-        marginData.setCurrency("USD");
+        MarginData marginData = new MarginData();
+        MarginDataId id = new MarginDataId();
+        id.setModelCode("");
+        id.setCurrency("USD");
+        id.setType(0);
+
+        marginData.setId(id);
         marginData.setOrderNumber("");
-        marginData.setType(0);
         marginData.setSeries("D466");
         marginData.setFileUUID("123");
         CalculatedMargin filter = new CalculatedMargin(marginData, "Asia");
 
-        when(imMarginAnalystDataService.isFileCalculated("123", "USD", "")).thenReturn(true);
+        when(marginDataService.isFileCalculated("123", "USD", "")).thenReturn(true);
 
         MvcResult result =
                 mockMvc

@@ -11,11 +11,12 @@ import com.hysteryale.exception.SeriesNotFoundException;
 import com.hysteryale.model.Currency;
 import com.hysteryale.model.marginAnalyst.MarginAnalystMacro;
 import com.hysteryale.model.upload.FileUpload;
-import com.hysteryale.model_h2.IMMarginAnalystData;
-import com.hysteryale.model_h2.IMMarginAnalystSummary;
+import com.hysteryale.model_h2.MarginData;
+import com.hysteryale.model_h2.MarginDataId;
+import com.hysteryale.model_h2.MarginSummary;
 import com.hysteryale.repository.marginAnalyst.MarginAnalystMacroRepository;
 import com.hysteryale.repository.upload.FileUploadRepository;
-import com.hysteryale.repository_h2.IMMarginAnalystDataRepository;
+import com.hysteryale.repository_h2.MarginDataRepository;
 import com.hysteryale.utils.CurrencyFormatUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +43,9 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class IMMarginAnalystServiceTest {
     @Resource
-    IMMarginAnalystDataService marginAnalystDataService;
+    MarginDataService marginAnalystDataService;
     @Resource
-    IMMarginAnalystDataRepository marginAnalystDataRepository;
+    MarginDataRepository marginAnalystDataRepository;
     @Resource
     MarginAnalystMacroRepository marginAnalystMacroRepository;
     @Resource
@@ -134,7 +135,7 @@ public class IMMarginAnalystServiceTest {
                 typeMap.put((int) row.getCell(columns.get("#")).getNumericCellValue(), 1);
             }
         }
-        Map<String, Object> result = marginAnalystDataService.populateMarginFilters("import_files/novo/SN_AUD.xlsx", "SN_AUD.xlsx", fileUpload.getUuid());
+        Map<String, Object> result = marginAnalystDataService.populateMarginFilters("import_files/novo/SN_AUD.xlsx", fileUpload.getUuid());
         Assertions.assertNotNull(result.get("modelCodes"));
         Assertions.assertNotNull(result.get("series"));
         Assertions.assertNotNull(result.get("orderNumbers"));
@@ -162,10 +163,13 @@ public class IMMarginAnalystServiceTest {
 
     @Test
     public void testIsFileCalculated() {
-        IMMarginAnalystData data = new IMMarginAnalystData();
+        MarginData data = new MarginData();
+        MarginDataId id = new MarginDataId();
+        id.setCurrency("USD");
+        id.setRegion("");
+
+        data.setId(id);
         data.setFileUUID("UUID test file calculated");
-        data.setCurrency("USD");
-        data.setRegion("");
         marginAnalystDataRepository.save(data);
 
         boolean result = marginAnalystDataService.isFileCalculated("UUID test file calculated", "USD", "");
@@ -174,11 +178,13 @@ public class IMMarginAnalystServiceTest {
 
     @Test
     public void testCalculateMarginAnalysisData() throws IOException, IncorectFormatCellException {
+        int userId = 1;
+
         FileUpload fileUpload = new FileUpload();
         fileUpload.setFileName("SN_AUD.xlsx");
         fileUpload.setUuid("UUID For Calculating Margin Data");
         fileUploadRepository.save(fileUpload);
-        marginAnalystDataService.calculateMarginAnalysisData("UUID For Calculating Margin Data", "AUD", "");
+        marginAnalystDataService.calculateMarginAnalysisData("UUID For Calculating Margin Data", "AUD", "", userId);
 
         FileInputStream is = new FileInputStream("import_files/novo/SN_AUD.xlsx");
         XSSFWorkbook workbook = new XSSFWorkbook(is);
@@ -197,9 +203,9 @@ public class IMMarginAnalystServiceTest {
             double listPrice = row.getCell(columns.get("List Price")).getNumericCellValue();
             double dealerNet = row.getCell(columns.get("Net Price Each")).getNumericCellValue();
 
-            Optional<IMMarginAnalystData> optional = marginAnalystDataRepository.getIMMarginAnalystDataForTesting(modelCode, partNumber, type, "UUID For Calculating Margin Data");
+            Optional<MarginData> optional = marginAnalystDataRepository.getIMMarginAnalystDataForTesting(modelCode, partNumber, type, "UUID For Calculating Margin Data");
             if(optional.isPresent()) {
-                IMMarginAnalystData dbData = optional.get();
+                MarginData dbData = optional.get();
 
                 Assertions.assertEquals(series, dbData.getSeries());
                 Assertions.assertEquals(listPrice, dbData.getListPrice());
@@ -216,26 +222,27 @@ public class IMMarginAnalystServiceTest {
         String orderNumber = "H82381";
         Integer type = 1;
         String series = "A3C1";
+        int userId = 1;
 
         FileUpload fileUpload = new FileUpload();
         fileUpload.setFileName("example 1_HYM.xlsx");
         fileUpload.setUuid(fileUUID);
         fileUploadRepository.save(fileUpload);
-        marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency, "");
+        marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency, "", userId);
 
-        List<IMMarginAnalystData> result = marginAnalystDataService.getIMMarginAnalystData(modelCode, strCurrency, fileUUID, orderNumber, type, series, "");
+        List<MarginData> result = marginAnalystDataService.getIMMarginAnalystData(modelCode, strCurrency, fileUUID, orderNumber, type, series, "");
         Assertions.assertEquals(34, result.size());
 
-        for(IMMarginAnalystData data : result) {
-            Assertions.assertEquals(modelCode, data.getModelCode());
-            Assertions.assertEquals(strCurrency, data.getCurrency());
+        for(MarginData data : result) {
+            Assertions.assertEquals(modelCode, data.getId().getModelCode());
+            Assertions.assertEquals(strCurrency, data.getId().getCurrency());
             Assertions.assertEquals(fileUUID, data.getFileUUID());
             Assertions.assertEquals(orderNumber, data.getOrderNumber());
-            Assertions.assertEquals(type, data.getType());
+            Assertions.assertEquals(type, data.getId().getType());
             Assertions.assertEquals(series, data.getSeries());
 
             Double manufacturingCost = marginAnalystMacroRepository.getManufacturingCost(
-                    modelCode, data.getOptionCode(), strCurrency,
+                    modelCode, data.getId().getPartNumber(), strCurrency,
                     new ArrayList<>(List.of("Maximal"))
             );
             double exchangeRate = 0.1436; // Exchange Rate in 2023 Decembers
@@ -259,28 +266,29 @@ public class IMMarginAnalystServiceTest {
         String orderNumber = "H82381";
         Integer type = 1;
         String series = "A3C1";
+        int userId = 1;
 
         FileUpload fileUpload = new FileUpload();
         fileUpload.setFileName("example 1_HYM.xlsx");
         fileUpload.setUuid(fileUUID);
         fileUploadRepository.save(fileUpload);
-        marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency, "");
+        marginAnalystDataService.calculateMarginAnalysisData(fileUUID, strCurrency, "", userId);
 
-        List<IMMarginAnalystData> dataList = marginAnalystDataService.getIMMarginAnalystData(modelCode, strCurrency, fileUUID, orderNumber, type, series, "");
+        List<MarginData> dataList = marginAnalystDataService.getIMMarginAnalystData(modelCode, strCurrency, fileUUID, orderNumber, type, series, "");
         Assertions.assertEquals(34, dataList.size());
 
-        Map<String, Object> result = marginAnalystDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, strCurrency, "");
-        IMMarginAnalystSummary monthlyResult = (IMMarginAnalystSummary) result.get("MarginAnalystSummaryMonthly");
-        IMMarginAnalystSummary annuallyResult = (IMMarginAnalystSummary) result.get("MarginAnalystSummaryAnnually");
+        Map<String, Object> result = marginAnalystDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, strCurrency, "", userId, new ArrayList<>());
+        MarginSummary monthlyResult = (MarginSummary) result.get("MarginAnalystSummaryMonthly");
+        MarginSummary annuallyResult = (MarginSummary) result.get("MarginAnalystSummaryAnnually");
 
         assertMarginAnalystSummary(monthlyResult, dataList, series, true);
         assertMarginAnalystSummary(annuallyResult, dataList, series, false);
     }
 
-    private void assertMarginAnalystSummary(IMMarginAnalystSummary result, List<IMMarginAnalystData> dataList, String series, boolean isMonthly) {
+    private void assertMarginAnalystSummary(MarginSummary result, List<MarginData> dataList, String series, boolean isMonthly) {
         LocalDate monthYear = LocalDate.of(2023, Month.DECEMBER, 1);
         double totalListPrice = 0, totalManufacturingCost = 0, totalDealerNet = 0;
-        for(IMMarginAnalystData data : dataList) {
+        for(MarginData data : dataList) {
             totalListPrice += data.getListPrice();
             totalManufacturingCost += data.getManufacturingCost();
             totalDealerNet += data.getDealerNet();
@@ -306,7 +314,7 @@ public class IMMarginAnalystServiceTest {
         Assertions.assertEquals(CurrencyFormatUtils.formatDoubleValue(totalListPrice, CurrencyFormatUtils.decimalFormatFourDigits), result.getTotalListPrice());
         Assertions.assertEquals(CurrencyFormatUtils.formatDoubleValue(totalManufacturingCost, CurrencyFormatUtils.decimalFormatFourDigits), result.getTotalManufacturingCost());
         Assertions.assertEquals( CurrencyFormatUtils.formatDoubleValue(totalDealerNet, CurrencyFormatUtils.decimalFormatFourDigits), result.getDealerNet());
-        Assertions.assertEquals(aopRate, result.getMarginAopRate());
+        Assertions.assertEquals(aopRate, result.getMarginAOPRate());
         Assertions.assertEquals(warranty, result.getAddWarranty());
         Assertions.assertEquals(duty, result.getDuty());
         Assertions.assertEquals(CurrencyFormatUtils.formatDoubleValue(totalCost, CurrencyFormatUtils.decimalFormatFourDigits), result.getTotalCost());
@@ -319,7 +327,7 @@ public class IMMarginAnalystServiceTest {
         Assertions.assertEquals(CurrencyFormatUtils.formatDoubleValue(margin, CurrencyFormatUtils.decimalFormatFourDigits), result.getMargin());
 
         // consider monthly and annually rate
-        Assertions.assertEquals(CurrencyFormatUtils.formatDoubleValue(fullCostAOPRate, CurrencyFormatUtils.decimalFormatFourDigits), isMonthly ? result.getFullMonthlyRate() : result.getFullCostAopRate());
-        Assertions.assertEquals(CurrencyFormatUtils.formatDoubleValue(marginPercentAopRate, CurrencyFormatUtils.decimalFormatFourDigits), isMonthly ? result.getMarginPercentMonthlyRate() : result.getMarginPercentAopRate());
+        Assertions.assertEquals(CurrencyFormatUtils.formatDoubleValue(fullCostAOPRate, CurrencyFormatUtils.decimalFormatFourDigits),result.getFullCostAOPRate());
+        Assertions.assertEquals(CurrencyFormatUtils.formatDoubleValue(marginPercentAopRate, CurrencyFormatUtils.decimalFormatFourDigits),result.getMarginPercentageAOPRate());
     }
 }
