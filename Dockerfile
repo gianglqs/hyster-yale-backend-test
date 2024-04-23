@@ -20,6 +20,8 @@ FROM eclipse-temurin:17-jdk-alpine
 VOLUME /app
 
 COPY --from=build /app/target/ target/
+COPY locale/ /locale/
+
 EXPOSE 8080
 
 # create folder to save file when import file excel

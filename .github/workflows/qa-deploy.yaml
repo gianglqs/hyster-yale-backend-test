@@ -68,8 +68,6 @@ jobs:
         shell: bash
         run: |
           CONTAINER_NAME=hysteryale-be
-          # delete old images
-          docker rmi -f ghcr.io/phoenix-software-development/hyster-yale-backend:latest || true
           
           # pull 
           docker pull ghcr.io/phoenix-software-development/hyster-yale-backend:latest
@@ -77,6 +75,9 @@ jobs:
           # if container is running, stop it
           if docker ps -a --format '{{.Names}}' | grep -Eq "^$CONTAINER_NAME$"; then
              docker stop $CONTAINER_NAME || true
+          
+             # delete old images
+             docker image prune -af
           fi
           
           # remove image and containers old
