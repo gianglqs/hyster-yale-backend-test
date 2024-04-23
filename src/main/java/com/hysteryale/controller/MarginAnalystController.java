@@ -12,7 +12,9 @@ import com.hysteryale.model.marginAnalyst.CalculatedMargin;
 import com.hysteryale.model_h2.MarginData;
 import com.hysteryale.model_h2.MarginDataId;
 import com.hysteryale.model_h2.MarginSummaryId;
+import com.hysteryale.model_h2.SavedMarginSummary;
 import com.hysteryale.repository.upload.FileUploadRepository;
+import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
 import com.hysteryale.service.PartService;
 import com.hysteryale.service.UserService;
@@ -22,9 +24,12 @@ import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.model.enums.ModelTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -178,5 +183,18 @@ public class MarginAnalystController {
         return Map.of(
                 "margin", marginDataService.viewHistoryMarginSummary(id)
         );
+    }
+
+    @PostMapping(path = "/save-margin-data", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseObject> saveMarginData(@RequestBody SavedMarginSummary savedMarginSummary) {
+        marginDataService.saveMarginSummary(savedMarginSummary);
+        return new ResponseEntity<>(new ResponseObject("Saved successfully", null), HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/delete-margin-data", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteMarginData(@RequestBody MarginSummaryId id, Authentication authentication) throws EmailNotFoundException {
+        User user = userService.getUserByEmail(authentication.getName());
+        id.setUserId(user.getId());
+        marginDataService.deleteMarginSummary(id);
     }
 }

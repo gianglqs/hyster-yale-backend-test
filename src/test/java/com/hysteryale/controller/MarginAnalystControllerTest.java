@@ -6,8 +6,7 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.model.marginAnalyst.CalculatedMargin;
-import com.hysteryale.model_h2.MarginData;
-import com.hysteryale.model_h2.MarginDataId;
+import com.hysteryale.model_h2.*;
 import com.hysteryale.service.marginAnalyst.MarginDataService;
 import com.hysteryale.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -147,7 +147,7 @@ public class MarginAnalystControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = "USER")
+    @WithMockUser(authorities = "USER", username = "user1@gmail.com")
     public void testEstimateMarginAnalystData() throws Exception {
 
         MarginData marginData = new MarginData();
@@ -174,6 +174,66 @@ public class MarginAnalystControllerTest {
                         .andExpect(jsonPath("$.MarginAnalystData").isArray())
                         .andExpect(jsonPath("$.MarginAnalystSummary").isMap())
                         .andExpect(jsonPath("$.TargetMargin").isNumber())
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER", username = "user1@gmail.com")
+    public void testListHistoryMargin() throws Exception {
+        MvcResult result =
+                mockMvc
+                        .perform(post("/list-history-margin"))
+                        .andExpect(jsonPath("$.historicalMargin").isArray())
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER", username = "user1@gmail.com")
+    public void testViewHistoryMargin() throws Exception {
+        MarginSummaryId id = new MarginSummaryId("", 0, "", "", "", 0, "", "");
+
+        MvcResult result =
+                mockMvc
+                        .perform(
+                                post("/view-history-margin")
+                                        .content(JsonUtils.toJSONString(id))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                        )
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER", username = "user1@gmail.com")
+    public void testSaveMarginData() throws Exception {
+        SavedMarginSummary savedMarginSummary = new SavedMarginSummary(new MarginSummary(), new MarginSummary());
+
+        MvcResult result =
+                mockMvc
+                        .perform(
+                                post("/save-margin-data")
+                                        .content(JsonUtils.toJSONString(savedMarginSummary))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                        )
+                        .andExpect(jsonPath("$.message").isString())
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER", username = "user1@gmail.com")
+    public void testDeleteMarginData() throws Exception {
+        MarginSummaryId id = new MarginSummaryId("", 0, "", "", "", 0, "", "");
+
+        MvcResult result =
+                mockMvc
+                        .perform(
+                                delete("/delete-margin-data")
+                                        .content(JsonUtils.toJSONString(id))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                        )
                         .andReturn();
         Assertions.assertEquals(200, result.getResponse().getStatus());
     }

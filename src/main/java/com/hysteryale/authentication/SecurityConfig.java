@@ -98,6 +98,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/product/uploadImage").permitAll()
                 .antMatchers("/fileUpload/updateColumnSize").permitAll()
                 .antMatchers("/version/**").permitAll()
+                .antMatchers("/gdp/collectData").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/author/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/users/resetPassword").permitAll()
                 .antMatchers("/h2/**").permitAll()

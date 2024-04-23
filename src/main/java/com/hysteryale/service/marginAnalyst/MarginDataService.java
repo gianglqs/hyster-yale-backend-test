@@ -10,10 +10,7 @@ import com.hysteryale.exception.MissingColumnException;
 import com.hysteryale.exception.SeriesNotFoundException;
 import com.hysteryale.model.Booking;
 import com.hysteryale.model.marginAnalyst.MarginAnalysisAOPRate;
-import com.hysteryale.model_h2.MarginData;
-import com.hysteryale.model_h2.MarginSummary;
-import com.hysteryale.model_h2.MarginDataId;
-import com.hysteryale.model_h2.MarginSummaryId;
+import com.hysteryale.model_h2.*;
 import com.hysteryale.repository.ProductRepository;
 import com.hysteryale.repository.marginAnalyst.MarginAnalysisAOPRateRepository;
 import com.hysteryale.repository_h2.MarginDataRepository;
@@ -456,11 +453,9 @@ public class MarginDataService {
             annually = calculateUSPlantMarginSummary(modelCode, series, currency, "annually", orderNumber, type, fileUUID, userId);
         }
 
-        marginSummaryRepository.save(monthly);
-        marginSummaryRepository.save(annually);
         return Map.of(
-                "MarginAnalystSummaryMonthly", monthly,
-                "MarginAnalystSummaryAnnually", annually
+                "monthly", monthly,
+                "annually", annually
         );
     }
 
@@ -585,6 +580,18 @@ public class MarginDataService {
         return marginSummaryRepository.viewHistoryMarginSummary(
                 id.getQuoteNumber(), id.getType(), id.getModelCode(), id.getSeries(),
                 id.getCurrency(), id.getUserId(), id.getRegion(), id.getDurationUnit()
+        );
+    }
+
+    public void saveMarginSummary(SavedMarginSummary savedMarginSummary) {
+        marginSummaryRepository.save(savedMarginSummary.getAnnually());
+        marginSummaryRepository.save(savedMarginSummary.getMonthly());
+    }
+
+    public void deleteMarginSummary(MarginSummaryId id) {
+        marginSummaryRepository.deleteMarginSummary(
+                id.getQuoteNumber(), id.getType(), id.getModelCode(), id.getSeries(),
+                id.getCurrency(), id.getUserId(), id.getRegion()
         );
     }
 }
