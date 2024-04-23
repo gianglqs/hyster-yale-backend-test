@@ -38,10 +38,6 @@ public class InterestRateService {
     @Autowired
     RegionRepository regionRepository;
 
-    public List<InterestRate> getAllInterestRate() {
-        return interestRateRepository.findAll();
-    }
-
     public Map<String, Object> getListInterestRateByFilter(InterestRateFilterModel filter) throws ParseException {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadInterestRateDataFilterIntoMap(filter);
@@ -51,8 +47,6 @@ public class InterestRateService {
         } else {
             getData = interestRateRepository.selectAllForInterestRateByFilter((String) filterMap.get("bankNameFilter"), (List<String>) filterMap.get("regionFilter"));
         }
-
-        //object =Map<String,Object>
         Map<String, List<Object>> resultList=new HashMap<>();
         List<Object> list=new ArrayList<>();
         for(Object[] data:getData) {
@@ -71,8 +65,6 @@ public class InterestRateService {
         result.put("listInterestRate",list);
         return result;
     }
-
-
 
     // import data from file excel world bank to databse
     public void importInterestRateFromFile(String filePath) throws Exception {
@@ -165,15 +157,6 @@ public class InterestRateService {
             }
         }
         return interestRateList;
-    }
-
-
-    private static List<String> checkListData(List<String> data) {
-        return data == null || data.isEmpty() ? null : data;
-    }
-
-    private static String checkStringData(String data) {
-        return data == null || data.isEmpty() ? null : data;
     }
 
 

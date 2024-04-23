@@ -20,6 +20,7 @@ public class InterestRateController {
     @Resource
     InterestRateService interestRateService;
 
+    //function to import data from world bank excel file
     @PostMapping("/testImport")
     public ResponseEntity<String> getDatafromInterestRateFile() {
         try {
@@ -30,44 +31,14 @@ public class InterestRateController {
         }
     }
 
-//    @GetMapping("/getAllInterestRate")
-//    public ResponseEntity<List<InterestRate>> getAllInterestRate(InterestRateFilterModel filterModel) throws Exception {
-//        try{
-//            List<InterestRate> interestRates=interestRateService.getAllInterestRate();
-//            if(interestRates!=null){
-//                return ResponseEntity.status(HttpStatus.OK).body(interestRates);
-//            }else{
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//            }
-//        }catch(Exception e){
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        }
-//    }
-
     @PostMapping("/getAllInterestRate")
     public Map<String, Object> getAllInterestRate(@RequestBody InterestRateFilterModel filters,
                                                         @RequestParam(defaultValue = "1") int pageNo,
                                                         @RequestParam(defaultValue = "100") int perPage) throws Exception {
-
         filters.setPageNo(pageNo);
         filters.setPerPage(perPage);
         return  interestRateService.getListInterestRateByFilter(filters);
-
     }
 
-
-//    @GetMapping("/getInterestRateByBankName")
-//    public ResponseEntity<List<InterestRate>> getInterestRateByBankName(@RequestParam("bankName") String bankName) {
-//        try {
-//            List<InterestRate> interestRates = interestRateService.getInterestRateByBankName(bankName);
-//            if (interestRates != null) {
-//                return ResponseEntity.status(HttpStatus.OK).body(interestRates);
-//            } else {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        }
-//    }
 
 }
