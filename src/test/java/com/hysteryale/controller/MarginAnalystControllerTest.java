@@ -6,8 +6,8 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.model.marginAnalyst.CalculatedMargin;
-import com.hysteryale.model_h2.IMMarginAnalystData;
-import com.hysteryale.service.marginAnalyst.IMMarginAnalystDataService;
+import com.hysteryale.model_h2.*;
+import com.hysteryale.service.marginAnalyst.MarginDataService;
 import com.hysteryale.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -28,10 +28,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Objects;
-
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -44,7 +43,7 @@ public class MarginAnalystControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private IMMarginAnalystDataService imMarginAnalystDataService;
+    private MarginDataService marginDataService;
 
     @BeforeEach
     public void setUp() {
@@ -148,19 +147,22 @@ public class MarginAnalystControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = "USER")
+    @WithMockUser(authorities = "USER", username = "user1@gmail.com")
     public void testEstimateMarginAnalystData() throws Exception {
 
-        IMMarginAnalystData marginData = new IMMarginAnalystData();
-        marginData.setModelCode("");
-        marginData.setCurrency("USD");
+        MarginData marginData = new MarginData();
+        MarginDataId id = new MarginDataId();
+        id.setModelCode("");
+        id.setCurrency("USD");
+        id.setType(0);
+
+        marginData.setId(id);
         marginData.setOrderNumber("");
-        marginData.setType(0);
         marginData.setSeries("D466");
         marginData.setFileUUID("123");
         CalculatedMargin filter = new CalculatedMargin(marginData, "Asia");
 
-        when(imMarginAnalystDataService.isFileCalculated("123", "USD", "")).thenReturn(true);
+        when(marginDataService.isFileCalculated("123", "USD", "")).thenReturn(true);
 
         MvcResult result =
                 mockMvc
@@ -172,6 +174,66 @@ public class MarginAnalystControllerTest {
                         .andExpect(jsonPath("$.MarginAnalystData").isArray())
                         .andExpect(jsonPath("$.MarginAnalystSummary").isMap())
                         .andExpect(jsonPath("$.TargetMargin").isNumber())
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER", username = "user1@gmail.com")
+    public void testListHistoryMargin() throws Exception {
+        MvcResult result =
+                mockMvc
+                        .perform(post("/list-history-margin"))
+                        .andExpect(jsonPath("$.historicalMargin").isArray())
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER", username = "user1@gmail.com")
+    public void testViewHistoryMargin() throws Exception {
+        MarginSummaryId id = new MarginSummaryId("", 0, "", "", "", 0, "", "");
+
+        MvcResult result =
+                mockMvc
+                        .perform(
+                                post("/view-history-margin")
+                                        .content(JsonUtils.toJSONString(id))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                        )
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER", username = "user1@gmail.com")
+    public void testSaveMarginData() throws Exception {
+        SavedMarginSummary savedMarginSummary = new SavedMarginSummary(new MarginSummary(), new MarginSummary());
+
+        MvcResult result =
+                mockMvc
+                        .perform(
+                                post("/save-margin-data")
+                                        .content(JsonUtils.toJSONString(savedMarginSummary))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                        )
+                        .andExpect(jsonPath("$.message").isString())
+                        .andReturn();
+        Assertions.assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER", username = "user1@gmail.com")
+    public void testDeleteMarginData() throws Exception {
+        MarginSummaryId id = new MarginSummaryId("", 0, "", "", "", 0, "", "");
+
+        MvcResult result =
+                mockMvc
+                        .perform(
+                                delete("/delete-margin-data")
+                                        .content(JsonUtils.toJSONString(id))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                        )
                         .andReturn();
         Assertions.assertEquals(200, result.getResponse().getStatus());
     }

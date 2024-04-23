@@ -6,22 +6,30 @@
 package com.hysteryale.controller;
 
 import com.hysteryale.exception.InvalidFileFormatException;
-import com.hysteryale.model.enums.FrequencyImport;
+import com.hysteryale.exception.UserException.EmailNotFoundException;
+import com.hysteryale.model.User;
 import com.hysteryale.model.marginAnalyst.CalculatedMargin;
-import com.hysteryale.model_h2.IMMarginAnalystData;
+import com.hysteryale.model_h2.MarginData;
+import com.hysteryale.model_h2.MarginDataId;
+import com.hysteryale.model_h2.MarginSummaryId;
+import com.hysteryale.model_h2.SavedMarginSummary;
 import com.hysteryale.repository.upload.FileUploadRepository;
+import com.hysteryale.response.ResponseObject;
 import com.hysteryale.service.FileUploadService;
-import com.hysteryale.service.ImportTrackingService;
 import com.hysteryale.service.PartService;
-import com.hysteryale.service.marginAnalyst.IMMarginAnalystDataService;
+import com.hysteryale.service.UserService;
+import com.hysteryale.service.marginAnalyst.MarginDataService;
 import com.hysteryale.service.marginAnalyst.MarginAnalystMacroService;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.model.enums.ModelTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,33 +44,35 @@ import java.util.Map;
 public class MarginAnalystController {
 
     @Resource
-    IMMarginAnalystDataService IMMarginAnalystDataService;
+    MarginDataService marginDataService;
     @Resource
     FileUploadService fileUploadService;
     @Resource
     MarginAnalystMacroService marginAnalystMacroService;
     @Resource
     PartService partService;
-
     @Resource
     FileUploadRepository fileUploadRepository;
-
-
+    @Resource
+    UserService userService;
 
     /**
      * Calculate MarginAnalystData and MarginAnalystSummary based on user's uploaded file
      */
     @PostMapping(path = "/estimateMarginAnalystData", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> estimateMarginAnalystData(@RequestBody CalculatedMargin calculatedMargin) throws Exception {
+    public Map<String, Object> estimateMarginAnalystData(@RequestBody CalculatedMargin calculatedMargin, Authentication authentication) throws Exception {
+        // Get the User requesting to estimate Margin Analysis Data
+        User user = userService.getUserByEmail(authentication.getName());
 
-        IMMarginAnalystData marginData = calculatedMargin.getMarginData();
+        MarginData marginData = calculatedMargin.getMarginData();
         String region = calculatedMargin.getRegion();
 
-        String currency = marginData.getCurrency();
+        MarginDataId id = marginData.getId();
+        String currency = id.getCurrency();
         String orderNumber = marginData.getOrderNumber();
         String fileUUID = marginData.getFileUUID();
-        Integer type = marginData.getType();
-        String modelCode = marginData.getModelCode();
+        Integer type = id.getType();
+        String modelCode = id.getModelCode();
         String series = marginData.getSeries();
 
         if (type == 0)
@@ -72,19 +82,19 @@ public class MarginAnalystController {
         if (orderNumber.isEmpty())
             orderNumber = null;
 
-        if (!IMMarginAnalystDataService.isFileCalculated(fileUUID, currency, region))
-            IMMarginAnalystDataService.calculateMarginAnalysisData(fileUUID, currency, region);
+        if (!marginDataService.isFileCalculated(fileUUID, currency, region))
+            marginDataService.calculateMarginAnalysisData(fileUUID, currency, region, user.getId());
 
-        List<IMMarginAnalystData> imMarginAnalystDataList = IMMarginAnalystDataService.getIMMarginAnalystData(modelCode, currency, fileUUID, orderNumber, type, series, region);
+        List<MarginData> marginDataList = marginDataService.getIMMarginAnalystData(modelCode, currency, fileUUID, orderNumber, type, series, region);
 
         double targetMargin = 0.0;
-        if (!imMarginAnalystDataList.isEmpty() && series != null)
+        if (!marginDataList.isEmpty() && series != null)
             targetMargin = marginAnalystMacroService.getLatestTargetMarginValue(region, series.substring(1));
 
         assert series != null;
         return Map.of(
-                "MarginAnalystData", imMarginAnalystDataList,
-                "MarginAnalystSummary", IMMarginAnalystDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, currency, region),
+                "MarginAnalystData", marginDataList,
+                "MarginAnalystSummary", marginDataService.calculateMarginAnalysisSummary(fileUUID, type, modelCode, series, orderNumber, currency, region, user.getId(), marginDataList),
                 "TargetMargin", targetMargin
         );
     }
@@ -107,7 +117,7 @@ public class MarginAnalystController {
             throw new InvalidFileFormatException(file.getOriginalFilename(), fileUUID);
 
         String uuid = fileUploadRepository.getUUIDByName(fileName);
-        Map<String, Object> marginFilters = IMMarginAnalystDataService.populateMarginFilters(filePath, fileName, uuid);
+        Map<String, Object> marginFilters = marginDataService.populateMarginFilters(filePath, uuid);
         fileUploadService.handleUpdatedSuccessfully(fileName);
 
         return Map.of(
@@ -154,5 +164,37 @@ public class MarginAnalystController {
         partService.importPartFromFile(file.getOriginalFilename(), filePath, fileUUID);
         fileUploadService.handleUpdatedSuccessfully(savedFileName);
 
+    }
+
+    @PostMapping(path = "/list-history-margin")
+    public Map<String, Object> ListHistoryMarginSummary(Authentication authentication) throws EmailNotFoundException {
+        User user = userService.getUserByEmail(authentication.getName());
+        return Map.of(
+                "historicalMargin", marginDataService.listHistoryMarginSummary(user.getId())
+        );
+    }
+
+    @PostMapping(path = "/view-history-margin", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> viewHistoryMargin(@RequestBody MarginSummaryId id, Authentication authentication) throws EmailNotFoundException {
+        User user = userService.getUserByEmail(authentication.getName());
+        id.setUserId(user.getId());
+        log.info("{}", id.getType());
+        log.info("{}", id.getSeries());
+        return Map.of(
+                "margin", marginDataService.viewHistoryMarginSummary(id)
+        );
+    }
+
+    @PostMapping(path = "/save-margin-data", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseObject> saveMarginData(@RequestBody SavedMarginSummary savedMarginSummary) {
+        marginDataService.saveMarginSummary(savedMarginSummary);
+        return new ResponseEntity<>(new ResponseObject("Saved successfully", null), HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/delete-margin-data", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteMarginData(@RequestBody MarginSummaryId id, Authentication authentication) throws EmailNotFoundException {
+        User user = userService.getUserByEmail(authentication.getName());
+        id.setUserId(user.getId());
+        marginDataService.deleteMarginSummary(id);
     }
 }
