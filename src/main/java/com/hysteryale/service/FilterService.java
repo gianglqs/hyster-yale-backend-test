@@ -41,6 +41,8 @@ public class FilterService {
     DealerRepository dealerRepository;
     @Resource
     ClazzRepository clazzRepository;
+    @Resource
+    GDPCountryRepository gdpCountryRepository;
 
     public Map<String, Object> getCompetitorPricingFilter() {
 
@@ -428,5 +430,10 @@ public class FilterService {
         modelTypeAndBrandFilterMap.put("modelTypes", getModelType());
         modelTypeAndBrandFilterMap.put("brands", getAllBrands());
         return modelTypeAndBrandFilterMap;
+    }
+
+    public List<Integer> getGDPFilter() {
+
+        return gdpCountryRepository.getAllYear();
     }
 }

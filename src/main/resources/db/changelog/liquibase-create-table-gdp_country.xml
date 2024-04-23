@@ -1,0 +1,59 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (c) 2024. Hyster-Yale Group
+  ~ All rights reserved.
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-table-gdp-country" author="songiang">
+        <createTable tableName="gdp_country">
+            <column name="country" type="INT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="years" type="INT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="gdp" type="DOUBLE" />
+            <column name="per_capita" type="DOUBLE" />
+            <column name="growth" type="DOUBLE" />
+            <column name="share_of_world" type="DOUBLE" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="update-country-code" author="songiang">
+        <sql> UPDATE country SET code = 'PK' WHERE code = 'PAK'</sql>
+    </changeSet>
+
+    <changeSet id="update-country-code-HongKong" author="songiang">
+        <sql> UPDATE country SET code = 'HK' WHERE code = 'HKG'</sql>
+    </changeSet>
+
+    <changeSet id="addColumn-hasDealer-in-country" author="songiang">
+        <addColumn tableName="country">
+            <column name="has_dealer" type="boolean"/>
+        </addColumn>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'Australia'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'New Zealand'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'Bangladesh'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'China'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'Hong Kong'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'India'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'Indonesia'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'Malaysia'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'Philippines'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'Singapore'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'South Korea'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'Sri Lanka'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'Taiwan'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'Thailand'</sql>
+        <sql>UPDATE country SET has_dealer = true WHERE country_name = 'Vietnam'</sql>
+    </changeSet>
+
+    <changeSet id="update-data-column-has_dealer" author="songiang">
+        <sql>UPDATE country SET has_dealer = false WHERE has_dealer IS NULL</sql>
+    </changeSet>
+
+</databaseChangeLog>
