@@ -8,6 +8,7 @@ package com.hysteryale.service;
 import com.hysteryale.model.filters.FilterRow;
 import com.hysteryale.repository.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -41,6 +42,8 @@ public class FilterService {
     DealerRepository dealerRepository;
     @Resource
     ClazzRepository clazzRepository;
+    @Autowired
+    private InterestRateRepository interestRateRepository;
 
     public Map<String, Object> getCompetitorPricingFilter() {
 
@@ -59,6 +62,14 @@ public class FilterService {
 
         return filters;
     }
+
+    public Map<String, Object> getAllInterestRateFilter() {
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("regions", getAllRegions());
+        filters.put("bankName",getAllBankNames());
+        return filters;
+    }
+
 
     public Map<String, Object> getOrderFilter() {
 
@@ -117,6 +128,7 @@ public class FilterService {
 
         return filters;
     }
+
 
     private List<Map<String, String>> getAllFamily() {
         List<Map<String, String>> familyMaps = new ArrayList<>();
@@ -190,6 +202,8 @@ public class FilterService {
         return classMap;
     }
 
+
+
     private List<Map<String, String>> getAllClasses() {
         List<Map<String, String>> classMap = new ArrayList<>();
         List<String> classes = clazzRepository.getAllClasses();
@@ -211,6 +225,18 @@ public class FilterService {
             DealerNameMap.add(mMap);
         }
         return DealerNameMap;
+    }
+
+    private List<Map<String, String>> getAllBankNames() {
+        List<Map<String, String>> bankNameMap = new ArrayList<>();
+        List<String> bankNames = interestRateRepository.getAllBankName();
+        bankNames.sort(String::compareTo);
+        for (String m : bankNames) {
+            Map<String, String> mMap = new HashMap<>();
+            mMap.put("value", m);
+            bankNameMap.add(mMap);
+        }
+        return bankNameMap;
     }
 
     private List<Map<String, String>> getAllPlants() {

@@ -1,6 +1,7 @@
 package com.hysteryale.controller;
 import com.hysteryale.model.InterestRate;
 import com.hysteryale.model.User;
+import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.InterestRateFilterModel;
 import com.hysteryale.service.InterestRateService;
 import org.springframework.data.repository.query.Param;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -41,16 +44,14 @@ public class InterestRateController {
 //        }
 //    }
 
-    @GetMapping("/getAllInterestRate")
-    public Map<String, Object> getAllInterestRate(
-                                                 @RequestParam(defaultValue = "") String search,
-                                                 @RequestParam(defaultValue = "1") int pageNo,
-                                                 @RequestParam(defaultValue = "100") int perPage) throws Exception {
-        InterestRateFilterModel filterModel = new InterestRateFilterModel();
-        filterModel.setBankName(search);
-        filterModel.setPageNo(pageNo);
-        filterModel.setPerPage(perPage);
-        return  interestRateService.getListInterestRateByFilter(filterModel);
+    @PostMapping("/getAllInterestRate")
+    public Map<String, Object> getAllInterestRate(@RequestBody InterestRateFilterModel filters,
+                                                        @RequestParam(defaultValue = "1") int pageNo,
+                                                        @RequestParam(defaultValue = "100") int perPage) throws Exception {
+
+        filters.setPageNo(pageNo);
+        filters.setPerPage(perPage);
+        return  interestRateService.getListInterestRateByFilter(filters);
 
     }
 

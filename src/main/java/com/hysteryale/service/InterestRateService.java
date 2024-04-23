@@ -4,6 +4,7 @@ import com.hysteryale.model.*;
 import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.InterestRateFilterModel;
 import com.hysteryale.repository.InterestRateRepository;
+import com.hysteryale.repository.RegionRepository;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.ConvertDataExcelUtils;
 import com.hysteryale.utils.ConvertDataFilterUtil;
@@ -15,6 +16,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -33,21 +35,44 @@ public class InterestRateService {
     @Autowired
     InterestRateRepository interestRateRepository;
 
+    @Autowired
+    RegionRepository regionRepository;
 
     public List<InterestRate> getAllInterestRate() {
         return interestRateRepository.findAll();
     }
+
     public Map<String, Object> getListInterestRateByFilter(InterestRateFilterModel filter) throws ParseException {
         Map<String, Object> result = new HashMap<>();
-        result.put("listInterestRate", interestRateRepository.selectAllForInterestRate(filter.getBankName()));
+        Map<String, Object> filterMap = ConvertDataFilterUtil.loadInterestRateDataFilterIntoMap(filter);
+        List<Object[]> getData;
+        if (filter.getRegions() == null || filter.getRegions().isEmpty()) {
+            getData=interestRateRepository.selectAllForInterestRate((String) filterMap.get("bankNameFilter"));
+        } else {
+            getData = interestRateRepository.selectAllForInterestRateByFilter((String) filterMap.get("bankNameFilter"), (List<String>) filterMap.get("regionFilter"));
+        }
+
+        //object =Map<String,Object>
+        Map<String, List<Object>> resultList=new HashMap<>();
+        List<Object> list=new ArrayList<>();
+        for(Object[] data:getData) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", data[0]);
+            map.put("bankName",data[1]);
+            map.put("country",data[2]);
+            map.put("currentRate",data[3]);
+            map.put("previousRate",data[4]);
+            map.put("updateDate",data[5]);
+            map.put("regionId",data[6]);
+            map.put("regionName",data[7]);
+            map.put("code",data[8]);
+            list.add(map);
+        }
+        result.put("listInterestRate",list);
         return result;
     }
 
 
-
-//    public List<InterestRate> getInterestRateByBankName(String bankName) {
-//        return interestRateRepository.getInterestRateByBankName(bankName);
-//    }
 
     // import data from file excel world bank to databse
     public void importInterestRateFromFile(String filePath) throws Exception {
@@ -140,6 +165,15 @@ public class InterestRateService {
             }
         }
         return interestRateList;
+    }
+
+
+    private static List<String> checkListData(List<String> data) {
+        return data == null || data.isEmpty() ? null : data;
+    }
+
+    private static String checkStringData(String data) {
+        return data == null || data.isEmpty() ? null : data;
     }
 
 

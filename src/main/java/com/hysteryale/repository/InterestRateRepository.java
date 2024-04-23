@@ -22,11 +22,17 @@ public interface InterestRateRepository extends JpaRepository<InterestRate, Inte
     @Query("SELECT c FROM InterestRate c WHERE c.bankName LIKE CONCAT (?1,'%')")
     List<InterestRate> getInterestRateByBankName(String bankName);
 
-    @Query("SELECT c FROM InterestRate c WHERE " +
-            "c.bankName LIKE CONCAT('%', :search, '%')")
-    List<InterestRate> selectAllForInterestRate(@Param("search") String bankName);
-//            @Param("region") List<String> regions
+    @Query("SELECT DISTINCT bankName FROM InterestRate ")
+    List<String> getAllBankName();
 
+    @Query(value = "select ir.id, ir.bank_name, ir.country, ir.current_rate, ir. previous_rate, ir.update_date, c.region_id, r.region_name, c.code  from interest_rate ir, country c , region r \n" +
+            "\twhere ir.bank_name like concat('%',:bankName,'%') and ir.country =c.country_name  and c.region_id =r.id", nativeQuery = true)
+    List<Object[]> selectAllForInterestRate(@Param("bankName") String bankName);
+
+
+    @Query(value = "select ir.id, ir.bank_name, ir.country, ir.current_rate, ir. previous_rate, ir.update_date, c.region_id, r.region_name, c.code  from interest_rate ir, country c , region r \n" +
+            "\twhere ir.bank_name like concat('%',:bankName,'%') and ir.country =c.country_name  and c.region_id =r.id and r.region_name IN (:regions)", nativeQuery = true)
+    List<Object[]> selectAllForInterestRateByFilter(@Param("bankName") String bankName,@Param("regions") List<String> regions);
 
 }
 
