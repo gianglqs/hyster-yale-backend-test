@@ -1,11 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<!--
-  ~ Copyright (c) 2024. Hyster-Yale Group
-  ~ All rights reserved.
-  -->
-
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.6.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
-    <changeSet author="oem (generated)" id="1712904759420-1">
+    <changeSet author="oem (generated)" id="1713785991282-1">
         <createTable tableName="product">
             <column name="model_code" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -30,118 +25,118 @@
             <column name="modeltype" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-2">
+    <changeSet author="oem (generated)" id="1713785991282-2">
         <addUniqueConstraint columnNames="series, model_code" constraintName="uk_1onsrfub7tpmstil3s7amjw1g" tableName="product"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-3">
+    <changeSet author="oem (generated)" id="1713785991282-3">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="aopmargin_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-4">
+    <changeSet author="oem (generated)" id="1713785991282-4">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="apacserial_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-5">
+    <changeSet author="oem (generated)" id="1713785991282-5">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="clazz_seq" startValue="7"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-6">
+    <changeSet author="oem (generated)" id="1713785991282-6">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="clazz_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-7">
+    <changeSet author="oem (generated)" id="1713785991282-7">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="competitorpricing_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-8">
+    <changeSet author="oem (generated)" id="1713785991282-8">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="cost_uplift_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-9">
+    <changeSet author="oem (generated)" id="1713785991282-9">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="costupliftseq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-10">
+    <changeSet author="oem (generated)" id="1713785991282-10">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="currency_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-11">
+    <changeSet author="oem (generated)" id="1713785991282-11">
         <createSequence cacheSize="100" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="dealer_seq" startValue="32"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-12">
+    <changeSet author="oem (generated)" id="1713785991282-12">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="discount_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-13">
+    <changeSet author="oem (generated)" id="1713785991282-13">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="exchange_rate_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-14">
+    <changeSet author="oem (generated)" id="1713785991282-14">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="exchangerateseq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-15">
+    <changeSet author="oem (generated)" id="1713785991282-15">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="file_uploaded_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-16">
+    <changeSet author="oem (generated)" id="1713785991282-16">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="fileuploadedseq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-17">
+    <changeSet author="oem (generated)" id="1713785991282-17">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="freight_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-18">
+    <changeSet author="oem (generated)" id="1713785991282-18">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="hibernate_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-19">
-        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="import_tracking_seq" startValue="100"/>
+    <changeSet author="oem (generated)" id="1713785991282-19">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="import_tracking_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-20">
+    <changeSet author="oem (generated)" id="1713785991282-20">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="importfailure_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-21">
+    <changeSet author="oem (generated)" id="1713785991282-21">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="margin_analyst_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-22">
+    <changeSet author="oem (generated)" id="1713785991282-22">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="margin_analyst_summary_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-23">
+    <changeSet author="oem (generated)" id="1713785991282-23">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalysisaoprateseq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-24">
+    <changeSet author="oem (generated)" id="1713785991282-24">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalystseq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-25">
+    <changeSet author="oem (generated)" id="1713785991282-25">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginanalystsummarysequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-26">
+    <changeSet author="oem (generated)" id="1713785991282-26">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="marginmacroseq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-27">
+    <changeSet author="oem (generated)" id="1713785991282-27">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="part_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-28">
+    <changeSet author="oem (generated)" id="1713785991282-28">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="partsequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-29">
+    <changeSet author="oem (generated)" id="1713785991282-29">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="price_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-30">
+    <changeSet author="oem (generated)" id="1713785991282-30">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="pricesequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-31">
+    <changeSet author="oem (generated)" id="1713785991282-31">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="product_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-32">
+    <changeSet author="oem (generated)" id="1713785991282-32">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="productdimension_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-33">
+    <changeSet author="oem (generated)" id="1713785991282-33">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="region_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-34">
+    <changeSet author="oem (generated)" id="1713785991282-34">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="role_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-35">
+    <changeSet author="oem (generated)" id="1713785991282-35">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="series_part_numberlpseq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-36">
+    <changeSet author="oem (generated)" id="1713785991282-36">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="target_margin_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-37">
+    <changeSet author="oem (generated)" id="1713785991282-37">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="user_seq" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-38">
+    <changeSet author="oem (generated)" id="1713785991282-38">
         <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807" minValue="1" sequenceName="warranty_sequence" startValue="1"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-39">
+    <changeSet author="oem (generated)" id="1713785991282-39">
         <createTable tableName="aopmargin">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="aopmargin_pkey"/>
@@ -161,7 +156,7 @@
             <column name="region" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-40">
+    <changeSet author="oem (generated)" id="1713785991282-40">
         <createTable tableName="apicdealer">
             <column name="billtocode" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="apicdealer_pkey"/>
@@ -171,7 +166,7 @@
             <column name="mkggroup" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-41">
+    <changeSet author="oem (generated)" id="1713785991282-41">
         <createTable tableName="booking">
             <column name="order_no" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="booking_order_pkey"/>
@@ -205,7 +200,7 @@
             <column name="country" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-42">
+    <changeSet author="oem (generated)" id="1713785991282-42">
         <createTable tableName="booking_fpa">
             <column name="order_no" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="booking_fpa_pkey"/>
@@ -227,7 +222,7 @@
             <column name="type" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-43">
+    <changeSet author="oem (generated)" id="1713785991282-43">
         <createTable tableName="clazz">
             <column name="clazz_name" type="VARCHAR(255)"/>
             <column autoIncrement="true" name="id" type="INTEGER">
@@ -235,7 +230,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-44">
+    <changeSet author="oem (generated)" id="1713785991282-44">
         <createTable tableName="competitor_color">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="competitorcolor_pkey"/>
@@ -244,7 +239,7 @@
             <column name="group_name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-45">
+    <changeSet author="oem (generated)" id="1713785991282-45">
         <createTable tableName="competitor_pricing">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="competitorpricing_pkey"/>
@@ -289,7 +284,7 @@
             <column name="latest_modified_by" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-46">
+    <changeSet author="oem (generated)" id="1713785991282-46">
         <createTable tableName="cost_uplift">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cost_uplift_pkey"/>
@@ -299,7 +294,7 @@
             <column name="plant" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-47">
+    <changeSet author="oem (generated)" id="1713785991282-47">
         <createTable tableName="country">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="country_pkey"/>
@@ -307,9 +302,10 @@
             <column name="country_name" type="VARCHAR(255)"/>
             <column name="region_id" type="INTEGER"/>
             <column name="code" type="VARCHAR(5)"/>
+            <column name="has_dealer" type="BOOLEAN"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-48">
+    <changeSet author="oem (generated)" id="1713785991282-48">
         <createTable tableName="currency">
             <column name="currency" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="currency_pkey"/>
@@ -317,7 +313,7 @@
             <column name="currency_name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-49">
+    <changeSet author="oem (generated)" id="1713785991282-49">
         <createTable tableName="dealer">
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dealer_pkey"/>
@@ -336,7 +332,7 @@
             <column name="territory_manager" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-50">
+    <changeSet author="oem (generated)" id="1713785991282-50">
         <createTable tableName="dealer_product">
             <column name="created_by_code" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dealer_product_pkey"/>
@@ -352,7 +348,7 @@
             <column name="product" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-51">
+    <changeSet author="oem (generated)" id="1713785991282-51">
         <createTable tableName="exchange_rate">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="exchange_rate_pkey"/>
@@ -365,7 +361,7 @@
             <column name="to_currency" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-52">
+    <changeSet author="oem (generated)" id="1713785991282-52">
         <createTable tableName="file_upload">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="file_upload_pkey"/>
@@ -380,10 +376,9 @@
             <column name="loading" type="BOOLEAN"/>
             <column name="size" type="INTEGER"/>
             <column name="model_type" type="INTEGER"/>
-            <column name="screen" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-53">
+    <changeSet author="oem (generated)" id="1713785991282-53">
         <createTable tableName="freight">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="freight_pkey"/>
@@ -395,7 +390,7 @@
             <column name="month_year" type="date"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-54">
+    <changeSet author="oem (generated)" id="1713785991282-54">
         <createTable tableName="frequency">
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="frequency_pkey"/>
@@ -403,7 +398,21 @@
             <column name="type" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-55">
+    <changeSet author="oem (generated)" id="1713785991282-55">
+        <createTable tableName="gdp_country">
+            <column name="country" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="gdp_country_pkey"/>
+            </column>
+            <column name="years" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="gdp_country_pkey"/>
+            </column>
+            <column name="gdp" type="FLOAT8"/>
+            <column name="per_capita" type="FLOAT8"/>
+            <column name="growth" type="FLOAT8"/>
+            <column name="share_of_world" type="FLOAT8"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1713785991282-56">
         <createTable tableName="hibernate_sequences">
             <column name="sequence_name" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="hibernate_sequences_pkey"/>
@@ -411,7 +420,7 @@
             <column name="next_val" type="BIGINT"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-56">
+    <changeSet author="oem (generated)" id="1713785991282-57">
         <createTable tableName="import_failure">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="import_failure_pkey"/>
@@ -423,7 +432,7 @@
             <column name="reason_value" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-57">
+    <changeSet author="oem (generated)" id="1713785991282-58">
         <createTable tableName="import_tracking">
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="import_tracking_pkey"/>
@@ -432,7 +441,7 @@
             <column name="belong_to_time" type="date"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-58">
+    <changeSet author="oem (generated)" id="1713785991282-59">
         <createTable tableName="margin_analyst_macro">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="margin_analyst_macro_pkey"/>
@@ -451,7 +460,7 @@
             <column name="region" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-59">
+    <changeSet author="oem (generated)" id="1713785991282-60">
         <createTable tableName="marginanalysisaoprate">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="marginanalysisaoprate_pkey"/>
@@ -480,7 +489,7 @@
             <column name="currency_currency" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-60">
+    <changeSet author="oem (generated)" id="1713785991282-61">
         <createTable tableName="model_type">
             <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="model_type_pkey"/>
@@ -489,7 +498,7 @@
             <column name="frequency" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-61">
+    <changeSet author="oem (generated)" id="1713785991282-62">
         <createTable tableName="part">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="part_pkey"/>
@@ -527,7 +536,7 @@
             <column name="clazz" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-62">
+    <changeSet author="oem (generated)" id="1713785991282-63">
         <createTable tableName="region">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="region_pkey"/>
@@ -536,7 +545,7 @@
             <column name="region_short_name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-63">
+    <changeSet author="oem (generated)" id="1713785991282-64">
         <createTable tableName="residual_value">
             <column name="hours" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="residual_value_pkey"/>
@@ -556,7 +565,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-64">
+    <changeSet author="oem (generated)" id="1713785991282-65">
         <createTable tableName="role">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="role_pkey"/>
@@ -564,7 +573,7 @@
             <column name="role_name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-65">
+    <changeSet author="oem (generated)" id="1713785991282-66">
         <createTable tableName="shipment">
             <column name="order_no" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="shipment_pkey"/>
@@ -600,7 +609,7 @@
             <column name="country" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-66">
+    <changeSet author="oem (generated)" id="1713785991282-67">
         <createTable tableName="target_margin">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="target_margin_pkey"/>
@@ -613,7 +622,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-67">
+    <changeSet author="oem (generated)" id="1713785991282-68">
         <createTable tableName="update_history">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="update_history_pkey"/>
@@ -625,7 +634,7 @@
             <column name="user_id" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-68">
+    <changeSet author="oem (generated)" id="1713785991282-69">
         <createTable tableName="user">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="user_pkey"/>
@@ -639,7 +648,16 @@
             <column name="role_id" type="INTEGER"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-69">
+    <changeSet author="oem (generated)" id="1713785991282-70">
+        <createTable tableName="version_app">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="version_app_pkey"/>
+            </column>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="version" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1713785991282-71">
         <createTable tableName="warranty">
             <column name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="warranty_pkey"/>
@@ -652,106 +670,109 @@
             <column name="clazz" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-70">
+    <changeSet author="oem (generated)" id="1713785991282-72">
         <addForeignKeyConstraint baseColumnNames="region" baseTableName="aopmargin" constraintName="constraint_aopmargin_region" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-71">
+    <changeSet author="oem (generated)" id="1713785991282-73">
         <addForeignKeyConstraint baseColumnNames="aopmargin" baseTableName="booking" constraintName="constraint_booking_and_aopmargin" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="aopmargin" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-72">
+    <changeSet author="oem (generated)" id="1713785991282-74">
         <addForeignKeyConstraint baseColumnNames="dealer" baseTableName="booking" constraintName="constraint_booking_and_dealer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dealer" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-73">
+    <changeSet author="oem (generated)" id="1713785991282-75">
         <addForeignKeyConstraint baseColumnNames="dealer" baseTableName="shipment" constraintName="constraint_shipment_and_dealer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dealer" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-74">
+    <changeSet author="oem (generated)" id="1713785991282-76">
         <addForeignKeyConstraint baseColumnNames="aopmargin" baseTableName="shipment" constraintName="constraint_shipment_and_aopmargin" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="aopmargin" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-75">
+    <changeSet author="oem (generated)" id="1713785991282-77">
         <addForeignKeyConstraint baseColumnNames="model_type" baseTableName="file_upload" constraintName="contraint_file_upload_and_model_type" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="model_type" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-76">
+    <changeSet author="oem (generated)" id="1713785991282-78">
         <addForeignKeyConstraint baseColumnNames="file_upload" baseTableName="import_tracking" constraintName="contraint_import_tracking_and_file_upload" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="file_upload" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-77">
+    <changeSet author="oem (generated)" id="1713785991282-79">
         <addForeignKeyConstraint baseColumnNames="product" baseTableName="booking" constraintName="contraint_key_booking_product" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-78">
+    <changeSet author="oem (generated)" id="1713785991282-80">
         <addForeignKeyConstraint baseColumnNames="product" baseTableName="shipment" constraintName="contraint_key_shipment_product" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-79">
+    <changeSet author="oem (generated)" id="1713785991282-81">
         <addForeignKeyConstraint baseColumnNames="from_currency" baseTableName="exchange_rate" constraintName="fk1rwcvrt8tiqppvlwu3cyh4bli" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-80">
+    <changeSet author="oem (generated)" id="1713785991282-82">
         <addForeignKeyConstraint baseColumnNames="uploadedby_id" baseTableName="file_upload" constraintName="fk331rjjrewvc14f26xlav1ii24" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-81">
+    <changeSet author="oem (generated)" id="1713785991282-83">
+        <addForeignKeyConstraint baseColumnNames="country" baseTableName="gdp_country" constraintName="fk4q7yjbh2mnfqqhc00m5hqhlw3" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="country" validate="true"/>
+    </changeSet>
+    <changeSet author="oem (generated)" id="1713785991282-84">
         <addForeignKeyConstraint baseColumnNames="dealer" baseTableName="dealer_product" constraintName="fk5abix0tjjpx9uvp0c406mfgdo" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="dealer" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-82">
+    <changeSet author="oem (generated)" id="1713785991282-85">
         <addForeignKeyConstraint baseColumnNames="currency_currency" baseTableName="part" constraintName="fk5gc3etg0f0v84k5l7lgxrgeup" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-83">
+    <changeSet author="oem (generated)" id="1713785991282-86">
         <addForeignKeyConstraint baseColumnNames="color_id" baseTableName="competitor_pricing" constraintName="fk5vyptr5fyxtgrbblddkm1aifc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="competitor_color" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-84">
+    <changeSet author="oem (generated)" id="1713785991282-87">
         <addForeignKeyConstraint baseColumnNames="region_id" baseTableName="country" constraintName="fk76d15mm086trvaxraob3c7shj" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-85">
+    <changeSet author="oem (generated)" id="1713785991282-88">
         <addForeignKeyConstraint baseColumnNames="clazz_id" baseTableName="competitor_pricing" constraintName="fk806iy89eclgtv5l1joqra94me" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="clazz" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-86">
+    <changeSet author="oem (generated)" id="1713785991282-89">
         <addForeignKeyConstraint baseColumnNames="frequency" baseTableName="model_type" constraintName="fkb3isvx0ijo5dd8tstg1kn9epx" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="frequency" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-87">
+    <changeSet author="oem (generated)" id="1713785991282-90">
         <addForeignKeyConstraint baseColumnNames="currency" baseTableName="shipment" constraintName="fkb5511f7geiylgseh5euon3or7" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-88">
+    <changeSet author="oem (generated)" id="1713785991282-91">
         <addForeignKeyConstraint baseColumnNames="file_upload" baseTableName="update_history" constraintName="fkbl5iwer1t24vpww4wgugver69" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="file_upload" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-89">
+    <changeSet author="oem (generated)" id="1713785991282-92">
         <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="user" constraintName="fkbolg2pe8eh0aaug0qwmc4cy6u" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="role" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-90">
+    <changeSet author="oem (generated)" id="1713785991282-93">
         <addForeignKeyConstraint baseColumnNames="product" baseTableName="dealer_product" constraintName="fkd5w49bikfrgmoxa6juys5qy69" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-91">
+    <changeSet author="oem (generated)" id="1713785991282-94">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="update_history" constraintName="fkdm2cf8g5fq3hmugvq59vsj76d" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-92">
+    <changeSet author="oem (generated)" id="1713785991282-95">
         <addForeignKeyConstraint baseColumnNames="clazz_id" baseTableName="product" constraintName="fkehkd41y34yvwjapmny8qfbi6c" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="clazz" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-93">
+    <changeSet author="oem (generated)" id="1713785991282-96">
         <addForeignKeyConstraint baseColumnNames="clazz_id" baseTableName="warranty" constraintName="fkf8pcmilngel5fckic6j7o8biv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="clazz" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-94">
+    <changeSet author="oem (generated)" id="1713785991282-97">
         <addForeignKeyConstraint baseColumnNames="region_id" baseTableName="target_margin" constraintName="fkhtl0yw9b1sp5t0ulwaoucdpuq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="region" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-95">
+    <changeSet author="oem (generated)" id="1713785991282-98">
         <addForeignKeyConstraint baseColumnNames="to_currency" baseTableName="exchange_rate" constraintName="fkis2145dar1rfybx9fwjyanuoa" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-96">
+    <changeSet author="oem (generated)" id="1713785991282-99">
         <addForeignKeyConstraint baseColumnNames="currency_currency" baseTableName="marginanalysisaoprate" constraintName="fkm07xacikh03ijwk4odjgu07xr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-97">
+    <changeSet author="oem (generated)" id="1713785991282-100">
         <addForeignKeyConstraint baseColumnNames="country" baseTableName="shipment" constraintName="fkn8fgomqfqcgl8pm93ips5skrf" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="country" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-98">
+    <changeSet author="oem (generated)" id="1713785991282-101">
         <addForeignKeyConstraint baseColumnNames="clazz_id" baseTableName="part" constraintName="fkn8p9ox338mdvuq4q7d9r31bsp" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="clazz" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-99">
+    <changeSet author="oem (generated)" id="1713785991282-102">
         <addForeignKeyConstraint baseColumnNames="country" baseTableName="booking" constraintName="fkolcoohuak57ke2s0s8na11rd4" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="country" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-100">
+    <changeSet author="oem (generated)" id="1713785991282-103">
         <addForeignKeyConstraint baseColumnNames="product" baseTableName="residual_value" constraintName="fkp828qni8jnwy0bhenv9y1s0e" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-101">
+    <changeSet author="oem (generated)" id="1713785991282-104">
         <addForeignKeyConstraint baseColumnNames="currency_currency" baseTableName="margin_analyst_macro" constraintName="fkq3j8hm7fc54pmcdsp54u3dt3x" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-102">
+    <changeSet author="oem (generated)" id="1713785991282-105">
         <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="competitor_pricing" constraintName="fkqb15wk5jg24m2hdttkbd6i2f8" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="country" validate="true"/>
     </changeSet>
-    <changeSet author="oem (generated)" id="1712904759420-103">
+    <changeSet author="oem (generated)" id="1713785991282-106">
         <addForeignKeyConstraint baseColumnNames="currency" baseTableName="booking" constraintName="fks7fhlcyemwr6qlieh7itp5pbt" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
     <changeSet id="create-function" author="songiang">

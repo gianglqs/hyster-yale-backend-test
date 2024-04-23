@@ -85,7 +85,7 @@ public class MarginAnalystMacroServiceTest {
         String filePath = "import_files/margin_analyst_data/USD AUD Margin Analysis Template Macro_Oct  2023 Rev.xlsb";
         String targetFolder = EnvironmentUtils.getEnvironmentValue("upload_files.residual_value");
         MultipartFile file = new MockMultipartFile(fileName, new FileInputStream(filePath));
-        String modelType = ModelTypeEnum.RESIDUAL_VALUE.getValue();
+        String modelType = ModelTypeEnum.MACRO.getValue();
 
         //save file on disk
         String excelFileExtension = FileUtils.EXCEL_FILE_EXTENSION;

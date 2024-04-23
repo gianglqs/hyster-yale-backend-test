@@ -21,4 +21,7 @@ public interface CountryRepository extends JpaRepository<Country, Integer> {
 
     @Query("SELECT c.countryName FROM Country c WHERE c.countryName != '' AND c.countryName IS NOT NULL")
     List<String> getAllCountryNames();
+
+    @Query("SELECT c FROM Country c WHERE c.hasDealer = true")
+    List<Country> findCountryHasDealer();
 }

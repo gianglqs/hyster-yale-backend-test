@@ -93,6 +93,10 @@ public class FilterController {
         return filterService.getModelTypeAndBrand();
     }
 
+    @GetMapping("/gdp")
+    public List<Integer> getGDPFilters() {
+            return filterService.getGDPFilter();
+    }
 
 }
 

@@ -1,25 +1,24 @@
-'id','country_name','region_id','code'
-293,'',2,
-247,South Korea,1,KR
-257,Singapore,1,SG
-307,Philippines,1,PH
-315,Indonesia,1,ID
-326,Malaysia,1,MY
-335,Vietnam,1,VN
-274,Thailand,1,TH
-342,Taiwan,1,TW
-34,New Country 123,1,
-336,Papua New Guinea,2,PG
-337,Australia,2,AU
-338,New Zealand,2,NZ
-339,French Polynesia,2,PF
-340,New Caledonia,2,NC
-344,Bangladesh,1,BD
-345,Guam,2,GU
-341,India,4,IN
-343,Sri Lanka,4,LK
-346,Fiji,2,FJ
-347,Bhutan,4,BT
-348,Pakistan,4,PAK
-349,China,5,CN
-350,Hong Kong,5,HKG
+'id','country_name','region_id','code','has_dealer'
+337,Australia,2,AU,true
+338,New Zealand,2,NZ,true
+344,Bangladesh,1,BD,true
+349,China,5,CN,true
+350,Hong Kong,5,HK,true
+341,India,4,IN,true
+315,Indonesia,1,ID,true
+326,Malaysia,1,MY,true
+307,Philippines,1,PH,true
+257,Singapore,1,SG,true
+247,South Korea,1,KR,true
+343,Sri Lanka,4,LK,true
+342,Taiwan,1,TW,true
+274,Thailand,1,TH,true
+335,Vietnam,1,VN,true
+293,'',2,,false
+336,Papua New Guinea,2,PG,false
+339,French Polynesia,2,PF,false
+340,New Caledonia,2,NC,false
+345,Guam,2,GU,false
+346,Fiji,2,FJ,false
+347,Bhutan,4,BT,false
+348,Pakistan,4,PK,false

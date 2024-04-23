@@ -30,6 +30,9 @@ public class Country {
 
     private String code;
 
+    @Column(name = "has_dealer")
+    private boolean hasDealer = false;
+
     public Country(String countryName, Region region) {
         this.countryName = countryName;
         this.region = region;

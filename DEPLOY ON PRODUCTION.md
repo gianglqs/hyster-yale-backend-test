@@ -91,24 +91,8 @@ sudo chown -R oem /opt/hysteryale/
 git clone git@github.com:Phoenix-Software-Development/hyster-yale-backend.git
 ```
 
-- Create folder for upload files
-```
-mkdir -p /opt/hysteryale/uploadFiles/forecast_pricing
-mkdir -p /opt/hysteryale/uploadFiles/booked
-mkdir -p /opt/hysteryale/uploadFiles/shipment
-mkdir -p /opt/hysteryale/uploadFiles/macro
-mkdir -p /opt/hysteryale/uploadFiles/part
-mkdir -p /opt/hysteryale/uploadFiles/novo
-mkdir -p /opt/hysteryale/uploadFiles/competitor
-mkdir -p /opt/hysteryale/uploadFiles/product
-mkdir -p /opt/hysteryale/uploadFiles/exchange_rate
-mkdir -p /opt/hysteryale/uploadFiles/booking_fpa
-mkdir -p /opt/hysteryale/uploadFiles/residual_value
+- Create folder for upload files by executing script /scripts/init_folders.sh
 
-
-mkdir -p /opt/hysteryale/images/product/
-mkdir -p /opt/hysteryale/images/part/
-```
 - Copy folder `/opt/hysteryale/hyster-yale-backend/locale` to folder `/opt/hysteryale/`
 ```
 cp -r /opt/hysteryale/hyster-yale-backend/locale /opt/hysteryale/

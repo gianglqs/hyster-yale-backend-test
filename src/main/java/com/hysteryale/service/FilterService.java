@@ -42,6 +42,8 @@ public class FilterService {
     DealerRepository dealerRepository;
     @Resource
     ClazzRepository clazzRepository;
+    @Resource
+    GDPCountryRepository gdpCountryRepository;
     @Autowired
     private InterestRateRepository interestRateRepository;
 
@@ -69,7 +71,6 @@ public class FilterService {
         filters.put("bankName",getAllBankNames());
         return filters;
     }
-
 
     public Map<String, Object> getOrderFilter() {
 
@@ -128,7 +129,6 @@ public class FilterService {
 
         return filters;
     }
-
 
     private List<Map<String, String>> getAllFamily() {
         List<Map<String, String>> familyMaps = new ArrayList<>();
@@ -201,8 +201,6 @@ public class FilterService {
         }
         return classMap;
     }
-
-
 
     private List<Map<String, String>> getAllClasses() {
         List<Map<String, String>> classMap = new ArrayList<>();
@@ -454,5 +452,10 @@ public class FilterService {
         modelTypeAndBrandFilterMap.put("modelTypes", getModelType());
         modelTypeAndBrandFilterMap.put("brands", getAllBrands());
         return modelTypeAndBrandFilterMap;
+    }
+
+    public List<Integer> getGDPFilter() {
+
+        return gdpCountryRepository.getAllYear();
     }
 }

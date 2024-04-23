@@ -84,6 +84,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 )
                 .and();
 
+        // Configure observing H2 Database
+        http.headers().frameOptions().disable();
+
         // Set permissions on endpoints
         http.authorizeRequests()
                 // Our public endpoints
@@ -94,8 +97,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/uploadFiles/**").permitAll()
                 .antMatchers("/product/uploadImage").permitAll()
                 .antMatchers("/fileUpload/updateColumnSize").permitAll()
+                .antMatchers("/version/**").permitAll()
+                .antMatchers("/gdp/collectData").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/author/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/users/resetPassword").permitAll()
+                .antMatchers("/h2/**").permitAll()
                 // Our private endpoints
                 .anyRequest().authenticated();
 
