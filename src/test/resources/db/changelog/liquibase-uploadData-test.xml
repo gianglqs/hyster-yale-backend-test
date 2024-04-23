@@ -157,5 +157,12 @@
             SELECT *
             FROM CSVREAD('classpath:db/database/residual_value.csv');
         </sql>
+
+        <sql>
+            INSERT INTO gdp_country (country, years, gdp, per_capita, growth, share_of_world)
+            SELECT *
+            FROM CSVREAD('classpath:db/database/gdp_country.csv');
+        </sql>
     </changeSet>
+
 </databaseChangeLog>
