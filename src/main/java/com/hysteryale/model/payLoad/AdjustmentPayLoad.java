@@ -21,6 +21,7 @@ public class AdjustmentPayLoad {
     private String clazz;
     private String metaSeries;
     private String model;
+    private String category;
     private long noOfOrder;
     private double manualAdjCost;
     private double manualAdjFreight;
