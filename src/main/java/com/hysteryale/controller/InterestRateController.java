@@ -20,21 +20,17 @@ public class InterestRateController {
     @Resource
     InterestRateService interestRateService;
 
-    //function to import data from world bank excel file
-    @PostMapping("/testImport")
-    public ResponseEntity<String> getDatafromInterestRateFile() {
-        try {
-            interestRateService.importInterestRateFromFile("import_files/interest_rate/API_FR.INR.RINR_DS2_en_excel_v2_119.xls");
-            return ResponseEntity.status(HttpStatus.OK).body("Data imported successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error occurred while importing data: " + e.getMessage());
-        }
-    }
-
     @PostMapping("/getAllInterestRate")
     public Map<String, Object> getAllInterestRate(@RequestBody InterestRateFilterModel filters,
                                                         @RequestParam(defaultValue = "1") int pageNo,
                                                         @RequestParam(defaultValue = "100") int perPage) throws Exception {
+        try {
+            //import data from world bank excel file
+            interestRateService.importInterestRateFromFile("import_files/interest_rate/API_FR.INR.RINR_DS2_en_excel_v2_119.xls");
+            ResponseEntity.status(HttpStatus.OK).body("Data imported successfully");
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error occurred while importing data: " + e.getMessage());
+        }
         filters.setPageNo(pageNo);
         filters.setPerPage(perPage);
         return  interestRateService.getListInterestRateByFilter(filters);
