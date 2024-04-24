@@ -26,6 +26,11 @@ public class FilterController {
         return filterService.getCompetitorPricingFilter();
     }
 
+    @GetMapping("/interestRate")
+    public Map<String, Object> getInterestRateFilters() {
+        return filterService.getAllInterestRateFilter();
+    }
+
     @GetMapping("/competitorPricing/get-country-name")
     public Map<String, Object> getCountryByRegion(@RequestParam String region) {
         List<String> countryList = countryService.getListCountryNameByRegion(region);
