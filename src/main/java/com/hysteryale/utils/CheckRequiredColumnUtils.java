@@ -48,6 +48,10 @@ public class CheckRequiredColumnUtils {
     public static final String RESIDUAL_VALUE_REQUIRED_SHEET = "RV APIC";
 
 
+    //REQUIRED ROW
+    public static final List<String> INTEREST_RATE_COUNTRY_ROW=List.of("Australia","Bangladesh","China","Hong Kong SAR, China","India","Indonesia","Malaysia","Philippines","Singapore","Korea, Rep.","Sri Lanka","Taiwanese","Thailand","Viet Nam");
+
+
     public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns, String fileUUID) throws MissingColumnException {
         List<String> listMissingColumn = new ArrayList<>();
         for (String requiredColumn : requiredColumns) {

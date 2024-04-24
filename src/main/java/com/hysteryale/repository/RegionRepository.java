@@ -22,4 +22,7 @@ public interface RegionRepository extends JpaRepository<Region, String> {
 
     @Query("SELECT r FROM Region r WHERE r.regionShortName = ?1")
     Region getRegionByShortName(String shortName);
+
+    @Query(value = "SELECT r.region_name FROM region r ", nativeQuery = true)
+    List<Object> findAllRegionObject();
 }

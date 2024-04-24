@@ -8,6 +8,7 @@ package com.hysteryale.service;
 import com.hysteryale.model.filters.FilterRow;
 import com.hysteryale.repository.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -43,6 +44,8 @@ public class FilterService {
     ClazzRepository clazzRepository;
     @Resource
     GDPCountryRepository gdpCountryRepository;
+    @Autowired
+    private InterestRateRepository interestRateRepository;
 
     public Map<String, Object> getCompetitorPricingFilter() {
 
@@ -59,6 +62,13 @@ public class FilterService {
         filters.put("categories", getCategories());
         filters.put("countries", getCountries());
 
+        return filters;
+    }
+
+    public Map<String, Object> getAllInterestRateFilter() {
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("regions", getAllRegions());
+        filters.put("bankName",getAllBankNames());
         return filters;
     }
 
@@ -213,6 +223,18 @@ public class FilterService {
             DealerNameMap.add(mMap);
         }
         return DealerNameMap;
+    }
+
+    private List<Map<String, String>> getAllBankNames() {
+        List<Map<String, String>> bankNameMap = new ArrayList<>();
+        List<String> bankNames = interestRateRepository.getAllBankName();
+        bankNames.sort(String::compareTo);
+        for (String m : bankNames) {
+            Map<String, String> mMap = new HashMap<>();
+            mMap.put("value", m);
+            bankNameMap.add(mMap);
+        }
+        return bankNameMap;
     }
 
     private List<Map<String, String>> getAllPlants() {
