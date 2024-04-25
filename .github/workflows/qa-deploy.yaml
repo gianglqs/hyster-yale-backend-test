@@ -86,11 +86,17 @@ jobs:
           # run
           export timezone_hy=$(cat /etc/timezone)
           
-          docker run -p 8080:8080 -d --name=hysteryale-be --network=host -v /opt/hysteryale:/opt/hysteryale -e TZ=$timezone_hy  --restart unless-stopped ghcr.io/phoenix-software-development/hyster-yale-backend:latest
+          hysteryale_container_id=$(docker run -p 8080:8080 -d --name=hysteryale-be --network=host -v /opt/hysteryale:/opt/hysteryale -e TZ=$timezone_hy  --restart unless-stopped ghcr.io/phoenix-software-development/hyster-yale-backend:latest)
           
           sleep 60
           
           if [[ $(lsof -i:8080 | grep "java") != "" ]]
           then
-            curl 'http://localhost:8080/hysteryale/version/updateVersion?version={{github.event.release.tag_name}}&type=backend'
+            echo 'Build successfully'
+            exit 0
+            #curl 'http://localhost:8080/hysteryale/version/updateVersion?version={{github.event.release.tag_name}}&type=backend'
+          else
+            echo 'Build Failure'
+            docker logs $hysteryale_container_id
+            exit 1
           fi
