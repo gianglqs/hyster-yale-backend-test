@@ -775,9 +775,5 @@
     <changeSet author="oem (generated)" id="1713785991282-106">
         <addForeignKeyConstraint baseColumnNames="currency" baseTableName="booking" constraintName="fks7fhlcyemwr6qlieh7itp5pbt" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="currency" referencedTableName="currency" validate="true"/>
     </changeSet>
-    <changeSet id="create-function" author="songiang">
-        <sql>
-            CREATE ALIAS similarity FOR "com.hysteryale.dbConfiguration.H2Function.similarity";
-        </sql>
-    </changeSet>
+
 </databaseChangeLog>
