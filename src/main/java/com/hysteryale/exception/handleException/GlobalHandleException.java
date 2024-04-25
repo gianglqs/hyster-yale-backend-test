@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -312,6 +313,12 @@ public class GlobalHandleException extends ResponseEntityExceptionHandler {
         logError(baseMessage, exception);
         return new ResponseEntity<>(new ErrorResponse(baseMessage), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleEccessDeniedException(AccessDeniedException exception) {
+        return new ResponseEntity<>(new ErrorResponse("Access denied"), HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception exception, WebRequest request) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) request;
