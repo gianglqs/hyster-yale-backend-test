@@ -7,6 +7,7 @@ package com.hysteryale.service;
 
 import com.hysteryale.exception.CompetitorException.CompetitorColorNotFoundException;
 import com.hysteryale.exception.CompetitorException.MissingForecastFileException;
+import com.hysteryale.exception.MissingSheetException;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.competitor.ForeCastValue;
@@ -236,6 +237,20 @@ public class IndicatorService extends BasedService {
         InputStream is = new FileInputStream(filePath);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
 
+        String requiredSheetName = CheckRequiredColumnUtils.COMPETITOR_REQUIRED_SHEET;
+        Sheet sheet = workbook.getSheet(requiredSheetName);
+        if (sheet == null)
+            throw new MissingSheetException(requiredSheetName, fileUUID);
+
+        List<String> titleColumnCurrent = new ArrayList<>();
+        Row headerRow = sheet.getRow(0);
+        for (int j = 0; j < 22; j++) {
+            Cell cell = headerRow.getCell(j);
+            titleColumnCurrent.add(ConvertDataExcelUtils.convertDataFromExcelToString(cell));
+        }
+        //Check format file competitor
+        CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN, fileUUID);
+
         HashMap<String, Integer> competitorColumnName = new HashMap<>();
         List<CompetitorPricing> competitorPricingList = new ArrayList<>();
         List<ForeCastValue> forecastValueList = importService.loadForecastForCompetitorPricingFromFile();
@@ -243,16 +258,6 @@ public class IndicatorService extends BasedService {
         if (forecastValueList == null) {
             throw new MissingForecastFileException("Missing Forecast Dynamic Pricing Excel file");
         }
-
-        Sheet sheet = workbook.getSheetAt(0);
-        List<String> titleColumnCurrent = new ArrayList<>();
-        Row headerRow = sheet.getRow(0);
-        for (int j = 0; j < CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN.size(); j++) {
-            Cell cell = headerRow.getCell(j);
-            titleColumnCurrent.add(ConvertDataExcelUtils.convertDataFromExcelToString(cell));
-        }
-        //Check format file competitor
-        CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.COMPETITOR_REQUIRED_COLUMN, fileUUID);
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) {
