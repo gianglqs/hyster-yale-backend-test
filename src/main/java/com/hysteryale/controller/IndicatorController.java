@@ -154,7 +154,7 @@ public class IndicatorController {
         String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
-        if (!FileUtils.isExcelFile(pathFile)) {
+        if (!FileUtils.isXLSXFile(pathFile)) {
             fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
             throw new InvalidFileFormatException("Uploaded file is not an Excel file " + savedFileName, fileUUID);
         }
