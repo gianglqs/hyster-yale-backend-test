@@ -7,6 +7,7 @@ package com.hysteryale.controller;
 
 import com.hysteryale.exception.CompetitorException.CompetitorColorNotFoundException;
 import com.hysteryale.exception.InvalidFileFormatException;
+import com.hysteryale.model.Region;
 import com.hysteryale.model.competitor.CompetitorColor;
 import com.hysteryale.model.competitor.CompetitorPricing;
 import com.hysteryale.model.enums.FrequencyImport;
@@ -14,16 +15,14 @@ import com.hysteryale.model.filters.FilterModel;
 import com.hysteryale.model.filters.SwotFilters;
 import com.hysteryale.repository.upload.FileUploadRepository;
 import com.hysteryale.service.FileUploadService;
+import com.hysteryale.service.ImportService;
 import com.hysteryale.service.ImportTrackingService;
 import com.hysteryale.service.IndicatorService;
 import com.hysteryale.utils.CheckRequiredColumnUtils;
 import com.hysteryale.utils.EnvironmentUtils;
 import com.hysteryale.utils.FileUtils;
 import com.hysteryale.model.enums.ModelTypeEnum;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -52,6 +51,9 @@ public class IndicatorController {
 
     @Resource
     ImportTrackingService importTrackingService;
+
+    @Resource
+    ImportService importService;
 
     @PostMapping("/getCompetitorData")
     public Map<String, Object> getCompetitorData(@RequestBody FilterModel filters,
@@ -152,18 +154,20 @@ public class IndicatorController {
         String pathFile = baseFolder + baseFolderUploaded + targetFolder + savedFileName;
         String fileUUID = fileUploadRepository.getFileUUIDByFileName(savedFileName);
 
-        if (!FileUtils.isExcelFile(pathFile)) {
+        if (!FileUtils.isXLSXFile(pathFile)) {
             fileUploadService.handleUpdatedFailure(fileUUID, "Uploaded file is not an Excel file");
             throw new InvalidFileFormatException("Uploaded file is not an Excel file " + savedFileName, fileUUID);
         }
         InputStream is = new FileInputStream(pathFile);
         XSSFWorkbook workbook = new XSSFWorkbook(is);
-
+        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         List<String> titleColumnCurrent = new ArrayList<>();
 
 
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             Sheet sheet = workbook.getSheetAt(i);
+            Region region = importService.getRegionBySheetName(sheet.getSheetName());
+            if (region == null) continue;
             Row headerRow = sheet.getRow(1);
             for (int j = 0; j < CheckRequiredColumnUtils.FORECAST_REQUIRED_COLUMN.size(); j++) {
                 Cell cell = headerRow.getCell(j);
@@ -171,9 +175,15 @@ public class IndicatorController {
                     continue;
                 if (cell.getCellType() == CellType.STRING)
                     titleColumnCurrent.add(cell.getStringCellValue());
-                else
+                else if (cell.getCellType() == CellType.NUMERIC)
                     titleColumnCurrent.add(String.valueOf(cell.getNumericCellValue()));
-
+                else if (cell.getCellType() == CellType.FORMULA) {
+                    CellValue cellValue = evaluator.evaluate(cell);
+                    if (cellValue.getCellType() == CellType.NUMERIC)
+                        titleColumnCurrent.add(String.valueOf(cellValue.getNumberValue()));
+                    else
+                        titleColumnCurrent.add(cellValue.getStringValue());
+                }
             }
         }
         CheckRequiredColumnUtils.checkRequiredColumn(titleColumnCurrent, CheckRequiredColumnUtils.FORECAST_REQUIRED_COLUMN, fileUUID);

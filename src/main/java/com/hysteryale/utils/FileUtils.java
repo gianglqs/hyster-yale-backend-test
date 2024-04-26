@@ -97,6 +97,17 @@ public class FileUtils {
         }
     }
 
+    public static boolean isXLSXFile(String filePath) throws IOException {
+        if (StringUtil.isNotBlank(filePath)) {
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filePath));
+            return  (FileMagic.valueOf(bis) == FileMagic.OOXML);
+        } else {
+            throw new FileNotFoundException(filePath + "does not exist");
+        }
+    }
+
+
+
     public static boolean isExcelFile(InputStream is) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(is);
 

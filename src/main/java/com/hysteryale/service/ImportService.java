@@ -343,6 +343,8 @@ public class ImportService extends BasedService {
 
         for (String fileName : fileList) {
             String pathFile = folderPath + "/" + fileName;
+            if(!FileUtils.isXLSXFile(pathFile))
+                continue;
             InputStream is = new FileInputStream(pathFile);
             XSSFWorkbook workbook = new XSSFWorkbook(is);
             List<Integer> years = new ArrayList<>();
@@ -351,6 +353,7 @@ public class ImportService extends BasedService {
 
             for (Sheet sheet : workbook) {
                 Region region = getRegionBySheetName(sheet.getSheetName());
+                if(region == null) continue;
                 for (Row row : sheet) {
                     if (row.getRowNum() == 0) {
                         getYearsInForeCast(YEARS_COLUMN, row, years);
@@ -394,7 +397,7 @@ public class ImportService extends BasedService {
     /**
      * Find the region based on sheetName in Forecast Value
      */
-    private Region getRegionBySheetName(String sheetName) {
+    public Region getRegionBySheetName(String sheetName) {
         String strRegion;
         switch (sheetName) {
             case "Asia_Fin":
