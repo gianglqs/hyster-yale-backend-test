@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -28,7 +30,7 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class InterestRateService {
 
-    @Autowired
+    @Resource
     InterestRateRepository interestRateRepository;
 
     @Autowired
@@ -39,13 +41,12 @@ public class InterestRateService {
         Map<String, Object> filterMap = ConvertDataFilterUtil.loadInterestRateDataFilterIntoMap(filter);
         List<Object[]> getData;
         if (filter.getRegions() == null || filter.getRegions().isEmpty()) {
-            getData=interestRateRepository.selectAllForInterestRate((String) filterMap.get("bankNameFilter"));
+            getData=interestRateRepository.selectAllForInterestRate((String) filterMap.get("bankNameFilter"),(Pageable) filterMap.get("pageable"));
         } else {
-            getData = interestRateRepository.selectAllForInterestRateByFilter((String) filterMap.get("bankNameFilter"), (List<String>) filterMap.get("regionFilter"));
+            getData = interestRateRepository.selectAllForInterestRateByFilter((String) filterMap.get("bankNameFilter"), (List<String>) filterMap.get("regionFilter"),(Pageable) filterMap.get("pageable"));
         }
 
        int totalBank=countBankWithFilter(filter);
-        Map<String, List<Object>> resultList=new HashMap<>();
         List<Object> list=new ArrayList<>();
         for(Object[] data:getData) {
             Map<String, Object> map = new HashMap<>();

@@ -35,7 +35,7 @@ public class InterestRateController {
         }
     }
 
-    @PostMapping("/getAllInterestRate")
+    @PostMapping("/getAllInterestRates")
     public Map<String, Object> getAllInterestRate(@RequestBody InterestRateFilterModel filters,
                                                         @RequestParam(defaultValue = "1") int pageNo,
                                                         @RequestParam(defaultValue = "10") int perPage) throws Exception {
