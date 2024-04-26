@@ -50,7 +50,7 @@ public class CheckRequiredColumnUtils {
 
 
     //REQUIRED ROW
-    public static final List<String> INTEREST_RATE_COUNTRY_ROW=List.of("Australia","Bangladesh","China","Hong Kong SAR, China","India","Indonesia","Malaysia","Philippines","Singapore","Korea, Rep.","Sri Lanka","Taiwanese","Thailand","Viet Nam");
+    public static final List<String> INTEREST_RATE_COUNTRY_ROW=List.of("Australia","Bangladesh","China","Hong Kong","India","Indonesia","Malaysia","Philippines","Singapore","South Korea","Sri Lanka","Taiwanese","Thailand","Vietnam");
 
 
     public static void checkRequiredColumn(List<String> currentColumns, List<String> requiredColumns, String fileUUID) throws MissingColumnException {

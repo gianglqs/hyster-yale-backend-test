@@ -77,6 +77,7 @@ public class ConvertDataFilterUtil {
         result.put("metaseriesFilter", metaseriesFilter);
         result.put("dealerId", dealerIdListFilter);
 
+
         return result;
     }
 
@@ -88,6 +89,7 @@ public class ConvertDataFilterUtil {
         result.put("pageable", pageable);
         result.put("regionFilter", regionFilter);
         result.put("bankNameFilter", bankNameFilter);
+
         return result;
     }
 

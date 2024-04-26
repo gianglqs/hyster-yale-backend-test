@@ -101,6 +101,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/gdp/collectData").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/author/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/users/resetPassword").permitAll()
+                .antMatchers(HttpMethod.GET,"/importDataInterestRate").permitAll()
                 .antMatchers("/h2/**").permitAll()
                 // Our private endpoints
                 .anyRequest().authenticated();
