@@ -343,7 +343,7 @@ public class ImportService extends BasedService {
 
         for (String fileName : fileList) {
             String pathFile = folderPath + "/" + fileName;
-            if(!FileUtils.isExcelFile(pathFile))
+            if(!FileUtils.isXLSXFile(pathFile))
                 continue;
             InputStream is = new FileInputStream(pathFile);
             XSSFWorkbook workbook = new XSSFWorkbook(is);
