@@ -2,10 +2,12 @@ package com.hysteryale.repository;
 
 import com.hysteryale.model.Booking;
 import com.hysteryale.model.InterestRate;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,13 +25,22 @@ public interface InterestRateRepository extends JpaRepository<InterestRate, Inte
     List<String> getAllBankName();
 
     @Query(value = "select ir.id, ir.bank_name, ir.country, ir.current_rate, ir. previous_rate, ir.update_date, c.region_id, r.region_name, c.code  from interest_rate ir, country c , region r \n" +
-            "\twhere ir.bank_name like concat('%',:bankName,'%') and ir.country =c.country_name  and c.region_id =r.id", nativeQuery = true)
-    List<Object[]> selectAllForInterestRate(@Param("bankName") String bankName);
+            "\twhere lower(ir.bank_name) like lower(concat('%', :bankName, '%')) and ir.country =c.country_name  and c.region_id =r.id", nativeQuery = true)
+    List<Object[]> selectAllForInterestRate(@Param("bankName") String bankName, @Param("pageable") Pageable pageable);
 
 
     @Query(value = "select ir.id, ir.bank_name, ir.country, ir.current_rate, ir. previous_rate, ir.update_date, c.region_id, r.region_name, c.code  from interest_rate ir, country c , region r \n" +
-            "\twhere ir.bank_name like concat('%',:bankName,'%') and ir.country =c.country_name  and c.region_id =r.id and r.region_name IN (:regions)", nativeQuery = true)
-    List<Object[]> selectAllForInterestRateByFilter(@Param("bankName") String bankName,@Param("regions") List<String> regions);
+            "\twhere lower(ir.bank_name) like lower(concat('%', :bankName, '%')) and ir.country =c.country_name  and c.region_id =r.id and r.region_name IN (:regions)", nativeQuery = true)
+    List<Object[]> selectAllForInterestRateByFilter(@Param("bankName") String bankName,@Param("regions") List<String> regions,@Param("pageable") Pageable pageable);
+
+
+    @Query(value = "SELECT COUNT(*) from interest_rate ir, country c , region r \n" +
+            "\twhere ir.bank_name like concat('%',:bankName,'%') and ir.country =c.country_name  and c.region_id =r.id", nativeQuery = true)
+    int getCountAll(@Param("bankName") String bankName);
+
+    @Query(value = "SELECT COUNT(*) from interest_rate ir, country c , region r \n" +
+            "\twhere lower(ir.bank_name) like lower(concat('%', :bankName, '%')) and ir.country =c.country_name  and c.region_id =r.id and r.region_name IN (:regions)", nativeQuery = true)
+    int getCount(@Param("bankName") String bankName,@Param("regions") List<String> regions);
 
 }
 

@@ -41,6 +41,7 @@ public class EnvironmentUtils implements EnvironmentAware {
         System.setProperty("DATABASE_USERNAME", dotenv().get("DATABASE_USERNAME"));
         System.setProperty("DATABASE_PASSWORD", dotenv().get("DATABASE_PASSWORD"));
         System.setProperty("BASE_FOLDER_IMPORT_POSTMAN", dotenv().get("BASE_FOLDER_IMPORT_POSTMAN"));
+        System.setProperty("BASE_IMPORT_FILE", dotenv().get("BASE_IMPORT_FILE"));
         System.setProperty("IMPORTED_FILES", dotenv().get("IMPORTED_FILES"));
         System.setProperty("MJ_API_KEY", dotenv().get("MJ_API_KEY"));
         System.setProperty("MJ_API_SECRET", dotenv().get("MJ_API_SECRET"));
