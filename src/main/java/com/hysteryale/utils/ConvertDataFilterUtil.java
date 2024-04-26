@@ -77,6 +77,7 @@ public class ConvertDataFilterUtil {
         result.put("metaseriesFilter", metaseriesFilter);
         result.put("dealerId", dealerIdListFilter);
 
+
         return result;
     }
 
@@ -84,10 +85,11 @@ public class ConvertDataFilterUtil {
         Map<String, Object> result = new HashMap<>();
         String bankNameFilter = checkStringData(filterModel.getBankName());
         List<String> regionFilter = checkListData(filterModel.getRegions());
-        Pageable pageable = PageRequest.of(filterModel.getPageNo() == 0 ? filterModel.getPageNo() : filterModel.getPageNo() - 1, filterModel.getPerPage() == 0 ? 100 : filterModel.getPerPage());
+        Pageable pageable = PageRequest.of(filterModel.getPageNo() == 0 ? filterModel.getPageNo() : filterModel.getPageNo() - 1, filterModel.getPerPage() == 0 ? 10 : filterModel.getPerPage());
         result.put("pageable", pageable);
         result.put("regionFilter", regionFilter);
         result.put("bankNameFilter", bankNameFilter);
+
         return result;
     }
 
