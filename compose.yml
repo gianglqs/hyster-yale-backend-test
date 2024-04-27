@@ -1,0 +1,38 @@
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    container_name: postgres_container
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - /opt/hysteryale/postgres_db:/var/lib/postgresql/data
+      - ./customPostgresql.conf:/etc/postgresql.conf
+    networks:
+      - hy_container
+
+
+  hysteryale-be:
+    image: hyster-yale-backend
+    #image: ghcr.io/phoenix-software-development/hyster-yale-backend:latest
+    container_name: ${CONTAINER_NAME}
+    ports:
+      - "8080:8080"
+    networks:
+      - hy_container
+    volumes:
+      - /opt/hysteryale:/opt/hysteryale
+    environment:
+      - TZ=${TIMEZONE_HY}
+
+volumes:
+  pgdata:
+
+networks:
+  hy_container:
+    name: hy_container
+    driver: bridge
+# run with: CONTAINER_NAME=giang_kkk TIMEZONE_HY=$(cat /etc/  timezone) docker compose up
