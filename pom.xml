@@ -268,7 +268,9 @@
             <resource>
                 <directory>${project.basedir}</directory>
                 <includes>
-                    <include>**/*</include>
+                    <include>src/*</include>
+                    <include>pom.xml</include>
+                    <include>.env</include>
                 </includes>
             </resource>
         </resources>
