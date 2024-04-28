@@ -274,7 +274,7 @@
                 </includes>
             </resource>
         </resources>
-        <finalName>hysteryale</finalName>
+        <finalName>${fileName}</finalName>
     </build>
 
 </project>

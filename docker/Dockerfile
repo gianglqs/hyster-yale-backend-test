@@ -19,10 +19,12 @@ RUN mvn clean install -DskipTests -DfileName=$RELEASE_TAG
 FROM eclipse-temurin:17-jdk-alpine
 VOLUME /app
 
+ARG RELEASE_TAG
+ARG VERSION_TAG
+
 COPY --from=build /app/target/$RELEASE_TAG.war .
 COPY ../locale /locale/
 
-ARG VERSION_TAG
 ENV IMAGE-TAG=$VERSION_TAG
 ENV RELEASE-TAG=$RELEASE_TAG
 
