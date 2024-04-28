@@ -95,7 +95,6 @@ jobs:
       - name: Run new Image
         shell: bash
         run: |
-          source ~/.bashrc
           cd /opt/hysteryale/hyster-yale-backend-test/docker
           docker compose up -d
 
