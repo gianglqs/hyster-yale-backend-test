@@ -25,8 +25,8 @@ ARG VERSION_TAG
 COPY --from=build /app/target/$RELEASE_TAG.war .
 COPY ../locale /locale/
 
-ENV IMAGE-TAG=$VERSION_TAG
-ENV RELEASE-TAG=$RELEASE_TAG
+ENV IMAGE_TAG=$VERSION_TAG
+ENV RELEASE_TAG=$RELEASE_TAG
 
 EXPOSE 8080
 
@@ -48,8 +48,7 @@ RUN mkdir -p /opt/hysteryale/uploadFiles/dealer
 RUN mkdir -p /opt/hysteryale/images/product/
 RUN mkdir -p /opt/hysteryale/images/part/
 RUN mkdir -p /opt/hysteryale/locale/
-# run
-CMD java -jar $RELEASE_TAG.war
+
 
 #ENTRYPOINT ["java","-jar","target/hysteryale.war"]
 CMD java -Xmx14000m -jar $RELEASE_TAG.war
