@@ -75,6 +75,7 @@ jobs:
         shell: bash
         run: |
           cd /opt/hysteryale/hyster-yale-backend
+          get fetch
           git checkout tags/${{ github.event.release.tag_name }}
 
       - name: Stop old container is running
