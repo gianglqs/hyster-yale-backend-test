@@ -74,14 +74,14 @@ jobs:
       - name: checkout code to get file compose.yml
         shell: bash
         run: |
-          cd /opt/hysteryale/hyster-yale-backend
+          cd /opt/hysteryale/hyster-yale-backend-test
           get fetch
           git checkout tags/${{ github.event.release.tag_name }}
 
       - name: Stop old container is running
         shell: bash
         run: |
-          cd /opt/hysteryale/hyster-yale-backend/docker
+          cd /opt/hysteryale/hyster-yale-backend-test/docker
           docker compose down
 
       - name: Setup environment
@@ -92,14 +92,14 @@ jobs:
       - name: Run new Image
         shell: bash
         run: |
-          cd /opt/hysteryale/hyster-yale-backend/docker
+          cd /opt/hysteryale/hyster-yale-backend-test/docker
           docker compose up -d
 
       - name: Check successfully
         shell: bash
         run: |
           sleep 60
-          cd /opt/hysteryale/hyster-yale-backend
+          cd /opt/hysteryale/hyster-yale-backend-test
           if [[ $(netstat -tuln | grep 8080) == "" ]]
           then
             echo 'Build Failure'
