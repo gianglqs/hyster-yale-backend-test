@@ -16,8 +16,8 @@ services:
 
 
   hysteryale-be:
-    #image: hyster-yale-backend
-    image: ghcr.io/phoenix-software-development/hyster-yale-backend:latest
+    image: hyster-yale-backend
+    #image: ghcr.io/phoenix-software-development/hyster-yale-backend:latest
     container_name: ${CONTAINER_NAME}
     ports:
       - "8080:8080"
