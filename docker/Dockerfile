@@ -4,10 +4,10 @@ WORKDIR /app
 ARG RELEASE_TAG
 
 #copy source code
-COPY import_files/ import_files/
-COPY src/ src/
-COPY pom.xml .
-COPY .env .
+COPY ../import_files import_files/
+COPY ../src src/
+COPY ../pom.xml .
+COPY ../.env .
 
 # create folder to save file when import file excel
 RUN mkdir -p /tmp/UploadFiles/forecast_pricing
@@ -20,8 +20,11 @@ FROM eclipse-temurin:17-jdk-alpine
 VOLUME /app
 
 COPY --from=build /app/target/$RELEASE_TAG.war .
-COPY locale/ /locale/
+COPY ../locale /locale/
 
+ARG VERSION_TAG
+ENV IMAGE-TAG=$VERSION_TAG
+ENV RELEASE-TAG=$RELEASE_TAG
 
 EXPOSE 8080
 

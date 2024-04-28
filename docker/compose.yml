@@ -35,4 +35,5 @@ networks:
   hy_container:
     name: hy_container
     driver: bridge
+    external: true
 # run with: CONTAINER_NAME=giang_kkk TIMEZONE_HY=$(cat /etc/  timezone) docker compose up

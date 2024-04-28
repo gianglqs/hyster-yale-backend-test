@@ -33,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./
-          file: Dockerfile
+          file: docker/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
@@ -80,20 +80,19 @@ jobs:
       - name: Stop old container is running
         shell: bash
         run: |
-          cd /opt/hysteryale/hyster-yale-backend
+          cd /opt/hysteryale/hyster-yale-backend/docker
           docker compose down
 
       - name: Setup environment
         shell: bash
         run: |
-          container_name=hysteryale-be-${{ github.event.release.tag_name }}
-          timezone_hy=$(cat /etc/timezone)
-
+          echo 'export CONTAINER_NAME=hysteryale-be-${{ github.event.release.tag_name }}' >> ~/.bashrc
+          source ~/.bashrc
       - name: Run new Image
         shell: bash
         run: |
-          cd /opt/hysteryale/hyster-yale-backend
-          CONTAINER_NAME=$container_name TIMEZONE_HY=$timezone_hy docker compose up -d
+          cd /opt/hysteryale/hyster-yale-backend/docker
+          docker compose up -d
 
       - name: Check successfully
         shell: bash
@@ -103,24 +102,25 @@ jobs:
           if [[ $(netstat -tuln | grep 8080) == "" ]]
           then
             echo 'Build Failure'
-            docker logs $container_name
+            docker logs $CONTAINER_NAME
           
             echo 'checkout last success tag'
-            git checkout tags/$last_tag_BE_success
+            git checkout tags/$LAST_SUCCESS_RELEASE_TAG_BE
           
+            cd docker/
             echo 'Down docker compose'
             docker compose down
           
             echo 'Up last success docker compose...'
-            CONTAINER_NAME=last_version_BE_successful TIMEZONE_HY=$timezone_hy docker compose up -d
+            CONTAINER_NAME=$LAST_SUCCESS_VERSION_IMAGE_BE docker compose up -d
             echo 'Revert successfully.'
           
             exit 1
           fi
           
           echo 'Build successfully'
-          last_version_BE_success=$container_name
-          last_tag_BE_success=${{ github.event.release.tag_name }}
+          echo "LAST_SUCCESS_VERSION_IMAGE_BE=$CONTAINER_NAME" >> ~/.bashrc
+          echo "LAST_SUCCESS_RELEASE_TAG_BE=${{ github.event.release.tag_name }}" >> ~/.bashrc
 
       - name: Clean images and containers not used
         shell: bash
