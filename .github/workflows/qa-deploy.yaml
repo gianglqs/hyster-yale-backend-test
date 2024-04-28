@@ -124,8 +124,10 @@ jobs:
           fi
           
           echo 'Build successfully'
-          echo "LAST_SUCCESS_VERSION_IMAGE_BE=$CONTAINER_NAME" >> ~/.bashrc
-          echo "LAST_SUCCESS_RELEASE_TAG_BE=${{ github.event.release.tag_name }}" >> ~/.bashrc
+          sed -i '/export LAST_SUCCESS_VERSION_IMAGE_BE=/d' ~/.bashrc
+          sed -i '/export LAST_SUCCESS_RELEASE_TAG_BE=/d' ~/.bashrc
+          echo "export LAST_SUCCESS_VERSION_IMAGE_BE=$CONTAINER_NAME" >> ~/.bashrc
+          echo "export LAST_SUCCESS_RELEASE_TAG_BE=${{ github.event.release.tag_name }}" >> ~/.bashrc
           source ~/.bashrc
       - name: Clean images and containers not used
         shell: bash
