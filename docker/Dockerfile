@@ -1,26 +1,30 @@
 #step 1: BUILD
 FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /app
+ARG RELEASE_TAG
 
 #copy source code
-COPY import_files/ import_files/
-COPY src/ src/
-COPY pom.xml .
-COPY .env .
-COPY locale/ locale/
+COPY ../import_files import_files/
+COPY ../src src/
+COPY ../pom.xml .
+COPY ../.env .
 
 # create folder to save file when import file excel
 RUN mkdir -p /tmp/UploadFiles/forecast_pricing
 
 # build file .war
-RUN mvn clean install -DskipTests
+RUN mvn clean install -DskipTests -DfileName=$RELEASE_TAG
 
 # step 2: RUN
 FROM eclipse-temurin:17-jdk-alpine
 VOLUME /app
 
-COPY --from=build /app/target/ target/
-COPY locale/ /locale/
+COPY --from=build /app/target/$RELEASE_TAG.war .
+COPY ../locale /locale/
+
+ARG VERSION_TAG
+ENV IMAGE-TAG=$VERSION_TAG
+ENV RELEASE-TAG=$RELEASE_TAG
 
 EXPOSE 8080
 
@@ -36,10 +40,14 @@ RUN mkdir -p /opt/hysteryale/uploadFiles/product
 RUN mkdir -p /opt/hysteryale/uploadFiles/exchange_rate
 RUN mkdir -p /opt/hysteryale/uploadFiles/booking_fpa
 RUN mkdir -p /opt/hysteryale/uploadFiles/residual_value
+RUN mkdir -p /opt/hysteryale/uploadFiles/dealer_product
+RUN mkdir -p /opt/hysteryale/uploadFiles/dealer
 
 RUN mkdir -p /opt/hysteryale/images/product/
 RUN mkdir -p /opt/hysteryale/images/part/
 RUN mkdir -p /opt/hysteryale/locale/
 # run
+CMD java -jar $RELEASE_TAG.war
+
 #ENTRYPOINT ["java","-jar","target/hysteryale.war"]
-CMD java -Xmx12000m -Dspring.profiles.active=dev -jar target/hysteryale.war
+CMD java -Xmx14000m -jar $RELEASE_TAG.war

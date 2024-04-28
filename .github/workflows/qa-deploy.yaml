@@ -33,11 +33,12 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./
-          file: Dockerfile
+          file: docker/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
             "VERSION_TAG=${{ steps.meta.outputs.tags }}"
+            "RELEASE_TAG=${{ github.event.release.tag_name }}
 
   deploy:
     needs: [build-qa-image]
@@ -67,36 +68,71 @@ jobs:
       - name: Pull latest image
         shell: bash
         run: |
-          CONTAINER_NAME=hysteryale-be
-          
-          # pull 
+          # pull image
           docker pull ghcr.io/phoenix-software-development/hyster-yale-backend:latest
-          
-          # if container is running, stop it
-          if docker ps -a --format '{{.Names}}' | grep -Eq "^$CONTAINER_NAME$"; then
-             docker stop $CONTAINER_NAME || true
-          
-             # delete old images
-             docker image prune -af
-          fi
-          
-          # remove image and containers old
-          docker rm $CONTAINER_NAME || true
-          
-          # run
-          export timezone_hy=$(cat /etc/timezone)
-          
-          hysteryale_container_id=$(docker run -p 8080:8080 -d --name=hysteryale-be --network=host -v /opt/hysteryale:/opt/hysteryale -e TZ=$timezone_hy  --restart unless-stopped ghcr.io/phoenix-software-development/hyster-yale-backend:latest)
-          
+
+      - name: checkout code to get file compose.yml
+        shell: bash
+        run: |
+          cd /opt/hysteryale/hyster-yale-backend
+          git checkout tags/{{ github.event.release.tag_name }}
+
+      - name: Stop old container is running
+        shell: bash
+        run: |
+          cd /opt/hysteryale/hyster-yale-backend/docker
+          docker compose down
+
+      - name: Setup environment
+        shell: bash
+        run: |
+          echo 'export CONTAINER_NAME=hysteryale-be-${{ github.event.release.tag_name }}' >> ~/.bashrc
+          source ~/.bashrc
+      - name: Run new Image
+        shell: bash
+        run: |
+          cd /opt/hysteryale/hyster-yale-backend/docker
+          docker compose up -d
+
+      - name: Check successfully
+        shell: bash
+        run: |
           sleep 60
-          
-          if [[ $(lsof -i:8080 | grep "java") != "" ]]
+          cd /opt/hysteryale/hyster-yale-backend
+          if [[ $(netstat -tuln | grep 8080) == "" ]]
           then
-            echo 'Build successfully'
-            exit 0
-            #curl 'http://localhost:8080/hysteryale/version/updateVersion?version={{github.event.release.tag_name}}&type=backend'
-          else
             echo 'Build Failure'
-            docker logs $hysteryale_container_id
+            docker logs $CONTAINER_NAME
+          
+            echo 'checkout last success tag'
+            git checkout tags/$LAST_SUCCESS_RELEASE_TAG_BE
+          
+            cd docker/
+            echo 'Down docker compose'
+            docker compose down
+          
+            echo 'Up last success docker compose...'
+            CONTAINER_NAME=$LAST_SUCCESS_VERSION_IMAGE_BE docker compose up -d
+            echo 'Revert successfully.'
+          
             exit 1
           fi
+          
+          echo 'Build successfully'
+          echo "LAST_SUCCESS_VERSION_IMAGE_BE=$CONTAINER_NAME" >> ~/.bashrc
+          echo "LAST_SUCCESS_RELEASE_TAG_BE=${{ github.event.release.tag_name }}" >> ~/.bashrc
+
+      - name: Clean images and containers not used
+        shell: bash
+        run: |
+          echo 'erasing not used container...'
+          docker container prune 
+          echo 'erased not used container.'
+          
+          echo 'erasing not used images...'
+          docker image prune 
+          echo 'erased not used images.'
+          
+          exit 0
+          
+
