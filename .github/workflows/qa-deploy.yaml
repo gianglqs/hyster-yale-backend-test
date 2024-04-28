@@ -95,6 +95,7 @@ jobs:
       - name: Run new Image
         shell: bash
         run: |
+          echo $TIMEZONE_HY
           cd /opt/hysteryale/hyster-yale-backend-test/docker
           docker compose up -d
 
