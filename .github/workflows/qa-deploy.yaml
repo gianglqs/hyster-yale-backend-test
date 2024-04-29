@@ -112,7 +112,7 @@ jobs:
             docker logs $CONTAINER_NAME
           
             echo 'checkout last success tag'
-            git checkout tags/$LAST_SUCCESS_RELEASE_TAG_BE
+            git checkout tags/${{LAST_SUCCESS_RELEASE_TAG_BE}}
           
             cd docker/
             echo 'Down docker compose'
