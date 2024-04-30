@@ -67,18 +67,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Set up environment variables
-        uses: actions/setup-dotenv@v4
-        with:
-            dotenv-file: .env
-
       - name: Pull latest image
         shell: bash
-        run: |
-          echo $LAST_SUCCESS_IMAGE_ID_BE
-          echo $LAST_SUCCESS_RELEASE_TAG_BE
-          echo $LAST_SUCCESS_CONTAINER_NAME_BE
-          
+        run: |     
           # pull image
           docker pull ghcr.io/gianglqs/hyster-yale-backend-test:latest
 
@@ -94,7 +85,7 @@ jobs:
         run: |
           cd /opt/hysteryale/hyster-yale-backend-test/docker
           export IMAGE_ID=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_ID_BE)
-          docker compose 
+          docker compose down
 
       - name: Run new Image
         shell: bash
