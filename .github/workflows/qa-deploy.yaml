@@ -84,6 +84,7 @@ jobs:
         shell: bash
         run: |
           cd /opt/hysteryale/hyster-yale-backend-test/docker
+          export IMAGE_ID=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_ID_BE)
           docker compose stop
 
       - name: Run new Image
