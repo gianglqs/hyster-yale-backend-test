@@ -67,9 +67,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
+      - name: Set up environment variables
+        uses: actions/setup-dotenv@v1
+        with:
+            dotenv-file: /opt/hysteryale/last_version_success_release/env
+
       - name: Pull latest image
         shell: bash
         run: |
+          echo $LAST_SUCCESS_IMAGE_ID_BE
+          echo $LAST_SUCCESS_RELEASE_TAG_BE
+          echo $LAST_SUCCESS_CONTAINER_NAME_BE
+          
           # pull image
           docker pull ghcr.io/gianglqs/hyster-yale-backend-test:latest
 
@@ -85,7 +94,7 @@ jobs:
         run: |
           cd /opt/hysteryale/hyster-yale-backend-test/docker
           export IMAGE_ID=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_ID_BE)
-          docker compose stop
+          docker compose 
 
       - name: Run new Image
         shell: bash
@@ -116,7 +125,7 @@ jobs:
             docker compose down
           
             echo 'Up last success docker compose...'
-            export CONTAINER_NAME=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_TAG_BE)
+            export CONTAINER_NAME=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_CONTAINER_NAME_BE)
             export IMAGE_ID=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_ID_BE)
             docker compose up -d
             echo 'Revert successfully.'
@@ -126,7 +135,7 @@ jobs:
           
           echo 'Build successfully'
           
-          echo $CONTAINER_NAME > /opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_TAG_BE
+          echo $CONTAINER_NAME > /opt/hysteryale/last_version_success_release/LAST_SUCCESS_CONTAINER_NAME_BE
           echo "${{ github.event.release.tag_name }}" > /opt/hysteryale/last_version_success_release/LAST_SUCCESS_RELEASE_TAG_BE
           IMAGE_NAME='ghcr.io/gianglqs/hyster-yale-backend-test:latest'
           IMAGE_ID=$(docker images --filter=reference="${IMAGE_NAME}" --format "{{.ID}}")
