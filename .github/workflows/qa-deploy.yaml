@@ -84,7 +84,7 @@ jobs:
         shell: bash
         run: |
           cd /opt/hysteryale/hyster-yale-backend-test/docker
-          docker compose down
+          docker compose stop
 
       - name: Run new Image
         shell: bash
@@ -109,7 +109,7 @@ jobs:
             git checkout tags/$LAST_SUCCESS_RELEASE_TAG_BE
           
             cd docker/
-            echo 'Down docker compose'
+            echo 'stop docker compose'
             export TIMEZONE_HY=$(cat /etc/timezone)
             docker compose down
           
