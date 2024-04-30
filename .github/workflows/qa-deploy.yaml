@@ -84,7 +84,9 @@ jobs:
         shell: bash
         run: |
           cd /opt/hysteryale/hyster-yale-backend-test/docker
-          export IMAGE_ID=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_ID_BE)
+          export TIMEZONE_HY=$(cat /etc/timezone)
+          export IMAGE_NAME=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_ID_BE)
+          export CONTAINER_NAME=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_CONTAINER_NAME_BE)
           docker compose down
 
       - name: Run new Image
