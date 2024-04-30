@@ -119,7 +119,7 @@ jobs:
           
             echo 'Up last success docker compose...'
             export CONTAINER_NAME=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_CONTAINER_NAME_BE)
-            export IMAGE_ID=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_ID_BE)
+            export IMAGE_NAME=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_ID_BE)
             docker compose up -d
             echo 'Revert successfully.'
           
