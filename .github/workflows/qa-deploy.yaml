@@ -111,7 +111,7 @@ jobs:
             cd docker/
             echo 'stop docker compose'
             export TIMEZONE_HY=$(cat /etc/timezone)
-            IMAGE_NAME='ghcr.io/gianglqs/hyster-yale-backend-test:latest'
+            export IMAGE_NAME='ghcr.io/gianglqs/hyster-yale-backend-test:latest'
             docker compose down
           
             echo 'checkout last success tag'
