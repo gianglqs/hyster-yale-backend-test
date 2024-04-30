@@ -108,14 +108,15 @@ jobs:
             echo 'Build Failure'
             docker logs $CONTAINER_NAME
           
-            echo 'checkout last success tag'
-            LAST_SUCCESS_RELEASE_TAG_BE=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_RELEASE_TAG_BE)
-            git checkout tags/$LAST_SUCCESS_RELEASE_TAG_BE
-          
             cd docker/
             echo 'stop docker compose'
             export TIMEZONE_HY=$(cat /etc/timezone)
+            IMAGE_NAME='ghcr.io/gianglqs/hyster-yale-backend-test:latest'
             docker compose down
+          
+            echo 'checkout last success tag'
+            LAST_SUCCESS_RELEASE_TAG_BE=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_RELEASE_TAG_BE)
+            git checkout tags/$LAST_SUCCESS_RELEASE_TAG_BE
           
             echo 'Up last success docker compose...'
             export CONTAINER_NAME=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_CONTAINER_NAME_BE)
