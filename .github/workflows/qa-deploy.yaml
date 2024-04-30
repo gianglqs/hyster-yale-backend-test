@@ -90,6 +90,7 @@ jobs:
         shell: bash
         run: |
           export TIMEZONE_HY=$(cat /etc/timezone)
+          export IMAGE_NAME=ghcr.io/gianglqs/hyster-yale-backend-test:latest
           
           cd /opt/hysteryale/hyster-yale-backend-test/docker
           docker compose up -d
@@ -114,8 +115,9 @@ jobs:
             docker compose down
           
             echo 'Up last success docker compose...'
-            LAST_SUCCESS_IMAGE_TAG_BE=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_TAG_BE)
-            CONTAINER_NAME=$LAST_SUCCESS_IMAGE_TAG_BE docker compose up -d
+            export CONTAINER_NAME=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_TAG_BE)
+            export IMAGE_ID=$(</opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_ID_BE)
+            docker compose up -d
             echo 'Revert successfully.'
           
             exit 1
@@ -125,6 +127,11 @@ jobs:
           
           echo $CONTAINER_NAME > /opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_TAG_BE
           echo "${{ github.event.release.tag_name }}" > /opt/hysteryale/last_version_success_release/LAST_SUCCESS_RELEASE_TAG_BE
+          IMAGE_NAME='ghcr.io/gianglqs/hyster-yale-backend-test:latest'
+          IMAGE_ID=$(docker images --filter=reference="${IMAGE_NAME}" --format "{{.ID}}")
+          echo $IMAGE_ID > /opt/hysteryale/last_version_success_release/LAST_SUCCESS_IMAGE_ID_BE
+          
+          
 
       - name: Clean images and containers not used
         shell: bash

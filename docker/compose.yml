@@ -16,8 +16,7 @@ services:
 
 
   hysteryale-be:
-    #image: hyster-yale-backend
-    image: ghcr.io/gianglqs/hyster-yale-backend-test:latest
+    image: ${IMAGE_NAME}
     container_name: ${CONTAINER_NAME}
     ports:
       - "8080:8080"
