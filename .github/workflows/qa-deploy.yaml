@@ -90,7 +90,6 @@ jobs:
         shell: bash
         run: |
           export TIMEZONE_HY=$(cat /etc/timezone)
-          echo $TIMEZONE_HY
           
           cd /opt/hysteryale/hyster-yale-backend-test/docker
           docker compose up -d
@@ -111,6 +110,7 @@ jobs:
           
             cd docker/
             echo 'Down docker compose'
+            export TIMEZONE_HY=$(cat /etc/timezone)
             docker compose down
           
             echo 'Up last success docker compose...'
