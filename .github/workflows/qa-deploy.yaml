@@ -68,9 +68,9 @@ jobs:
           password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Set up environment variables
-        uses: actions/setup-dotenv@v1
+        uses: actions/setup-dotenv@v4
         with:
-            dotenv-file: /opt/hysteryale/last_version_success_release/env
+            dotenv-file: .env
 
       - name: Pull latest image
         shell: bash
